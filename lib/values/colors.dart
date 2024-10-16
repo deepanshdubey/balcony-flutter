@@ -2,6 +2,8 @@ import 'package:balcony/core/locator/locator.dart';
 import 'package:flutter/material.dart';
 
 class AppColor {
+  Color get disabledColor => const Color(0xff28AE7B);
+
   Color get greenColor => const Color(0xff0FDA48);
 
   Color get primaryColor => const Color(0xff0D5EF9);
