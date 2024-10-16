@@ -10,7 +10,7 @@ ThemeData createTheme(ColorScheme colors, TextTheme textTheme) {
     visualDensity: VisualDensity.adaptivePlatformDensity,
     useMaterial3: false,
     appBarTheme: AppBarTheme(
-      color: colors.background,
+      color: colors.surface,
       iconTheme: IconThemeData(color: colors.primary, size: 30.0),
       toolbarTextStyle: textTheme.bodyMedium,
       titleTextStyle: textTheme.titleLarge,
@@ -26,34 +26,34 @@ ThemeData createTheme(ColorScheme colors, TextTheme textTheme) {
       floatingLabelBehavior: FloatingLabelBehavior.never,
       contentPadding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(6.r),
         borderSide: BorderSide(color: colors.outline),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(6.r),
         borderSide: BorderSide(color: colors.outline),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(6.r),
         borderSide: BorderSide(color: colors.primary),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16.r),
-        borderSide: BorderSide(color: Colors.red),
+        borderRadius: BorderRadius.circular(6.r),
+        borderSide: const BorderSide(color: Colors.red),
       ),
       focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16.r),
-        borderSide: BorderSide(color: Colors.red),
+        borderRadius: BorderRadius.circular(6.r),
+        borderSide: const BorderSide(color: Colors.red),
       ),
     ),
     dividerColor: colors.outlineVariant,
     dialogTheme: DialogTheme(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6.r)),
     ),
     dropdownMenuTheme: DropdownMenuThemeData(
       menuStyle: MenuStyle(
-        backgroundColor: MaterialStateProperty.all(colors.background),
-        elevation: MaterialStateProperty.all(4),
+        backgroundColor: WidgetStateProperty.all(colors.surface),
+        elevation: WidgetStateProperty.all(4),
       ),
     ),
     datePickerTheme: DatePickerThemeData(
@@ -98,8 +98,7 @@ final ThemeData appTheme = createTheme(
   ColorScheme.fromSwatch().copyWith(
     primary: appColor.primaryColor,
     secondary: appColor.iconColor,
-    background: appColor.backgroundColor,
-    surface: appColor.fillColor,
+    surface: appColor.backgroundColor,
     onSurface: appColor.textColor,
     outline: appColor.strokeColor,
     outlineVariant: appColor.dividerColor,

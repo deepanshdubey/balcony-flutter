@@ -24,7 +24,6 @@ class _SplashPageState extends State<SplashPage> {
       () {
         if (session.isWalkthroughSeen) {
           if (session.isLogin) {
-
           } else {
             appRouter.replaceAll([const StartRoute()]);
           }
@@ -46,6 +45,8 @@ class _SplashPageState extends State<SplashPage> {
             width: context.width,
             height: context.height,
             assetPath: theme.assets.splashBg,
+            alignment: Alignment.topCenter,
+            boxFit: BoxFit.fitWidth,
           ),
           Positioned(
             left: 24.w,

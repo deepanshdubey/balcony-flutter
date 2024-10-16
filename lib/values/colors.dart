@@ -20,7 +20,7 @@ class AppColor {
 
   Color get fillColor => const Color(0xffF9F9F9);
 
-  Color get strokeColor => const Color(0x1a181e22);
+  Color get strokeColor => const Color(0xffCBD5E1);
 
   Color get subtitleColor => const Color(0xff181E22);
 

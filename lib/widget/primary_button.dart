@@ -8,13 +8,13 @@ class PrimaryButton extends StatelessWidget {
   final Color? backgroundColor;
 
   const PrimaryButton({
-    Key? key,
+    super.key,
     required this.text,
     required this.onPressed,
     this.isLoading = false,
     this.enabled = true,
     this.backgroundColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class PrimaryButton extends StatelessWidget {
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w500,
                   color: Colors.white,
-                  fontSize: 18.spMin),
+                  fontSize: 15.spMin),
             ),
     );
   }

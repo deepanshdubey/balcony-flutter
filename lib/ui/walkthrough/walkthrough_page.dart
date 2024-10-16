@@ -15,10 +15,10 @@ class WalkthroughPage extends StatefulWidget {
   const WalkthroughPage({super.key});
 
   @override
-  _WalkthroughPageState createState() => _WalkthroughPageState();
+  WalkthroughPageState createState() => WalkthroughPageState();
 }
 
-class _WalkthroughPageState extends State<WalkthroughPage> {
+class WalkthroughPageState extends State<WalkthroughPage> {
   final WalkthroughStore _store = WalkthroughStore();
 
   final PageController _pageController = PageController();
@@ -38,9 +38,10 @@ class _WalkthroughPageState extends State<WalkthroughPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Scaffold(
-      body: Observer(
-        builder: (_) => Stack(
+    return Observer(builder: (context) {
+      return Scaffold(
+        bottomNavigationBar: _buildBottomRow(theme, _store.currentPage),
+        body: Stack(
           children: [
             PageView(
               controller: _pageController,
@@ -71,11 +72,10 @@ class _WalkthroughPageState extends State<WalkthroughPage> {
                     imagePath: theme.assets.walkthrough3),
               ],
             ),
-            _buildBottomRow(theme, _store.currentPage)
           ],
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildIntroPage(
@@ -143,51 +143,59 @@ class _WalkthroughPageState extends State<WalkthroughPage> {
   }
 
   Widget _buildBottomRow(ThemeData theme, int currentPage) {
-    return SafeArea(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          24.w.horizontalSpace,
-          currentPage == 0
-              ? SizedBox(
-                  width: 40.r,
-                )
-              : GestureDetector(
-                  onTap: () {
-                    _pageController.animateToPage(currentPage - 1,
-                        duration: 400.milliseconds, curve: Curves.easeIn);
-                  },
-                  child: AppImage(
-                    radius: 20.r,
-                    assetPath: theme.assets.back,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(20.r),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                currentPage == 0
+                    ? SizedBox(
+                        width: 40.r,
+                      )
+                    : GestureDetector(
+                        onTap: () {
+                          _pageController.animateToPage(currentPage - 1,
+                              duration: 400.milliseconds, curve: Curves.easeIn);
+                        },
+                        child: AppImage(
+                          radius: 20.r,
+                          assetPath: theme.assets.back,
+                        ),
+                      ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: _buildDotsIndicator(theme, currentPage),
                   ),
                 ),
-          Expanded(
-              child: Align(
-            alignment: Alignment.bottomCenter,
-            child: _buildDotsIndicator(theme, currentPage),
-          )),
-          GestureDetector(
-            onTap: () {
-              if (currentPage != 2) {
-                _pageController.animateToPage(currentPage + 1,
-                    duration: 400.milliseconds, curve: Curves.easeIn);
-              } else {
-                session.isWalkthroughSeen = true;
-                appRouter.replaceAll([const StartRoute()]);
-              }
-            },
-            child: RotatedBox(
-              quarterTurns: 2,
-              child: AppImage(
-                radius: 20.r,
-                assetPath: theme.assets.back,
-              ),
+                GestureDetector(
+                  onTap: () {
+                    if (currentPage != 2) {
+                      _pageController.animateToPage(currentPage + 1,
+                          duration: 400.milliseconds, curve: Curves.easeIn);
+                    } else {
+                      session.isWalkthroughSeen = true;
+                      appRouter.replaceAll([const StartRoute()]);
+                    }
+                  },
+                  child: RotatedBox(
+                    quarterTurns: 2,
+                    child: AppImage(
+                      radius: 20.r,
+                      assetPath: theme.assets.back,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          24.w.horizontalSpace,
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -198,7 +206,7 @@ class _WalkthroughPageState extends State<WalkthroughPage> {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: List.generate(3, (index) {
         return Container(
-          margin: EdgeInsets.symmetric(horizontal: 6.w),
+          margin: EdgeInsets.symmetric(horizontal: 6.w, vertical: 6.h),
           width: 10.r,
           // Larger width for active dot
           height: 10.r,

@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:balcony/ui/auth/ui/bottomsheet/onboarding_bottomsheet.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
 import 'package:balcony/widget/app_image.dart';
@@ -20,12 +21,36 @@ class _StartPageState extends State<StartPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(20.r),
+          child: Row(
+            children: [
+              Expanded(
+                  child: AppOutlinedButton(
+                text: "just visiting",
+                onPressed: () {},
+              )),
+              12.w.horizontalSpace,
+              Expanded(
+                  child: PrimaryButton(
+                text: "sign up",
+                onPressed: () {
+                  showOnboardingBottomSheet(context);
+                },
+              )),
+            ],
+          ),
+        ),
+      ),
       body: Stack(
         alignment: Alignment.bottomCenter,
         children: [
           AppImage(
             width: context.width,
             height: context.height,
+            boxFit: BoxFit.fitWidth,
+            alignment: Alignment.topCenter,
             assetPath: theme.assets.startBg,
           ),
           Positioned(
@@ -39,25 +64,6 @@ class _StartPageState extends State<StartPage> {
               ),
             ),
           ),
-          SafeArea(
-            child: Row(
-              children: [
-                20.w.horizontalSpace,
-                Expanded(
-                    child: AppOutlinedButton(
-                  text: "just visiting",
-                  onPressed: () {},
-                )),
-                12.w.horizontalSpace,
-                Expanded(
-                    child: PrimaryButton(
-                  text: "sign up",
-                  onPressed: () {},
-                )),
-                20.w.horizontalSpace,
-              ],
-            ),
-          )
         ],
       ),
     );

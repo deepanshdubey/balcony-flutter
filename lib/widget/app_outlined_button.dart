@@ -55,7 +55,7 @@ class AppOutlinedButton extends StatelessWidget {
               textAlign: TextAlign.center,
               style: style ??
                   Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontSize: 16.spMin,
+                    fontSize: 15.spMin,
                     fontWeight: FontWeight.w500,
                   ),
             ),

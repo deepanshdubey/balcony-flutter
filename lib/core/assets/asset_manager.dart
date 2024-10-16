@@ -13,6 +13,8 @@ class AssetManager {
   String get back => Assets.imagesBack;
 
   String get startBg => Assets.imagesStartBg;
+  String get facebook => Assets.imagesFacebook;
+  String get google => Assets.imagesGoogle;
 }
 
 final assetManager = locator<AssetManager>();

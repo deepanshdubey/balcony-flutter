@@ -1,4 +1,3 @@
-import 'package:balcony/core/alert/alert_manager_impl.dart';
 import 'package:balcony/core/locator/locator.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -14,9 +13,9 @@ abstract class AlertManager {
     String confirmButtonText = "OK",
     String cancelButtonText = "Cancel",
     VoidCallback? onConfirm,
-    VoidCallback? onCancel = null,
+    VoidCallback? onCancel,
     bool isCancelable = true,
   });
 }
 
-final alertManager = locator<AlertManagerImpl>();
+AlertManager alertManager = locator<AlertManager>();

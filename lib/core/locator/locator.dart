@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/core/alert/alert_manager_impl.dart';
 import 'package:balcony/core/assets/asset_manager.dart';
 import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/core/session/session.dart';
@@ -28,7 +30,7 @@ Future<void> setupLocator() async {
   locator.registerSingleton(AppRouter());
   locator.registerSingleton(AppColor());
   locator.registerSingleton(AssetManager());
-
+  locator.registerLazySingleton<AlertManager>(() => AlertManagerImpl());
   locator.registerLazySingleton<Logger>(() => Logger(level: Level.all));
 }
 

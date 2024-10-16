@@ -74,9 +74,9 @@ class _MyAppState extends State<MyApp> {
             child: child!,
           );
           child = MediaQuery(
-            child: child,
             data: MediaQuery.of(context).copyWith(
                 textScaler: const TextScaler.linear(1.0), boldText: false),
+            child: child,
           );
           return child;
         },
