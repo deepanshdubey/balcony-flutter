@@ -6,7 +6,7 @@ class AppColor {
 
   Color get greenColor => const Color(0xff0FDA48);
 
-  Color get primaryColor => const Color(0xff0D5EF9);
+  Color get primaryColor => const Color(0xff005451);
 
   Color get borderColor => const Color(0xffBEE1F4);
 

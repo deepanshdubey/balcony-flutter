@@ -24,7 +24,10 @@ class _SplashPageState extends State<SplashPage> {
       () {
         if (session.isWalkthroughSeen) {
           if (session.isLogin) {
-          } else {}
+
+          } else {
+            appRouter.replaceAll([const StartRoute()]);
+          }
         } else {
           appRouter.replaceAll([const WalkthroughRoute()]);
         }

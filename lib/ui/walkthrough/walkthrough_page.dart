@@ -1,4 +1,6 @@
 import 'package:auto_route/annotations.dart';
+import 'package:balcony/core/session/app_session.dart';
+import 'package:balcony/router/app_router.dart';
 import 'package:balcony/ui/walkthrough/store/walkthrough_store.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/values/extensions/int_ext.dart';
@@ -171,7 +173,8 @@ class _WalkthroughPageState extends State<WalkthroughPage> {
                 _pageController.animateToPage(currentPage + 1,
                     duration: 400.milliseconds, curve: Curves.easeIn);
               } else {
-                //loadNextPage
+                session.isWalkthroughSeen = true;
+                appRouter.replaceAll([const StartRoute()]);
               }
             },
             child: RotatedBox(

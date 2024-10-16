@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class AlertManagerImpl implements AlertManager {
   @override
   void showSuccess(BuildContext context, String message) {
-    _showAlert(context, message, Theme.of(context).appColors.greenColor);
+    _showAlert(context, message, Theme.of(context).colors.greenColor);
   }
 
   @override

@@ -11,6 +11,8 @@ class AssetManager {
   String get walkthrough3 => Assets.imagesWalkthrough3;
 
   String get back => Assets.imagesBack;
+
+  String get startBg => Assets.imagesStartBg;
 }
 
 final assetManager = locator<AssetManager>();
