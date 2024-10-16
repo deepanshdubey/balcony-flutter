@@ -7,7 +7,7 @@ extension CustomThemeData on ThemeData {
     return assetManager;
   }
 
-  AppColor get appColors {
-    return appColors;
+  AppColor get colors {
+    return appColor;
   }
 }

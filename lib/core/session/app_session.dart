@@ -1,3 +1,4 @@
+import 'package:balcony/core/locator/locator.dart';
 import 'package:balcony/core/session/session.dart';
 import 'package:hive/hive.dart';
 
@@ -42,4 +43,13 @@ class AppSession implements Session {
     token = "";
     isLogin = false;
   }
+
+  @override
+  bool get isWalkthroughSeen =>
+      getValue("isWalkthroughSeen", defaultValue: false);
+
+  @override
+  set isWalkthroughSeen(bool update) => setValue("isWalkthroughSeen", update);
 }
+
+final session = locator<Session>();

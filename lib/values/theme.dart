@@ -2,12 +2,11 @@ import 'package:balcony/values/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
 ThemeData createTheme(ColorScheme colors, TextTheme textTheme) {
   return ThemeData(
     colorScheme: colors,
-    scaffoldBackgroundColor: colors.background,
-    primaryColor: appColors.primaryColor,
+    scaffoldBackgroundColor: appColor.containerColor,
+    primaryColor: appColor.primaryColor,
     visualDensity: VisualDensity.adaptivePlatformDensity,
     useMaterial3: false,
     appBarTheme: AppBarTheme(
@@ -67,43 +66,43 @@ ThemeData createTheme(ColorScheme colors, TextTheme textTheme) {
 
 final TextTheme textTheme = TextTheme(
   titleLarge: TextStyle(
-    fontFamily: 'Satoshi',
+    fontFamily: 'Inter',
     fontWeight: FontWeight.bold,
-    color: appColors.textColor,
+    color: appColor.textColor,
     fontSize: 16.spMin,
   ),
   titleMedium: TextStyle(
-    fontFamily: 'Satoshi',
+    fontFamily: 'Inter',
     fontWeight: FontWeight.w500,
-    color: appColors.textColor,
+    color: appColor.textColor,
   ),
   bodyLarge: TextStyle(
-    fontFamily: 'Satoshi',
+    fontFamily: 'Inter',
     fontWeight: FontWeight.normal,
-    color: appColors.textColor,
+    color: appColor.textColor,
   ),
   bodyMedium: TextStyle(
-    fontFamily: 'Satoshi',
+    fontFamily: 'Inter',
     fontWeight: FontWeight.normal,
-    color: appColors.subtitleColor,
+    color: appColor.subtitleColor,
     fontSize: 14.spMin,
   ),
   bodySmall: TextStyle(
-    fontFamily: 'Satoshi',
+    fontFamily: 'Inter',
     fontWeight: FontWeight.w300,
-    color: appColors.textColor,
+    color: appColor.textColor,
   ),
 );
 
 final ThemeData appTheme = createTheme(
   ColorScheme.fromSwatch().copyWith(
-    primary: appColors.primaryColor,
-    secondary: appColors.iconColor,
-    background: appColors.backgroundColor,
-    surface: appColors.fillColor,
-    onSurface: appColors.textColor,
-    outline: appColors.strokeColor,
-    outlineVariant: appColors.dividerColor,
+    primary: appColor.primaryColor,
+    secondary: appColor.iconColor,
+    background: appColor.backgroundColor,
+    surface: appColor.fillColor,
+    onSurface: appColor.textColor,
+    outline: appColor.strokeColor,
+    outlineVariant: appColor.dividerColor,
   ),
   textTheme,
 );

@@ -14,7 +14,7 @@ class AppColor {
 
   Color get backgroundColor => Colors.white;
 
-  Color get textColor => Colors.black;
+  Color get textColor => const Color(0xff005451);
 
   Color get fillColor => const Color(0xffF9F9F9);
 
@@ -27,4 +27,4 @@ class AppColor {
   Color get containerColor => Colors.white;
 }
 
-AppColor appColors = locator<AppColor>();
+AppColor appColor = locator<AppColor>();

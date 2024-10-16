@@ -3,6 +3,10 @@ abstract class Session {
 
   Future<void> setValue<T>(String key, T value);
 
+  bool get isWalkthroughSeen;
+
+  set isWalkthroughSeen(bool update);
+
   bool get isLogin;
 
   set isLogin(bool update);
