@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:balcony/router/app_router.dart';
 import 'package:balcony/ui/auth/ui/bottomsheet/onboarding_bottomsheet.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
@@ -29,7 +30,9 @@ class _StartPageState extends State<StartPage> {
               Expanded(
                   child: AppOutlinedButton(
                 text: "just visiting",
-                onPressed: () {},
+                onPressed: () {
+                  appRouter.replaceAll([const HomeRoute()]);
+                },
               )),
               12.w.horizontalSpace,
               Expanded(
