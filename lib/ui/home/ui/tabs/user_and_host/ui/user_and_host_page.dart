@@ -1,5 +1,8 @@
+import 'package:balcony/ui/auth/ui/reset_password_page.dart';
 import 'package:balcony/ui/home/ui/tabs/user_and_host/widget/search_properties_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/user_and_host/widget/search_workspaces_widget.dart';
+import 'package:balcony/ui/home/widget/home_listing_widget.dart';
+import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -35,7 +38,39 @@ class _UserAndHostPageState extends State<UserAndHostPage> {
           10.h.verticalSpace,
           _currentIndex == 0
               ? const SearchWorkspacesWidget()
-              : const SearchPropertiesWidget()
+              : const SearchPropertiesWidget(),
+          20.h.verticalSpace,
+          HomeListingWidget(
+              title: "properties",
+              onMoreClick: () {},
+              isReverse: false,
+              children: List.generate(
+                4,
+                (index) {
+                  return Container(
+                    decoration: BoxDecoration(
+                        color: index %  2== 0 ? theme.primaryColor.withOpacity(.2) : theme.primaryColor,
+                        borderRadius: BorderRadius.all(Radius.circular(20.r)),
+                        border: Border.all(color: Colors.white)),
+                  );
+                },
+              )),
+          20.h.verticalSpace,
+          HomeListingWidget(
+              title: "workspaces",
+              onMoreClick: () {},
+              isReverse: true,
+              children: List.generate(
+                4,
+                    (index) {
+                  return Container(
+                    decoration: BoxDecoration(
+                        color: index %  2== 0 ? theme.primaryColor.withOpacity(.2) : theme.primaryColor,
+                        borderRadius: BorderRadius.all(Radius.circular(20.r)),
+                        border: Border.all(color: Colors.white)),
+                  );
+                },
+              ))
         ],
       ),
     );
