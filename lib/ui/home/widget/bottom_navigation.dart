@@ -15,6 +15,7 @@ class BottomNavigation extends StatefulWidget {
 
 class _BottomNavigationState extends State<BottomNavigation> {
   bool isUserSelected = true;
+  String previousItem = "user";
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +55,12 @@ class _BottomNavigationState extends State<BottomNavigation> {
   Widget switchHostUser(ThemeData theme) {
     return GestureDetector(
       onTap: () {
-        setState(() {
-          isUserSelected = !isUserSelected;
-        });
+        if (previousItem == 'user' || previousItem == 'host') {
+          setState(() {
+            isUserSelected = !isUserSelected;
+          });
+        }
+        previousItem = isUserSelected ? "user" : "host";
         widget.onItemSelected(isUserSelected ? "user" : "host");
       },
       child: Container(
@@ -117,6 +121,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
   Widget bottomTab(ThemeData theme, String text, String icon) {
     return GestureDetector(
       onTap: () {
+        previousItem = text;
         widget.onItemSelected(text);
       },
       child: Column(
