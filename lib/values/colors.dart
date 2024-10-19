@@ -24,7 +24,7 @@ class AppColor {
 
   Color get subtitleColor => const Color(0xff181E22);
 
-  Color get dividerColor => const Color(0xffEDEEEE);
+  Color get dividerColor => const Color(0xff005451);
 
   Color get containerColor => Colors.white;
 }

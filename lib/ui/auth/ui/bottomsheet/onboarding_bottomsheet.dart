@@ -69,7 +69,7 @@ class OnboardingBottomSheetState extends State<OnboardingBottomSheet> {
                       _currentIndex = index;
                     });
                   },
-                  children: [
+                  children: const [
                     SignInPage(),
                     SignUpPage(),
                     ResetPasswordPage(),
@@ -106,56 +106,6 @@ class OnboardingBottomSheetState extends State<OnboardingBottomSheet> {
     );
   }
 
-  Widget _buildSignUpForm() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const TextField(
-            decoration: InputDecoration(labelText: "First Name"),
-          ),
-          const SizedBox(height: 16),
-          const TextField(
-            decoration: InputDecoration(labelText: "Last Name"),
-          ),
-          const SizedBox(height: 16),
-          const TextField(
-            decoration: InputDecoration(labelText: "Email"),
-          ),
-          const SizedBox(height: 16),
-          const TextField(
-            obscureText: true,
-            decoration: InputDecoration(labelText: "Password"),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () {},
-            child: const Text("Register"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPasswordResetForm() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const TextField(
-            decoration: InputDecoration(labelText: "Email or phone number"),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () {},
-            child: const Text("Reset Password"),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 void showOnboardingBottomSheet(BuildContext context) {

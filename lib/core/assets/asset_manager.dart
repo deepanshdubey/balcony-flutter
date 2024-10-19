@@ -27,6 +27,12 @@ class AssetManager {
   String get bottomNavigationStays => Assets.imagesStays;
 
   String get bottomNavigationMore => Assets.imagesMore;
+
+  String get calender => Assets.imagesCalendar;
+
+  String get beds => Assets.imagesBeds;
+
+  String get baths => Assets.imagesBaths;
 }
 
 final assetManager = locator<AssetManager>();

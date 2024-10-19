@@ -66,15 +66,15 @@ class AppTextField extends StatelessWidget {
       onTap: onTap,
       decoration: inputDecoration ??
           InputDecoration(
-            contentPadding: EdgeInsets.symmetric(
-              vertical: 5.h,
-              horizontal: 16.w,
-            ),
-            labelText: label,
-            hintText: hintText,
-            suffixIcon: suffixIcon,
-            prefixIcon: prefixIcon,
-          ),
+              contentPadding: EdgeInsets.symmetric(
+                vertical: 5.h,
+                horizontal: 16.w,
+              ),
+              labelText: hintText,
+              hintText: hintText,
+              suffixIcon: suffixIcon,
+              prefixIcon: prefixIcon,
+              floatingLabelBehavior: FloatingLabelBehavior.never),
       keyboardType: keyboardType,
       obscureText: obscureText,
       obscuringCharacter: "*",
