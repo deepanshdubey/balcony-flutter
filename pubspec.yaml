@@ -74,6 +74,7 @@ flutter:
   assets:
     - assets/images/
     - assets/
+    - assets/dummy/
     - assets/fonts/
 
 

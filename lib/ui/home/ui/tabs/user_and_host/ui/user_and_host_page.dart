@@ -10,9 +10,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../../widget/app_image.dart';
 
 class UserAndHostPage extends StatefulWidget {
+  final Function(String) onItemSelected;
   final bool isUserSelected;
 
-  const UserAndHostPage({super.key, required this.isUserSelected});
+  const UserAndHostPage(
+      {super.key, required this.isUserSelected, required this.onItemSelected});
 
   @override
   State<UserAndHostPage> createState() => _UserAndHostPageState();
@@ -42,7 +44,9 @@ class _UserAndHostPageState extends State<UserAndHostPage> {
           20.h.verticalSpace,
           HomeListingWidget(
               title: "properties",
-              onMoreClick: () {},
+              onMoreClick: () {
+                widget.onItemSelected("stays");
+              },
               isReverse: false,
               children: List.generate(
                 4,
@@ -58,7 +62,9 @@ class _UserAndHostPageState extends State<UserAndHostPage> {
               )),
           HomeListingWidget(
               title: "workspaces",
-              onMoreClick: () {},
+              onMoreClick: () {
+                widget.onItemSelected("works");
+              },
               isReverse: true,
               children: List.generate(
                 4,
