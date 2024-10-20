@@ -1,3 +1,5 @@
+import 'package:balcony/values/extensions/theme_ext.dart';
+import 'package:balcony/widget/app_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -43,7 +45,6 @@ class PropertyWidget extends StatelessWidget {
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontSize: 12.spMin,
                         fontWeight: FontWeight.w300,
-
                       )),
                   horizontalPadding: 30.w),
               chip(
@@ -72,7 +73,7 @@ class PropertyWidget extends StatelessWidget {
           children: [
             8.horizontalSpace,
             buildRatingStars(theme, rating), // Display stars based on rating
-            8.horizontalSpace,
+            6.horizontalSpace,
             Text(
               '($reviews)',
               style: theme.textTheme.titleMedium?.copyWith(
@@ -118,21 +119,27 @@ class PropertyWidget extends StatelessWidget {
     return Row(
       children: List.generate(5, (index) {
         if (index < fullStars) {
-          return Icon(
-            Icons.star,
-            color: theme.primaryColor,
-            size: 12.r,
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: .5.w),
+            child: AppImage(
+              assetPath: theme.assets.ratingStar,
+              height: 12.r,
+              width: 12.r,
+            ),
           );
         } else if (index == fullStars && hasHalfStar) {
-          return Icon(
-            Icons.star_half,
-            color: theme.primaryColor,
-            size: 12.r,
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: .5.w),
+            child: AppImage(
+              assetPath: theme.assets.ratingStar,
+              height: 12.r,
+              width: 12.r,
+            ),
           );
         } else {
           return Icon(
             Icons.star_border,
-            color: theme.primaryColor,
+            color: Colors.transparent,
             size: 12.r,
           );
         }

@@ -33,6 +33,8 @@ class AssetManager {
   String get beds => Assets.imagesBeds;
 
   String get baths => Assets.imagesBaths;
+
+  String get ratingStar => Assets.imagesRatingStar;
 }
 
 final assetManager = locator<AssetManager>();
