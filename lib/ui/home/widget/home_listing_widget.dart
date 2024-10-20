@@ -38,16 +38,16 @@ class HomeListingWidget extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 16.0),
+        8.h.verticalSpace,
         SizedBox(
-          height: context.height * .28,
+          height: 220.h + 40.h + 20.h,
           child: ListView(
               reverse: isReverse,
               scrollDirection: Axis.horizontal,
               children: children
                   .map(
                     (e) => Container(
-                        width: context.width * .6,
+                        width: context.width * .7,
                         margin: EdgeInsets.symmetric(horizontal: 10.w),
                         child: e),
                   )
@@ -56,6 +56,8 @@ class HomeListingWidget extends StatelessWidget {
       ],
     );
   }
+
+
 
   Widget showMore(ThemeData theme) {
     return GestureDetector(

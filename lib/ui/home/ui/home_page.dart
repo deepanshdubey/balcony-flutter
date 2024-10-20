@@ -31,16 +31,22 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: bottomPages.containsKey(selectedTab)
-          ? bottomPages[selectedTab]
-          : UserAndHostPage(isUserSelected: selectedTab == 'user'),
-      bottomNavigationBar: BottomNavigation(
-        onItemSelected: (s) {
-          setState(() {
-            selectedTab = s;
-          });
-        },
-      ),
-    );
+        body: Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        Container(
+          child: bottomPages.containsKey(selectedTab)
+              ? bottomPages[selectedTab]
+              : UserAndHostPage(isUserSelected: selectedTab == 'user'),
+        ),
+        BottomNavigation(
+          onItemSelected: (s) {
+            setState(() {
+              selectedTab = s;
+            });
+          },
+        ),
+      ],
+    ));
   }
 }

@@ -23,7 +23,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
     return SafeArea(
       child: Container(
         width: context.width,
-        margin: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
+        margin: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
         padding: EdgeInsets.only(top: 10.h, bottom: 10.h),
         decoration: BoxDecoration(
           color: Colors.white,
