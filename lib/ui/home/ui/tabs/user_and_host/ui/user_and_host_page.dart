@@ -1,3 +1,4 @@
+import 'package:balcony/ui/home/ui/tabs/user_and_host/widget/host_your_property_or_workspace_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/user_and_host/widget/property_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/user_and_host/widget/search_properties_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/user_and_host/widget/search_workspaces_widget.dart';
@@ -70,7 +71,9 @@ class _UserAndHostPageState extends State<UserAndHostPage> {
                     reviews: 221,
                   );
                 },
-              ))
+              )),
+          12.h.verticalSpace,
+          const HostYourPropertyOrWorkspaceWidget(),
         ],
       ),
     );

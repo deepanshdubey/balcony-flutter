@@ -32,9 +32,11 @@ class AppOutlinedButton extends StatelessWidget {
     return OutlinedButton(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
-        padding: padding ?? EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+        padding:
+            padding ?? EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
         backgroundColor: backgroundColor ?? Colors.transparent,
-        side: BorderSide(color: borderColor ?? Theme.of(context).colors.primaryColor),
+        side: BorderSide(
+            color: borderColor ?? Theme.of(context).colors.primaryColor),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius ?? 12.r),
         ),
@@ -53,11 +55,14 @@ class AppOutlinedButton extends StatelessWidget {
             child: Text(
               text,
               textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: style ??
                   Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontSize: 15.spMin,
+                        fontSize: 14.spMin,
+
                     fontWeight: FontWeight.w500,
-                  ),
+                      ),
             ),
           ),
         ],

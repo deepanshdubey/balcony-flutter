@@ -40,10 +40,12 @@ class PrimaryButton extends StatelessWidget {
             )
           : Text(
               text,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w500,
                   color: Colors.white,
-                  fontSize: 15.spMin),
+                  fontSize: 14.spMin),
             ),
     );
   }
