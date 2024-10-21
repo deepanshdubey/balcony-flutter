@@ -1,4 +1,5 @@
 import 'package:auto_route/annotations.dart';
+import 'package:balcony/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:balcony/ui/home/ui/tabs/user_and_host/ui/user_and_host_page.dart';
 import 'package:balcony/ui/home/ui/tabs/workspace_and_property/ui/workspace_and_property_page.dart';
 import 'package:balcony/ui/home/widget/bottom_navigation.dart';
@@ -46,21 +47,22 @@ class _HomePageState extends State<HomePage> {
               ? bottomPages[selectedTab]
               : UserAndHostPage(
                   isUserSelected: selectedTab == 'user',
-                  onItemSelected: (s) {
-                    setState(() {
-                      selectedTab = s;
-                    });
-                  },
-                ),
+                  onItemSelected: handleNavigation),
         ),
         BottomNavigation(
-          onItemSelected: (s) {
-            setState(() {
-              selectedTab = s;
-            });
-          },
+          onItemSelected: handleNavigation,
         ),
       ],
     ));
+  }
+
+  void handleNavigation(String s) {
+    if (s == "chat") {
+      showChatBottomSheet(context);
+    } else {
+      setState(() {
+        selectedTab = s;
+      });
+    }
   }
 }
