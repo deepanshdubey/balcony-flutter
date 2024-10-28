@@ -29,7 +29,7 @@ class OnboardingBottomSheetState extends State<OnboardingBottomSheet> {
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
       expand: false,
-      initialChildSize: 0.8,
+      initialChildSize: 0.9,
       minChildSize: 0.3,
       maxChildSize: 0.9,
       builder: (context, scrollController) {
@@ -42,7 +42,7 @@ class OnboardingBottomSheetState extends State<OnboardingBottomSheet> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              50.h.verticalSpace,
+              40.h.verticalSpace,
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
                 margin: EdgeInsets.only(left: 20.w),
@@ -113,6 +113,7 @@ void showOnboardingBottomSheet(BuildContext context) {
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
+
     builder: (context) => const OnboardingBottomSheet(),
   );
 }

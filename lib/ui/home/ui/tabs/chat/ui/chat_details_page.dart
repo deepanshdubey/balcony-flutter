@@ -16,7 +16,7 @@ class ChatDetailsPage extends StatelessWidget {
       body: Column(
         children: [
           _buildCustomAppBar(context),
-          Expanded(child: _buildChatList()),
+          Expanded(child: _buildChatList(context)),
           _buildInputArea(context),
         ],
       ),
@@ -80,15 +80,15 @@ class ChatDetailsPage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        _buildSentMessage(context,'Hey! How have you been?', '12:15 PM'),
-        _buildSentMessage(context,'Wanna catch up for a beer?', '12:15 PM'),
+        _buildSentMessage(context, 'Hey! How have you been?', '12:15 PM'),
+        _buildSentMessage(context, 'Wanna catch up for a beer?', '12:15 PM'),
         _buildReceivedMessage('Awesome! Let\'s meet up', '12:20 PM'),
         _buildReceivedMessage(
             'Can I also get my cousin along?\nWill that be okay?', '12:20 PM'),
-        _buildSentMessage(context,'Yeah sure! get him too.', '12:22 PM'),
+        _buildSentMessage(context, 'Yeah sure! get him too.', '12:22 PM'),
         _buildReceivedMessage('Alright! See you soon!', '12:25 PM'),
         _buildVoiceMessage('12:25 PM', isReceived: true),
-        _buildSentMessage(context,'okay sure!', '12:25 PM'),
+        _buildSentMessage(context, 'okay sure!', '12:25 PM'),
       ],
     );
   }

@@ -22,7 +22,7 @@ class AppColor {
 
   Color get strokeColor => const Color(0xffCBD5E1);
 
-  Color get subtitleColor => const Color(0xff181E22);
+  Color get subtitleColor => const Color(0xff64748B);
 
   Color get dividerColor => const Color(0xff005451);
 

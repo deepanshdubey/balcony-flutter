@@ -65,4 +65,12 @@ class AlertManagerImpl implements AlertManager {
       },
     );
   }
+
+  @override
+  void showAlert(BuildContext context, Widget alert) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => alert,
+    );
+  }
 }

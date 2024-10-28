@@ -1,6 +1,8 @@
 import 'package:balcony/core/alert/alert_manager.dart';
-import 'package:balcony/core/locator/locator.dart';
+import 'package:balcony/router/app_router.dart';
+import 'package:balcony/ui/auth/store/auth_store.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
+import 'package:balcony/values/extensions/string_ext.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
 import 'package:balcony/values/validators.dart';
 import 'package:balcony/widget/app_image.dart';
@@ -8,7 +10,9 @@ import 'package:balcony/widget/app_text_field.dart';
 import 'package:balcony/widget/password_field.dart';
 import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mobx/mobx.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -23,9 +27,12 @@ class _SignInPageState extends State<SignInPage> {
   late TextEditingController passwordController;
   late FocusNode emailNode;
   late FocusNode passwordNode;
+  List<ReactionDisposer>? disposers;
+  final authStore = AuthStore();
 
   @override
   void initState() {
+    addDisposer();
     super.initState();
     emailController = TextEditingController();
     passwordController = TextEditingController();
@@ -35,12 +42,35 @@ class _SignInPageState extends State<SignInPage> {
 
   @override
   void dispose() {
+    removeDisposer();
     emailController.dispose();
     passwordController.dispose();
     emailNode.dispose();
     passwordNode.dispose();
 
     super.dispose();
+  }
+
+  void addDisposer() {
+    disposers ??= [
+      reaction((_) => authStore.loginResponse, (response) {
+        if (response != null) {
+          appRouter.replaceAll([const HomeRoute()]);
+        }
+      }),
+      reaction((_) => authStore.errorMessage, (String? errorMessage) {
+        if (errorMessage != null) {
+          alertManager.showError(context, errorMessage);
+        }
+      }),
+    ];
+  }
+
+  void removeDisposer() {
+    if (disposers == null) return;
+    for (final element in disposers!) {
+      element.reaction.dispose();
+    }
   }
 
   @override
@@ -79,14 +109,23 @@ class _SignInPageState extends State<SignInPage> {
                   hintText: 'password',
                 ),
                 10.h.verticalSpace,
-                PrimaryButton(
-                  text: "login",
-                  onPressed: () {
-                    if (_formKey.currentState!.validate() == true) {
-                      logger.w("message");
-                    }
-                  },
-                ),
+                Observer(builder: (context) {
+                  final isLoading = authStore.isLoading;
+                  return PrimaryButton(
+                    text: "login",
+                    onPressed: () {
+                      if (_formKey.currentState!.validate() == true) {
+                        authStore.login({
+                          emailController.text.trim().isValidEmail()
+                              ? "email"
+                              : "phone": emailController.text.trim(),
+                          "password": passwordController.text.trim(),
+                        });
+                      }
+                    },
+                    isLoading: isLoading,
+                  );
+                }),
                 16.h.verticalSpace,
               ],
             ),

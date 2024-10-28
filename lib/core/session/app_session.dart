@@ -1,5 +1,6 @@
 import 'package:balcony/core/locator/locator.dart';
 import 'package:balcony/core/session/session.dart';
+import 'package:balcony/data/model/response/user_data.dart';
 import 'package:hive/hive.dart';
 
 class AppSession implements Session {
@@ -50,6 +51,18 @@ class AppSession implements Session {
 
   @override
   set isWalkthroughSeen(bool update) => setValue("isWalkthroughSeen", update);
+
+  @override
+  UserData get user => getValue("user", defaultValue: UserData());
+
+  @override
+  set user(UserData update) => setValue("user", user);
+
+  @override
+  bool get isLoginSkipped => getValue("isLoginSkipped", defaultValue: false);
+
+  @override
+  set isLoginSkipped(bool update) => setValue("isLoginSkipped", update);
 }
 
 final session = locator<Session>();

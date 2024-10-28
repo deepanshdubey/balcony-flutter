@@ -28,6 +28,11 @@ dependencies:
   mobx: ^2.3.3+2
   flutter_mobx: ^2.0.0
   form_field_validator: ^1.1.0
+  dio: ^5.7.0
+  retrofit: ^4.4.1
+  connectivity_plus: ^6.1.0
+  pretty_dio_logger: ^1.4.0
+  json_annotation: ^4.9.0
 
 
 dev_dependencies:
@@ -35,6 +40,11 @@ dev_dependencies:
   auto_route_generator: ^9.0.0
   hive_generator: ^2.0.1
   mobx_codegen: ^2.6.0+1
+  # API generator
+  retrofit_generator: ^8.0.6
+
+  # json parsing
+  json_serializable: ^6.7.1
 
   flutter_test:
     sdk: flutter

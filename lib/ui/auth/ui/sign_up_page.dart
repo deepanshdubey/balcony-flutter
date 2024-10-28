@@ -1,11 +1,15 @@
+import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/ui/auth/store/auth_store.dart';
+import 'package:balcony/ui/auth/ui/bottomsheet/alert/verification_alert.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
-import 'package:balcony/values/extensions/theme_ext.dart';
 import 'package:balcony/values/validators.dart';
 import 'package:balcony/widget/app_text_field.dart';
 import 'package:balcony/widget/password_field.dart';
 import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mobx/mobx.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -26,10 +30,14 @@ class _SignUpPageState extends State<SignUpPage> {
   late FocusNode emailNode;
   late FocusNode phoneNode;
   late FocusNode passwordNode;
+  List<ReactionDisposer>? disposers;
+  late Map<String, dynamic> apiRequest;
+  final authStore = AuthStore();
 
   @override
   void initState() {
     super.initState();
+    addDisposer();
     _formKey = GlobalKey<FormState>();
     firstNameController = TextEditingController();
     lastNameController = TextEditingController();
@@ -45,6 +53,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   void dispose() {
+    removeDisposer();
     firstNameController.dispose();
     lastNameController.dispose();
     emailController.dispose();
@@ -58,74 +67,123 @@ class _SignUpPageState extends State<SignUpPage> {
     super.dispose();
   }
 
+  void addDisposer() {
+    disposers ??= [
+      reaction((_) => authStore.registerResponse, (response) {
+        if (response != null) {
+          alertManager.showAlert(
+              context,
+              VerificationAlert(
+                type: VerificationAlertType.register,
+                apiRequest: apiRequest,
+                onSuccess: () {},
+              ));
+        }
+      }),
+      reaction((_) => authStore.errorMessage, (String? errorMessage) {
+        if (errorMessage != null) {
+          alertManager.showError(context, errorMessage);
+        }
+      }),
+    ];
+  }
+
+  void removeDisposer() {
+    if (disposers == null) return;
+    for (final element in disposers!) {
+      element.reaction.dispose();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Form(
-      key: _formKey,
-      child: ListView(
-        children: [
-          Container(
-            width: context.width,
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-            margin: EdgeInsets.symmetric(horizontal: 20.w),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(12.r)),
-                border: Border.all(color: Colors.black.withOpacity(.25))),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                16.h.verticalSpace,
-                AppTextField(
-                  controller: firstNameController,
-                  focusNode: firstNameNode,
-                  validator: firstNameValidator.call,
-                  label: 'first name',
-                  hintText: 'first name',
-                  textInputAction: TextInputAction.next,
-                ),
-                16.h.verticalSpace,
-                AppTextField(
-                  controller: lastNameController,
-                  focusNode: lastNameNode,
-                  validator: lastNameValidator.call,
-                  label: 'last name',
-                  hintText: 'last name',
-                  textInputAction: TextInputAction.next,
-                ),
-                16.h.verticalSpace,
-                PasswordField(
-                  controller: passwordController,
-                  focusNode: passwordNode,
-                  validator: passwordValidator.call,
-                  label: 'password',
-                  hintText: 'password',
-                ),
-                16.h.verticalSpace,
-                AppTextField(
-                  controller: phoneController,
-                  focusNode: phoneNode,
-                  keyboardType: TextInputType.number,
-                  validator: phoneValidator.call,
-                  label: 'phone',
-                  hintText: '###-###-####',
-                  textInputAction: TextInputAction.next,
-                ),
-                10.h.verticalSpace,
-                PrimaryButton(
-                  text: "register",
-                  onPressed: () {
-                    if (_formKey.currentState?.validate() == true) {}
-                  },
-                ),
-                16.h.verticalSpace,
-              ],
+    return Observer(builder: (context) {
+      var isLoading = authStore.isLoading;
+      return Form(
+        key: _formKey,
+        child: ListView(
+          children: [
+            Container(
+              width: context.width,
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+              margin: EdgeInsets.symmetric(horizontal: 20.w),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(12.r)),
+                  border: Border.all(color: Colors.black.withOpacity(.25))),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  16.h.verticalSpace,
+                  AppTextField(
+                    controller: firstNameController,
+                    focusNode: firstNameNode,
+                    validator: firstNameValidator.call,
+                    label: 'first name',
+                    hintText: 'first name',
+                    textInputAction: TextInputAction.next,
+                  ),
+                  16.h.verticalSpace,
+                  AppTextField(
+                    controller: lastNameController,
+                    focusNode: lastNameNode,
+                    validator: lastNameValidator.call,
+                    label: 'last name',
+                    hintText: 'last name',
+                    textInputAction: TextInputAction.next,
+                  ),
+                  16.h.verticalSpace,
+                  AppTextField(
+                    controller: emailController,
+                    focusNode: emailNode,
+                    validator: emailValidator.call,
+                    label: 'email',
+                    hintText: 'name@email.com',
+                    textInputAction: TextInputAction.next,
+                  ),
+                  16.h.verticalSpace,
+                  PasswordField(
+                    controller: passwordController,
+                    focusNode: passwordNode,
+                    validator: passwordValidator.call,
+                    label: 'password',
+                    hintText: 'password',
+                  ),
+                  16.h.verticalSpace,
+                  AppTextField(
+                    controller: phoneController,
+                    focusNode: phoneNode,
+                    keyboardType: TextInputType.number,
+                    validator: phoneValidator.call,
+                    label: 'phone',
+                    hintText: '###-###-####',
+                    textInputAction: TextInputAction.next,
+                  ),
+                  10.h.verticalSpace,
+                  PrimaryButton(
+                    isLoading: isLoading,
+                    text: "register",
+                    onPressed: () {
+                      if (_formKey.currentState?.validate() == true) {
+                        apiRequest = {
+                          "firstName": firstNameController.text.trim(),
+                          "lastName": lastNameController.text.trim(),
+                          "email": emailController.text.trim(),
+                          "phone": phoneController.text.trim(),
+                          "password": passwordController.text.trim(),
+                        };
+                        authStore.register(apiRequest);
+                      }
+                    },
+                  ),
+                  16.h.verticalSpace,
+                ],
+              ),
             ),
-          ),
-
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 }

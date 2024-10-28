@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/router/app_router.dart';
 import 'package:balcony/ui/auth/ui/bottomsheet/onboarding_bottomsheet.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
@@ -31,6 +32,7 @@ class _StartPageState extends State<StartPage> {
                   child: AppOutlinedButton(
                 text: "just visiting",
                 onPressed: () {
+                  session.isLoginSkipped = true;
                   appRouter.replaceAll([const HomeRoute()]);
                 },
               )),

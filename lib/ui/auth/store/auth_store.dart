@@ -1,0 +1,139 @@
+import 'package:balcony/core/locator/locator.dart';
+import 'package:balcony/core/session/app_session.dart';
+import 'package:balcony/data/model/response/common_data.dart';
+import 'package:balcony/data/model/response/user_data.dart';
+import 'package:balcony/data/repository/user_repository.dart';
+import 'package:balcony/ui/auth/ui/bottomsheet/alert/verification_alert.dart';
+import 'package:mobx/mobx.dart';
+
+part 'auth_store.g.dart';
+
+class AuthStore = _AuthStoreBase with _$AuthStore;
+
+abstract class _AuthStoreBase with Store {
+  @observable
+  CommonData? loginResponse;
+
+  @observable
+  CommonData? registerResponse;
+
+  @observable
+  CommonData? verificationResponse;
+
+  @observable
+  CommonData? resendOtpResponse;
+
+  @observable
+  CommonData? forgotPasswordResponse;
+
+  @observable
+  bool? logoutSuccess;
+
+  @observable
+  bool isLoading = false;
+
+  @observable
+  String? errorMessage;
+
+  @action
+  Future login(Map<String, dynamic> request) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await userRepository.login(request);
+      if (response.isSuccess) {
+        loginResponse = response.data!;
+        session.user = response.data!.user!;
+        session.token = response.data!.token!;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future register(Map<String, dynamic> request) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await userRepository.register(request);
+      if (response.isSuccess) {
+        registerResponse = response.data!;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future resendOtp(VerificationAlertType type) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await userRepository.resentOtp(type);
+      if (response.isSuccess) {
+        resendOtpResponse = response.data!;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future verifyOtp(VerificationAlertType type, String otp) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await userRepository.verifyOtp(type, otp);
+      if (response.isSuccess) {
+        verificationResponse = response.data!;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future forgotPassword(Map<String, dynamic> request) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await userRepository.forgotPassword(request);
+      if (response.isSuccess) {
+        forgotPasswordResponse = response.data!;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+}

@@ -1,3 +1,5 @@
+import 'package:balcony/data/model/response/user_data.dart';
+
 abstract class Session {
   T getValue<T>(String key, {T? defaultValue});
 
@@ -11,6 +13,10 @@ abstract class Session {
 
   set isLogin(bool update);
 
+  bool get isLoginSkipped;
+
+  set isLoginSkipped(bool update);
+
   String get token;
 
   set token(String update);
@@ -18,6 +24,10 @@ abstract class Session {
   String get fcmToken;
 
   set fcmToken(String update);
+
+  UserData get user;
+
+  set user(UserData update);
 
   void logout();
 }

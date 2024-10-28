@@ -14,8 +14,8 @@ final MultiValidator emailOrPhoneValidator = MultiValidator([
 ]);
 final MultiValidator phoneValidator = MultiValidator([
   RequiredValidator(errorText: "please enter phone number"),
-  MinLengthValidator(8, errorText: "please enter valid phone number"),
-  MaxLengthValidator(11, errorText: "please enter valid phone number"),
+  MinLengthValidator(10, errorText: "please enter valid phone number"),
+  MaxLengthValidator(15, errorText: "please enter valid phone number"),
 ]);
 final MultiValidator mobileCodeValidator = MultiValidator([
   RequiredValidator(errorText: "S.current.kEnterCountryCode"),

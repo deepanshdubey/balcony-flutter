@@ -2,9 +2,12 @@ import 'dart:io';
 
 import 'package:balcony/core/alert/alert_manager.dart';
 import 'package:balcony/core/alert/alert_manager_impl.dart';
+import 'package:balcony/core/api/api_module.dart';
 import 'package:balcony/core/assets/asset_manager.dart';
 import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/core/session/session.dart';
+import 'package:balcony/data/repository/user_repository.dart';
+import 'package:balcony/data/repository_impl/user_repository_impl.dart';
 import 'package:balcony/router/app_router.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:get_it/get_it.dart';
@@ -26,12 +29,17 @@ Future<void> setupLocator() async {
   if (!Hive.isAdapterRegistered(0)) {
     Hive.registerAdapter(UserDataAdapter());
   }*/
+  await ApiModule().provides();
   locator.registerSingletonAsync<Session>(() => AppSession.getInstance());
   locator.registerSingleton(AppRouter());
   locator.registerSingleton(AppColor());
   locator.registerSingleton(AssetManager());
   locator.registerLazySingleton<AlertManager>(() => AlertManagerImpl());
+  locator.registerLazySingleton<UserRepository>(
+      () => UserRepositoryImpl(locator()));
   locator.registerLazySingleton<Logger>(() => Logger(level: Level.all));
+
+  /// setup API modules with repos which requires [Dio] instance
 }
 
 final logger = locator<Logger>();

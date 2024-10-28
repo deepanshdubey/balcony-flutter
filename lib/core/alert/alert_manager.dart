@@ -6,6 +6,8 @@ abstract class AlertManager {
 
   void showError(BuildContext context, String message);
 
+  void showAlert(BuildContext context, Widget alert);
+
   Future<void> showSystemAlertDialog({
     required BuildContext context,
     String title = "Alert",

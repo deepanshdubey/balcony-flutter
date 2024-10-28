@@ -16,6 +16,7 @@ class AppTextField extends StatelessWidget {
   final void Function(String)? onChanged;
   final void Function()? onTap;
   final InputDecoration? inputDecoration;
+  final int? maxLength;
 
   const AppTextField({
     super.key,
@@ -35,6 +36,7 @@ class AppTextField extends StatelessWidget {
     this.inputDecoration,
     this.readOnly = false,
     this.onTap,
+    this.maxLength,
   });
 
   @override
@@ -64,6 +66,7 @@ class AppTextField extends StatelessWidget {
       focusNode: focusNode,
       readOnly: readOnly,
       onTap: onTap,
+      maxLength: maxLength,
       decoration: inputDecoration ??
           InputDecoration(
               contentPadding: EdgeInsets.symmetric(
