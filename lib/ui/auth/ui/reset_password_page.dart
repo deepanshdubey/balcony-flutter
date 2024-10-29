@@ -1,9 +1,15 @@
+import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/ui/auth/store/auth_store.dart';
+import 'package:balcony/ui/auth/ui/bottomsheet/alert/verification_alert.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
+import 'package:balcony/values/extensions/string_ext.dart';
 import 'package:balcony/values/validators.dart';
 import 'package:balcony/widget/app_text_field.dart';
 import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mobx/mobx.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({super.key});
@@ -18,10 +24,14 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   late TextEditingController passwordController;
   late FocusNode emailNode;
   late FocusNode passwordNode;
+  List<ReactionDisposer>? disposers;
+  late Map<String, dynamic> apiRequest;
+  final authStore = AuthStore();
 
   @override
   void initState() {
     super.initState();
+    addDisposer();
     _formKey = GlobalKey<FormState>();
     emailController = TextEditingController();
     passwordController = TextEditingController();
@@ -35,7 +45,39 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     passwordController.dispose();
     emailNode.dispose();
     passwordNode.dispose();
+    removeDisposer();
+
     super.dispose();
+  }
+
+  void addDisposer() {
+    disposers ??= [
+      reaction((_) => authStore.forgotPasswordResponse, (response) {
+        if (response != null) {
+          alertManager.showAlert(
+              context,
+              VerificationAlert(
+                type: VerificationAlertType.forgotPassword,
+                apiRequest: apiRequest,
+                onSuccess: () {
+                  alertManager.showSuccess(context, "password changed successfully");
+                },
+              ));
+        }
+      }),
+      reaction((_) => authStore.errorMessage, (String? errorMessage) {
+        if (errorMessage != null) {
+          alertManager.showError(context, errorMessage);
+        }
+      }),
+    ];
+  }
+
+  void removeDisposer() {
+    if (disposers == null) return;
+    for (final element in disposers!) {
+      element.reaction.dispose();
+    }
   }
 
   @override
@@ -67,12 +109,23 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   textInputAction: TextInputAction.next,
                 ),
                 16.h.verticalSpace,
-                PrimaryButton(
-                  text: "reset password",
-                  onPressed: () {
-                    if (_formKey.currentState?.validate() == true) {}
-                  },
-                ),
+                Observer(builder: (context) {
+                  var isLoading = authStore.isLoading;
+                  return PrimaryButton(
+                    text: "reset password",
+                    onPressed: () {
+                      if (_formKey.currentState?.validate() == true) {
+                        String input = emailController.text.trim();
+                        bool isValidEmail = input.isValidEmail();
+                        apiRequest = {
+                          isValidEmail ? "email" : "phone": input,
+                        };
+                        authStore.forgotPassword(apiRequest);
+                      }
+                    },
+                    isLoading: isLoading,
+                  );
+                }),
                 16.h.verticalSpace,
               ],
             ),

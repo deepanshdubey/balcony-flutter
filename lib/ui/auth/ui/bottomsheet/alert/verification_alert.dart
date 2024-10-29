@@ -47,7 +47,7 @@ class _VerificationAlertState extends State<VerificationAlert> {
       case VerificationAlertType.login:
         return 'Login One-Time Passcode';
       case VerificationAlertType.forgotPassword:
-        return 'Password Reset One-Time Passcode';
+        return 'password reset one-time passcode';
       default:
         return '';
     }
@@ -75,10 +75,18 @@ class _VerificationAlertState extends State<VerificationAlert> {
     disposers ??= [
       reaction((_) => authStore.verificationResponse, (response) {
         if (response != null) {
+          Navigator.of(context).pop();
           widget.onSuccess();
         }
       }),
       reaction((_) => authStore.registerResponse, (response) {
+        if (response != null) {
+          alertManager.showSuccess(context, "otp resend successfully");
+          remainingTime = 60;
+          startTimer();
+        }
+      }),
+      reaction((_) => authStore.forgotPasswordResponse, (response) {
         if (response != null) {
           alertManager.showSuccess(context, "otp resend successfully");
           remainingTime = 60;
@@ -133,7 +141,11 @@ class _VerificationAlertState extends State<VerificationAlert> {
             remainingTime == 0
                 ? GestureDetector(
                     onTap: () {
-                      authStore.register(widget.apiRequest);
+                      if (widget.type == VerificationAlertType.register) {
+                        authStore.register(widget.apiRequest);
+                      } else {
+                        authStore.forgotPassword(widget.apiRequest);
+                      }
                     },
                     child: Text(
                       "resend passcode",

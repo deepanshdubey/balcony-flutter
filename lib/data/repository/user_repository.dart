@@ -15,11 +15,11 @@ abstract class UserRepository {
 
   Future<ApiResponse<CommonData>> forgotPassword(Map<String, dynamic> request);
 
+  Future<ApiResponse<CommonData>> updatePassword(String newPassword);
+
   Future<ApiResponse<UserData>> updateProfile(Map<String, dynamic> request);
 
   Future<ApiResponse<void>> logout();
-
-  Future<ApiResponse<CommonData>> resetPassword(String newPassword);
 }
 
 final userRepository = locator<UserRepository>();

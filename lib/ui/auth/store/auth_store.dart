@@ -1,7 +1,6 @@
 import 'package:balcony/core/locator/locator.dart';
 import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/data/model/response/common_data.dart';
-import 'package:balcony/data/model/response/user_data.dart';
 import 'package:balcony/data/repository/user_repository.dart';
 import 'package:balcony/ui/auth/ui/bottomsheet/alert/verification_alert.dart';
 import 'package:mobx/mobx.dart';
@@ -25,6 +24,9 @@ abstract class _AuthStoreBase with Store {
 
   @observable
   CommonData? forgotPasswordResponse;
+
+  @observable
+  CommonData? updatePasswordResponse;
 
   @observable
   bool? logoutSuccess;
@@ -125,6 +127,26 @@ abstract class _AuthStoreBase with Store {
       final response = await userRepository.forgotPassword(request);
       if (response.isSuccess) {
         forgotPasswordResponse = response.data!;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future updatePassword(String newPassword) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await userRepository.updatePassword(newPassword);
+      if (response.isSuccess) {
+        updatePasswordResponse = response.data!;
       } else {
         errorMessage = response.error!.message;
       }

@@ -27,19 +27,10 @@ class UserRepositoryImpl extends BaseRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<ApiResponse<CommonData>> forgotPassword(Map<String, dynamic> request) {
-    return execute(apiClient.sendResetOtp(request));
-  }
-
-  @override
   Future<ApiResponse<UserData>> updateProfile(Map<String, dynamic> request) {
     return execute(apiClient.updateProfile(request));
   }
 
-  @override
-  Future<ApiResponse<CommonData>> resetPassword(String newPassword) {
-    return execute(apiClient.resetPassword(newPassword));
-  }
 
   @override
   Future<ApiResponse<CommonData>> resentOtp(VerificationAlertType type) {
@@ -50,6 +41,18 @@ class UserRepositoryImpl extends BaseRepositoryImpl implements UserRepository {
   @override
   Future<ApiResponse<CommonData>> verifyOtp(
       VerificationAlertType type, String otp) {
-    return execute(apiClient.verifyOtp(otp, type == VerificationAlertType.forgotPassword ? true : false));
+    return execute(apiClient.verifyOtp(
+        otp, type == VerificationAlertType.forgotPassword ? true : false));
+  }
+
+
+  @override
+  Future<ApiResponse<CommonData>> updatePassword(String newPassword) {
+    return execute(apiClient.updatePassword(newPassword));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> forgotPassword(Map<String, dynamic> request) {
+    return execute(apiClient.forgotPassword(request));
   }
 }

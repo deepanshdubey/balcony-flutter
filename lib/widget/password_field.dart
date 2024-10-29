@@ -7,6 +7,7 @@ class PasswordField extends StatefulWidget {
   final String? hintText;
   final String? Function(String?)? validator;
   final FocusNode? focusNode;
+  final bool showLabelAboveField;
   final TextInputAction? textInputAction;
   final void Function(String)? onFieldSubmitted;
 
@@ -19,6 +20,7 @@ class PasswordField extends StatefulWidget {
     this.focusNode,
     this.textInputAction,
     this.onFieldSubmitted,
+    this.showLabelAboveField = true,
   }) : super(key: key);
 
   @override
@@ -50,7 +52,7 @@ class _PasswordFieldState extends State<PasswordField> {
           label: widget.label,
           hintText: widget.hintText,
           obscureText: obscureText,
-
+          showLabelAboveField: widget.showLabelAboveField,
           validator: widget.validator,
           focusNode: widget.focusNode,
           textInputAction: widget.textInputAction,

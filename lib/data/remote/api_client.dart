@@ -19,7 +19,8 @@ abstract class ApiClient {
   Future<CommonData> getOtpStatus();
 
   @POST("auth/verify")
-  Future<CommonData> verifyOtp(@Field("otp") String otp, @Field("reset") bool isReset);
+  Future<CommonData> verifyOtp(
+      @Field("otp") String otp, @Field("reset") bool isReset);
 
   @POST("auth/login")
   Future<CommonData> login(@Body() Map<String, dynamic> request);
@@ -27,8 +28,11 @@ abstract class ApiClient {
   @POST("auth/send-reset-otp")
   Future<CommonData> sendResetOtp(@Body() Map<String, dynamic> request);
 
-  @POST("auth/reset-password")
-  Future<CommonData> resetPassword(@Field("newPassword") String newPassword);
+  @PUT("auth/update-password")
+  Future<CommonData> updatePassword(@Field("password") String newPassword);
+
+  @POST("auth/forgot-password")
+  Future<CommonData> forgotPassword(@Body() Map<String, dynamic> request);
 
   @POST("auth/logout")
   Future<void> logout();
