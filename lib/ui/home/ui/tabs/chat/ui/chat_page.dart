@@ -35,7 +35,7 @@ void showAppBottomSheet(BuildContext context, Widget any) {
     backgroundColor: Colors.transparent,
     builder: (context) => Container(
       height: context.height * .8,
-      padding: const EdgeInsets.only(top: 100),
+      padding: const EdgeInsets.only(top: 30),
       decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(20.r))),

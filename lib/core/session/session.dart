@@ -29,5 +29,9 @@ abstract class Session {
 
   set user(UserData update);
 
+  String? get sessionCookie;
+
+  set sessionCookie(String? update);
+
   void logout();
 }

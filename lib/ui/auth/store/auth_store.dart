@@ -37,6 +37,12 @@ abstract class _AuthStoreBase with Store {
   @observable
   String? errorMessage;
 
+  @observable
+  bool? logoutResponse;
+
+  @observable
+  CommonData? updateProfileResponse;
+
   @action
   Future login(Map<String, dynamic> request) async {
     try {
@@ -67,6 +73,8 @@ abstract class _AuthStoreBase with Store {
       final response = await userRepository.register(request);
       if (response.isSuccess) {
         registerResponse = response.data!;
+        session.user = response.data!.user!;
+        session.token = response.data!.token!;
       } else {
         errorMessage = response.error!.message;
       }
@@ -147,6 +155,47 @@ abstract class _AuthStoreBase with Store {
       final response = await userRepository.updatePassword(newPassword);
       if (response.isSuccess) {
         updatePasswordResponse = response.data!;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future logout() async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await userRepository.logout();
+      if (response.isSuccess) {
+        logoutResponse = true;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future updateProfile(Map<String, dynamic> request) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await userRepository.updateProfile(request);
+      if (response.isSuccess) {
+        updateProfileResponse = response.data!;
+        session.user = response.data!.user!;
       } else {
         errorMessage = response.error!.message;
       }

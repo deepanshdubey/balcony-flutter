@@ -6,6 +6,7 @@ import 'package:balcony/core/api/api_module.dart';
 import 'package:balcony/core/assets/asset_manager.dart';
 import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/core/session/session.dart';
+import 'package:balcony/data/model/response/user_data.dart';
 import 'package:balcony/data/repository/user_repository.dart';
 import 'package:balcony/data/repository_impl/user_repository_impl.dart';
 import 'package:balcony/router/app_router.dart';
@@ -25,10 +26,10 @@ Future<void> setupLocator() async {
 
   Hive.init(appDocumentDir.path);
 
-  /*// Register the adapter only if it's not registered yet
+  // Register the adapter only if it's not registered yet
   if (!Hive.isAdapterRegistered(0)) {
     Hive.registerAdapter(UserDataAdapter());
-  }*/
+  }
   await ApiModule().provides();
   locator.registerSingletonAsync<Session>(() => AppSession.getInstance());
   locator.registerSingleton(AppRouter());

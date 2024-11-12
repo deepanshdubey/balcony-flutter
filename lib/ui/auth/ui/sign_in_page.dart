@@ -1,4 +1,5 @@
 import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/router/app_router.dart';
 import 'package:balcony/ui/auth/store/auth_store.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
@@ -47,7 +48,6 @@ class _SignInPageState extends State<SignInPage> {
     passwordController.dispose();
     emailNode.dispose();
     passwordNode.dispose();
-
     super.dispose();
   }
 
@@ -55,6 +55,7 @@ class _SignInPageState extends State<SignInPage> {
     disposers ??= [
       reaction((_) => authStore.loginResponse, (response) {
         if (response != null) {
+          session.isLogin = true;
           appRouter.replaceAll([const HomeRoute()]);
         }
       }),
@@ -98,6 +99,7 @@ class _SignInPageState extends State<SignInPage> {
                   validator: emailOrPhoneValidator.call,
                   label: 'email or phone number',
                   hintText: "email or phone number",
+                  keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
                 ),
                 16.h.verticalSpace,

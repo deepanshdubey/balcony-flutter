@@ -40,9 +40,18 @@ class AppSession implements Session {
   set fcmToken(String update) => setValue("fcm_token", update);
 
   @override
+  String? get sessionCookie => getValue("session_cookie", defaultValue: null);
+
+  @override
+  set sessionCookie(String? update) => setValue("session_cookie", update);
+
+  @override
   void logout() {
     token = "";
     isLogin = false;
+    isLoginSkipped = false;
+    isWalkthroughSeen = false;
+    sessionCookie = null;
   }
 
   @override
@@ -53,16 +62,16 @@ class AppSession implements Session {
   set isWalkthroughSeen(bool update) => setValue("isWalkthroughSeen", update);
 
   @override
-  UserData get user => getValue("user", defaultValue: UserData());
-
-  @override
-  set user(UserData update) => setValue("user", user);
-
-  @override
   bool get isLoginSkipped => getValue("isLoginSkipped", defaultValue: false);
 
   @override
   set isLoginSkipped(bool update) => setValue("isLoginSkipped", update);
+
+  @override
+  UserData get user => getValue("user");
+
+  @override
+  set user(UserData user) => setValue("user", user);
 }
 
 final session = locator<Session>();

@@ -5,7 +5,7 @@ import 'package:retrofit/retrofit.dart';
 
 part 'api_client.g.dart';
 
-@RestApi(baseUrl: "https://api.balcony.co/api/v2/")
+@RestApi(baseUrl: "https://api.homework.ws/api/v2/")
 abstract class ApiClient {
   factory ApiClient(Dio dio, {String baseUrl}) = _ApiClient;
 
@@ -34,12 +34,12 @@ abstract class ApiClient {
   @POST("auth/forgot-password")
   Future<CommonData> forgotPassword(@Body() Map<String, dynamic> request);
 
-  @POST("auth/logout")
+  @GET("auth/logout")
   Future<void> logout();
 
   @GET("profile")
   Future<UserData> getProfile();
 
-  @POST("profile")
-  Future<UserData> updateProfile(@Body() Map<String, dynamic> request);
+  @PUT("user/update")
+  Future<CommonData> updateProfile(@Body() Map<String, dynamic> request);
 }

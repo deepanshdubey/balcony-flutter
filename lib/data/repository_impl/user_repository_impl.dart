@@ -1,6 +1,5 @@
 import 'package:balcony/core/api/api_response/api_response.dart';
 import 'package:balcony/data/model/response/common_data.dart';
-import 'package:balcony/data/model/response/user_data.dart';
 import 'package:balcony/data/remote/api_client.dart';
 import 'package:balcony/data/repository/user_repository.dart';
 import 'package:balcony/data/repository_impl/base_repository_impl.dart';
@@ -27,10 +26,9 @@ class UserRepositoryImpl extends BaseRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<ApiResponse<UserData>> updateProfile(Map<String, dynamic> request) {
+  Future<ApiResponse<CommonData>> updateProfile(Map<String, dynamic> request) {
     return execute(apiClient.updateProfile(request));
   }
-
 
   @override
   Future<ApiResponse<CommonData>> resentOtp(VerificationAlertType type) {
@@ -44,7 +42,6 @@ class UserRepositoryImpl extends BaseRepositoryImpl implements UserRepository {
     return execute(apiClient.verifyOtp(
         otp, type == VerificationAlertType.forgotPassword ? true : false));
   }
-
 
   @override
   Future<ApiResponse<CommonData>> updatePassword(String newPassword) {

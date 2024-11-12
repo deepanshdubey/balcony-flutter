@@ -1,4 +1,7 @@
 import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/core/locator/locator.dart';
+import 'package:balcony/core/session/app_session.dart';
+import 'package:balcony/router/app_router.dart';
 import 'package:balcony/ui/auth/store/auth_store.dart';
 import 'package:balcony/ui/auth/ui/bottomsheet/alert/verification_alert.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
@@ -76,7 +79,11 @@ class _SignUpPageState extends State<SignUpPage> {
               VerificationAlert(
                 type: VerificationAlertType.register,
                 apiRequest: apiRequest,
-                onSuccess: () {},
+                onSuccess: () {
+                  session.user = response.user!;
+                  session.isLogin = true;
+                  appRouter.replaceAll([const HomeRoute()]);
+                },
               ));
         }
       }),
@@ -122,6 +129,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     validator: firstNameValidator.call,
                     label: 'first name',
                     hintText: 'first name',
+                    keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
                   ),
                   16.h.verticalSpace,
