@@ -1,5 +1,7 @@
 import 'package:balcony/data/model/response/common_data.dart';
+import 'package:balcony/data/model/response/pagination_data.dart';
 import 'package:balcony/data/model/response/user_data.dart';
+import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -42,4 +44,14 @@ abstract class ApiClient {
 
   @PUT("user/update")
   Future<CommonData> updateProfile(@Body() Map<String, dynamic> request);
+
+  @GET("workspace/all")
+  Future<PaginationData<WorkspaceData>> getWorkSpaces(
+    @Query("status") String? status,
+    @Query("sort") String? sort,
+    @Query("select") String? select,
+    @Query("page") int? page,
+    @Query("limit") int? limit,
+    @Query("includeHost") bool? includeHost,
+  );
 }
