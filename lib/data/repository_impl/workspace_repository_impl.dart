@@ -19,7 +19,6 @@ class WorkspaceRepositoryImpl extends BaseRepositoryImpl
       int? page,
       int? limit,
       bool? includeHost}) {
-    return execute(apiClient.getWorkSpaces(
-        status, sort, select, page, limit, includeHost));
+    return execute(apiClient.getWorkSpaces(status, sort, select, page, limit, includeHost));
   }
 }

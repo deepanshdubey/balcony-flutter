@@ -7,12 +7,14 @@ class HomeListingWidget extends StatelessWidget {
   final VoidCallback onMoreClick;
   final List<Widget> children;
   final bool isReverse;
+  final bool isLoading;
 
   HomeListingWidget({
     required this.title,
     required this.onMoreClick,
     required this.children,
-    this.isReverse = false, // Default is not reversed
+    this.isReverse = false,
+    required this.isLoading,
   });
 
   @override
@@ -57,29 +59,30 @@ class HomeListingWidget extends StatelessWidget {
     );
   }
 
-
-
   Widget showMore(ThemeData theme) {
-    return GestureDetector(
-      onTap: onMoreClick,
-      child: Row(
-        children: [
-          Text(
-            "show more",
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontSize: 16.spMin,
-              fontWeight: FontWeight.w400,
+    return isLoading
+        ? SizedBox(
+            height: 40.r, width: 40.r, child: const CircularProgressIndicator())
+        : GestureDetector(
+            onTap: onMoreClick,
+            child: Row(
+              children: [
+                Text(
+                  "show more",
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontSize: 16.spMin,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                8.w.horizontalSpace,
+                Icon(
+                  Icons.add_circle_outline,
+                  color: theme.primaryColor,
+                  size: 20.r,
+                ),
+              ],
             ),
-          ),
-          8.w.horizontalSpace,
-          Icon(
-            Icons.add_circle_outline,
-            color: theme.primaryColor,
-            size: 20.r,
-          ),
-        ],
-      ),
-    );
+          );
   }
 
   Widget titleText(ThemeData theme) {

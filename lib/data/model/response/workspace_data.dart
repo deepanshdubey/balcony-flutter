@@ -1,55 +1,51 @@
+import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'workspace_data.g.dart';
 
-
 @JsonSerializable()
 class WorkspaceData {
   @JsonKey(name: '_id')
-  final String id;
-
-  @JsonKey(name: 'host')
-  final Host host;
+  final String? id;
 
   @JsonKey(name: 'status')
-  final String status;
+  final String? status;
 
   @JsonKey(name: 'ratings')
-  final int ratings;
+  final int? ratings;
 
   @JsonKey(name: 'info')
-  final Info info;
+  final Info? info;
 
   @JsonKey(name: 'images')
-  final List<String> images;
+  final List<String>? images;
 
   @JsonKey(name: 'geocode')
-  final Geocode geocode;
+  final Geocode? geocode;
 
   @JsonKey(name: 'pricing')
-  final Pricing pricing;
+  final Pricing? pricing;
 
   @JsonKey(name: 'times')
-  final Times times;
+  final Times? times;
 
   @JsonKey(name: 'other')
-  final Other other;
+  final Other? other;
 
   @JsonKey(name: 'amenities')
-  final String amenities;
+  final List<String>? amenities;
 
   WorkspaceData({
-    required this.id,
-    required this.host,
-    required this.status,
-    required this.ratings,
-    required this.info,
-    required this.images,
-    required this.geocode,
-    required this.pricing,
-    required this.times,
-    required this.other,
-    required this.amenities,
+    this.id,
+    this.status,
+    this.ratings,
+    this.info,
+    this.images,
+    this.geocode,
+    this.pricing,
+    this.times,
+    this.other,
+    this.amenities,
   });
 
   factory WorkspaceData.fromJson(Map<String, dynamic> json) =>
@@ -61,46 +57,46 @@ class WorkspaceData {
 @JsonSerializable()
 class Host {
   @JsonKey(name: '_id')
-  final String id;
+  final String? id;
 
   @JsonKey(name: 'firstName')
-  final String firstName;
+  final String? firstName;
 
   @JsonKey(name: 'lastName')
-  final String lastName;
+  final String? lastName;
 
   @JsonKey(name: 'email')
-  final String email;
+  final String? email;
 
   @JsonKey(name: 'phone')
-  final String phone;
+  final String? phone;
 
   @JsonKey(name: 'image')
-  final String image;
+  final String? image;
 
   @JsonKey(name: 'role')
-  final String role;
+  final String? role;
 
   @JsonKey(name: 'status')
-  final String status;
+  final String? status;
 
   @JsonKey(name: 'isWorkspaceAccountConnected')
-  final bool isWorkspaceAccountConnected;
+  final bool? isWorkspaceAccountConnected;
 
   @JsonKey(name: 'isPropertyAccountConnected')
-  final bool isPropertyAccountConnected;
+  final bool? isPropertyAccountConnected;
 
   Host({
-    required this.id,
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-    required this.phone,
-    required this.image,
-    required this.role,
-    required this.status,
-    required this.isWorkspaceAccountConnected,
-    required this.isPropertyAccountConnected,
+    this.id,
+    this.firstName,
+    this.lastName,
+    this.email,
+    this.phone,
+    this.image,
+    this.role,
+    this.status,
+    this.isWorkspaceAccountConnected,
+    this.isPropertyAccountConnected,
   });
 
   factory Host.fromJson(Map<String, dynamic> json) => _$HostFromJson(json);
@@ -110,22 +106,22 @@ class Host {
 
 @JsonSerializable()
 class Info {
-  final String name;
-  final String address;
-  final String floor;
-  final String city;
-  final String state;
-  final String country;
-  final String summary;
+  final String? name;
+  final String? address;
+  final String? floor;
+  final String? city;
+  final String? state;
+  final String? country;
+  final String? summary;
 
   Info({
-    required this.name,
-    required this.address,
-    required this.floor,
-    required this.city,
-    required this.state,
-    required this.country,
-    required this.summary,
+    this.name,
+    this.address,
+    this.floor,
+    this.city,
+    this.state,
+    this.country,
+    this.summary,
   });
 
   factory Info.fromJson(Map<String, dynamic> json) => _$InfoFromJson(json);
@@ -135,12 +131,12 @@ class Info {
 
 @JsonSerializable()
 class Geocode {
-  final double lat;
-  final double lon;
+  final double? lat;
+  final double? lon;
 
   Geocode({
-    required this.lat,
-    required this.lon,
+    this.lat,
+    this.lon,
   });
 
   factory Geocode.fromJson(Map<String, dynamic> json) =>
@@ -151,19 +147,24 @@ class Geocode {
 
 @JsonSerializable()
 class Pricing {
-  final String currency;
-  final int totalPerDay;
-  final Fee cleaning;
-  final Fee maintenance;
-  final Fee additional;
+  final String? currency;
+  final int? totalPerDay;
+  final Fee? cleaning;
+  final Fee? maintenance;
+  final Fee? additional;
 
   Pricing({
-    required this.currency,
-    required this.totalPerDay,
-    required this.cleaning,
-    required this.maintenance,
-    required this.additional,
+    this.currency,
+    this.totalPerDay,
+    this.cleaning,
+    this.maintenance,
+    this.additional,
   });
+
+  String get formattedTotalPerDay {
+    var format = NumberFormat.currency(locale: 'en_US', name: currency);
+    return format.format(totalPerDay);
+  }
 
   factory Pricing.fromJson(Map<String, dynamic> json) =>
       _$PricingFromJson(json);
@@ -173,12 +174,12 @@ class Pricing {
 
 @JsonSerializable()
 class Fee {
-  final int fee;
-  final String type;
+  final int? fee;
+  final String? type;
 
   Fee({
-    required this.fee,
-    required this.type,
+    this.fee,
+    this.type,
   });
 
   factory Fee.fromJson(Map<String, dynamic> json) => _$FeeFromJson(json);
@@ -188,38 +189,37 @@ class Fee {
 
 @JsonSerializable()
 class Times {
-  final DayTime sunday;
-  final DayTime monday;
-  final DayTime tuesday;
-  final DayTime wednesday;
-  final DayTime thursday;
-  final DayTime friday;
-  final DayTime saturday;
+  final DayTime? sunday;
+  final DayTime? monday;
+  final DayTime? tuesday;
+  final DayTime? wednesday;
+  final DayTime? thursday;
+  final DayTime? friday;
+  final DayTime? saturday;
 
   Times({
-    required this.sunday,
-    required this.monday,
-    required this.tuesday,
-    required this.wednesday,
-    required this.thursday,
-    required this.friday,
-    required this.saturday,
+    this.sunday,
+    this.monday,
+    this.tuesday,
+    this.wednesday,
+    this.thursday,
+    this.friday,
+    this.saturday,
   });
 
-  factory Times.fromJson(Map<String, dynamic> json) =>
-      _$TimesFromJson(json);
+  factory Times.fromJson(Map<String, dynamic> json) => _$TimesFromJson(json);
 
   Map<String, dynamic> toJson() => _$TimesToJson(this);
 }
 
 @JsonSerializable()
 class DayTime {
-  final String startTime;
-  final String endTime;
+  final String? startTime;
+  final String? endTime;
 
   DayTime({
-    required this.startTime,
-    required this.endTime,
+    this.startTime,
+    this.endTime,
   });
 
   factory DayTime.fromJson(Map<String, dynamic> json) =>
@@ -230,16 +230,16 @@ class DayTime {
 
 @JsonSerializable()
 class Other {
-  final bool isIndoorSpace;
-  final bool isOutdoorSpace;
-  final bool isCoWorkingWorkspace;
-  final int additionalGuests;
+  final bool? isIndoorSpace;
+  final bool? isOutdoorSpace;
+  final bool? isCoWorkingWorkspace;
+  final int? additionalGuests;
 
   Other({
-    required this.isIndoorSpace,
-    required this.isOutdoorSpace,
-    required this.isCoWorkingWorkspace,
-    required this.additionalGuests,
+    this.isIndoorSpace,
+    this.isOutdoorSpace,
+    this.isCoWorkingWorkspace,
+    this.additionalGuests,
   });
 
   factory Other.fromJson(Map<String, dynamic> json) => _$OtherFromJson(json);

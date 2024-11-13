@@ -8,7 +8,9 @@ import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/core/session/session.dart';
 import 'package:balcony/data/model/response/user_data.dart';
 import 'package:balcony/data/repository/user_repository.dart';
+import 'package:balcony/data/repository/workspace_repository.dart';
 import 'package:balcony/data/repository_impl/user_repository_impl.dart';
+import 'package:balcony/data/repository_impl/workspace_repository_impl.dart';
 import 'package:balcony/router/app_router.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:get_it/get_it.dart';
@@ -36,8 +38,8 @@ Future<void> setupLocator() async {
   locator.registerSingleton(AppColor());
   locator.registerSingleton(AssetManager());
   locator.registerLazySingleton<AlertManager>(() => AlertManagerImpl());
-  locator.registerLazySingleton<UserRepository>(
-      () => UserRepositoryImpl(locator()));
+  locator.registerLazySingleton<UserRepository>(() => UserRepositoryImpl(locator()));
+  locator.registerLazySingleton<WorkspaceRepository>(() => WorkspaceRepositoryImpl(locator()));
   locator.registerLazySingleton<Logger>(() => Logger(level: Level.all));
 
   /// setup API modules with repos which requires [Dio] instance

@@ -2,37 +2,17 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'pagination_data.g.dart';
 
-@JsonSerializable(genericArgumentFactories: true)
+@JsonSerializable(genericArgumentFactories: true,explicitToJson: true)
 class PaginationData<T> {
   @JsonKey(name: 'success')
-  final bool success;
+  final bool? success;
 
-  @JsonKey(name: 'totalDocuments')
-  final int totalDocuments;
-
-  @JsonKey(name: 'totalPages')
-  final int totalPages;
-
-  @JsonKey(name: 'currentPage')
-  final int currentPage;
-
-  @JsonKey(name: 'limit')
-  final int limit;
-
-  @JsonKey(name: 'skip')
-  final int skip;
-
-  @JsonKey(name: 'result')
-  final List<T> result;
+  @JsonKey(name: 'data')
+  final PaginationDataDetails<T>? data;
 
   PaginationData({
-    required this.success,
-    required this.totalDocuments,
-    required this.totalPages,
-    required this.currentPage,
-    required this.limit,
-    required this.skip,
-    required this.result,
+    this.success,
+    this.data,
   });
 
   factory PaginationData.fromJson(
@@ -42,4 +22,64 @@ class PaginationData<T> {
 
   Map<String, dynamic> toJson(Object Function(T value) toJsonT) =>
       _$PaginationDataToJson(this, toJsonT);
+}
+
+@JsonSerializable(genericArgumentFactories: true)
+class PaginationDataDetails<T> {
+  @JsonKey(name: 'count')
+  final int? count;
+
+  @JsonKey(name: 'items')
+  final List<PaginationItem<T>>? items;
+
+  PaginationDataDetails({
+    this.count,
+    this.items,
+  });
+
+  factory PaginationDataDetails.fromJson(
+      Map<String, dynamic> json,
+      T Function(Object? json) fromJsonT,
+      ) => _$PaginationDataDetailsFromJson(json, fromJsonT);
+
+  Map<String, dynamic> toJson(Object Function(T value) toJsonT) =>
+      _$PaginationDataDetailsToJson(this, toJsonT);
+}
+
+@JsonSerializable(genericArgumentFactories: true)
+class PaginationItem<T> {
+  @JsonKey(name: 'totalDocuments')
+  final int? totalDocuments;
+
+  @JsonKey(name: 'totalPages')
+  final int? totalPages;
+
+  @JsonKey(name: 'currentPage')
+  final int? currentPage;
+
+  @JsonKey(name: 'limit')
+  final int? limit;
+
+  @JsonKey(name: 'skip')
+  final int? skip;
+
+  @JsonKey(name: 'result')
+  final List<T>? result;
+
+  PaginationItem({
+    this.totalDocuments,
+    this.totalPages,
+    this.currentPage,
+    this.limit,
+    this.skip,
+    this.result,
+  });
+
+  factory PaginationItem.fromJson(
+      Map<String, dynamic> json,
+      T Function(Object? json) fromJsonT,
+      ) => _$PaginationItemFromJson(json, fromJsonT);
+
+  Map<String, dynamic> toJson(Object Function(T value) toJsonT) =>
+      _$PaginationItemToJson(this, toJsonT);
 }

@@ -154,7 +154,7 @@ class _AppImageState extends State<AppImage> {
           color: widget.borderColor,
         ),
       ),
-      child: const AppLoader(),
+      child: const Center(child: AppLoader()),
     );
   }
 
