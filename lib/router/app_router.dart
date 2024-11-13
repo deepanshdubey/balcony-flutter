@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:balcony/core/locator/locator.dart';
 import 'package:balcony/ui/auth/ui/start_page.dart';
 import 'package:balcony/ui/home/ui/home_page.dart';
+import 'package:balcony/ui/home/ui/tabs/workspace/ui/workspace_details/workspace_detail_page.dart';
 import 'package:balcony/ui/splash/splash_page.dart';
 import 'package:balcony/ui/walkthrough/walkthrough_page.dart';
 
@@ -17,7 +18,8 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: SplashRoute.page, initial: true),
         AutoRoute(page: WalkthroughRoute.page),
         AutoRoute(page: StartRoute.page),
-        AutoRoute(page: HomeRoute.page)
+        AutoRoute(page: HomeRoute.page),
+        AutoRoute(page: WorkspaceDetailRoute.page)
       ];
 }
 

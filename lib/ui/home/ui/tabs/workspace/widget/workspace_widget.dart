@@ -1,4 +1,6 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
+import 'package:balcony/router/app_router.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
 import 'package:balcony/widget/app_image.dart';
@@ -13,74 +15,80 @@ class WorkspaceWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Stack(
-          children: [
-            AppImage(
-              url: data.images?.firstOrNull,
-              height: 200.h,
-              width: context.width,
-              radius: 10,
-            ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  chip(
+    return GestureDetector(
+      onTap: () {
+        context.router.push(WorkspaceDetailRoute());
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
+            children: [
+              AppImage(
+                url: data.images?.firstOrNull,
+                height: 200.h,
+                width: context.width,
+                radius: 10,
+              ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    chip(
                       Text(data.info?.city ?? "",
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontSize: 12.spMin,
                             fontWeight: FontWeight.w500,
-                          )),),
-                  chip(
-                    Text(data.pricing?.formattedTotalPerDay ?? "0",
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontSize: 12.spMin,
-                          fontWeight: FontWeight.w500,
-                        )),
-                  ),
-                  6.w.horizontalSpace,
-                ],
+                          )),
+                    ),
+                    chip(
+                      Text(data.pricing?.formattedTotalPerDay ?? "0",
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontSize: 12.spMin,
+                            fontWeight: FontWeight.w500,
+                          )),
+                    ),
+                    6.w.horizontalSpace,
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-        8.h.verticalSpace,
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.w),
-          child: Text(
-            "${data.info?.name} | ${data.info?.address}",
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.normal,
-            ),
+            ],
           ),
-        ),
-        3.h.verticalSpace,
-        Row(
-          children: [
-            8.horizontalSpace,
-            buildRatingStars(theme, data.ratings?.toDouble() ?? 0),
-            // Display stars based on rating
-            6.horizontalSpace,
-            Text(
-              "(${data.ratings.toString()})",
-              maxLines: 1,
+          8.h.verticalSpace,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
+            child: Text(
+              "${data.info?.name} | ${data.info?.address}",
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.normal,
-                fontSize: 11.spMax,
               ),
             ),
-          ],
-        ),
-        const SizedBox(height: 8),
-      ],
+          ),
+          3.h.verticalSpace,
+          Row(
+            children: [
+              8.horizontalSpace,
+              buildRatingStars(theme, data.ratings?.toDouble() ?? 0),
+              // Display stars based on rating
+              6.horizontalSpace,
+              Text(
+                "(${data.ratings.toString()})",
+                maxLines: 1,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.normal,
+                  fontSize: 11.spMax,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+        ],
+      ),
     );
   }
 
@@ -99,8 +107,10 @@ class WorkspaceWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(25.r),
           boxShadow: const [
             BoxShadow(
-              color: Colors.black12,
-                offset: Offset(0, 4), blurRadius: 4, spreadRadius: 0)
+                color: Colors.black12,
+                offset: Offset(0, 4),
+                blurRadius: 4,
+                spreadRadius: 0)
           ]),
       child: text,
     );
