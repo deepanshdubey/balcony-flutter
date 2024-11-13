@@ -1,5 +1,6 @@
 import 'package:auto_route/annotations.dart';
 import 'package:balcony/generated/assets.dart';
+import 'package:balcony/ui/home/ui/tabs/workspace/store/workspace_store.dart';
 import 'package:balcony/ui/home/ui/tabs/workspace/ui/workspace_details/booking_calender.dart';
 import 'package:balcony/ui/home/ui/tabs/workspace/ui/workspace_details/custom_dropdown.dart';
 import 'package:balcony/values/colors.dart';
@@ -11,13 +12,24 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 @RoutePage()
 class WorkspaceDetailPage extends StatefulWidget {
-  const WorkspaceDetailPage({super.key});
+  final String? workspaceId ;
+  const WorkspaceDetailPage({super.key, this.workspaceId});
 
   @override
   State<WorkspaceDetailPage> createState() => _WorkspaceDetailPageState();
 }
 
 class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
+
+  final workspaceStore = WorkspaceStore();
+
+  @override
+  void initState() {
+    workspaceStore.getWorkspaceDetail(id:"60c72b2f9b1e8f001f2d3b59");
+    super.initState();
+  }
+
+
   final List<Map<String, dynamic>> amenities = [
     {'icon': Icons.home, 'title': 'residential'},
     {'icon': Icons.table_bar, 'title': '16 table'},

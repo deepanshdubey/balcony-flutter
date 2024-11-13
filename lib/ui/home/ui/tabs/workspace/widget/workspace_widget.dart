@@ -17,7 +17,7 @@ class WorkspaceWidget extends StatelessWidget {
     final theme = Theme.of(context);
     return GestureDetector(
       onTap: () {
-        context.router.push(WorkspaceDetailRoute());
+        context.router.push(WorkspaceDetailRoute(workspaceId: data.id));
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

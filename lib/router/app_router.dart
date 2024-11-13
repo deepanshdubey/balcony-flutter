@@ -5,6 +5,7 @@ import 'package:balcony/ui/home/ui/home_page.dart';
 import 'package:balcony/ui/home/ui/tabs/workspace/ui/workspace_details/workspace_detail_page.dart';
 import 'package:balcony/ui/splash/splash_page.dart';
 import 'package:balcony/ui/walkthrough/walkthrough_page.dart';
+import 'package:flutter/material.dart';
 
 part 'app_router.gr.dart';
 
