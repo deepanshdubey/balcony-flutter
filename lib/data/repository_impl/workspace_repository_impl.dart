@@ -24,7 +24,7 @@ class WorkspaceRepositoryImpl extends BaseRepositoryImpl
   }
 
   @override
-  Future<ApiResponse<WorkspaceDetailData>> getWorkspaceDetail({String? id}) {
+  Future<ApiResponse<WorkspaceData>> getWorkspaceDetail({String? id}) {
     return execute(apiClient.getWorkspaceDetails(id!));
   }
 }

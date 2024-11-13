@@ -14,7 +14,7 @@ abstract class WorkspaceRepository {
     bool? includeHost,
   });
 
-  Future<ApiResponse<WorkspaceDetailData>> getWorkspaceDetail({
+  Future<ApiResponse<WorkspaceData>> getWorkspaceDetail({
     String? id
   });
 }

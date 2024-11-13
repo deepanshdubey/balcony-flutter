@@ -14,7 +14,7 @@ abstract class _WorkspaceStoreBase with Store {
 
 
   @observable
-  WorkspaceDetailData? workspaceDetailsResponse;
+  WorkspaceData? workspaceDetailsResponse;
 
   @observable
   bool isLoading = false;

@@ -7,6 +7,8 @@ import 'package:balcony/ui/splash/splash_page.dart';
 import 'package:balcony/ui/walkthrough/walkthrough_page.dart';
 import 'package:flutter/material.dart';
 
+import '../ui/home/ui/tabs/workspace/ui/workspace_payment/workspace_payment_page.dart';
+
 part 'app_router.gr.dart';
 
 @AutoRouterConfig(replaceInRouteName: 'Screen|Page,Route')
@@ -20,7 +22,8 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: WalkthroughRoute.page),
         AutoRoute(page: StartRoute.page),
         AutoRoute(page: HomeRoute.page),
-        AutoRoute(page: WorkspaceDetailRoute.page)
+        AutoRoute(page: WorkspaceDetailRoute.page),
+        AutoRoute(page: WorkspacePaymentRoute.page)
       ];
 }
 
