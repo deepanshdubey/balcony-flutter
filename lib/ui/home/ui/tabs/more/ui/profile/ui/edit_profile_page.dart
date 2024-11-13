@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:balcony/core/alert/alert_manager.dart';
@@ -7,7 +6,6 @@ import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/generated/assets.dart';
 import 'package:balcony/ui/auth/store/auth_store.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
-import 'package:balcony/values/extensions/map_ext.dart';
 import 'package:balcony/values/validators.dart';
 import 'package:balcony/widget/app_back_button.dart';
 import 'package:balcony/widget/app_image.dart';
@@ -141,12 +139,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
       },
       child: Row(
         children: [
-          AppImage(
-            radius: 25.r,
-            file: imagePath,
-            boxFit: BoxFit.cover,
-            assetPath: Assets.imagesProfilePlaceholder,
-          ),
+          imagePath == null
+              ? ClipOval(
+                  child: Image.network(
+                    "https://www.homework.ws/${session.user.id}",
+                    height: 50.r,
+                    width: 50.r,
+                    loadingBuilder: (context, child, loadingProgress) =>
+                        const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    errorBuilder: (context, error, stackTrace) => AppImage(
+                      radius: 25.r,
+                      file: imagePath,
+                      boxFit: BoxFit.cover,
+                      assetPath: Assets.imagesProfilePlaceholder,
+                    ),
+                    fit: BoxFit.cover,
+                  ),
+                )
+              : AppImage(
+                  radius: 25.r,
+                  file: imagePath,
+                  boxFit: BoxFit.cover,
+                  assetPath: Assets.imagesProfilePlaceholder,
+                ),
           12.w.horizontalSpace,
           Text(
             "${imagePath == null ? "add" : "replace"} profile image",
@@ -256,21 +273,22 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 text: "update profile",
                 onPressed: () async {
                   if (_formKey.currentState?.validate() == true) {
-                    String? base64Image;
                     if (imagePath != null) {
-                      /*List<int> imageBytes =
-                          await File(imagePath!).readAsBytes();
-                      base64Image = base64Encode(imageBytes);*/
+                      authStore.updateProfileWithImage(
+                          firstNameController.text.trim(),
+                          lastNameController.text.trim(),
+                          emailController.text.trim(),
+                          phoneController.text.trim(),
+                          File(imagePath!));
+                    } else {
+                      var apiRequest = {
+                        "firstName": firstNameController.text.trim(),
+                        "lastName": lastNameController.text.trim(),
+                        "email": emailController.text.trim(),
+                        "phone": phoneController.text.trim()
+                      };
+                      authStore.updateProfile(apiRequest);
                     }
-                    var apiRequest = {
-                      "firstName": firstNameController.text.trim(),
-                      "lastName": lastNameController.text.trim(),
-                      "email": emailController.text.trim(),
-                      "phone": phoneController.text.trim(),
-                      "image": base64Image
-                    };
-                    apiRequest.dropNull();
-                    authStore.updateProfile(apiRequest);
                   }
                 },
               );

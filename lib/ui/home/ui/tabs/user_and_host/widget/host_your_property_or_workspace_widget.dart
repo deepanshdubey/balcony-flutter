@@ -1,3 +1,6 @@
+import 'package:balcony/core/session/app_session.dart';
+import 'package:balcony/router/app_router.dart';
+import 'package:balcony/ui/auth/ui/bottomsheet/onboarding_bottomsheet.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
 import 'package:balcony/widget/app_image.dart';
@@ -97,13 +100,26 @@ class HostYourPropertyOrWorkspaceWidget extends StatelessWidget {
               Expanded(
                   child: PrimaryButton(
                 text: "sign up workspace",
-                onPressed: () {},
+                onPressed: () {
+                  if (session.isLogin) {
+                    navigateToCreateWorkSpace(context);
+                  } else {
+                    showOnboardingBottomSheet(
+                      context,
+                      onSuccess: () {
+                        navigateToCreateWorkSpace(context);
+                      },
+                    );
+                  }
+                },
               )),
               12.w.horizontalSpace,
               Expanded(
                   child: AppOutlinedButton(
                 text: "sign up property",
-                onPressed: () {},
+                onPressed: () {
+                  navigateToCreateWorkSpace(context);
+                },
               )),
             ],
           ),
@@ -111,5 +127,9 @@ class HostYourPropertyOrWorkspaceWidget extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void navigateToCreateWorkSpace(BuildContext context) {
+    //appRouter.push();
   }
 }

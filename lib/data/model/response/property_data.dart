@@ -54,24 +54,3 @@ class PropertyData {
 
   Map<String, dynamic> toJson() => _$PropertyDataToJson(this);
 }
-
-
-
-@JsonSerializable()
-class Other {
-  final bool? isIndoorSpace;
-  final bool? isOutdoorSpace;
-  final bool? isCoWorkingWorkspace;
-  final int? additionalGuests;
-
-  Other({
-    this.isIndoorSpace,
-    this.isOutdoorSpace,
-    this.isCoWorkingWorkspace,
-    this.additionalGuests,
-  });
-
-  factory Other.fromJson(Map<String, dynamic> json) => _$OtherFromJson(json);
-
-  Map<String, dynamic> toJson() => _$OtherToJson(this);
-}

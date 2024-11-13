@@ -15,7 +15,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobx/mobx.dart';
 
 class SignUpPage extends StatefulWidget {
-  const SignUpPage({super.key});
+  final VoidCallback onSuccess;
+  const SignUpPage({super.key, required this.onSuccess});
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();
@@ -82,7 +83,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 onSuccess: () {
                   session.user = response.user!;
                   session.isLogin = true;
-                  appRouter.replaceAll([const HomeRoute()]);
+                  widget.onSuccess();
                 },
               ));
         }

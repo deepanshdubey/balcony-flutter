@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/pagination_data.dart';
 import 'package:balcony/data/model/response/property_data.dart';
@@ -46,6 +49,16 @@ abstract class ApiClient {
   @PUT("user/update")
   Future<CommonData> updateProfile(@Body() Map<String, dynamic> request);
 
+  @PUT("user/update")
+  @MultiPart()
+  Future<CommonData> updateProfileWithImage(
+    @Part(name: "firstName") String firstName,
+    @Part(name: "lastName") String lastName,
+    @Part(name: "email") String email,
+    @Part(name: "phone") String phone,
+    @Part(name: "image") File image,
+  );
+
   @GET("workspace/all")
   Future<PaginationData<WorkspaceData>> getWorkSpaces(
     @Query("status") String? status,
@@ -54,6 +67,17 @@ abstract class ApiClient {
     @Query("page") int? page,
     @Query("limit") int? limit,
     @Query("includeHost") bool? includeHost,
+  );
+
+  @POST("workspace/create")
+  @MultiPart()
+  Future<CommonData> createWorkspace(
+    @Part(name: "images") List<File> images,
+    @Part(name: "info") Info info,
+    @Part(name: "pricing") Pricing pricing,
+    @Part(name: "times") Times times,
+    @Part(name: "other") Other other,
+    @Part(name: "amenities") List<String> amenities,
   );
 
   @GET("property/all")

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:balcony/core/api/api_response/api_response.dart';
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/remote/api_client.dart';
@@ -51,5 +53,22 @@ class UserRepositoryImpl extends BaseRepositoryImpl implements UserRepository {
   @override
   Future<ApiResponse<CommonData>> forgotPassword(Map<String, dynamic> request) {
     return execute(apiClient.forgotPassword(request));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> updateProfileWithImage(
+    String firstName,
+    String lastName,
+    String email,
+    String phone,
+    File image,
+  ) {
+    return execute(apiClient.updateProfileWithImage(
+      firstName,
+      lastName,
+      email,
+      phone,
+      image,
+    ));
   }
 }

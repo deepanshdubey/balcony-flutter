@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:balcony/core/locator/locator.dart';
 import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/data/model/response/common_data.dart';
@@ -193,6 +195,34 @@ abstract class _AuthStoreBase with Store {
       errorMessage = null;
       isLoading = true;
       final response = await userRepository.updateProfile(request);
+      if (response.isSuccess) {
+        updateProfileResponse = response.data!;
+        session.user = response.data!.user!;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future updateProfileWithImage(
+    String firstName,
+    String lastName,
+    String email,
+    String phone,
+    File image,
+  ) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await userRepository.updateProfileWithImage(
+          firstName, lastName, email, phone, image);
       if (response.isSuccess) {
         updateProfileResponse = response.data!;
         session.user = response.data!.user!;

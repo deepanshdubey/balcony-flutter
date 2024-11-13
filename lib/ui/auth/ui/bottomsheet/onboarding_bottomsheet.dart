@@ -1,3 +1,4 @@
+import 'package:balcony/router/app_router.dart';
 import 'package:balcony/ui/auth/ui/reset_password_page.dart';
 import 'package:balcony/ui/auth/ui/sign_in_page.dart';
 import 'package:balcony/ui/auth/ui/sign_up_page.dart';
@@ -6,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class OnboardingBottomSheet extends StatefulWidget {
-  const OnboardingBottomSheet({super.key});
+  final VoidCallback onSuccess;
+
+  const OnboardingBottomSheet({super.key, required this.onSuccess});
 
   @override
   OnboardingBottomSheetState createState() => OnboardingBottomSheetState();
@@ -69,10 +72,14 @@ class OnboardingBottomSheetState extends State<OnboardingBottomSheet> {
                       _currentIndex = index;
                     });
                   },
-                  children: const [
-                    SignInPage(),
-                    SignUpPage(),
-                    ResetPasswordPage(),
+                  children: [
+                    SignInPage(
+                      onSuccess: widget.onSuccess,
+                    ),
+                    SignUpPage(
+                      onSuccess: widget.onSuccess,
+                    ),
+                    const ResetPasswordPage(),
                   ],
                 ),
               ),
@@ -105,15 +112,25 @@ class OnboardingBottomSheetState extends State<OnboardingBottomSheet> {
       ),
     );
   }
-
 }
 
-void showOnboardingBottomSheet(BuildContext context) {
+void showOnboardingBottomSheet(
+  BuildContext context, {
+  VoidCallback? onSuccess,
+}) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-
-    builder: (context) => const OnboardingBottomSheet(),
+    builder: (context) => OnboardingBottomSheet(
+      onSuccess: () {
+        Navigator.of(context).pop();
+        if (onSuccess != null) {
+          onSuccess();
+        } else {
+          appRouter.replaceAll([const HomeRoute()]);
+        }
+      },
+    ),
   );
 }

@@ -1,6 +1,5 @@
 import 'package:balcony/core/alert/alert_manager.dart';
 import 'package:balcony/core/session/app_session.dart';
-import 'package:balcony/router/app_router.dart';
 import 'package:balcony/ui/auth/store/auth_store.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/values/extensions/string_ext.dart';
@@ -16,7 +15,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobx/mobx.dart';
 
 class SignInPage extends StatefulWidget {
-  const SignInPage({super.key});
+  final VoidCallback onSuccess;
+
+  const SignInPage({super.key, required this.onSuccess});
 
   @override
   State<SignInPage> createState() => _SignInPageState();
@@ -56,7 +57,7 @@ class _SignInPageState extends State<SignInPage> {
       reaction((_) => authStore.loginResponse, (response) {
         if (response != null) {
           session.isLogin = true;
-          appRouter.replaceAll([const HomeRoute()]);
+          widget.onSuccess();
         }
       }),
       reaction((_) => authStore.errorMessage, (String? errorMessage) {
