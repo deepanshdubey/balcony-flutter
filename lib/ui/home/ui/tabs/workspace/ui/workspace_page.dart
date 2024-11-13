@@ -6,14 +6,14 @@ import 'package:balcony/widget/app_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class WorkSpacePage extends StatefulWidget {
-  const WorkSpacePage({super.key});
+class WorkspacePage extends StatefulWidget {
+  const WorkspacePage({super.key});
 
   @override
-  WorkSpacePageState createState() => WorkSpacePageState();
+  WorkspacePageState createState() => WorkspacePageState();
 }
 
-class WorkSpacePageState extends State<WorkSpacePage> {
+class WorkspacePageState extends State<WorkspacePage> {
   int currentPage = 2;
   final int totalPages = 20;
   bool isMapViewSelected = true;

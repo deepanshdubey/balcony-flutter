@@ -1,27 +1,27 @@
 import 'package:balcony/core/alert/alert_manager.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/store/workspace_store.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/widget/workspace_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property/store/property_store.dart';
+import 'package:balcony/ui/home/ui/tabs/property/widget/property_widget.dart';
 import 'package:balcony/ui/home/widget/home_listing_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
 
-class WorkspaceHomeWidget extends StatefulWidget {
-  const WorkspaceHomeWidget({super.key});
+class PropertyHomeWidget extends StatefulWidget {
+  const PropertyHomeWidget({super.key});
 
   @override
-  State<WorkspaceHomeWidget> createState() => _WorkspaceHomeWidgetState();
+  State<PropertyHomeWidget> createState() => _PropertyHomeWidgetState();
 }
 
-class _WorkspaceHomeWidgetState extends State<WorkspaceHomeWidget> {
+class _PropertyHomeWidgetState extends State<PropertyHomeWidget> {
   List<ReactionDisposer>? disposers;
-  final store = WorkspaceStore();
+  final store = PropertyStore();
 
   @override
   void initState() {
     super.initState();
     addDisposer();
-    store.getWorkspace();
+    store.getProperty();
   }
 
   @override
@@ -52,17 +52,16 @@ class _WorkspaceHomeWidgetState extends State<WorkspaceHomeWidget> {
     final theme = Theme.of(context);
     return Observer(
         builder: (context) =>
-            store.workspaceResponse?.isNotEmpty == true || store.isLoading
+            store.propertyResponse?.isNotEmpty == true || store.isLoading
                 ? HomeListingWidget(
-                    title: "workspace",
+                    title: "properties",
                     onMoreClick: () {
                       //open listing page
                     },
-                    isReverse: true,
                     isLoading: store.isLoading,
-                    children: store.workspaceResponse
+                    children: store.propertyResponse
                             ?.map(
-                              (e) => WorkspaceWidget(data: e),
+                              (e) => PropertyWidget(data: e),
                             )
                             .toList() ??
                         [])

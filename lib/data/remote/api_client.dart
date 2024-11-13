@@ -1,5 +1,6 @@
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/pagination_data.dart';
+import 'package:balcony/data/model/response/property_data.dart';
 import 'package:balcony/data/model/response/user_data.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:dio/dio.dart';
@@ -47,6 +48,16 @@ abstract class ApiClient {
 
   @GET("workspace/all")
   Future<PaginationData<WorkspaceData>> getWorkSpaces(
+    @Query("status") String? status,
+    @Query("sort") String? sort,
+    @Query("select") String? select,
+    @Query("page") int? page,
+    @Query("limit") int? limit,
+    @Query("includeHost") bool? includeHost,
+  );
+
+  @GET("property/all")
+  Future<PaginationData<PropertyData>> getProperties(
     @Query("status") String? status,
     @Query("sort") String? sort,
     @Query("select") String? select,

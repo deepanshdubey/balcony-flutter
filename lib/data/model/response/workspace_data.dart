@@ -54,55 +54,6 @@ class WorkspaceData {
   Map<String, dynamic> toJson() => _$WorkspaceDataToJson(this);
 }
 
-@JsonSerializable()
-class Host {
-  @JsonKey(name: '_id')
-  final String? id;
-
-  @JsonKey(name: 'firstName')
-  final String? firstName;
-
-  @JsonKey(name: 'lastName')
-  final String? lastName;
-
-  @JsonKey(name: 'email')
-  final String? email;
-
-  @JsonKey(name: 'phone')
-  final String? phone;
-
-  @JsonKey(name: 'image')
-  final String? image;
-
-  @JsonKey(name: 'role')
-  final String? role;
-
-  @JsonKey(name: 'status')
-  final String? status;
-
-  @JsonKey(name: 'isWorkspaceAccountConnected')
-  final bool? isWorkspaceAccountConnected;
-
-  @JsonKey(name: 'isPropertyAccountConnected')
-  final bool? isPropertyAccountConnected;
-
-  Host({
-    this.id,
-    this.firstName,
-    this.lastName,
-    this.email,
-    this.phone,
-    this.image,
-    this.role,
-    this.status,
-    this.isWorkspaceAccountConnected,
-    this.isPropertyAccountConnected,
-  });
-
-  factory Host.fromJson(Map<String, dynamic> json) => _$HostFromJson(json);
-
-  Map<String, dynamic> toJson() => _$HostToJson(this);
-}
 
 @JsonSerializable()
 class Info {

@@ -6,17 +6,15 @@ import 'package:balcony/widget/app_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class WorkspaceAndPropertyPage extends StatefulWidget {
-  final bool isWorkSpace;
-
-  const WorkspaceAndPropertyPage({super.key, required this.isWorkSpace});
+class PropertyPage extends StatefulWidget {
+  const PropertyPage({super.key});
 
   @override
-  WorkspaceAndPropertyPageState createState() =>
-      WorkspaceAndPropertyPageState();
+  PropertyPageState createState() =>
+      PropertyPageState();
 }
 
-class WorkspaceAndPropertyPageState extends State<WorkspaceAndPropertyPage> {
+class PropertyPageState extends State<PropertyPage> {
   int currentPage = 2;
   final int totalPages = 20;
   bool isMapViewSelected = true;
@@ -93,7 +91,7 @@ class WorkspaceAndPropertyPageState extends State<WorkspaceAndPropertyPage> {
             ),
             10.h.verticalSpace,
             Text(
-              widget.isWorkSpace ? 'workspaces' : 'properties',
+              'properties',
               textAlign: TextAlign.end,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.w600,

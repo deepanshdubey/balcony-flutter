@@ -1,3 +1,4 @@
+import 'package:balcony/ui/home/ui/tabs/property/widget/property_home_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/user_and_host/widget/host_your_property_or_workspace_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/user_and_host/widget/property_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/user_and_host/widget/search_properties_widget.dart';
@@ -43,25 +44,7 @@ class _UserAndHostPageState extends State<UserAndHostPage> {
               ? const SearchWorkspacesWidget()
               : const SearchPropertiesWidget(),
           20.h.verticalSpace,
-          HomeListingWidget(
-              title: "properties",
-              onMoreClick: () {
-                widget.onItemSelected("stays");
-              },
-              isReverse: false,
-              isLoading: false,
-              children: List.generate(
-                4,
-                (index) {
-                  return PropertyWidget(
-                    title: 'Backyard w. NYC View',
-                    location: 'Paris',
-                    rating: 4.5,
-                    price: '\$123.45',
-                    reviews: 221,
-                  );
-                },
-              )),
+          const PropertyHomeWidget(),
           const WorkspaceHomeWidget(),
           12.h.verticalSpace,
           const HostYourPropertyOrWorkspaceWidget(),

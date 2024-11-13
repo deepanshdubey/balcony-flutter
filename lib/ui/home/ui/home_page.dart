@@ -1,8 +1,9 @@
 import 'package:auto_route/annotations.dart';
 import 'package:balcony/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/more_page.dart';
+import 'package:balcony/ui/home/ui/tabs/property/ui/property_page.dart';
 import 'package:balcony/ui/home/ui/tabs/user_and_host/ui/user_and_host_page.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace_and_property/ui/workspace_and_property_page.dart';
+import 'package:balcony/ui/home/ui/tabs/workspace/ui/workspace_page.dart';
 import 'package:balcony/ui/home/widget/bottom_navigation.dart';
 import 'package:flutter/material.dart';
 
@@ -24,14 +25,8 @@ class _HomePageState extends State<HomePage> {
     bottomPages = {
       "search": const Center(child: Text("Search")),
       "chat": const Center(child: Text("Chat")),
-      "works": WorkspaceAndPropertyPage(
-        isWorkSpace: true,
-        key: UniqueKey(),
-      ),
-      "stays": WorkspaceAndPropertyPage(
-        isWorkSpace: false,
-        key: UniqueKey(),
-      ),
+      "works": const WorkspacePage(),
+      "stays": const PropertyPage(),
       "more": const Center(child: Text("More")),
     };
     super.initState();
