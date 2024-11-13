@@ -162,8 +162,10 @@ class Pricing {
   });
 
   String get formattedTotalPerDay {
-    var format = NumberFormat.currency(locale: 'en_US', name: currency);
-    return format.format(totalPerDay);
+
+    String symbol = NumberFormat.simpleCurrency(name: currency).currencySymbol;
+    NumberFormat format = NumberFormat("$symbol ###,###,###.00");
+    return format.format(totalPerDay ?? 0);
   }
 
   factory Pricing.fromJson(Map<String, dynamic> json) =>
