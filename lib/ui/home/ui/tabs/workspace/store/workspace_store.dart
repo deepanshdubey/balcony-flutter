@@ -1,5 +1,6 @@
 import 'package:balcony/core/locator/locator.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
+import 'package:balcony/data/model/response/workspace_detail_data.dart';
 import 'package:balcony/data/repository/workspace_repository.dart';
 import 'package:mobx/mobx.dart';
 
@@ -10,6 +11,10 @@ class WorkspaceStore = _WorkspaceStoreBase with _$WorkspaceStore;
 abstract class _WorkspaceStoreBase with Store {
   @observable
   List<WorkspaceData>? workspaceResponse;
+
+
+  @observable
+  WorkspaceData? workspaceDetailsResponse;
 
   @observable
   bool isLoading = false;
@@ -37,7 +42,32 @@ abstract class _WorkspaceStoreBase with Store {
           includeHost: includeHost);
       if (response.isSuccess) {
         workspaceResponse =
-            response.data?.data?.items?.firstOrNull?.result ?? [];
+            response.data?.data?.result ?? [];
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+
+  @action
+  Future getWorkspaceDetail(
+      {String? id,
+   }) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await workspaceRepository.getWorkspaceDetail(
+         id: id);
+      if (response.isSuccess) {
+        workspaceDetailsResponse =
+            response.data;
       } else {
         errorMessage = response.error!.message;
       }

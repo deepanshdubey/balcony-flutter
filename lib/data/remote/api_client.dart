@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/pagination_data.dart';
 import 'package:balcony/data/model/response/property_data.dart';
 import 'package:balcony/data/model/response/user_data.dart';
-import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
+
+import '../model/response/workspace_data.dart';
 
 part 'api_client.g.dart';
 
@@ -89,4 +89,11 @@ abstract class ApiClient {
     @Query("limit") int? limit,
     @Query("includeHost") bool? includeHost,
   );
+
+
+  @GET("/workspace/find/{id}")
+  Future<WorkspaceData> getWorkspaceDetails(
+      @Path("id") String id,
+      );
+
 }

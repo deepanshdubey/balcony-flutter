@@ -8,7 +8,7 @@ class PaginationData<T> {
   final bool? success;
 
   @JsonKey(name: 'data')
-  final PaginationDataDetails<T>? data;
+  final PaginationItem<T>? data;
 
   PaginationData({
     this.success,
@@ -29,7 +29,7 @@ class PaginationDataDetails<T> {
   @JsonKey(name: 'count')
   final int? count;
 
-  @JsonKey(name: 'items')
+  @JsonKey(name: 'data')
   final List<PaginationItem<T>>? items;
 
   PaginationDataDetails({
@@ -63,7 +63,7 @@ class PaginationItem<T> {
   @JsonKey(name: 'skip')
   final int? skip;
 
-  @JsonKey(name: 'result')
+  @JsonKey(name: 'items')
   final List<T>? result;
 
   PaginationItem({

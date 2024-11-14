@@ -6,6 +6,8 @@ import 'package:balcony/ui/home/ui/tabs/workspace/ui/create_workspace/ui/create_
 import 'package:balcony/ui/home/ui/tabs/workspace/ui/workspace_details/workspace_detail_page.dart';
 import 'package:balcony/ui/splash/splash_page.dart';
 import 'package:balcony/ui/walkthrough/walkthrough_page.dart';
+import 'package:flutter/material.dart';
+import '../ui/home/ui/tabs/workspace/ui/workspace_payment/workspace_payment_page.dart';
 
 part 'app_router.gr.dart';
 
@@ -20,6 +22,8 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: WalkthroughRoute.page),
         AutoRoute(page: StartRoute.page),
         AutoRoute(page: HomeRoute.page),
+        AutoRoute(page: WorkspaceDetailRoute.page),
+        AutoRoute(page: WorkspacePaymentRoute.page)
         AutoRoute(page: WorkspaceDetailRoute.page),
         AutoRoute(page: CreateWorkspaceRoute.page)
       ];

@@ -3,5 +3,7 @@
   "applicationTitle": "Balcony",
   "@appName": {
     "description": "Application Name"
-  }
+  },
+  "connectionTimedOut": "The connection has timed out. Please try again",
+  "connectionProblem": "There are some problems with the connection. Please try again"
 }
