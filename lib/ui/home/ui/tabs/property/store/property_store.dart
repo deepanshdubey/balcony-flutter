@@ -36,7 +36,7 @@ abstract class _PropertyStoreBase with Store {
           limit: limit,
           includeHost: includeHost);
       if (response.isSuccess) {
-        propertyResponse = response.data?.data?.items?.firstOrNull?.result ?? [];
+        propertyResponse = response.data?.data?.result ?? [];
       } else {
         errorMessage = response.error!.message;
       }

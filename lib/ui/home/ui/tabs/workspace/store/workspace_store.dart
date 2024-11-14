@@ -42,7 +42,7 @@ abstract class _WorkspaceStoreBase with Store {
           includeHost: includeHost);
       if (response.isSuccess) {
         workspaceResponse =
-            response.data?.data?.items?.firstOrNull?.result ?? [];
+            response.data?.data?.result ?? [];
       } else {
         errorMessage = response.error!.message;
       }
