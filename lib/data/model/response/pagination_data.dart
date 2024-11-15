@@ -8,11 +8,11 @@ class PaginationData<T> {
   final bool? success;
 
   @JsonKey(name: 'data')
-  final PaginationItem<T>? data;
+  final PaginationItem<T> data;
 
   PaginationData({
-    this.success,
-    this.data,
+    required this.success,
+    required this.data,
   });
 
   factory PaginationData.fromJson(
@@ -22,28 +22,6 @@ class PaginationData<T> {
 
   Map<String, dynamic> toJson(Object Function(T value) toJsonT) =>
       _$PaginationDataToJson(this, toJsonT);
-}
-
-@JsonSerializable(genericArgumentFactories: true)
-class PaginationDataDetails<T> {
-  @JsonKey(name: 'count')
-  final int? count;
-
-  @JsonKey(name: 'data')
-  final List<PaginationItem<T>>? items;
-
-  PaginationDataDetails({
-    this.count,
-    this.items,
-  });
-
-  factory PaginationDataDetails.fromJson(
-      Map<String, dynamic> json,
-      T Function(Object? json) fromJsonT,
-      ) => _$PaginationDataDetailsFromJson(json, fromJsonT);
-
-  Map<String, dynamic> toJson(Object Function(T value) toJsonT) =>
-      _$PaginationDataDetailsToJson(this, toJsonT);
 }
 
 @JsonSerializable(genericArgumentFactories: true)

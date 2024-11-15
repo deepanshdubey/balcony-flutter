@@ -47,6 +47,30 @@ final MultiValidator newPasswordValidator = MultiValidator([
 final MultiValidator firstNameValidator = MultiValidator([
   RequiredValidator(errorText: "please enter first name"),
 ]);
+
+final MultiValidator workspaceNameValidator = MultiValidator([
+  RequiredValidator(errorText: "please enter workspace name"),
+]);
+
+final MultiValidator addressValidator = MultiValidator([
+  RequiredValidator(errorText: "please enter address"),
+]);
+
+final MultiValidator cityValidator = MultiValidator([
+  RequiredValidator(errorText: "please enter city name"),
+]);
+
+final MultiValidator stateValidator = MultiValidator([
+  RequiredValidator(errorText: "please enter state name"),
+]);
+
+final MultiValidator countryValidator = MultiValidator([
+  RequiredValidator(errorText: "please enter country name"),
+]);
+
+final MultiValidator requiredValidator = MultiValidator([
+  RequiredValidator(errorText: "required"),
+]);
 final MultiValidator lastNameValidator = MultiValidator([
   RequiredValidator(errorText: "please enter last name"),
 ]);

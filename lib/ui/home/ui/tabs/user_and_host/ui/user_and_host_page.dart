@@ -1,15 +1,12 @@
 import 'package:balcony/ui/home/ui/tabs/property/widget/property_home_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/user_and_host/widget/host_your_property_or_workspace_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/user_and_host/widget/property_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/user_and_host/widget/search_properties_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/user_and_host/widget/search_workspaces_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/workspace/widget/workspace_home_widget.dart';
-import 'package:balcony/ui/home/widget/home_listing_widget.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
+import 'package:balcony/widget/app_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import 'package:balcony/widget/app_image.dart';
 
 class UserAndHostPage extends StatefulWidget {
   final Function(String) onItemSelected;

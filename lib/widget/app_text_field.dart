@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppTextField extends StatelessWidget {
@@ -17,6 +18,9 @@ class AppTextField extends StatelessWidget {
   final void Function()? onTap;
   final InputDecoration? inputDecoration;
   final int? maxLength;
+  final int? maxLines;
+  final int? minLines;
+  final List<TextInputFormatter>? inputFormatters;
 
   const AppTextField({
     super.key,
@@ -36,7 +40,8 @@ class AppTextField extends StatelessWidget {
     this.inputDecoration,
     this.readOnly = false,
     this.onTap,
-    this.maxLength,
+    this.maxLength, this.maxLines, this.minLines, this.inputFormatters,
+
   });
 
   @override
@@ -67,6 +72,9 @@ class AppTextField extends StatelessWidget {
       readOnly: readOnly,
       onTap: onTap,
       maxLength: maxLength,
+      maxLines: maxLines ?? 1,
+      minLines: minLines ?? 1,
+      inputFormatters: inputFormatters,
       decoration: inputDecoration ??
           InputDecoration(
               contentPadding: EdgeInsets.symmetric(

@@ -61,6 +61,34 @@ ThemeData createTheme(ColorScheme colors, TextTheme textTheme) {
       headerForegroundColor: colors.onPrimaryContainer,
       dayStyle: TextStyle(color: colors.onSurface),
     ),
+    checkboxTheme: CheckboxThemeData(
+      fillColor: WidgetStateProperty.resolveWith<Color>(
+        (states) {
+          if (states.contains(WidgetState.selected)) {
+            return appColor.primaryColor; // When checked
+          }
+          return Colors.white; // When unchecked
+        },
+      ),
+      checkColor: WidgetStateProperty.all(Colors.white),
+      // Optional: Set check mark color
+      overlayColor: WidgetStateProperty.resolveWith<Color?>(
+        (states) {
+          if (states.contains(WidgetState.hovered)) {
+            return appColor.primaryColor.withOpacity(0.1);
+          } else if (states.contains(WidgetState.pressed)) {
+            return appColor.primaryColor.withOpacity(0.2);
+          } else if (states.contains(WidgetState.selected)) {
+            return appColor.primaryColor.withOpacity(0.3);
+          }
+          return null;
+        },
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4.0),
+      ),
+      side: BorderSide(color: appColor.primaryColor, width: 1.0),
+    ),
   );
 }
 
