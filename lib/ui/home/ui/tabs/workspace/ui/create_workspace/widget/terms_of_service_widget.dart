@@ -38,6 +38,7 @@ class _TermsOfServiceWidgetState extends State<TermsOfServiceWidget> {
           ),
           16.h.verticalSpace,
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Checkbox(
                 value: firstTerm,
@@ -86,6 +87,7 @@ class _TermsOfServiceWidgetState extends State<TermsOfServiceWidget> {
             ],
           ),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Checkbox(
                 value: secondTerm,
