@@ -1,5 +1,5 @@
 import 'package:auto_route/annotations.dart';
-import 'package:balcony/main.dart';
+import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
 import 'package:balcony/widget/app_image.dart';
 import 'package:balcony/widget/app_text_field.dart';
@@ -9,7 +9,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 @RoutePage()
 class WorkspacePaymentPage extends StatefulWidget {
-  WorkspacePaymentPage();
+  final WorkspaceData? workspaceData ;
+  WorkspacePaymentPage({super.key, this.workspaceData});
 
   @override
   State<WorkspacePaymentPage> createState() => _WorkspacePaymentPageState();
@@ -32,14 +33,13 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildSectionTitle("9 Bushwick Lofts"),
+                _buildSectionTitle(widget.workspaceData?.info?.name ?? "" , widget.workspaceData?.ratings?.toDouble()  ),
                 const SizedBox(height: 8),
                 _buildOrderDetails(),
                 _buildTimeFrameSection(),
                 _buildUserInfoSection(),
                 _buildPromoCodeSection(),
                 _buildPaymentSection(),
-
                 _buildBookButton(context),
                 32.verticalSpace
               ],
@@ -50,13 +50,13 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title , double? rating) {
     final theme = Theme.of(context);
     return Container(
       width: 1.sw,
       height: 98.h,
       decoration: BoxDecoration(
-          color: Color(0xffCCDDDC),
+          color: const Color(0xffCCDDDC),
           borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(10), topRight: Radius.circular(10))
               .r),
@@ -76,10 +76,10 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
             8.verticalSpace,
             Row(
               children: [
-                buildRatingStars(theme, 2),
+                buildRatingStars(theme, rating ?? 0),
                 6.horizontalSpace,
                 Text(
-                  "(2)",
+                  "(${rating.toString()})",
                   maxLines: 1,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.normal,
@@ -207,13 +207,12 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
               .titleLarge
               ?.copyWith(fontWeight: FontWeight.w600, fontSize: 13.spMin)),
           12.verticalSpace,
-          Row(
+          const Row(
             children: [
               Icon(Icons.credit_card),
               Text("Visa"),
               Spacer(),
               Text('•••• •••• •••• \$cardLastDigits'),
-
             ],
           ),
           16.verticalSpace

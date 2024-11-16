@@ -67,7 +67,7 @@ abstract class _WorkspaceStoreBase with Store {
       isLoading = true;
       final response = await workspaceRepository.getWorkspaceDetail(id: id);
       if (response.isSuccess) {
-        workspaceDetailsResponse = response.data;
+        workspaceDetailsResponse = response.data?.workspace;
       } else {
         errorMessage = response.error!.message;
       }

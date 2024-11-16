@@ -16,7 +16,7 @@ abstract class WorkspaceRepository {
     bool? includeHost,
   });
 
-  Future<ApiResponse<WorkspaceData>> getWorkspaceDetail({String? id});
+  Future<ApiResponse<PaginationData<WorkspaceData>>> getWorkspaceDetail({String? id});
 
   Future<ApiResponse<CommonData>> createWorkspace(
     List<File> images,

@@ -95,7 +95,7 @@ abstract class ApiClient {
   );
 
   @GET("/workspace/find/{id}")
-  Future<WorkspaceData> getWorkspaceDetails(
+  Future<PaginationData<WorkspaceData>> getWorkspaceDetails(
     @Path("id") String id,
   );
 }

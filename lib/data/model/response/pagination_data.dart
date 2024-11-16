@@ -1,24 +1,30 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'workspace_data.dart'; // Import the WorkspaceData model.
 
 part 'pagination_data.g.dart';
 
-@JsonSerializable(genericArgumentFactories: true,explicitToJson: true)
+@JsonSerializable(genericArgumentFactories: true, explicitToJson: true)
 class PaginationData<T> {
   @JsonKey(name: 'success')
   final bool? success;
 
   @JsonKey(name: 'data')
-  final PaginationItem<T> data;
+  final PaginationItem<T>? data;
+
+  @JsonKey(name: 'workspace')
+  final WorkspaceData? workspace;
 
   PaginationData({
     required this.success,
-    required this.data,
+     this.data,
+     this.workspace,
   });
 
   factory PaginationData.fromJson(
       Map<String, dynamic> json,
       T Function(Object? json) fromJsonT,
-      ) => _$PaginationDataFromJson(json, fromJsonT);
+      ) =>
+      _$PaginationDataFromJson(json, fromJsonT);
 
   Map<String, dynamic> toJson(Object Function(T value) toJsonT) =>
       _$PaginationDataToJson(this, toJsonT);
@@ -56,7 +62,8 @@ class PaginationItem<T> {
   factory PaginationItem.fromJson(
       Map<String, dynamic> json,
       T Function(Object? json) fromJsonT,
-      ) => _$PaginationItemFromJson(json, fromJsonT);
+      ) =>
+      _$PaginationItemFromJson(json, fromJsonT);
 
   Map<String, dynamic> toJson(Object Function(T value) toJsonT) =>
       _$PaginationItemToJson(this, toJsonT);
