@@ -1,33 +1,50 @@
+import 'package:balcony/data/model/response/workspace_data.dart';
+import 'package:balcony/ui/home/ui/tabs/workspace/ui/create_workspace/widget/workspace_photos_widget.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/values/validators.dart';
 import 'package:balcony/widget/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class WorkspaceInfoWidget extends StatelessWidget {
-  const WorkspaceInfoWidget({
-    super.key,
-    required this.formKey,
-    required this.workspaceNameController,
-    required this.floorController,
-    required this.addressController,
-    required this.cityController,
-    required this.stateController,
-    required this.countryController,
-  });
+class WorkspaceInfoWidget extends StatefulWidget {
+  const WorkspaceInfoWidget({super.key});
 
-  final GlobalKey<FormState> formKey;
+  @override
+  State<WorkspaceInfoWidget> createState() => _WorkspaceInfoWidgetState();
+}
 
-  final TextEditingController workspaceNameController;
-  final TextEditingController floorController;
+class _WorkspaceInfoWidgetState extends BaseState<WorkspaceInfoWidget> {
+  late GlobalKey<FormState> formKey;
+  late TextEditingController workspaceNameController;
+  late TextEditingController floorController;
+  late TextEditingController addressController;
+  late TextEditingController cityController;
+  late TextEditingController stateController;
+  late TextEditingController countryController;
 
-  final TextEditingController addressController;
+  @override
+  void initState() {
+    formKey = GlobalKey<FormState>();
+    workspaceNameController = TextEditingController();
+    floorController = TextEditingController();
+    addressController = TextEditingController();
+    cityController = TextEditingController();
+    stateController = TextEditingController();
+    countryController = TextEditingController();
+    super.initState();
+  }
 
-  final TextEditingController cityController;
-
-  final TextEditingController stateController;
-
-  final TextEditingController countryController;
+  @override
+  void dispose() {
+    formKey.currentState?.dispose();
+    workspaceNameController.dispose();
+    floorController.dispose();
+    addressController.dispose();
+    cityController.dispose();
+    stateController.dispose();
+    countryController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +63,7 @@ class WorkspaceInfoWidget extends StatelessWidget {
           children: [
             16.h.verticalSpace,
             Text(
-              "workspace amenities*",
+              "workspace info*",
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w500,
                     fontSize: 24.spMin,
@@ -107,4 +124,28 @@ class WorkspaceInfoWidget extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  Info getApiData() {
+    return Info(
+      name: workspaceNameController.text.trim(),
+      address: addressController.text.trim(),
+      floor: floorController.text.trim(),
+      city: cityController.text.trim(),
+      state: stateController.text.trim(),
+      country: countryController.text.trim(),
+    );
+  }
+
+  @override
+  String? getError() {
+    return null;
+  }
+
+  @override
+  bool validate() {
+    return formKey.currentState?.validate() == true;
+  }
+
+
 }

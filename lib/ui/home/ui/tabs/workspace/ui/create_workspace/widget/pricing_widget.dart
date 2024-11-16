@@ -1,3 +1,5 @@
+import 'package:balcony/data/model/response/workspace_data.dart';
+import 'package:balcony/ui/home/ui/tabs/workspace/ui/create_workspace/widget/workspace_photos_widget.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/values/validators.dart';
 import 'package:balcony/widget/app_dropdown_field.dart';
@@ -6,31 +8,56 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class PricingWidget extends StatelessWidget {
+class PricingWidget extends StatefulWidget {
   const PricingWidget({
     super.key,
-    required this.formKey,
-    required this.currencyController,
-    required this.totalPerDayController,
-    required this.additionalGuestsController,
-    required this.cleaningFeeController,
-    required this.cleaningFeeTypeController,
-    required this.maintenanceFeeController,
-    required this.maintenanceFeeTypeController,
-    required this.additionalGeneralFeeController,
-    required this.additionalGeneralFeeTypeController,
   });
 
-  final GlobalKey<FormState> formKey;
-  final TextEditingController currencyController;
-  final TextEditingController totalPerDayController;
-  final TextEditingController additionalGuestsController;
-  final TextEditingController cleaningFeeController;
-  final TextEditingController cleaningFeeTypeController;
-  final TextEditingController maintenanceFeeController;
-  final TextEditingController maintenanceFeeTypeController;
-  final TextEditingController additionalGeneralFeeController;
-  final TextEditingController additionalGeneralFeeTypeController;
+  @override
+  State<PricingWidget> createState() => _PricingWidgetState();
+}
+
+class _PricingWidgetState extends BaseState<PricingWidget> {
+  late GlobalKey<FormState> formKey;
+  late TextEditingController currencyController;
+  late TextEditingController totalPerDayController;
+  late TextEditingController additionalGuestsController;
+  late TextEditingController cleaningFeeController;
+  late TextEditingController cleaningFeeTypeController;
+  late TextEditingController maintenanceFeeController;
+  late TextEditingController maintenanceFeeTypeController;
+  late TextEditingController additionalGeneralFeeController;
+  late TextEditingController additionalGeneralFeeTypeController;
+
+  @override
+  void initState() {
+    formKey = GlobalKey<FormState>();
+    currencyController = TextEditingController(text: "USD");
+    totalPerDayController = TextEditingController();
+    additionalGuestsController = TextEditingController();
+    cleaningFeeController = TextEditingController();
+    cleaningFeeTypeController = TextEditingController();
+    maintenanceFeeController = TextEditingController();
+    maintenanceFeeTypeController = TextEditingController();
+    additionalGeneralFeeController = TextEditingController();
+    additionalGeneralFeeTypeController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    formKey.currentState?.dispose();
+    currencyController.dispose();
+    totalPerDayController.dispose();
+    additionalGuestsController.dispose();
+    cleaningFeeController.dispose();
+    cleaningFeeTypeController.dispose();
+    maintenanceFeeController.dispose();
+    maintenanceFeeTypeController.dispose();
+    additionalGeneralFeeController.dispose();
+    additionalGeneralFeeTypeController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +175,7 @@ class PricingWidget extends StatelessWidget {
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                     ],
                     keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+                        const TextInputType.numberWithOptions(decimal: true),
                     textInputAction: TextInputAction.next,
                   ),
                 ),
@@ -179,7 +206,7 @@ class PricingWidget extends StatelessWidget {
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                     ],
                     keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+                        const TextInputType.numberWithOptions(decimal: true),
                     textInputAction: TextInputAction.next,
                   ),
                 ),
@@ -202,5 +229,40 @@ class PricingWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  Pricing getApiData() {
+    return Pricing(
+      currency: currencyController.text.trim(),
+      totalPerDay: num.tryParse(totalPerDayController.text.trim()),
+      cleaning: Fee(
+        fee: num.tryParse(cleaningFeeController.text.trim()),
+        type: cleaningFeeTypeController.text.trim(),
+      ),
+      additional: Fee(
+        fee: num.tryParse(additionalGeneralFeeController.text.trim()),
+        type: additionalGeneralFeeTypeController.text.trim(),
+      ),
+      maintenance: Fee(
+        fee: num.tryParse(maintenanceFeeController.text.trim()),
+        type: maintenanceFeeTypeController.text.trim(),
+      ),
+    );
+  }
+
+  @override
+  String? getError() {
+    return null;
+  }
+
+  @override
+  bool validate() {
+    return formKey.currentState?.validate() == true;
+  }
+
+  @override
+  int additionalGuests() {
+    return int.tryParse(additionalGuestsController.text.trim()) ?? super.additionalGuests();
   }
 }

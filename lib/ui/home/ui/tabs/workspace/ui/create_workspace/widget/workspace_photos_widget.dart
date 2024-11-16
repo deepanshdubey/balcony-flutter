@@ -1,17 +1,46 @@
+import 'dart:io';
+
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/widget/app_image.dart';
 import 'package:balcony/widget/image_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+abstract class BaseState<T extends StatefulWidget> extends State<T> {
+  /// Abstract method for form validation
+  bool validate();
+
+  /// Abstract method to show error messages
+  String? getError();
+
+  dynamic getApiData();
+
+  int additionalGuests() {
+    return 0;
+  }
+
+  bool isIndoor() {
+    return false;
+  }
+
+  bool isOutdoor() {
+    return false;
+  }
+
+  bool isWorkspaceStyle() {
+    return false;
+  }
+
+}
+
 class WorkspacePhotosWidget extends StatefulWidget {
   const WorkspacePhotosWidget({super.key});
 
   @override
-  State<WorkspacePhotosWidget> createState() => _WorkspacePhotosWidgetState();
+  State<WorkspacePhotosWidget> createState() => WorkspacePhotosWidgetState();
 }
 
-class _WorkspacePhotosWidgetState extends State<WorkspacePhotosWidget> {
+class WorkspacePhotosWidgetState extends BaseState<WorkspacePhotosWidget> {
   List<String?> userSelectedImages = List.generate(
     3,
     (index) => null,
@@ -101,7 +130,7 @@ class _WorkspacePhotosWidgetState extends State<WorkspacePhotosWidget> {
                     ),
                     6.w.horizontalSpace,
                     Text(
-                      userSelectedImages[index] != null ? 'replace' : 'add',
+                      userSelectedImages[index] != null ? 'update' : 'add',
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontSize: 14.spMin,
                       ),
@@ -112,5 +141,29 @@ class _WorkspacePhotosWidgetState extends State<WorkspacePhotosWidget> {
             ))
       ],
     );
+  }
+
+  @override
+  bool validate() {
+    bool isNotValid = userSelectedImages.any((element) => element == null);
+    return !isNotValid;
+  }
+
+  @override
+  List<File> getApiData() {
+    return userSelectedImages
+        .map(
+          (e) => File(e!),
+        )
+        .toList();
+  }
+
+  @override
+  String? getError() {
+    return userSelectedImages.any(
+      (element) => element == null,
+    )
+        ? "please select workspace photos"
+        : null;
   }
 }

@@ -99,7 +99,7 @@ class Geocode {
 @JsonSerializable()
 class Pricing {
   final String? currency;
-  final int? totalPerDay;
+  final num? totalPerDay;
   final Fee? cleaning;
   final Fee? maintenance;
   final Fee? additional;
@@ -127,7 +127,7 @@ class Pricing {
 
 @JsonSerializable()
 class Fee {
-  final int? fee;
+  final num? fee;
   final String? type;
 
   Fee({

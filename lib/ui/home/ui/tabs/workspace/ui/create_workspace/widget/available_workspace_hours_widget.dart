@@ -1,4 +1,6 @@
+import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/ui/home/ui/tabs/workspace/ui/create_workspace/model/availability_slot_item.dart';
+import 'package:balcony/ui/home/ui/tabs/workspace/ui/create_workspace/widget/workspace_photos_widget.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/widget/app_dropdown_field.dart';
@@ -14,7 +16,7 @@ class AvailableWorkspaceHoursWidget extends StatefulWidget {
 }
 
 class _AvailableWorkspaceHoursWidgetState
-    extends State<AvailableWorkspaceHoursWidget> {
+    extends BaseState<AvailableWorkspaceHoursWidget> {
   late List<AvailabilitySlotItem> slots;
   late List<String> allSlots;
 
@@ -125,16 +127,69 @@ class _AvailableWorkspaceHoursWidgetState
         Expanded(
             flex: 5,
             child: AppDropdownField(
-              controller: item.startTimeController,
+              controller: item.endTimeController,
               label: "am / pm",
               hintText: "1..",
               items: allSlots,
               itemLabel: (p0) => p0,
               onItemSelected: (p0) {
-                item.startTime = allSlots.indexOf(p0).toString();
+                item.endTime = allSlots.indexOf(p0).toString();
               },
             )),
       ],
     );
+  }
+
+  @override
+  Times getApiData() {
+    return Times(
+      sunday: getDayTimeForIndex(0),
+      monday: getDayTimeForIndex(1),
+      tuesday: getDayTimeForIndex(2),
+      wednesday: getDayTimeForIndex(3),
+      thursday: getDayTimeForIndex(4),
+      friday: getDayTimeForIndex(5),
+      saturday: getDayTimeForIndex(6),
+    );
+  }
+
+  DayTime getDayTimeForIndex(int index) {
+    return DayTime(
+      startTime: slots[index].startTimeController.text.trim(),
+      endTime: slots[index].endTimeController.text.trim(),
+    );
+  }
+
+  @override
+  String? getError() {
+    bool isAtLeastOneFilled = slots.any(
+      (element) => element.isChecked == true,
+    );
+    List<AvailabilitySlotItem> checked = slots
+        .where(
+          (element) => element.isChecked,
+        )
+        .toList();
+    for (var element in checked) {
+      if (element.startTimeController.text.isEmpty) {
+        return 'please select start time for ${element.day}';
+      }
+      if (element.endTimeController.text.isEmpty) {
+        return 'please select end time for ${element.day}';
+      }
+      if (int.parse(element.startTime ?? "0") >
+          int.parse(element.endTime ?? "0")) {
+        return '${element.day} : start cannot be greater than end time';
+      }
+    }
+
+    return !isAtLeastOneFilled
+        ? "please select at least one available workspace hours"
+        : null;
+  }
+
+  @override
+  bool validate() {
+    return getError() == null;
   }
 }

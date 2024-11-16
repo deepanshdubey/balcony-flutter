@@ -1,5 +1,7 @@
+import 'package:balcony/core/locator/locator.dart';
 import 'package:balcony/generated/assets.dart';
 import 'package:balcony/ui/home/ui/tabs/workspace/ui/create_workspace/model/amenities_item.dart';
+import 'package:balcony/ui/home/ui/tabs/workspace/ui/create_workspace/widget/workspace_photos_widget.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/widget/app_image.dart';
 import 'package:balcony/widget/app_text_field.dart';
@@ -21,7 +23,8 @@ class WorkspaceAmenitiesWidget extends StatefulWidget {
       _WorkspaceAmenitiesWidgetState();
 }
 
-class _WorkspaceAmenitiesWidgetState extends State<WorkspaceAmenitiesWidget> {
+class _WorkspaceAmenitiesWidgetState
+    extends BaseState<WorkspaceAmenitiesWidget> {
   late String? otherAmenities;
   late TextEditingController otherAmenitiesController;
 
@@ -141,5 +144,34 @@ class _WorkspaceAmenitiesWidgetState extends State<WorkspaceAmenitiesWidget> {
             )
           ],
         ));
+  }
+
+  @override
+  List<String> getApiData() {
+    List<String> checked = widget.amenities
+        .where(
+          (element) => element.isChecked,
+        )
+        .map(
+          (e) => e.name,
+        )
+        .toList();
+    if (otherAmenities != null) {
+      checked.add(otherAmenitiesController.text.trim());
+    }
+    for (var element in checked) {
+      logger.i(element);
+    }
+    return checked;
+  }
+
+  @override
+  String? getError() {
+    return null;
+  }
+
+  @override
+  bool validate() {
+    return true;
   }
 }

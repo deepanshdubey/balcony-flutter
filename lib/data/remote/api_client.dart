@@ -75,7 +75,7 @@ abstract class ApiClient {
   @POST("workspace/create")
   @MultiPart()
   Future<CommonData> createWorkspace(
-    @Part(name: "images") List<File> images,
+    @Part(name: "images", contentType: 'image/*') List<File> images,
     @Part(name: "info") Info info,
     @Part(name: "pricing") Pricing pricing,
     @Part(name: "times") Times times,

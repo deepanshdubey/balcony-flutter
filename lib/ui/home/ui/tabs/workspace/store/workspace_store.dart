@@ -1,6 +1,8 @@
+import 'dart:io';
+
 import 'package:balcony/core/locator/locator.dart';
+import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
-import 'package:balcony/data/model/response/workspace_detail_data.dart';
 import 'package:balcony/data/repository/workspace_repository.dart';
 import 'package:mobx/mobx.dart';
 
@@ -12,9 +14,11 @@ abstract class _WorkspaceStoreBase with Store {
   @observable
   List<WorkspaceData>? workspaceResponse;
 
-
   @observable
   WorkspaceData? workspaceDetailsResponse;
+
+  @observable
+  CommonData? createWorkSpaceDetailsResponse;
 
   @observable
   bool isLoading = false;
@@ -41,8 +45,7 @@ abstract class _WorkspaceStoreBase with Store {
           limit: limit,
           includeHost: includeHost);
       if (response.isSuccess) {
-        workspaceResponse =
-            response.data?.data?.result ?? [];
+        workspaceResponse = response.data?.data?.result ?? [];
       } else {
         errorMessage = response.error!.message;
       }
@@ -55,19 +58,44 @@ abstract class _WorkspaceStoreBase with Store {
     }
   }
 
-
   @action
-  Future getWorkspaceDetail(
-      {String? id,
-   }) async {
+  Future getWorkspaceDetail({
+    String? id,
+  }) async {
     try {
       errorMessage = null;
       isLoading = true;
-      final response = await workspaceRepository.getWorkspaceDetail(
-         id: id);
+      final response = await workspaceRepository.getWorkspaceDetail(id: id);
       if (response.isSuccess) {
-        workspaceDetailsResponse =
-            response.data;
+        workspaceDetailsResponse = response.data;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future createWorkSpace(
+    List<File> images,
+    Info info,
+    Pricing pricing,
+    Times times,
+    Other other,
+    List<String> amenities,
+  ) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await workspaceRepository.createWorkspace(
+          images, info, pricing, times, other, amenities);
+      if (response.isSuccess) {
+        createWorkSpaceDetailsResponse = response.data;
       } else {
         errorMessage = response.error!.message;
       }

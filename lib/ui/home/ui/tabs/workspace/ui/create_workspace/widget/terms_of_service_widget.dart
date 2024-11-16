@@ -1,3 +1,4 @@
+import 'package:balcony/ui/home/ui/tabs/workspace/ui/create_workspace/widget/workspace_photos_widget.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,7 @@ class TermsOfServiceWidget extends StatefulWidget {
   State<TermsOfServiceWidget> createState() => _TermsOfServiceWidgetState();
 }
 
-class _TermsOfServiceWidgetState extends State<TermsOfServiceWidget> {
+class _TermsOfServiceWidgetState extends BaseState<TermsOfServiceWidget> {
   bool firstTerm = false, secondTerm = false;
 
   @override
@@ -109,5 +110,20 @@ class _TermsOfServiceWidgetState extends State<TermsOfServiceWidget> {
         ],
       ),
     );
+  }
+
+  @override
+  getApiData() {
+    return null;
+  }
+
+  @override
+  String? getError() {
+    return validate() ? null : 'please agree to terms of service';
+  }
+
+  @override
+  bool validate() {
+    return firstTerm && secondTerm;
   }
 }
