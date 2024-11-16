@@ -2,16 +2,16 @@ import 'package:auto_route/annotations.dart';
 import 'package:balcony/core/alert/alert_manager.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/address_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/amenities_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/photos_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/short_summary_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/terms_of_service_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/model/amenities_item.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/available_workspace_hours_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/hosting_space_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/pricing_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/short_summary_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/terms_of_service_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/workspace_amenities_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/workspace_info_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/workspace_photos_widget.dart';
 import 'package:balcony/widget/app_back_button.dart';
 import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -86,11 +86,11 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
                     children: [
                       title(),
                       divider(),
-                      WorkspacePhotosWidget(
+                      PhotosWidget(
                         key: photosKey,
                       ),
                       30.h.verticalSpace,
-                      WorkspaceInfoWidget(
+                      AddressWidget(
                         key: workspaceInfoKey,
                       ),
                       30.h.verticalSpace,
@@ -111,7 +111,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
                         key: hostingSpaceKey,
                       ),
                       30.h.verticalSpace,
-                      WorkspaceAmenitiesWidget(
+                      AmenitiesWidget(
                           key: amenitiesKey, amenities: AmenitiesItem.preset()),
                       divider(),
                       TermsOfServiceWidget(

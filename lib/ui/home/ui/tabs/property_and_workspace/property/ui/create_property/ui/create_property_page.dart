@@ -2,16 +2,16 @@ import 'package:auto_route/annotations.dart';
 import 'package:balcony/core/alert/alert_manager.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/address_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/amenities_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/photos_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/short_summary_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/terms_of_service_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/model/amenities_item.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/available_workspace_hours_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/hosting_space_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/pricing_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/short_summary_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/terms_of_service_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/workspace_amenities_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/workspace_info_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/workspace_photos_widget.dart';
 import 'package:balcony/widget/app_back_button.dart';
 import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +29,7 @@ class CreatePropertyPage extends StatefulWidget {
 class _CreatePropertyPageState extends State<CreatePropertyPage> {
   ThemeData get theme => Theme.of(context);
 
-  late GlobalKey<BaseState> workspaceInfoKey;
+  late GlobalKey<BaseState> properyAddressKey;
   late GlobalKey<BaseState> pricingKey;
   late GlobalKey<BaseState> photosKey;
   late GlobalKey<BaseState> availableWorkspaceHoursKey;
@@ -41,7 +41,7 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
 
   @override
   void initState() {
-    workspaceInfoKey = GlobalKey<BaseState>();
+    properyAddressKey = GlobalKey<BaseState>();
     pricingKey = GlobalKey<BaseState>();
     photosKey = GlobalKey<BaseState>();
     availableWorkspaceHoursKey = GlobalKey<BaseState>();
@@ -54,7 +54,7 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
 
   @override
   void dispose() {
-    workspaceInfoKey.currentState?.dispose();
+    properyAddressKey.currentState?.dispose();
     availableWorkspaceHoursKey.currentState?.dispose();
     photosKey.currentState?.dispose();
     pricingKey.currentState?.dispose();
@@ -86,17 +86,20 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
                     children: [
                       title(),
                       divider(),
-                      WorkspacePhotosWidget(
+                      PhotosWidget(
                         key: photosKey,
+                        isWorkspace: false,
                       ),
                       30.h.verticalSpace,
-                      WorkspaceInfoWidget(
-                        key: workspaceInfoKey,
+                      AddressWidget(
+                        key: properyAddressKey,
+                        isWorkSpace: false,
                       ),
                       30.h.verticalSpace,
                       ShortSummaryWidget(
                         formKey: GlobalKey(),
                         summaryController: summaryController,
+                        isWorkspace: false,
                       ),
                       30.h.verticalSpace,
                       PricingWidget(
@@ -111,8 +114,11 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
                         key: hostingSpaceKey,
                       ),
                       30.h.verticalSpace,
-                      WorkspaceAmenitiesWidget(
-                          key: amenitiesKey, amenities: AmenitiesItem.preset()),
+                      AmenitiesWidget(
+                        key: amenitiesKey,
+                        isWorkspace: false,
+                        amenities: AmenitiesItem.preset(),
+                      ),
                       divider(),
                       TermsOfServiceWidget(
                         key: termsOfServiceKey,
@@ -165,7 +171,7 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
     if (validate()) {
       store.createWorkSpace(
         photosKey.currentState!.getApiData(),
-        workspaceInfoKey.currentState!.getApiData(),
+        properyAddressKey.currentState!.getApiData(),
         pricingKey.currentState!.getApiData(),
         availableWorkspaceHoursKey.currentState?.getApiData()!,
         Other(
@@ -183,7 +189,7 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
   bool validate() {
     for (var element in [
       photosKey,
-      workspaceInfoKey,
+      properyAddressKey,
       pricingKey,
       availableWorkspaceHoursKey,
       hostingSpaceKey,

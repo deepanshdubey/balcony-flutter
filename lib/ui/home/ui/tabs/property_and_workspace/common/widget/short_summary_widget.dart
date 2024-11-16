@@ -1,14 +1,16 @@
 import 'package:balcony/values/extensions/context_ext.dart';
-import 'package:balcony/widget/app_dropdown_field.dart';
 import 'package:balcony/widget/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ShortSummaryWidget extends StatelessWidget {
+  final bool isWorkspace;
+
   const ShortSummaryWidget({
     super.key,
     required this.formKey,
     required this.summaryController,
+    this.isWorkspace = true,
   });
 
   final GlobalKey<FormState> formKey;
@@ -31,7 +33,7 @@ class ShortSummaryWidget extends StatelessWidget {
           children: [
             16.h.verticalSpace,
             Text(
-              "short summary about the workspace  ",
+              isWorkspace ? "short summary about the workspace  ": 'short summary about the property rental',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w500,
                     fontSize: 24.spMin,
@@ -48,7 +50,6 @@ class ShortSummaryWidget extends StatelessWidget {
               keyboardType: TextInputType.text,
               textInputAction: TextInputAction.next,
             ),
-
             16.h.verticalSpace,
           ],
         ),

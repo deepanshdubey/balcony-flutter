@@ -7,16 +7,16 @@ import 'package:balcony/widget/image_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+class PhotosWidget extends StatefulWidget {
+  final bool isWorkspace;
 
-
-class WorkspacePhotosWidget extends StatefulWidget {
-  const WorkspacePhotosWidget({super.key});
+  const PhotosWidget({super.key, this.isWorkspace = true});
 
   @override
-  State<WorkspacePhotosWidget> createState() => WorkspacePhotosWidgetState();
+  State<PhotosWidget> createState() => PhotosWidgetState();
 }
 
-class WorkspacePhotosWidgetState extends BaseState<WorkspacePhotosWidget> {
+class PhotosWidgetState extends BaseState<PhotosWidget> {
   List<String?> userSelectedImages = List.generate(
     3,
     (index) => null,
@@ -37,23 +37,23 @@ class WorkspacePhotosWidgetState extends BaseState<WorkspacePhotosWidget> {
         children: [
           16.h.verticalSpace,
           Text(
-            "property photos*",
+            widget.isWorkspace ? "workspace photos*" : "property photos*",
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w500,
               fontSize: 24.spMin,
             ),
           ),
           16.h.verticalSpace,
-          workspacePicker(0),
+          photoPicker(0),
           12.verticalSpace,
           Row(
             children: [
               Expanded(
-                child: workspacePicker(1),
+                child: photoPicker(1),
               ),
               6.w.horizontalSpace,
               Expanded(
-                child: workspacePicker(2),
+                child: photoPicker(2),
               ),
             ],
           ),
@@ -63,7 +63,7 @@ class WorkspacePhotosWidgetState extends BaseState<WorkspacePhotosWidget> {
     );
   }
 
-  Widget workspacePicker(int index) {
+  Widget photoPicker(int index) {
     return Stack(
       children: [
         Container(
@@ -139,7 +139,7 @@ class WorkspacePhotosWidgetState extends BaseState<WorkspacePhotosWidget> {
     return userSelectedImages.any(
       (element) => element == null,
     )
-        ? "please select workspace photos"
+        ? "please select ${widget.isWorkspace ? 'workspace' : 'property'} photos"
         : null;
   }
 }

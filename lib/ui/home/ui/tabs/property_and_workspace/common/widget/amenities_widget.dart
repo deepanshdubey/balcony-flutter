@@ -8,23 +8,23 @@ import 'package:balcony/widget/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class WorkspaceAmenitiesWidget extends StatefulWidget {
+class AmenitiesWidget extends StatefulWidget {
+  final bool isWorkspace;
   final List<AmenitiesItem> amenities;
   final String? otherAmenities;
 
-  const WorkspaceAmenitiesWidget({
+  const AmenitiesWidget({
     super.key,
     required this.amenities,
     this.otherAmenities,
+    this.isWorkspace = true,
   });
 
   @override
-  State<WorkspaceAmenitiesWidget> createState() =>
-      _WorkspaceAmenitiesWidgetState();
+  State<AmenitiesWidget> createState() => _AmenitiesWidgetState();
 }
 
-class _WorkspaceAmenitiesWidgetState
-    extends BaseState<WorkspaceAmenitiesWidget> {
+class _AmenitiesWidgetState extends BaseState<AmenitiesWidget> {
   late String? otherAmenities;
   late TextEditingController otherAmenitiesController;
 
@@ -50,7 +50,7 @@ class _WorkspaceAmenitiesWidgetState
         children: [
           16.h.verticalSpace,
           Text(
-            "workspace amenities",
+            widget.isWorkspace ? "workspace amenities" : "property amenities",
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w500,
                   fontSize: 24.spMin,
