@@ -42,6 +42,10 @@ class UserData {
   @JsonKey(name: 'isPropertyAccountConnected')
   bool? isPropertyAccountConnected;
 
+  @HiveField(9)
+  @JsonKey(name: 'image')
+  String? image;
+
   UserData({
     this.id,
     this.firstName,
@@ -52,6 +56,7 @@ class UserData {
     this.status,
     this.isWorkspaceAccountConnected,
     this.isPropertyAccountConnected,
+    this.image,
   });
 
   factory UserData.fromJson(Map<String, dynamic> json) =>

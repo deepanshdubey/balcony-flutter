@@ -12,7 +12,7 @@ class PasswordField extends StatefulWidget {
   final void Function(String)? onFieldSubmitted;
 
   const PasswordField({
-    Key? key,
+    super.key,
     required this.controller,
     required this.label,
     this.hintText,
@@ -21,7 +21,7 @@ class PasswordField extends StatefulWidget {
     this.textInputAction,
     this.onFieldSubmitted,
     this.showLabelAboveField = true,
-  }) : super(key: key);
+  });
 
   @override
   State<PasswordField> createState() => _PasswordFieldState();

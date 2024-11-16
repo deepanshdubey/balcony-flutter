@@ -1,4 +1,6 @@
 import 'package:auto_route/annotations.dart';
+import 'package:balcony/core/session/app_session.dart';
+import 'package:balcony/ui/auth/ui/bottomsheet/onboarding_bottomsheet.dart';
 import 'package:balcony/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/more_page.dart';
 import 'package:balcony/ui/home/ui/tabs/property/ui/property_page.dart';
@@ -36,27 +38,32 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Stack(
-      alignment: Alignment.bottomCenter,
-      children: [
-        Container(
-          child: bottomPages.containsKey(selectedTab)
-              ? bottomPages[selectedTab]
-              : UserAndHostPage(
+          alignment: Alignment.bottomCenter,
+          children: [
+            Container(
+              child: bottomPages.containsKey(selectedTab)
+                  ? bottomPages[selectedTab]
+                  : UserAndHostPage(
                   isUserSelected: selectedTab == 'user',
                   onItemSelected: handleNavigation),
-        ),
-        BottomNavigation(
-          onItemSelected: handleNavigation,
-        ),
-      ],
-    ));
+            ),
+            BottomNavigation(
+              onItemSelected: handleNavigation,
+            ),
+          ],
+        ));
   }
 
   void handleNavigation(String s) {
     if (s == "chat") {
       showChatBottomSheet(context);
     } else if (s == "more") {
-      showAppBottomSheet(context, const MorePage());
+      if (session.isLogin) {
+        showAppBottomSheet(context, const MorePage());
+      } else {
+        showOnboardingBottomSheet(context,
+          onSuccess: () => showAppBottomSheet(context, const MorePage()),);
+      }
     } else {
       setState(() {
         selectedTab = s;

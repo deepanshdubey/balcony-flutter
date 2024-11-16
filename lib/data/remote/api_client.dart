@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/pagination_data.dart';
 import 'package:balcony/data/model/response/property_data.dart';
 import 'package:balcony/data/model/response/user_data.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
+import 'package:http_parser/http_parser.dart';
+
 
 import '../model/response/workspace_data.dart';
 
@@ -56,7 +59,7 @@ abstract class ApiClient {
     @Part(name: "lastName") String lastName,
     @Part(name: "email") String email,
     @Part(name: "phone") String phone,
-    @Part(name: "image") File image,
+    @Part(name: "image",contentType: "image/*") File image,
   );
 
   @GET("workspace/all")
@@ -78,6 +81,7 @@ abstract class ApiClient {
     @Part(name: "times") Times times,
     @Part(name: "other") Other other,
     @Part(name: "amenities") List<String> amenities,
+
   );
 
   @GET("property/all")
@@ -90,10 +94,8 @@ abstract class ApiClient {
     @Query("includeHost") bool? includeHost,
   );
 
-
   @GET("/workspace/find/{id}")
   Future<WorkspaceData> getWorkspaceDetails(
-      @Path("id") String id,
-      );
-
+    @Path("id") String id,
+  );
 }

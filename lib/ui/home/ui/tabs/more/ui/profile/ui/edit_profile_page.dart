@@ -42,7 +42,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     var user = session.user;
-    logger.i(user.toJson());
     _formKey = GlobalKey<FormState>();
     firstNameController = TextEditingController(text: user.firstName ?? "");
     lastNameController = TextEditingController(text: user.lastName ?? "");
@@ -133,40 +132,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget _addProfilePic(ThemeData theme) {
     return ImagePickerWidget(
       onImageSelected: (path) {
+        logger.i(path);
         setState(() {
           imagePath = path;
         });
       },
       child: Row(
         children: [
-          imagePath == null
-              ? ClipOval(
-                  child: Image.network(
-                    "https://www.homework.ws/${session.user.id}",
-                    height: 50.r,
-                    width: 50.r,
-                    loadingBuilder: (context, child, loadingProgress) =>
-                        const Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                    errorBuilder: (context, error, stackTrace) => AppImage(
-                      radius: 25.r,
-                      file: imagePath,
-                      boxFit: BoxFit.cover,
-                      assetPath: Assets.imagesProfilePlaceholder,
-                    ),
-                    fit: BoxFit.cover,
-                  ),
-                )
-              : AppImage(
-                  radius: 25.r,
-                  file: imagePath,
-                  boxFit: BoxFit.cover,
-                  assetPath: Assets.imagesProfilePlaceholder,
-                ),
+          AppImage(
+            radius: 25.r,
+            file: imagePath,
+            url: imagePath == null ? session.user.image : null,
+            boxFit: BoxFit.cover,
+            assetPath: Assets.imagesProfilePlaceholder,
+          ),
           12.w.horizontalSpace,
           Text(
-            "${imagePath == null ? "add" : "replace"} profile image",
+            "${imagePath == null ? "add" : "update"} profile image",
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w500,
               fontSize: 15.spMin,
@@ -285,7 +267,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         "firstName": firstNameController.text.trim(),
                         "lastName": lastNameController.text.trim(),
                         "email": emailController.text.trim(),
-                        "phone": phoneController.text.trim()
+                        "phone": phoneController.text.trim(),
+                        "image": session.user.image,
                       };
                       authStore.updateProfile(apiRequest);
                     }

@@ -32,7 +32,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
   @override
   void initState() {
     addDisposer();
-    workspaceStore.getWorkspaceDetail(id: widget.workspaceId);
+    workspaceStore.getWorkspaceDetail(id: '67192df5082ac7fd60fa49e2'/*widget.workspaceId*/);
     super.initState();
   }
 
