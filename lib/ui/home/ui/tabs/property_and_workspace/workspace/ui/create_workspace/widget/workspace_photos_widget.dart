@@ -1,37 +1,13 @@
 import 'dart:io';
 
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/widget/app_image.dart';
 import 'package:balcony/widget/image_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-abstract class BaseState<T extends StatefulWidget> extends State<T> {
-  /// Abstract method for form validation
-  bool validate();
 
-  /// Abstract method to show error messages
-  String? getError();
-
-  dynamic getApiData();
-
-  int additionalGuests() {
-    return 0;
-  }
-
-  bool isIndoor() {
-    return false;
-  }
-
-  bool isOutdoor() {
-    return false;
-  }
-
-  bool isWorkspaceStyle() {
-    return false;
-  }
-
-}
 
 class WorkspacePhotosWidget extends StatefulWidget {
   const WorkspacePhotosWidget({super.key});

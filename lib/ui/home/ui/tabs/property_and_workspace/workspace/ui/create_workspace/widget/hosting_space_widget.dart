@@ -1,4 +1,4 @@
-import 'package:balcony/ui/home/ui/tabs/workspace/ui/create_workspace/widget/workspace_photos_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

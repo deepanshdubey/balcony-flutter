@@ -1,5 +1,5 @@
 import 'package:balcony/data/model/response/workspace_data.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/ui/create_workspace/widget/workspace_photos_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/values/validators.dart';
 import 'package:balcony/widget/app_dropdown_field.dart';

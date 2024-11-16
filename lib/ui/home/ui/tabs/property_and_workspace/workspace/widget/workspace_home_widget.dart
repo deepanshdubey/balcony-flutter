@@ -1,10 +1,11 @@
 import 'package:balcony/core/alert/alert_manager.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/store/workspace_store.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/widget/workspace_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:balcony/ui/home/widget/home_listing_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
+
+import 'workspace_widget.dart';
 
 class WorkspaceHomeWidget extends StatefulWidget {
   const WorkspaceHomeWidget({super.key});

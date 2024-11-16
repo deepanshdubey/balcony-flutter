@@ -1,6 +1,6 @@
 import 'package:balcony/core/alert/alert_manager.dart';
-import 'package:balcony/ui/home/ui/tabs/property/store/property_store.dart';
-import 'package:balcony/ui/home/ui/tabs/property/widget/property_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/widget/property_widget.dart';
 import 'package:balcony/ui/home/widget/home_listing_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';

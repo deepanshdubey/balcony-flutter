@@ -1,6 +1,6 @@
 import 'package:balcony/data/model/response/workspace_data.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/ui/create_workspace/model/availability_slot_item.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/ui/create_workspace/widget/workspace_photos_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/model/availability_slot_item.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/widget/app_dropdown_field.dart';

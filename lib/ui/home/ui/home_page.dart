@@ -3,11 +3,12 @@ import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/ui/auth/ui/bottomsheet/onboarding_bottomsheet.dart';
 import 'package:balcony/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/more_page.dart';
-import 'package:balcony/ui/home/ui/tabs/property/ui/property_page.dart';
 import 'package:balcony/ui/home/ui/tabs/user_and_host/ui/user_and_host_page.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/ui/workspace_page.dart';
 import 'package:balcony/ui/home/widget/bottom_navigation.dart';
 import 'package:flutter/material.dart';
+
+import 'tabs/property_and_workspace/property/ui/property_page.dart';
+import 'tabs/property_and_workspace/workspace/ui/workspace_page.dart';
 
 @RoutePage()
 class HomePage extends StatefulWidget {
@@ -38,20 +39,20 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            Container(
-              child: bottomPages.containsKey(selectedTab)
-                  ? bottomPages[selectedTab]
-                  : UserAndHostPage(
+      alignment: Alignment.bottomCenter,
+      children: [
+        Container(
+          child: bottomPages.containsKey(selectedTab)
+              ? bottomPages[selectedTab]
+              : UserAndHostPage(
                   isUserSelected: selectedTab == 'user',
                   onItemSelected: handleNavigation),
-            ),
-            BottomNavigation(
-              onItemSelected: handleNavigation,
-            ),
-          ],
-        ));
+        ),
+        BottomNavigation(
+          onItemSelected: handleNavigation,
+        ),
+      ],
+    ));
   }
 
   void handleNavigation(String s) {
@@ -61,8 +62,10 @@ class _HomePageState extends State<HomePage> {
       if (session.isLogin) {
         showAppBottomSheet(context, const MorePage());
       } else {
-        showOnboardingBottomSheet(context,
-          onSuccess: () => showAppBottomSheet(context, const MorePage()),);
+        showOnboardingBottomSheet(
+          context,
+          onSuccess: () => showAppBottomSheet(context, const MorePage()),
+        );
       }
     } else {
       setState(() {

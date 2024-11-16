@@ -2,10 +2,10 @@ import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:balcony/core/alert/alert_manager.dart';
 import 'package:balcony/generated/assets.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/store/workspace_store.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/ui/workspace_details/booking_calender.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/ui/workspace_details/custom_dropdown.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/ui/workspace_payment/workspace_payment_page.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/workspace_details/booking_calender.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/workspace_details/custom_dropdown.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/workspace_payment/workspace_payment_page.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
 import 'package:balcony/widget/app_image.dart';
@@ -32,7 +32,8 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
   @override
   void initState() {
     addDisposer();
-    workspaceStore.getWorkspaceDetail(id: '67192df5082ac7fd60fa49e2'/*widget.workspaceId*/);
+    workspaceStore.getWorkspaceDetail(
+        id: '67192df5082ac7fd60fa49e2' /*widget.workspaceId*/);
     super.initState();
   }
 
@@ -146,7 +147,8 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                   showModalBottomSheet(
                     context: context,
 
-                    isScrollControlled: true, // Makes it a full-height bottom sheet
+                    isScrollControlled: true,
+                    // Makes it a full-height bottom sheet
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.vertical(
                         top: Radius.circular(20),
@@ -233,7 +235,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                             ?.copyWith(
                                 fontSize: 15.spMin,
                                 color: appColor.primaryColor,
-                        fontWeight: FontWeight.w500),
+                                fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),

@@ -1,16 +1,17 @@
 import 'package:auto_route/annotations.dart';
 import 'package:balcony/core/alert/alert_manager.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/store/workspace_store.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/ui/create_workspace/model/amenities_item.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/ui/create_workspace/widget/available_workspace_hours_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/ui/create_workspace/widget/hosting_space_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/ui/create_workspace/widget/pricing_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/ui/create_workspace/widget/short_summary_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/ui/create_workspace/widget/terms_of_service_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/ui/create_workspace/widget/workspace_amenities_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/ui/create_workspace/widget/workspace_info_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/workspace/ui/create_workspace/widget/workspace_photos_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/model/amenities_item.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/available_workspace_hours_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/hosting_space_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/pricing_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/short_summary_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/terms_of_service_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/workspace_amenities_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/workspace_info_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/workspace_photos_widget.dart';
 import 'package:balcony/widget/app_back_button.dart';
 import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -18,14 +19,14 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 @RoutePage()
-class CreateWorkspacePage extends StatefulWidget {
-  const CreateWorkspacePage({super.key});
+class CreatePropertyPage extends StatefulWidget {
+  const CreatePropertyPage({super.key});
 
   @override
-  State<CreateWorkspacePage> createState() => _CreateWorkspacePageState();
+  State<CreatePropertyPage> createState() => _CreatePropertyPageState();
 }
 
-class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
+class _CreatePropertyPageState extends State<CreatePropertyPage> {
   ThemeData get theme => Theme.of(context);
 
   late GlobalKey<BaseState> workspaceInfoKey;
