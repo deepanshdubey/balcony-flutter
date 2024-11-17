@@ -10,9 +10,9 @@ import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/ter
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/widget/lease_duration_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/widget/lease_terms_and_policy_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/widget/processing_fee_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/widget/unit_list_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/model/amenities_item.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/available_workspace_hours_widget.dart';
 import 'package:balcony/widget/app_back_button.dart';
 import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +33,7 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
   late GlobalKey<BaseState> propertyAddressKey;
   late GlobalKey<BaseState> processingFeeKey;
   late GlobalKey<BaseState> photosKey;
-  late GlobalKey<BaseState> availableWorkspaceHoursKey;
+  late GlobalKey<BaseState> unitListKey;
   late GlobalKey<BaseState> leasingTermsKey;
   late GlobalKey<BaseState> amenitiesKey;
   late GlobalKey<BaseState> termsOfServiceKey;
@@ -45,7 +45,7 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
     propertyAddressKey = GlobalKey<BaseState>();
     processingFeeKey = GlobalKey<BaseState>();
     photosKey = GlobalKey<BaseState>();
-    availableWorkspaceHoursKey = GlobalKey<BaseState>();
+    unitListKey = GlobalKey<BaseState>();
     leasingTermsKey = GlobalKey<BaseState>();
     amenitiesKey = GlobalKey<BaseState>();
     termsOfServiceKey = GlobalKey<BaseState>();
@@ -56,7 +56,7 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
   @override
   void dispose() {
     propertyAddressKey.currentState?.dispose();
-    availableWorkspaceHoursKey.currentState?.dispose();
+    unitListKey.currentState?.dispose();
     photosKey.currentState?.dispose();
     processingFeeKey.currentState?.dispose();
     leasingTermsKey.currentState?.dispose();
@@ -101,17 +101,17 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
                         key: processingFeeKey,
                       ),
                       30.h.verticalSpace,
+                      UnitListWidget(
+                        key: unitListKey,
+                      ),
+                      30.h.verticalSpace,
                       ShortSummaryWidget(
                         formKey: GlobalKey(),
                         summaryController: summaryController,
                         isWorkspace: false,
                       ),
                       30.h.verticalSpace,
-                      LeaseDurationWidget(),
-                      30.h.verticalSpace,
-                      AvailableWorkspaceHoursWidget(
-                        key: availableWorkspaceHoursKey,
-                      ),
+                      const LeaseDurationWidget(),
                       30.h.verticalSpace,
                       AmenitiesWidget(
                         key: amenitiesKey,
@@ -176,7 +176,7 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
         photosKey.currentState!.getApiData(),
         propertyAddressKey.currentState!.getApiData(),
         processingFeeKey.currentState!.getApiData(),
-        availableWorkspaceHoursKey.currentState?.getApiData()!,
+        unitListKey.currentState?.getApiData()!,
         Other(
           additionalGuests: processingFeeKey.currentState!.additionalGuests(),
           isCoWorkingWorkspace:
@@ -191,10 +191,10 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
 
   bool validate() {
     for (var element in [
+      unitListKey,
       photosKey,
       propertyAddressKey,
       processingFeeKey,
-      availableWorkspaceHoursKey,
       leasingTermsKey,
       termsOfServiceKey,
     ]) {
