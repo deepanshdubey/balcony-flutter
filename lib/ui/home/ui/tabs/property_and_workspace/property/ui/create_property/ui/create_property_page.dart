@@ -127,7 +127,7 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
                       Observer(builder: (context) {
                         var isLoading = store.isLoading;
                         return PrimaryButton(
-                          text: "add new workspace",
+                          text: "add new property",
                           onPressed: submit,
                           isLoading: isLoading,
                         );

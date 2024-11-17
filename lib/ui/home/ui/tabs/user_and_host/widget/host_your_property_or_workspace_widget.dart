@@ -118,7 +118,7 @@ class HostYourPropertyOrWorkspaceWidget extends StatelessWidget {
                   child: AppOutlinedButton(
                 text: "sign up property",
                 onPressed: () {
-                  navigateToCreateWorkSpace(context);
+                  navigateToCreateProperty(context);
                 },
               )),
             ],
@@ -131,5 +131,9 @@ class HostYourPropertyOrWorkspaceWidget extends StatelessWidget {
 
   void navigateToCreateWorkSpace(BuildContext context) {
     appRouter.push(const CreateWorkspaceRoute());
+  }
+
+  void navigateToCreateProperty(BuildContext context) {
+    appRouter.push(const CreatePropertyRoute());
   }
 }

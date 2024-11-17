@@ -139,7 +139,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
 
   Widget title() {
     return Text(
-      "we need a few information about your workspace.",
+      "we need a few information about your property.",
       style: theme.textTheme.titleLarge?.copyWith(
         fontWeight: FontWeight.w600,
         fontSize: 28.spMin,
