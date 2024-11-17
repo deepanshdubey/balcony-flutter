@@ -7,11 +7,12 @@ import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/ame
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/photos_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/short_summary_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/terms_of_service_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/widget/lease_duration_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/widget/lease_terms_and_policy_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/widget/processing_fee_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/model/amenities_item.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/available_workspace_hours_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/hosting_space_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/pricing_widget.dart';
 import 'package:balcony/widget/app_back_button.dart';
 import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -29,11 +30,11 @@ class CreatePropertyPage extends StatefulWidget {
 class _CreatePropertyPageState extends State<CreatePropertyPage> {
   ThemeData get theme => Theme.of(context);
 
-  late GlobalKey<BaseState> properyAddressKey;
-  late GlobalKey<BaseState> pricingKey;
+  late GlobalKey<BaseState> propertyAddressKey;
+  late GlobalKey<BaseState> processingFeeKey;
   late GlobalKey<BaseState> photosKey;
   late GlobalKey<BaseState> availableWorkspaceHoursKey;
-  late GlobalKey<BaseState> hostingSpaceKey;
+  late GlobalKey<BaseState> leasingTermsKey;
   late GlobalKey<BaseState> amenitiesKey;
   late GlobalKey<BaseState> termsOfServiceKey;
   late TextEditingController summaryController;
@@ -41,11 +42,11 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
 
   @override
   void initState() {
-    properyAddressKey = GlobalKey<BaseState>();
-    pricingKey = GlobalKey<BaseState>();
+    propertyAddressKey = GlobalKey<BaseState>();
+    processingFeeKey = GlobalKey<BaseState>();
     photosKey = GlobalKey<BaseState>();
     availableWorkspaceHoursKey = GlobalKey<BaseState>();
-    hostingSpaceKey = GlobalKey<BaseState>();
+    leasingTermsKey = GlobalKey<BaseState>();
     amenitiesKey = GlobalKey<BaseState>();
     termsOfServiceKey = GlobalKey<BaseState>();
     summaryController = TextEditingController();
@@ -54,11 +55,11 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
 
   @override
   void dispose() {
-    properyAddressKey.currentState?.dispose();
+    propertyAddressKey.currentState?.dispose();
     availableWorkspaceHoursKey.currentState?.dispose();
     photosKey.currentState?.dispose();
-    pricingKey.currentState?.dispose();
-    hostingSpaceKey.currentState?.dispose();
+    processingFeeKey.currentState?.dispose();
+    leasingTermsKey.currentState?.dispose();
     termsOfServiceKey.currentState?.dispose();
     amenitiesKey.currentState?.dispose();
     summaryController.dispose();
@@ -92,8 +93,12 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
                       ),
                       30.h.verticalSpace,
                       AddressWidget(
-                        key: properyAddressKey,
+                        key: propertyAddressKey,
                         isWorkSpace: false,
+                      ),
+                      30.h.verticalSpace,
+                      ProcessingFeeWidget(
+                        key: processingFeeKey,
                       ),
                       30.h.verticalSpace,
                       ShortSummaryWidget(
@@ -102,22 +107,20 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
                         isWorkspace: false,
                       ),
                       30.h.verticalSpace,
-                      PricingWidget(
-                        key: pricingKey,
-                      ),
+                      LeaseDurationWidget(),
                       30.h.verticalSpace,
                       AvailableWorkspaceHoursWidget(
                         key: availableWorkspaceHoursKey,
-                      ),
-                      30.h.verticalSpace,
-                      HostingSpaceWidget(
-                        key: hostingSpaceKey,
                       ),
                       30.h.verticalSpace,
                       AmenitiesWidget(
                         key: amenitiesKey,
                         isWorkspace: false,
                         amenities: AmenitiesItem.preset(),
+                      ),
+                      30.h.verticalSpace,
+                      LeaseTermsAndPolicyWidget(
+                        key: leasingTermsKey,
                       ),
                       divider(),
                       TermsOfServiceWidget(
@@ -145,7 +148,7 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
 
   Widget title() {
     return Text(
-      "we need a few information about your workspace.",
+      "we need a few information about your property.",
       style: theme.textTheme.titleLarge?.copyWith(
         fontWeight: FontWeight.w600,
         fontSize: 28.spMin,
@@ -171,15 +174,15 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
     if (validate()) {
       store.createWorkSpace(
         photosKey.currentState!.getApiData(),
-        properyAddressKey.currentState!.getApiData(),
-        pricingKey.currentState!.getApiData(),
+        propertyAddressKey.currentState!.getApiData(),
+        processingFeeKey.currentState!.getApiData(),
         availableWorkspaceHoursKey.currentState?.getApiData()!,
         Other(
-          additionalGuests: pricingKey.currentState!.additionalGuests(),
+          additionalGuests: processingFeeKey.currentState!.additionalGuests(),
           isCoWorkingWorkspace:
-              hostingSpaceKey.currentState!.isWorkspaceStyle(),
-          isIndoorSpace: hostingSpaceKey.currentState!.isIndoor(),
-          isOutdoorSpace: hostingSpaceKey.currentState!.isOutdoor(),
+              leasingTermsKey.currentState!.isWorkspaceStyle(),
+          isIndoorSpace: leasingTermsKey.currentState!.isIndoor(),
+          isOutdoorSpace: leasingTermsKey.currentState!.isOutdoor(),
         ),
         amenitiesKey.currentState!.getApiData(),
       );
@@ -189,10 +192,10 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
   bool validate() {
     for (var element in [
       photosKey,
-      properyAddressKey,
-      pricingKey,
+      propertyAddressKey,
+      processingFeeKey,
       availableWorkspaceHoursKey,
-      hostingSpaceKey,
+      leasingTermsKey,
       termsOfServiceKey,
     ]) {
       if (!validateAndScrollTo(element)) {

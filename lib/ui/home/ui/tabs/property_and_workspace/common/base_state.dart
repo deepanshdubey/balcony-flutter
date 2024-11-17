@@ -4,6 +4,8 @@ abstract class BaseState<T extends StatefulWidget> extends State<T> {
   /// Abstract method for form validation
   bool validate();
 
+  ThemeData get theme => Theme.of(context);
+
   /// Abstract method to show error messages
   String? getError();
 

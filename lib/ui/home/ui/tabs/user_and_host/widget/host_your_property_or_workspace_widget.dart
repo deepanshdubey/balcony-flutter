@@ -116,11 +116,19 @@ class HostYourPropertyOrWorkspaceWidget extends StatelessWidget {
               12.w.horizontalSpace,
               Expanded(
                   child: AppOutlinedButton(
-                text: "sign up property",
-                onPressed: () {
-                  navigateToCreateProperty(context);
-                },
-              )),
+                      text: "sign up property",
+                      onPressed: () {
+                        if (session.isLogin) {
+                          navigateToCreateProperty(context);
+                        } else {
+                          showOnboardingBottomSheet(
+                            context,
+                            onSuccess: () {
+                              navigateToCreateProperty(context);
+                            },
+                          );
+                        }
+                      })),
             ],
           ),
           100.h.verticalSpace,
