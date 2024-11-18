@@ -1,6 +1,6 @@
 import 'package:balcony/generated/assets.dart';
-import 'package:balcony/ui/home/ui/tabs/user_and_host/widget/pagination_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/user_and_host/widget/property_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/user_home/widget/pagination_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/user_home/widget/property_widget.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/widget/app_image.dart';
 import 'package:flutter/material.dart';

@@ -2,8 +2,9 @@ import 'package:auto_route/annotations.dart';
 import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/ui/auth/ui/bottomsheet/onboarding_bottomsheet.dart';
 import 'package:balcony/ui/home/ui/tabs/chat/ui/chat_page.dart';
+import 'package:balcony/ui/home/ui/tabs/host_home/ui/host_home_page.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/more_page.dart';
-import 'package:balcony/ui/home/ui/tabs/user_and_host/ui/user_and_host_page.dart';
+import 'package:balcony/ui/home/ui/tabs/user_home/ui/user_home_page.dart';
 import 'package:balcony/ui/home/widget/bottom_navigation.dart';
 import 'package:flutter/material.dart';
 
@@ -44,9 +45,9 @@ class _HomePageState extends State<HomePage> {
         Container(
           child: bottomPages.containsKey(selectedTab)
               ? bottomPages[selectedTab]
-              : UserAndHostPage(
-                  isUserSelected: selectedTab == 'user',
-                  onItemSelected: handleNavigation),
+              : selectedTab == 'user'
+                  ? const UserHomePage()
+                  : const HostHomePage(),
         ),
         BottomNavigation(
           onItemSelected: handleNavigation,

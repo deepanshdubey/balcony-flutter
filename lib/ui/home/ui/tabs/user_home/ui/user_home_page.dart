@@ -1,25 +1,21 @@
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/widget/property_home_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/widget/workspace_home_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/user_and_host/widget/host_your_property_or_workspace_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/user_and_host/widget/search_properties_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/user_and_host/widget/search_workspaces_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/user_home/widget/host_your_property_or_workspace_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/user_home/widget/search_properties_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/user_home/widget/search_workspaces_widget.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
 import 'package:balcony/widget/app_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class UserAndHostPage extends StatefulWidget {
-  final Function(String) onItemSelected;
-  final bool isUserSelected;
-
-  const UserAndHostPage(
-      {super.key, required this.isUserSelected, required this.onItemSelected});
+class UserHomePage extends StatefulWidget {
+  const UserHomePage({super.key});
 
   @override
-  State<UserAndHostPage> createState() => _UserAndHostPageState();
+  State<UserHomePage> createState() => _UserHomePageState();
 }
 
-class _UserAndHostPageState extends State<UserAndHostPage> {
+class _UserHomePageState extends State<UserHomePage> {
   int _currentIndex = 0;
 
   void _onTabTapped(int index) {
