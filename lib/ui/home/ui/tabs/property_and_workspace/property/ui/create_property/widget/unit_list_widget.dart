@@ -268,6 +268,7 @@ class _UnitListWidgetState extends BaseState<UnitListWidget> {
         ),
         Container(
           margin: EdgeInsets.only(top: 12.h),
+          height: 1.h,
           color: theme.primaryColor.withOpacity(.2),
         )
       ],

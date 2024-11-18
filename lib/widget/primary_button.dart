@@ -6,6 +6,7 @@ class PrimaryButton extends StatelessWidget {
   final VoidCallback onPressed;
   final bool isLoading, enabled;
   final Color? backgroundColor;
+  final Widget? icon;
 
   const PrimaryButton({
     super.key,
@@ -14,6 +15,7 @@ class PrimaryButton extends StatelessWidget {
     this.isLoading = false,
     this.enabled = true,
     this.backgroundColor,
+    this.icon,
   });
 
   @override
@@ -21,7 +23,7 @@ class PrimaryButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: isLoading ? null : onPressed,
       style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 20.w),
+        padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 16.w),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.r),
         ),
@@ -38,15 +40,32 @@ class PrimaryButton extends StatelessWidget {
                 strokeWidth: 2.r,
               ),
             )
-          : Text(
-              text,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                  fontSize: 14.spMin),
-            ),
+          : icon != null
+              ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    icon!,
+                    8.w.horizontalSpace,
+                    Text(
+                      text,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                          fontSize: 14.spMin),
+                    ),
+                  ],
+                )
+              : Text(
+                  text,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                      fontSize: 14.spMin),
+                ),
     );
   }
 }
