@@ -1,13 +1,16 @@
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/generated/assets.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/workspace_details/booking_calender.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/workspace_details/custom_dropdown.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/workspace_payment/workspace_payment_page.dart';
 import 'package:balcony/values/colors.dart';
+import 'package:balcony/values/extensions/assets_helper.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
+import 'package:balcony/widget/app_back_button.dart';
 import 'package:balcony/widget/app_image.dart';
 import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +30,8 @@ class WorkspaceDetailPage extends StatefulWidget {
 
 class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
   List<ReactionDisposer>? disposers;
+  ValueNotifier<bool> dateSelected = ValueNotifier(false);
+  String? selectedDate ;
 
   final workspaceStore = WorkspaceStore();
 
@@ -34,7 +39,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
   void initState() {
     addDisposer();
     workspaceStore.getWorkspaceDetail(
-        id: '67192df5082ac7fd60fa49e2' /*widget.workspaceId*/);
+        id: widget.workspaceId);
     super.initState();
   }
 
@@ -70,7 +75,6 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(automaticallyImplyLeading: true),
       body: SingleChildScrollView(
         child: Observer(
           builder: (context) {
@@ -86,9 +90,13 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        25.verticalSpace,
+                        const AppBackButton(
+                          text: "back",
+                        ),
                         20.verticalSpace,
                         AppImage(
-                          assetPath: data?.images?.first ??
+                          url: data?.images?.first ??
                               Assets.fontsHostYourWorkspaceOrProperty,
                           height: 173.h,
                           width: double.infinity,
@@ -107,10 +115,11 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                                             right: index == 0 ? 12.w : 0,
                                           ),
                                           child: AppImage(
-                                            assetPath: data?.images?[index + 1],
+                                            url: data.images?[index + 1],
                                             height: 173.h,
                                             boxFit: BoxFit.cover,
                                             radius: 10,
+                                            color: appColor.primaryColor,
                                           ),
                                         ),
                                       ),
@@ -140,29 +149,38 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                                 fontSize: 11.spMax,
                               ),
                             ),
+                            40.horizontalSpace,
+                            Image.asset(
+                              Assets.imagesShare,
+                              height: 16.h,
+                              width: 16.w,
+                              fit: BoxFit.cover,
+                            )
                           ],
                         ),
                         29.verticalSpace,
-                        BookingCalendar(),
+                        BookingCalendar(
+                          onDateSelected: (String onDateSelected) {
+                            selectedDate = onDateSelected;
+                            dateSelected.value = true;
+                          },
+                        ),
                         51.verticalSpace,
+                        ValueListenableBuilder<bool>(
+                          valueListenable: dateSelected,
+                          builder: (context, value, child) {
+                            return !value
+                                ? Text(
+                              "Please select a date",
+                              style: TextStyle(color: Colors.red),
+                            )
+                                : SizedBox.shrink();
+                          },
+                        ),
                         PrimaryButton(
                           text: "Book Workspace",
-                          onPressed: () {
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(20),
-                                ),
-                              ),
-                              builder: (BuildContext context) {
-                                return FractionallySizedBox(
-                                  heightFactor: 0.8,
-                                  child: WorkspacePaymentPage( workspaceData: data,),
-                                );
-                              },
-                            );
+                          onPressed:() {
+                            openBottomSheet(context , data);
                           },
                         ),
                         55.verticalSpace,
@@ -195,16 +213,44 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                           thickness: 0.5,
                         ),
                         16.verticalSpace,
+                        Row(
+                          children: [
+                            Text(
+                              "chat",
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                  fontSize: 14.spMin,
+                                  color: appColor.primaryColor,
+                                  decoration: TextDecoration.underline),
+                            ),
+                            16.horizontalSpace,
+                            Container(
+                              color: const Color(0xff005451),
+                              height: 20.h,
+                              width: 1.w,
+                            ),
+                            16.horizontalSpace,
+                            Text(
+                              "call",
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontSize: 14.spMin,
+                                decoration: TextDecoration.underline,
+                                color: appColor.primaryColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                        25.verticalSpace,
                         CustomDropdown(
                           title: 'Locations',
-                          items: data?.geocode != null
+                          items: data?.info?.address != null
                               ? [
                                   {
                                     'icon': Icons.location_pin,
-                                    'title': "Unknown"
+                                    'title': data?.info?.address
                                   }
                                 ]
                               : [],
+                          visibleItem: 1,
                         ),
                         18.verticalSpace,
                         CustomDropdown(
@@ -216,11 +262,20 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                                       })
                                   .toList() ??
                               [],
+                          visibleItem: 9,
+                        ),
+                        18.verticalSpace,
+                        CustomDropdown(
+                          title: 'Hours of Service (Time Frame)',
+                          items:
+                              TimesHelper.mapTimesToDropdownItems(data?.times),
+                          visibleItem: 3,
                         ),
                         18.verticalSpace,
                         CustomDropdown(
                           title: 'Facilities',
                           items: facilities,
+                          visibleItem: 3,
                         ),
                         23.verticalSpace,
                         // Workspace Overview
@@ -249,7 +304,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                                 ),
                                 30.verticalSpace,
                                 Text(
-                                  "No description available.",
+                                  data?.info?.summary ?? "",
                                   maxLines: 70,
                                   overflow: TextOverflow.ellipsis,
                                   style: theme.textTheme.titleMedium?.copyWith(
@@ -311,6 +366,40 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
           );
         }
       }),
+    );
+  }
+
+  void openBottomSheet(BuildContext context , WorkspaceData? data) {
+    if (!dateSelected.value) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Please select a date first.",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return; // Do not proceed if the date is not selected
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          heightFactor: 0.8,
+          child: WorkspacePaymentPage(
+            workspaceData: data,
+            selectedData: selectedDate,
+          ),
+        );
+      },
     );
   }
 }

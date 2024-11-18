@@ -29,6 +29,10 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: WorkspaceDetailRoute.page),
         AutoRoute(page: WorkspacePaymentRoute.page),
         AutoRoute(page: WorkspaceDetailRoute.page),
+        AutoRoute(page: PlansRoute.page),
+        AutoRoute(page: PropertyDetailRoute.page),
+        AutoRoute(page: CreateWorkspaceRoute.page),
+        AutoRoute(page: WalletRoute.page),
         AutoRoute(page: CreateWorkspaceRoute.page),
         AutoRoute(page: CreatePropertyRoute.page)
       ];

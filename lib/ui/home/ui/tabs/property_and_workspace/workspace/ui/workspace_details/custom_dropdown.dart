@@ -1,12 +1,15 @@
+import 'package:balcony/generated/assets.dart';
 import 'package:balcony/values/colors.dart';
+import 'package:balcony/values/extensions/assets_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomDropdown extends StatefulWidget {
   final String title;
   final List<Map<String, dynamic>> items;
+  final int visibleItem ;
 
-  CustomDropdown({required this.title, required this.items});
+  CustomDropdown({required this.title, required this.items, required this.visibleItem});
 
   @override
   _CustomDropdownState createState() => _CustomDropdownState();
@@ -15,6 +18,8 @@ class CustomDropdown extends StatefulWidget {
 class _CustomDropdownState extends State<CustomDropdown> {
   @override
   Widget build(BuildContext context) {
+     int maxVisibleItems = widget.visibleItem; // Maximum items visible before scrolling
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.r),
@@ -32,48 +37,55 @@ class _CustomDropdownState extends State<CustomDropdown> {
               ),
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   widget.title,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.normal,
-                        fontSize: 12.spMin,
-                      ),
-                ),
-                Icon(
-                  Icons.arrow_drop_down,
-                  color: appColor.primaryColor,
-                ),
+                    fontWeight: FontWeight.normal,
+                    fontSize: 12.spMin,
+                  ),
+                ),8.horizontalSpace,
+                Image.asset(Assets.imagesChevronsUpDown,height: 12.r,width: 12.r,)
               ],
             ),
           ),
 
-          Column(
-            children: widget.items.map((item) {
-              return Column(
-                children: [
-                  ListTile(
-                    leading: Icon(
-                      item['icon'],
-                      size: 16.r,
-                      color: appColor.primaryColor,
-                    ),
-                    title: Text(
-                      item['title'],
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          // Item List
+          SizedBox(
+            height: (widget.items.length > maxVisibleItems
+                ? maxVisibleItems * 50.h // Estimated height per item
+                : widget.items.length * 50.h) +
+                8.h, // Add padding for better UX
+            child: SingleChildScrollView(
+              child: Column(
+                children: widget.items.map((item) {
+                  return Column(
+                    children: [
+                      ListTile(
+                        leading: Image.asset(
+                          AssetHelper.getAssetForAmenity(item['title']),
+                          height: 16.r,
+                          width: 16.r,
+                          color: appColor.primaryColor,
+                        ),
+                        title: Text(
+                          item['title'],
+                          style:
+                          Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.normal,
                             fontSize: 14.spMin,
                           ),
-                    ),
-                  ),
-                  Divider(
-                    color: Color(0xffE2E8F0),
-                    thickness: 0.5,
-                  ),
-                ],
-              );
-            }).toList(),
+                        ),
+                      ),
+                      const Divider(
+                        color: Color(0xffE2E8F0),
+                        thickness: 0.5,
+                      ),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ),
           ),
         ],
       ),

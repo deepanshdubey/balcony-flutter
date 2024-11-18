@@ -1,3 +1,5 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:balcony/router/app_router.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,42 +22,47 @@ class HomeListingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment:
-                isReverse ? MainAxisAlignment.end : MainAxisAlignment.start,
-            children: [
-              isReverse ? showMore(theme) : titleText(theme),
-              Container(
-                color: theme.dividerColor,
-                height: 30.h,
-                width: 1,
-                margin: EdgeInsets.symmetric(horizontal: 10.w),
-              ),
-              isReverse ? titleText(theme) : showMore(theme),
-            ],
+    return GestureDetector(
+      onTap: () {
+        context.router.push(const PropertyDetailRoute());
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment:
+                  isReverse ? MainAxisAlignment.end : MainAxisAlignment.start,
+              children: [
+                isReverse ? showMore(theme) : titleText(theme),
+                Container(
+                  color: theme.dividerColor,
+                  height: 30.h,
+                  width: 1,
+                  margin: EdgeInsets.symmetric(horizontal: 10.w),
+                ),
+                isReverse ? titleText(theme) : showMore(theme),
+              ],
+            ),
           ),
-        ),
-        8.h.verticalSpace,
-        SizedBox(
-          height: 220.h + 40.h + 20.h,
-          child: ListView(
-              reverse: isReverse,
-              scrollDirection: Axis.horizontal,
-              children: children
-                  .map(
-                    (e) => Container(
-                        width: context.width * .7,
-                        margin: EdgeInsets.symmetric(horizontal: 10.w),
-                        child: e),
-                  )
-                  .toList()),
-        ),
-      ],
+          8.h.verticalSpace,
+          SizedBox(
+            height: 220.h + 40.h + 20.h,
+            child: ListView(
+                reverse: isReverse,
+                scrollDirection: Axis.horizontal,
+                children: children
+                    .map(
+                      (e) => Container(
+                          width: context.width * .7,
+                          margin: EdgeInsets.symmetric(horizontal: 10.w),
+                          child: e),
+                    )
+                    .toList()),
+          ),
+        ],
+      ),
     );
   }
 

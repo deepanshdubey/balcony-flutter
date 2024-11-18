@@ -1,5 +1,9 @@
 import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
+import 'package:balcony/router/app_router.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/wallets/wallet_page.dart';
+import 'package:balcony/values/colors.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
 import 'package:balcony/widget/app_image.dart';
 import 'package:balcony/widget/app_text_field.dart';
@@ -10,7 +14,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 @RoutePage()
 class WorkspacePaymentPage extends StatefulWidget {
   final WorkspaceData? workspaceData ;
-  WorkspacePaymentPage({super.key, this.workspaceData});
+  final String? selectedData ;
+  WorkspacePaymentPage({super.key, this.workspaceData,  this.selectedData});
 
   @override
   State<WorkspacePaymentPage> createState() => _WorkspacePaymentPageState();
@@ -108,17 +113,17 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
                 ?.copyWith(fontWeight: FontWeight.w600, fontSize: 13.spMin),
           ),
           12.verticalSpace,
-          _buildKeyValueRow('\$9 Bushwick Lofts x 2 days', "\$250.00"),
+          _buildKeyValueRow('9 Bushwick Lofts x 2 days', "\$${widget.workspaceData?.pricing?.totalPerDay.toString()}" ),
           30.verticalSpace,
           Divider(),
           20.verticalSpace,
-          _buildKeyValueRow('Subtotal', "\$250.00"),
+          _buildKeyValueRow('Subtotal', "\$${widget.workspaceData?.pricing?.totalPerDay.toString()}"),
           12.verticalSpace,
-          _buildKeyValueRow('Service Fee', "\$250.00"),
+          _buildKeyValueRow('Service Fee', "\$${widget.workspaceData?.pricing?.maintenance?.fee.toString()}"),
           12.verticalSpace,
           _buildKeyValueRow('Total', "\$250.00"),
           16.verticalSpace,
-          Divider(),
+          const Divider(),
         ],
       ),
     );
@@ -141,7 +146,7 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
           12.verticalSpace,
           _buildKeyValueRow('Service Hours', "8 AM - 5 PM EST"),
           12.verticalSpace,
-          _buildKeyValueRow('Service Days', "June 8th - 16th"),
+          _buildKeyValueRow('Service Days', widget.selectedData ?? ""),
         ],
       ),
     );
@@ -207,14 +212,36 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
               .titleLarge
               ?.copyWith(fontWeight: FontWeight.w600, fontSize: 13.spMin)),
           12.verticalSpace,
-          const Row(
-            children: [
-              Icon(Icons.credit_card),
-              Text("Visa"),
-              Spacer(),
-              Text('•••• •••• •••• \$cardLastDigits'),
-            ],
-          ),
+           GestureDetector(
+              onTap: () {
+                context.maybePop();
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                  ),
+                  builder: (BuildContext context) {
+                    return FractionallySizedBox(
+                      heightFactor: 0.8,
+                      child: WalletPage(),
+                    );
+                  },
+                );
+              },
+             child: Row(
+              children: [
+                Text("No card yet!"),
+                Spacer(),
+                Text('add' ,style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontSize: 14.spMin,
+                    color: appColor.primaryColor,
+                    decoration: TextDecoration.underline)),
+              ],
+                       ),
+           ),
           16.verticalSpace
         ],
       ),

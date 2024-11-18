@@ -4,19 +4,23 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class BookingCalendar extends StatefulWidget {
+  final Function(String formattedRange) onDateSelected;
+
+  BookingCalendar({required this.onDateSelected});
+
   @override
   _BookingCalendarState createState() => _BookingCalendarState();
 }
 
 class _BookingCalendarState extends State<BookingCalendar> {
   DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
+  DateTime? _startDate;
+  DateTime? _endDate;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 276.w,
-      height: 350.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8).r,
         border: Border.all(color: appColor.primaryColor),
@@ -25,42 +29,61 @@ class _BookingCalendarState extends State<BookingCalendar> {
         firstDay: DateTime.utc(2020, 1, 1),
         lastDay: DateTime.utc(2030, 12, 31),
         focusedDay: _focusedDay,
-        selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+        selectedDayPredicate: (day) {
+          if (_startDate != null && _endDate != null) {
+            return day.isAtSameMomentAs(_startDate!) || day.isAtSameMomentAs(_endDate!) ||
+                (day.isAfter(_startDate!) && day.isBefore(_endDate!));
+          }
+          return isSameDay(_startDate, day);
+        },
         onDaySelected: (selectedDay, focusedDay) {
+          if (selectedDay.isBefore(DateTime.now())) {
+            // Do nothing if the selected day is before today
+            return;
+          }
+
           setState(() {
-            _selectedDay = selectedDay;
+            if (_startDate == null || (_startDate != null && _endDate != null)) {
+              // Start a new range
+              _startDate = selectedDay;
+              _endDate = null;
+            } else if (_startDate != null && selectedDay.isAfter(_startDate!)) {
+              // Set the end date
+              _endDate = selectedDay;
+            } else {
+              // Reset and start over
+              _startDate = selectedDay;
+              _endDate = null;
+            }
             _focusedDay = focusedDay;
           });
+
+          // Pass the formatted range back to the parent widget
+          widget.onDateSelected(_formatSelectedRange());
         },
         calendarStyle: CalendarStyle(
-          // Decoration for today's date
           todayDecoration: BoxDecoration(
-            color:
-                appColor.primaryColor.withOpacity(0.3), // Light primary color
+            color: appColor.primaryColor.withOpacity(0.3),
             shape: BoxShape.circle,
           ),
-          // Decoration for the selected day
           selectedDecoration: BoxDecoration(
             color: appColor.primaryColor,
             shape: BoxShape.circle,
           ),
-          // Text style for weekend days (e.g., Fridays)
+          rangeHighlightColor: appColor.primaryColor.withOpacity(0.2),
           weekendTextStyle: TextStyle(
             color: appColor.primaryColor,
             fontWeight: FontWeight.bold,
           ),
-          // Text style for default days
           defaultTextStyle: TextStyle(
             color: appColor.primaryColor,
           ),
-          // Today’s text style
           todayTextStyle: TextStyle(
-            color: Colors.white, // Contrast with todayDecoration
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
-          // Selected day's text style
           selectedTextStyle: TextStyle(
-            color: Colors.white, // Contrast with selectedDecoration
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -68,7 +91,7 @@ class _BookingCalendarState extends State<BookingCalendar> {
           formatButtonVisible: false,
           titleCentered: true,
           titleTextStyle: TextStyle(
-            color: appColor.primaryColor, // Title text color
+            color: appColor.primaryColor,
             fontSize: 16.sp,
             fontWeight: FontWeight.bold,
           ),
@@ -80,7 +103,7 @@ class _BookingCalendarState extends State<BookingCalendar> {
             padding: EdgeInsets.all(6.0),
             child: Icon(
               Icons.chevron_left,
-              color: appColor.primaryColor, // Chevron icon color
+              color: appColor.primaryColor,
             ),
           ),
           rightChevronIcon: Container(
@@ -91,11 +114,11 @@ class _BookingCalendarState extends State<BookingCalendar> {
             padding: EdgeInsets.all(6.0),
             child: Icon(
               Icons.chevron_right,
-              color: appColor.primaryColor, // Chevron icon color
+              color: appColor.primaryColor,
             ),
           ),
           decoration: BoxDecoration(
-            color: Colors.white, // Background color for the header
+            color: Colors.white,
           ),
         ),
         daysOfWeekStyle: DaysOfWeekStyle(
@@ -110,5 +133,50 @@ class _BookingCalendarState extends State<BookingCalendar> {
         ),
       ),
     );
+  }
+
+  String _formatSelectedRange() {
+    if (_startDate != null && _endDate == null) {
+      // Single date selected
+      return "${_startDate!.monthName()} ${_startDate!.day}${_getDaySuffix(_startDate!.day)}";
+    } else if (_startDate != null && _endDate != null) {
+      // Range selected
+      return "${_startDate!.monthName()} ${_startDate!.day}${_getDaySuffix(_startDate!.day)} - ${_endDate!.day}${_getDaySuffix(_endDate!.day)}";
+    }
+    return "No date selected";
+  }
+
+  String _getDaySuffix(int day) {
+    if (day >= 11 && day <= 13) return "th";
+    switch (day % 10) {
+      case 1:
+        return "st";
+      case 2:
+        return "nd";
+      case 3:
+        return "rd";
+      default:
+        return "th";
+    }
+  }
+}
+
+extension DateTimeExtension on DateTime {
+  String monthName() {
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ];
+    return monthNames[this.month - 1];
   }
 }

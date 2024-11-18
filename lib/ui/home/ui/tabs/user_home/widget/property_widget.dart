@@ -1,3 +1,5 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:balcony/router/app_router.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
 import 'package:balcony/widget/app_image.dart';
 import 'package:flutter/material.dart';
@@ -21,70 +23,75 @@ class PropertyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          height: 220.h,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20.r),
-              color: theme.primaryColor,
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.black.withOpacity(0.025),
-                    offset: const Offset(0, 4),
-                    blurRadius: 4,
-                    spreadRadius: 0)
-              ]),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              chip(
-                  Text(location,
+    return GestureDetector(
+       onTap:  () {
+         context.router.push(PropertyDetailRoute());
+       },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 220.h,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20.r),
+                color: theme.primaryColor,
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withOpacity(0.025),
+                      offset: const Offset(0, 4),
+                      blurRadius: 4,
+                      spreadRadius: 0)
+                ]),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                chip(
+                    Text(location,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontSize: 12.spMin,
+                          fontWeight: FontWeight.w300,
+                        )),
+                    horizontalPadding: 30.w),
+                chip(
+                  Text(price,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontSize: 12.spMin,
                         fontWeight: FontWeight.w300,
                       )),
-                  horizontalPadding: 30.w),
-              chip(
-                Text(price,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontSize: 12.spMin,
-                      fontWeight: FontWeight.w300,
-                    )),
-              ),
-              6.w.horizontalSpace,
-            ],
-          ),
-        ),
-        8.h.verticalSpace,
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.w),
-          child: Text(
-            title,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.normal,
+                ),
+                6.w.horizontalSpace,
+              ],
             ),
           ),
-        ),
-        3.h.verticalSpace,
-        Row(
-          children: [
-            8.horizontalSpace,
-            buildRatingStars(theme, rating), // Display stars based on rating
-            6.horizontalSpace,
-            Text(
-              '($reviews)',
+          8.h.verticalSpace,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
+            child: Text(
+              title,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.normal,
-                fontSize: 11.spMax,
               ),
             ),
-          ],
-        ),
-        const SizedBox(height: 8),
-      ],
+          ),
+          3.h.verticalSpace,
+          Row(
+            children: [
+              8.horizontalSpace,
+              buildRatingStars(theme, rating), // Display stars based on rating
+              6.horizontalSpace,
+              Text(
+                '($reviews)',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.normal,
+                  fontSize: 11.spMax,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+        ],
+      ),
     );
   }
 
