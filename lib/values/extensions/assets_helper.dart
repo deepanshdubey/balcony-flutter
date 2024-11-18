@@ -10,16 +10,13 @@ class AssetHelper {
     'chairs': Assets.imagesTable1,
     'wi-fi': Assets.imagesWifi,
     'conference room': Assets.imagesHome,
-   /* 'common space': 'assets/icons/common_space.png',
-    'tv / television, presentation': 'assets/icons/tv_presentation.png',
-    'printer': 'assets/icons/printer.png',
-    'rooftop': 'assets/icons/rooftop.png',
-    'terrace': 'assets/icons/terrace.png',
-    'break room, cafe': 'assets/icons/breakroom_cafe.png',
-    'outdoor deck': 'assets/icons/outdoor_deck.png',
-    'natural light': 'assets/icons/natural_light.png',
-    'waterfront views': 'assets/icons/waterfront_views.png',
-    'landscape views': 'assets/icons/landscape_views.png',*/
+    'tv / television, presentation': Assets.imagesGalaTv,
+    'printer': Assets.imagesPrinter,
+    'terrace': Assets.imagesStays,
+    'break room, cafe': Assets.imagesCoffee,
+    'natural light': Assets.imagesCoffee,
+    'waterfront views': Assets.imagesCoffee,
+    'landscape views': Assets.imagesCoffee,
   };
 
   static String getAssetForAmenity(String amenity) {

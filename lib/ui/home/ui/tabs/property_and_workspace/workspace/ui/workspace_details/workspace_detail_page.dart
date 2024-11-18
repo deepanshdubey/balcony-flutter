@@ -251,6 +251,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                                 ]
                               : [],
                           visibleItem: 1,
+                          iconImage: Assets.imagesLocationOn,
                         ),
                         18.verticalSpace,
                         CustomDropdown(
@@ -269,7 +270,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                           title: 'Hours of Service (Time Frame)',
                           items:
                               TimesHelper.mapTimesToDropdownItems(data?.times),
-                          visibleItem: 3,
+                          visibleItem: 3,iconImage: Assets.imagesClock,
                         ),
                         18.verticalSpace,
                         CustomDropdown(

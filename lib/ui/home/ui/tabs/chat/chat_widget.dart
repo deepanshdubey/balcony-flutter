@@ -1,5 +1,4 @@
 import 'package:balcony/ui/home/ui/tabs/chat/ui/chat_details_page.dart';
-import 'package:balcony/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/widget/app_image.dart';
 import 'package:flutter/material.dart';

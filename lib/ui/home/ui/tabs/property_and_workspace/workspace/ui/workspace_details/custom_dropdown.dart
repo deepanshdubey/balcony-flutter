@@ -8,8 +8,9 @@ class CustomDropdown extends StatefulWidget {
   final String title;
   final List<Map<String, dynamic>> items;
   final int visibleItem ;
+  final String? iconImage;
 
-  CustomDropdown({required this.title, required this.items, required this.visibleItem});
+  CustomDropdown({required this.title, required this.items, required this.visibleItem, this.iconImage});
 
   @override
   _CustomDropdownState createState() => _CustomDropdownState();
@@ -63,7 +64,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
                     children: [
                       ListTile(
                         leading: Image.asset(
-                          AssetHelper.getAssetForAmenity(item['title']),
+                          widget.iconImage ==null ?  AssetHelper.getAssetForAmenity(item['title']) : widget.iconImage??"",
                           height: 16.r,
                           width: 16.r,
                           color: appColor.primaryColor,

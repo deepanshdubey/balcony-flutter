@@ -3,7 +3,6 @@ import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/generated/assets.dart';
 import 'package:balcony/router/app_router.dart';
 import 'package:balcony/ui/auth/store/auth_store.dart';
-import 'package:balcony/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/profile/ui/edit_profile_page.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';

@@ -5,6 +5,7 @@ import 'package:balcony/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:balcony/ui/home/ui/tabs/host_home/ui/host_home_page.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/more_page.dart';
 import 'package:balcony/ui/home/ui/tabs/user_home/ui/user_home_page.dart';
+import 'package:balcony/ui/home/ui/tabs/works/booking_history_page.dart';
 import 'package:balcony/ui/home/widget/bottom_navigation.dart';
 import 'package:flutter/material.dart';
 
@@ -57,6 +58,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void handleNavigation(String s) {
+    print("click tab --> $s");
     if (s == "chat") {
       showChatBottomSheet(context);
     } else if (s == "more") {
@@ -68,6 +70,8 @@ class _HomePageState extends State<HomePage> {
           onSuccess: () => showAppBottomSheet(context, const MorePage()),
         );
       }
+    }else if(s == "works"){
+      showAppBottomSheet(context,  BookingHistoryPage());
     } else {
       setState(() {
         selectedTab = s;
