@@ -373,7 +373,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
   void openBottomSheet(BuildContext context , WorkspaceData? data) {
     if (!dateSelected.value) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+         SnackBar(
           content: Text(
             "Please select a date first.",
             style: TextStyle(color: Colors.white),

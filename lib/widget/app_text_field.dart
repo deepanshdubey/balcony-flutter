@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppTextField extends StatelessWidget {
   final TextEditingController controller;
-  final String label;
+  final String? label;
   final String? hintText;
   final String? Function(String?)? validator;
   final TextInputType keyboardType;
@@ -25,7 +25,7 @@ class AppTextField extends StatelessWidget {
   const AppTextField({
     super.key,
     required this.controller,
-    required this.label,
+     this.label,
     this.hintText,
     this.validator,
     this.keyboardType = TextInputType.text,
@@ -50,14 +50,14 @@ class AppTextField extends StatelessWidget {
         ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                label,
+           if(label!=null)   Text(
+                label ?? "",
                 style: Theme.of(context)
                     .textTheme
                     .titleLarge
                     ?.copyWith(fontSize: 14.spMin, fontWeight: FontWeight.w500),
               ),
-              6.h.verticalSpace,
+              if(label!=null)  6.h.verticalSpace,
               field(context)
             ],
           )
