@@ -62,7 +62,6 @@ class _BookingDatePagesState extends State<BookingDatePages> {
            ),
           20.verticalSpace,
           _buildUserInfoSection(context),
-
           _buildCancelOrderSection(context),
         ],
       ),
@@ -123,7 +122,7 @@ class _BookingDatePagesState extends State<BookingDatePages> {
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                return BookingDialog(
+                return CompleteDialog(
                   title: "Your all set!",
                   message:
                   "You should receive an email with the booking details. You can also visit the booking detail page as well.",
@@ -138,7 +137,6 @@ class _BookingDatePagesState extends State<BookingDatePages> {
                 );
               },
             );
-
           },
         ),
         20.verticalSpace

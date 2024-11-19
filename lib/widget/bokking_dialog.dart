@@ -2,7 +2,7 @@ import 'package:balcony/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class BookingDialog extends StatelessWidget {
+class CompleteDialog extends StatelessWidget {
   final String title;
   final String message;
   final String primaryButtonText;
@@ -10,7 +10,7 @@ class BookingDialog extends StatelessWidget {
   final VoidCallback onPrimaryButtonPressed;
   final VoidCallback onSecondaryButtonPressed;
 
-  const BookingDialog({
+  const CompleteDialog({
     Key? key,
     required this.title,
     required this.message,

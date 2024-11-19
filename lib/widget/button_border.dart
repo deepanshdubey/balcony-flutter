@@ -5,11 +5,12 @@ class BorderButton extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
   final double? height;
+  final EdgeInsetsGeometry? padding;
 
   const BorderButton({
     required this.label,
     required this.onTap,
-    super.key, this.height,
+    super.key, this.height, this.padding,
   });
 
   @override
@@ -18,7 +19,7 @@ class BorderButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         height: height ?? 40.h,
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+        padding:padding ?? EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
         decoration: BoxDecoration(
           border: Border.all(color: Theme.of(context).primaryColor),
           borderRadius: BorderRadius.circular(12),
