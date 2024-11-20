@@ -4,6 +4,7 @@ import 'package:balcony/ui/auth/ui/bottomsheet/onboarding_bottomsheet.dart';
 import 'package:balcony/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:balcony/ui/home/ui/tabs/host_home/ui/host_home_page.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/more_page.dart';
+import 'package:balcony/ui/home/ui/tabs/search/search_page.dart';
 import 'package:balcony/ui/home/ui/tabs/stay/ranted_history_page.dart';
 import 'package:balcony/ui/home/ui/tabs/user_home/ui/user_home_page.dart';
 import 'package:balcony/ui/home/ui/tabs/works/booking_history_page.dart';
@@ -71,11 +72,13 @@ class _HomePageState extends State<HomePage> {
           onSuccess: () => showAppBottomSheet(context, const MorePage()),
         );
       }
-    }else if(s == "works"){
-      showAppBottomSheet(context,  BookingHistoryPage());
-    } else if(s == "stays"){
-      showAppBottomSheet(context,  RantedHistoryPage());
-    }else {
+    } else if (s == "works") {
+      showAppBottomSheet(context, BookingHistoryPage());
+    } else if (s == "stays") {
+      showAppBottomSheet(context, RantedHistoryPage());
+    } else if (s == "search") {
+      showAppBottomSheet(context, SearchPage());
+    } else {
       setState(() {
         selectedTab = s;
       });
