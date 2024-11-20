@@ -10,7 +10,6 @@ import 'package:balcony/ui/home/ui/tabs/user_home/ui/user_home_page.dart';
 import 'package:balcony/ui/home/ui/tabs/works/booking_history_page.dart';
 import 'package:balcony/ui/home/widget/bottom_navigation.dart';
 import 'package:flutter/material.dart';
-
 import 'tabs/property_and_workspace/property/ui/property_page.dart';
 import 'tabs/property_and_workspace/workspace/ui/workspace_page.dart';
 
@@ -77,7 +76,7 @@ class _HomePageState extends State<HomePage> {
     } else if (s == "stays") {
       showAppBottomSheet(context, RantedHistoryPage());
     } else if (s == "search") {
-      showAppBottomSheet(context, SearchPage());
+      showAppBottomSheet(context, const SearchPage());
     } else {
       setState(() {
         selectedTab = s;

@@ -5,7 +5,6 @@ import 'package:balcony/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/tenant_application_page.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/workspace_details/custom_dropdown.dart';
-import 'package:balcony/ui/home/ui/tabs/works/booking_history_page.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
 import 'package:balcony/widget/app_back_button.dart';
@@ -131,7 +130,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                   PrimaryButton(
                     text: "apply for tenancy",
                     onPressed: () {
-                      showAppBottomSheet(context,  TenantApplicationPage());
+                      showAppBottomSheet(context,  const TenantApplicationPage());
                     },
 
 
