@@ -267,6 +267,18 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                         ),
                         18.verticalSpace,
                         CustomDropdown(
+                          title: 'workspace booking info',
+                          items: [
+                            {
+                              'title': "\$${data?.pricing?.totalPerDay} per person",
+                            },{
+                              'title': "${data?.other?.additionalGuests} extra guests allowed",
+                            }
+                          ],
+                          visibleItem: 3,iconImage: Assets.imagesProfile,
+                        ),
+                        18.verticalSpace,
+                        CustomDropdown(
                           title: 'Hours of Service (Time Frame)',
                           items:
                               TimesHelper.mapTimesToDropdownItems(data?.times),
@@ -274,8 +286,14 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                         ),
                         18.verticalSpace,
                         CustomDropdown(
-                          title: 'Facilities',
-                          items: facilities,
+                          title: 'workspace info',
+                          items: [
+                           if(data?.other?.isCoWorkingWorkspace ?? false) {
+                              'title': "shared co-working space",
+                            },if(data?.other?.isIndoorSpace ?? false){
+                              'title': "conference room",
+                            }
+                          ],
                           visibleItem: 3,
                         ),
                         23.verticalSpace,

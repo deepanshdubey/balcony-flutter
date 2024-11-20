@@ -62,23 +62,27 @@ class _CustomDropdownState extends State<CustomDropdown> {
                 children: widget.items.map((item) {
                   return Column(
                     children: [
-                      ListTile(
-                        leading: Image.asset(
-                          widget.iconImage ==null ?  AssetHelper.getAssetForAmenity(item['title']) : widget.iconImage??"",
-                          height: 16.r,
-                          width: 16.r,
-                          color: appColor.primaryColor,
-                        ),
-                        title: Text(
-                          item['title'],
-                          style:
-                          Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.normal,
-                            fontSize: 14.spMin,
-                          ),
+
+                      Padding(
+                        padding: const EdgeInsets.all(16.0).r,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [Image.asset(
+                            widget.iconImage ==null ?  AssetHelper.getAssetForAmenity(item['title']) : widget.iconImage??"",
+                            height: 16.r,
+                            width: 16.r,
+                            color: appColor.primaryColor,
+                          ),20.horizontalSpace,Text(
+                            item['title'],
+                            style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.normal,
+                              fontSize: 14.spMin,
+                            ),
+                          )],
                         ),
                       ),
-                      const Divider(
+                       Divider(
                         color: Color(0xffE2E8F0),
                         thickness: 0.5,
                       ),
