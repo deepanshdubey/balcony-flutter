@@ -1,3 +1,4 @@
+import 'package:auto_route/annotations.dart';
 import 'package:balcony/generated/assets.dart';
 import 'package:balcony/ui/home/ui/tabs/user_home/widget/pagination_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/user_home/widget/property_widget.dart';
@@ -6,6 +7,7 @@ import 'package:balcony/widget/app_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+@RoutePage()
 class WorkspacePage extends StatefulWidget {
   const WorkspacePage({super.key});
 
@@ -16,7 +18,7 @@ class WorkspacePage extends StatefulWidget {
 class WorkspacePageState extends State<WorkspacePage> {
   int currentPage = 2;
   final int totalPages = 20;
-  bool isMapViewSelected = true;
+  bool isMapViewSelected = false;
 
   @override
   Widget build(BuildContext context) {

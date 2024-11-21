@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class BookingCalendar extends StatefulWidget {
-  final Function(String formattedRange) onDateSelected;
+  final Function(String formattedRange , int days) onDateSelected;
 
   BookingCalendar({required this.onDateSelected});
 
@@ -38,28 +38,29 @@ class _BookingCalendarState extends State<BookingCalendar> {
         },
         onDaySelected: (selectedDay, focusedDay) {
           if (selectedDay.isBefore(DateTime.now())) {
-            // Do nothing if the selected day is before today
+
             return;
           }
 
           setState(() {
             if (_startDate == null || (_startDate != null && _endDate != null)) {
-              // Start a new range
               _startDate = selectedDay;
               _endDate = null;
             } else if (_startDate != null && selectedDay.isAfter(_startDate!)) {
-              // Set the end date
               _endDate = selectedDay;
             } else {
-              // Reset and start over
               _startDate = selectedDay;
               _endDate = null;
             }
             _focusedDay = focusedDay;
           });
 
-          // Pass the formatted range back to the parent widget
-          widget.onDateSelected(_formatSelectedRange());
+
+          widget.onDateSelected(
+            _formatSelectedRange(),
+            _endDate == null ? 1 : _endDate!.difference(_startDate!).inDays + 1,
+          );
+
         },
         calendarStyle: CalendarStyle(
           todayDecoration: BoxDecoration(
@@ -137,10 +138,8 @@ class _BookingCalendarState extends State<BookingCalendar> {
 
   String _formatSelectedRange() {
     if (_startDate != null && _endDate == null) {
-      // Single date selected
       return "${_startDate!.monthName()} ${_startDate!.day}${_getDaySuffix(_startDate!.day)}";
     } else if (_startDate != null && _endDate != null) {
-      // Range selected
       return "${_startDate!.monthName()} ${_startDate!.day}${_getDaySuffix(_startDate!.day)} - ${_endDate!.day}${_getDaySuffix(_endDate!.day)}";
     }
     return "No date selected";

@@ -1,9 +1,10 @@
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:balcony/core/alert/alert_manager.dart';
 import 'package:balcony/generated/assets.dart';
 import 'package:balcony/ui/home/ui/tabs/chat/ui/chat_page.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/tenant_application_page.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/workspace_details/custom_dropdown.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
@@ -18,7 +19,8 @@ import 'package:mobx/mobx.dart';
 
 @RoutePage()
 class PropertyDetailPage extends StatefulWidget {
-  const PropertyDetailPage({super.key});
+  final String? propertyId;
+  const PropertyDetailPage({super.key, this.propertyId});
 
   @override
   State<PropertyDetailPage> createState() => _PropertyDetailPageState();
@@ -28,15 +30,37 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
   List<ReactionDisposer>? disposers;
   late TextEditingController leaseController = TextEditingController();
 
+  final propertyStore = PropertyStore() ;
 
   @override
   void initState() {
+    addDisposer();
+    propertyStore.getPropertyDetails(
+        id: widget.propertyId);
     super.initState();
   }
 
   @override
   void dispose() {
+    removeDisposer();
     super.dispose();
+  }
+
+  void addDisposer() {
+    disposers ??= [
+      reaction((_) => propertyStore.errorMessage, (String? errorMessage) {
+        if (errorMessage != null) {
+          alertManager.showError(context, errorMessage);
+        }
+      }),
+    ];
+  }
+
+  void removeDisposer() {
+    if (disposers == null) return;
+    for (final element in disposers!) {
+      element.reaction.dispose();
+    }
   }
 
 
@@ -53,7 +77,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
       body: SingleChildScrollView(
         child: Observer(
           builder: (context) {
-            var data = workspaceStore.workspaceDetailsResponse;
+            var data = propertyStore.propertyDetailsResponse;
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24).r,
               child: Column(

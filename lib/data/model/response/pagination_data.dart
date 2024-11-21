@@ -1,3 +1,4 @@
+import 'package:balcony/data/model/response/property_data.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'workspace_data.dart'; // Import the WorkspaceData model.
 
@@ -14,16 +15,15 @@ class PaginationData<T> {
   @JsonKey(name: 'workspace')
   final WorkspaceData? workspace;
 
-  PaginationData({
-    required this.success,
-     this.data,
-     this.workspace,
-  });
+  @JsonKey(name: 'property')
+  final PropertyData? property;
+
+  PaginationData( {required this.success, this.data, this.workspace,this.property,});
 
   factory PaginationData.fromJson(
-      Map<String, dynamic> json,
-      T Function(Object? json) fromJsonT,
-      ) =>
+    Map<String, dynamic> json,
+    T Function(Object? json) fromJsonT,
+  ) =>
       _$PaginationDataFromJson(json, fromJsonT);
 
   Map<String, dynamic> toJson(Object Function(T value) toJsonT) =>
@@ -60,9 +60,9 @@ class PaginationItem<T> {
   });
 
   factory PaginationItem.fromJson(
-      Map<String, dynamic> json,
-      T Function(Object? json) fromJsonT,
-      ) =>
+    Map<String, dynamic> json,
+    T Function(Object? json) fromJsonT,
+  ) =>
       _$PaginationItemFromJson(json, fromJsonT);
 
   Map<String, dynamic> toJson(Object Function(T value) toJsonT) =>

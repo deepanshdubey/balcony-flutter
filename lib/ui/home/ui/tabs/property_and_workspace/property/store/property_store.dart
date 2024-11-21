@@ -17,6 +17,10 @@ abstract class _PropertyStoreBase with Store {
   @observable
   String? errorMessage;
 
+
+  @observable
+  PropertyData? propertyDetailsResponse;
+
   @action
   Future getProperty(
       {String? status,
@@ -37,6 +41,28 @@ abstract class _PropertyStoreBase with Store {
           includeHost: includeHost);
       if (response.isSuccess) {
         propertyResponse = response.data?.data?.result ?? [];
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future getPropertyDetails({
+    String? id,
+  }) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await propertyRepository.getPropertyDetails(id: id);
+      if (response.isSuccess) {
+        propertyDetailsResponse = response.data?.property;
       } else {
         errorMessage = response.error!.message;
       }

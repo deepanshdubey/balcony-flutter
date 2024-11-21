@@ -14,7 +14,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class WorkspacePaymentPage extends StatefulWidget {
   final WorkspaceData? workspaceData ;
   final String? selectedData ;
-  WorkspacePaymentPage({super.key, this.workspaceData,  this.selectedData});
+  final num? selectedDays;
+  WorkspacePaymentPage({super.key, this.workspaceData,  this.selectedData, this.selectedDays});
 
   @override
   State<WorkspacePaymentPage> createState() => _WorkspacePaymentPageState();
@@ -112,7 +113,11 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
                 ?.copyWith(fontWeight: FontWeight.w600, fontSize: 13.spMin),
           ),
           12.verticalSpace,
-          _buildKeyValueRow('9 Bushwick Lofts x 2 days', "\$${widget.workspaceData?.pricing?.totalPerDay.toString()}" ),
+          _buildKeyValueRow(
+              '9 Bushwick Lofts x ${widget.selectedDays} days',
+              "\$${(widget.workspaceData?.pricing?.totalPerDay ?? 0) * (widget.selectedDays ?? 0)}"
+          ),
+
           30.verticalSpace,
           Divider(),
           20.verticalSpace,

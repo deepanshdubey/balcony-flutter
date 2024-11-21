@@ -32,6 +32,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
   List<ReactionDisposer>? disposers;
   ValueNotifier<bool> dateSelected = ValueNotifier(false);
   String? selectedDate ;
+  int? selectedDays;
 
   final workspaceStore = WorkspaceStore();
 
@@ -160,8 +161,9 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                         ),
                         29.verticalSpace,
                         BookingCalendar(
-                          onDateSelected: (String onDateSelected) {
+                          onDateSelected: (String onDateSelected,int days ) {
                             selectedDate = onDateSelected;
+                            selectedDays = days ;
                             dateSelected.value = true;
                           },
                         ),
@@ -389,19 +391,6 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
   }
 
   void openBottomSheet(BuildContext context , WorkspaceData? data) {
-    if (!dateSelected.value) {
-      ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(
-          content: Text(
-            "Please select a date first.",
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return; // Do not proceed if the date is not selected
-    }
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -416,6 +405,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
           child: WorkspacePaymentPage(
             workspaceData: data,
             selectedData: selectedDate,
+              selectedDays: selectedDays,
           ),
         );
       },

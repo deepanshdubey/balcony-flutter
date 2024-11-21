@@ -1,4 +1,6 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:balcony/core/locator/locator.dart';
+import 'package:balcony/router/app_router.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
 import 'package:balcony/widget/app_image.dart';
@@ -132,7 +134,7 @@ class _SearchWorkspacesWidgetState extends State<SearchWorkspacesWidget> {
               text: "search",
               onPressed: () {
                 if (_formKey.currentState!.validate() == true) {
-                  logger.w("message");
+                 context.router.push(WorkspaceRoute());
                 }
               },
             ),

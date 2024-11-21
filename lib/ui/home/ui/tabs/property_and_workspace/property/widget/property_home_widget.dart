@@ -59,6 +59,7 @@ class _PropertyHomeWidgetState extends State<PropertyHomeWidget> {
                       //open listing page
                     },
                     isLoading: store.isLoading,
+
                     children: store.propertyResponse
                             ?.map(
                               (e) => PropertyWidget(data: e),

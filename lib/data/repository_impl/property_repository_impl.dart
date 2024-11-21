@@ -24,4 +24,10 @@ class PropertyRepositoryImpl extends BaseRepositoryImpl
       bool? includeHost}) {
     return execute(apiClient.getProperties(status, sort, select, page, limit, includeHost));
   }
+
+
+  @override
+  Future<ApiResponse<PaginationData<PropertyData>>> getPropertyDetails({String? id}) {
+    return execute(apiClient.getPropertyDetails(id!));
+  }
 }
