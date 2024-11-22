@@ -1,9 +1,14 @@
 import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/store/address_store.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/values/validators.dart';
+import 'package:balcony/widget/app_dropdown_field.dart';
 import 'package:balcony/widget/app_text_field.dart';
+import 'package:country_state_city/country_state_city.dart' as csc;
+import 'package:country_state_city/models/state.dart' as s;
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AddressWidget extends StatefulWidget {
@@ -65,7 +70,7 @@ class _AddressWidgetState extends BaseState<AddressWidget> {
           children: [
             16.h.verticalSpace,
             Text(
-               widget.isWorkSpace ? "workspace amenities*" : 'rental info*',
+              widget.isWorkSpace ? "workspace amenities*" : 'rental info*',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w500,
                     fontSize: 24.spMin,
@@ -74,9 +79,12 @@ class _AddressWidgetState extends BaseState<AddressWidget> {
             16.h.verticalSpace,
             AppTextField(
               controller: nameController,
-              label: widget.isWorkSpace  ? 'name of workspace' : 'property name if any',
+              label: widget.isWorkSpace
+                  ? 'name of workspace'
+                  : 'property name if any',
               hintText: 'the square',
-              validator: widget.isWorkSpace ? workspaceNameValidator.call : null,
+              validator:
+                  widget.isWorkSpace ? workspaceNameValidator.call : null,
               keyboardType: TextInputType.text,
               textInputAction: TextInputAction.next,
             ),
@@ -88,38 +96,55 @@ class _AddressWidgetState extends BaseState<AddressWidget> {
               hintText: '123 address..',
               textInputAction: TextInputAction.next,
             ),
-            if(widget.isWorkSpace)16.h.verticalSpace,
-            if(widget.isWorkSpace)AppTextField(
-              controller: floorController,
-              validator: addressValidator.call,
-              label: 'floor, apt., etc.',
-              hintText: 'floor 2',
-              textInputAction: TextInputAction.next,
-            ),
+            if (widget.isWorkSpace) 16.h.verticalSpace,
+            if (widget.isWorkSpace)
+              AppTextField(
+                controller: floorController,
+                validator: addressValidator.call,
+                label: 'floor, apt., etc.',
+                hintText: 'floor 2',
+                textInputAction: TextInputAction.next,
+              ),
             16.h.verticalSpace,
-            AppTextField(
-              controller: cityController,
-              validator: cityValidator.call,
-              label: 'city',
-              hintText: 'new york city',
-              textInputAction: TextInputAction.next,
-            ),
+            Observer(builder: (context) {
+              var countries = addressStore.countries;
+              return AppDropdownField(
+                controller: countryController,
+                label: 'country',
+                hintText: 'united states',
+                items: countries ?? <csc.Country>[],
+                itemLabel: (csc.Country c) => c.name.toLowerCase(),
+                onItemSelected: (csc.Country c) {
+                  addressStore.fetchStates(c.isoCode);
+                },
+              );
+            }),
             16.h.verticalSpace,
-            AppTextField(
-              controller: stateController,
-              keyboardType: TextInputType.text,
-              validator: stateValidator.call,
-              label: 'state',
-              hintText: 'new york',
-              textInputAction: TextInputAction.next,
-            ),
+            Observer(builder: (context) {
+              var states = addressStore.states;
+              return AppDropdownField<s.State>(
+                controller: stateController,
+                label: 'state',
+                hintText: 'new york',
+                items: states ?? <s.State>[],
+                itemLabel: (s.State c) => c.name.toLowerCase(),
+                onItemSelected: (s.State c) {
+                  addressStore.fetchCities(c.isoCode);
+                },
+              );
+            }),
             16.h.verticalSpace,
-            AppTextField(
-              controller: countryController,
-              validator: countryValidator.call,
-              label: 'country',
-              hintText: 'united states',
-            ),
+            Observer(builder: (context) {
+              var cities = addressStore.cities;
+              return AppDropdownField<csc.City>(
+                controller: cityController,
+                label: 'city',
+                hintText: 'new york city',
+                items: cities ?? [],
+                itemLabel: (p0) => p0.name.toLowerCase(),
+                onItemSelected: (p0) {},
+              );
+            }),
             16.h.verticalSpace,
           ],
         ),
@@ -130,14 +155,13 @@ class _AddressWidgetState extends BaseState<AddressWidget> {
   @override
   Info getApiData() {
     return Info(
-      name: nameController.text.trim(),
-      address: addressController.text.trim(),
-      floor: floorController.text.trim(),
-      city: cityController.text.trim(),
-      state: stateController.text.trim(),
-      country: countryController.text.trim(),
-      summary: 'a'
-    );
+        name: nameController.text.trim(),
+        address: addressController.text.trim(),
+        floor: floorController.text.trim(),
+        city: cityController.text.trim(),
+        state: stateController.text.trim(),
+        country: countryController.text.trim(),
+        summary: 'a');
   }
 
   @override
