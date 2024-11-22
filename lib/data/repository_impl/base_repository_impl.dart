@@ -48,7 +48,7 @@ abstract class BaseRepositoryImpl {
 
   ApiException handleBadResponse(DioException error) {
     final statusCode = error.response?.statusCode ?? -1;
-    String message = "Bad response from server";
+    String? message;
 
     if (error.response?.data is Map<String, dynamic>) {
       message = error.response?.data['message'] ?? message;
@@ -59,33 +59,33 @@ abstract class BaseRepositoryImpl {
       case 500:
         return ApiException(
           statusCode: statusCode,
-          message: "Internal server error. Please try again later.",
+          message: message ?? "Internal server error. Please try again later.",
         );
       case 401:
         return ApiException(
           statusCode: statusCode,
-          message: message,
+          message: message ?? error.message ?? '401',
         );
       case 403:
         return ApiException(
           statusCode: statusCode,
           message:
-              "Forbidden. You don't have permission to access this resource.",
+              message ?? "Forbidden. You don't have permission to access this resource.",
         );
       case 404:
         return ApiException(
           statusCode: statusCode,
-          message: "Resource not found.",
+          message: message ?? "Resource not found.",
         );
       case 422:
         return ApiException(
           statusCode: statusCode,
-          message: "Unprocessable Entity. Please check the submitted data.",
+          message: message ?? "Unprocessable Entity. Please check the submitted data.",
         );
       default:
         return ApiException(
           statusCode: statusCode,
-          message: message,
+          message: message ?? "Something went wrong",
         );
     }
   }
