@@ -23,6 +23,9 @@ class WorkspaceData {
   @JsonKey(name: 'geocode')
   final Geocode? geocode;
 
+   // @JsonKey(name: 'host')
+   // final Host? host;
+
   @JsonKey(name: 'pricing')
   final Pricing? pricing;
 
@@ -35,25 +38,24 @@ class WorkspaceData {
   @JsonKey(name: 'amenities')
   final List<String>? amenities;
 
-  WorkspaceData({
-    this.id,
-    this.status,
-    this.ratings,
-    this.info,
-    this.images,
-    this.geocode,
-    this.pricing,
-    this.times,
-    this.other,
-    this.amenities,
-  });
+  WorkspaceData(
+      {this.id,
+      this.status,
+      this.ratings,
+      this.info,
+      this.images,
+      this.geocode,
+      this.pricing,
+      this.times,
+      this.other,
+      this.amenities,
+    });
 
   factory WorkspaceData.fromJson(Map<String, dynamic> json) =>
       _$WorkspaceDataFromJson(json);
 
   Map<String, dynamic> toJson() => _$WorkspaceDataToJson(this);
 }
-
 
 @JsonSerializable()
 class Info {
@@ -113,7 +115,6 @@ class Pricing {
   });
 
   String get formattedTotalPerDay {
-
     String symbol = NumberFormat.simpleCurrency(name: currency).currencySymbol;
     NumberFormat format = NumberFormat("$symbol ###,###,###.00");
     return format.format(totalPerDay ?? 0);
@@ -198,4 +199,38 @@ class Other {
   factory Other.fromJson(Map<String, dynamic> json) => _$OtherFromJson(json);
 
   Map<String, dynamic> toJson() => _$OtherToJson(this);
+}
+
+@JsonSerializable(ignoreUnannotated: true)
+class Host {
+  @JsonKey(name: '_id')
+  final String? Id;
+  @JsonKey(name: 'firstName')
+  final String? firstName;
+  @JsonKey(name: 'lastName')
+  final String? lastName;
+  @JsonKey(name: 'email')
+  final String? email;
+  @JsonKey(name: 'phone')
+  final String? phone;
+  @JsonKey(name: 'role')
+  final String? role;
+  @JsonKey(name: 'status')
+  final String? status;
+  @JsonKey(name: 'image')
+  final String? image;
+
+  Host(
+      {this.Id,
+      this.firstName,
+      this.lastName,
+      this.email,
+      this.phone,
+      this.role,
+      this.status,
+      this.image});
+
+  factory Host.fromJson(Map<String, dynamic> json) => _$HostFromJson(json);
+
+  Map<String, dynamic> toJson() => _$HostToJson(this);
 }

@@ -26,6 +26,7 @@ abstract class _WorkspaceStoreBase with Store {
   @observable
   String? errorMessage;
 
+
   @action
   Future getWorkspace(
       {String? status,
@@ -106,6 +107,14 @@ abstract class _WorkspaceStoreBase with Store {
       isLoading = false;
     }
   }
+
+  @computed
+  num get totalFee {
+    return (workspaceDetailsResponse?.pricing?.cleaning?.fee ?? 0) +
+        (workspaceDetailsResponse?.pricing?.maintenance?.fee ?? 0) +
+        (workspaceDetailsResponse?.pricing?.additional?.fee ?? 0);
+  }
+
 }
 
 final workspaceStore = WorkspaceStore();

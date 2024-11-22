@@ -1,6 +1,7 @@
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/wallets/wallet_page.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
@@ -8,6 +9,7 @@ import 'package:balcony/widget/app_image.dart';
 import 'package:balcony/widget/app_text_field.dart';
 import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 @RoutePage()
@@ -62,7 +64,7 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
       height: 98.h,
       decoration: BoxDecoration(
           color: const Color(0xffCCDDDC),
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(10), topRight: Radius.circular(10))
               .r),
       child: Padding(
@@ -121,11 +123,19 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
           30.verticalSpace,
           Divider(),
           20.verticalSpace,
-          _buildKeyValueRow('Subtotal', "\$${widget.workspaceData?.pricing?.totalPerDay.toString()}"),
+          _buildKeyValueRow('Subtotal', "\$${(widget.workspaceData?.pricing?.totalPerDay ?? 0) * (widget.selectedDays ?? 0)}"),
           12.verticalSpace,
-          _buildKeyValueRow('Service Fee', "\$${widget.workspaceData?.pricing?.maintenance?.fee.toString()}"),
+          Observer(
+            builder: (context) {
+              return _buildKeyValueRow('Service Fee', "\$${workspaceStore.totalFee}");
+            }
+          ),
           12.verticalSpace,
-          _buildKeyValueRow('Total', "\$250.00"),
+          Observer(
+            builder: (context) {
+              return _buildKeyValueRow('Total', "\$${(widget.workspaceData?.pricing?.totalPerDay ?? 0) * (widget.selectedDays ?? 0) + (workspaceStore.totalFee ?? 0)}");
+            }
+          ),
           16.verticalSpace,
           const Divider(),
         ],
@@ -148,7 +158,7 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
                 ?.copyWith(fontWeight: FontWeight.w600, fontSize: 13.spMin),
           ),
           12.verticalSpace,
-          _buildKeyValueRow('Service Hours', "8 AM - 5 PM EST"),
+          buildTodayServiceHours(),
           12.verticalSpace,
           _buildKeyValueRow('Service Days', widget.selectedData ?? ""),
         ],
@@ -228,7 +238,7 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
                     ),
                   ),
                   builder: (BuildContext context) {
-                    return FractionallySizedBox(
+                    return const FractionallySizedBox(
                       heightFactor: 0.8,
                       child: WalletPage(),
                     );
@@ -270,7 +280,7 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.normal,
                   fontSize: 13.spMin,
-                  color: Color(0xff71717A))),
+                  color: const Color(0xff71717A))),
           Text(value,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.normal, fontSize: 13.spMin)),
@@ -313,4 +323,33 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
       }),
     );
   }
+
+   Widget buildTodayServiceHours() {
+     final today = DateTime.now().weekday;
+
+     final todaysTimes = getServiceHoursForToday(widget.workspaceData?.times ?? Times(), today);
+
+     return _buildKeyValueRow('Service Hours', todaysTimes);
+   }
+
+   String getServiceHoursForToday(Times times, int day) {
+     switch (day) {
+       case DateTime.monday:
+         return '${times.monday?.startTime} - ${times.monday?.endTime}';
+       case DateTime.tuesday:
+         return '${times.tuesday?.startTime} - ${times.tuesday?.endTime}';
+       case DateTime.wednesday:
+         return '${times.wednesday?.startTime} - ${times.wednesday?.endTime}';
+       case DateTime.thursday:
+         return '${times.thursday?.startTime} - ${times.thursday?.endTime}';
+       case DateTime.friday:
+         return '${times.friday?.startTime} - ${times.friday?.endTime}';
+       case DateTime.saturday:
+         return '${times.saturday?.startTime} - ${times.saturday?.endTime}';
+       case DateTime.sunday:
+         return '${times.sunday?.startTime} - ${times.sunday?.endTime}';
+       default:
+         return 'Closed'; // Fallback for any unexpected cases
+     }
+   }
 }
