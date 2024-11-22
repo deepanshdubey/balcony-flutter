@@ -117,11 +117,15 @@ abstract class ApiClient {
 
   // -- promo -- //
 
-  @GET("/promo/create")
+  @POST("/promo/create")
   Future<PromoModel> createPromo(@Body() Map<String, dynamic> request);
 
   @GET("/promo/find/{code}")
   Future<PromoModel> getPromoCode(
     @Path("code") String code,
+  );
+
+  @GET("/promo/all")
+  Future<PromoModel> getPromoCodeList(
   );
 }

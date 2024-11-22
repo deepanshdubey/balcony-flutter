@@ -1,4 +1,3 @@
-import 'package:balcony/core/alert/alert_manager.dart';
 import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/router/app_router.dart';
 import 'package:balcony/ui/auth/ui/bottomsheet/onboarding_bottomsheet.dart';
@@ -140,9 +139,9 @@ class HostYourPropertyOrWorkspaceWidget extends StatelessWidget {
 
   void navigateToCreateWorkSpace(BuildContext context) {
     appRouter.push(CreateWorkspaceRoute(
-      onSuccess: () {
-        alertManager.showSuccess(context, 'workspace added successfully');
-      },
+      // onSuccess: () {
+      //   alertManager.showSuccess(context, 'workspace added successfully');
+      // },
     ));
   }
 

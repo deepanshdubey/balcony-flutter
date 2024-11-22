@@ -15,6 +15,9 @@ abstract class _PromoStoreBase with Store {
   PromoModel? createPromoResponse;
 
   @observable
+  PromoModel? promoListResponse;
+
+  @observable
   bool isLoading = false;
 
   @observable
@@ -52,6 +55,26 @@ abstract class _PromoStoreBase with Store {
       final response = await promoRepository.createPromo(request);
       if (response.isSuccess) {
         createPromoResponse = response.data;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future getPromoList() async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await promoRepository.promoList();
+      if (response.isSuccess) {
+        promoListResponse = response.data;
       } else {
         errorMessage = response.error!.message;
       }

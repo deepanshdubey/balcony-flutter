@@ -1,6 +1,7 @@
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/data/model/response/promo_model.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/ui/home/store/promo_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
@@ -17,49 +18,60 @@ import 'package:mobx/mobx.dart';
 
 @RoutePage()
 class WorkspacePaymentPage extends StatefulWidget {
-  final WorkspaceData? workspaceData ;
-  final String? selectedData ;
+  final WorkspaceData? workspaceData;
+
+  final String? selectedData;
+
   final num? selectedDays;
-  WorkspacePaymentPage({super.key, this.workspaceData,  this.selectedData, this.selectedDays});
+
+  WorkspacePaymentPage(
+      {super.key, this.workspaceData, this.selectedData, this.selectedDays});
 
   @override
   State<WorkspacePaymentPage> createState() => _WorkspacePaymentPageState();
 }
 
 class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
-   TextEditingController promoController = TextEditingController();
-   List<ReactionDisposer>? disposers;
+  TextEditingController promoController = TextEditingController();
+  List<ReactionDisposer>? disposers;
+  ValueNotifier<String?> fieldError = ValueNotifier(null);
+  ValueNotifier<int> promoDiscount = ValueNotifier(0) ;
+  final promoStore = PromoStore();
 
-   final promoStore = PromoStore();
+  @override
+  void initState() {
+    addDisposer();
+    super.initState();
+  }
 
-   @override
-   void initState() {
-     addDisposer();
-     super.initState();
-   }
+  @override
+  void dispose() {
+    removeDisposer();
+    super.dispose();
+  }
 
-   @override
-   void dispose() {
-     removeDisposer();
-     super.dispose();
-   }
+  void addDisposer() {
+    disposers ??= [
+      reaction((_) => promoStore.errorMessage, (String? errorMessage) {
+        if (errorMessage != null) {
+          fieldError.value = errorMessage;
 
-   void addDisposer() {
-     disposers ??= [
-       reaction((_) => promoStore.errorMessage, (String? errorMessage) {
-         if (errorMessage != null) {
-           alertManager.showError(context, errorMessage);
-         }
-       }),
-     ];
-   }
+        }
+      }),     reaction((_) => promoStore.promoResponse, (PromoModel? promoDetails) {
+        if (promoDetails?.success ?? false) {
+          alertManager.showSuccess(context, "Promo applied");
+         promoDiscount.value = promoDetails?.promo?.discount ?? 0 ;
+        }
+      }),
+    ];
+  }
 
-   void removeDisposer() {
-     if (disposers == null) return;
-     for (final element in disposers!) {
-       element.reaction.dispose();
-     }
-   }
+  void removeDisposer() {
+    if (disposers == null) return;
+    for (final element in disposers!) {
+      element.reaction.dispose();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +87,8 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildSectionTitle(widget.workspaceData?.info?.name ?? "" , widget.workspaceData?.ratings?.toDouble()  ),
+                _buildSectionTitle(widget.workspaceData?.info?.name ?? "",
+                    widget.workspaceData?.ratings?.toDouble()),
                 const SizedBox(height: 8),
                 _buildOrderDetails(),
                 _buildTimeFrameSection(),
@@ -92,7 +105,7 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
     );
   }
 
-  Widget _buildSectionTitle(String title , double? rating) {
+  Widget _buildSectionTitle(String title, double? rating) {
     final theme = Theme.of(context);
     return Container(
       width: 1.sw,
@@ -150,27 +163,21 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
                 ?.copyWith(fontWeight: FontWeight.w600, fontSize: 13.spMin),
           ),
           12.verticalSpace,
-          _buildKeyValueRow(
-              '9 Bushwick Lofts x ${widget.selectedDays} days',
-              "\$${(widget.workspaceData?.pricing?.totalPerDay ?? 0) * (widget.selectedDays ?? 0)}"
-          ),
-
+          _buildKeyValueRow('9 Bushwick Lofts x ${widget.selectedDays} days',
+              "\$${(widget.workspaceData?.pricing?.totalPerDay ?? 0) * (widget.selectedDays ?? 0)}"),
           30.verticalSpace,
           Divider(),
           20.verticalSpace,
-          _buildKeyValueRow('Subtotal', "\$${(widget.workspaceData?.pricing?.totalPerDay ?? 0) * (widget.selectedDays ?? 0)}"),
+          _buildKeyValueRow('Subtotal',
+              "\$${(widget.workspaceData?.pricing?.totalPerDay ?? 0) * (widget.selectedDays ?? 0)}"),
           12.verticalSpace,
-          Observer(
-            builder: (context) {
-              return _buildKeyValueRow('Service Fee', "\$${workspaceStore.totalFee}");
-            }
-          ),
+          _buildKeyValueRow(
+              'Service Fee', "\$${workspaceStore.totalFee}"),
           12.verticalSpace,
-          Observer(
-            builder: (context) {
-              return _buildKeyValueRow('Total', "\$${(widget.workspaceData?.pricing?.totalPerDay ?? 0) * (widget.selectedDays ?? 0) + (workspaceStore.totalFee ?? 0)}");
-            }
-          ),
+          ValueListenableBuilder(valueListenable: promoDiscount, builder: (context, value, child) {
+            return _buildKeyValueRow('Total',
+                "\$${(widget.workspaceData?.pricing?.totalPerDay ?? 0) * (widget.selectedDays ?? 0) + (workspaceStore.totalFee) - value} ");
+          },),
           16.verticalSpace,
           const Divider(),
         ],
@@ -240,18 +247,32 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
             label: 'Promo code',
             hintText: "Promo code",
             keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.next, controller: promoController,
+            textInputAction: TextInputAction.next,
+            controller: promoController,
             suffixIcon: GestureDetector(
-               onTap: () {
-                 promoStore.getPromo(code: promoController.text);
-               },
+              onTap: () {
+                promoStore.getPromo(code: promoController.text);
+              },
               child: Padding(
                 padding: const EdgeInsets.all(13.0).r,
                 child: Text("Apply"),
               ),
             ),
-
           ),
+          ValueListenableBuilder(
+            valueListenable: fieldError,
+            builder: (context, value, child) {
+              return value != null
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        value!,
+                        style: const TextStyle(color: Colors.red, fontSize: 12),
+                      ),
+                    )
+                  : const SizedBox();
+            },
+          )
         ],
       ),
     );
@@ -266,41 +287,43 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
           16.verticalSpace,
           const Divider(),
           16.verticalSpace,
-          Text('Payment Information',style: Theme.of(context)
-              .textTheme
-              .titleLarge
-              ?.copyWith(fontWeight: FontWeight.w600, fontSize: 13.spMin)),
+          Text('Payment Information',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge
+                  ?.copyWith(fontWeight: FontWeight.w600, fontSize: 13.spMin)),
           12.verticalSpace,
-           GestureDetector(
-              onTap: () {
-                context.maybePop();
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(20),
-                    ),
+          GestureDetector(
+            onTap: () {
+              context.maybePop();
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(20),
                   ),
-                  builder: (BuildContext context) {
-                    return const FractionallySizedBox(
-                      heightFactor: 0.8,
-                      child: WalletPage(),
-                    );
-                  },
-                );
-              },
-             child: Row(
+                ),
+                builder: (BuildContext context) {
+                  return const FractionallySizedBox(
+                    heightFactor: 0.8,
+                    child: WalletPage(),
+                  );
+                },
+              );
+            },
+            child: Row(
               children: [
                 Text("No card yet!"),
                 Spacer(),
-                Text('add' ,style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontSize: 14.spMin,
-                    color: appColor.primaryColor,
-                    decoration: TextDecoration.underline)),
+                Text('add',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontSize: 14.spMin,
+                        color: appColor.primaryColor,
+                        decoration: TextDecoration.underline)),
               ],
-                       ),
-           ),
+            ),
+          ),
           16.verticalSpace
         ],
       ),
@@ -310,8 +333,10 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
   Widget _buildBookButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24).r,
-      child: PrimaryButton(text: "Book Workspace", onPressed:() {
-      }, ),
+      child: PrimaryButton(
+        text: "Book Workspace",
+        onPressed: () {},
+      ),
     );
   }
 
@@ -369,32 +394,33 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
     );
   }
 
-   Widget buildTodayServiceHours() {
-     final today = DateTime.now().weekday;
+  Widget buildTodayServiceHours() {
+    final today = DateTime.now().weekday;
 
-     final todaysTimes = getServiceHoursForToday(widget.workspaceData?.times ?? Times(), today);
+    final todaysTimes =
+        getServiceHoursForToday(widget.workspaceData?.times ?? Times(), today);
 
-     return _buildKeyValueRow('Service Hours', todaysTimes);
-   }
+    return _buildKeyValueRow('Service Hours', todaysTimes);
+  }
 
-   String getServiceHoursForToday(Times times, int day) {
-     switch (day) {
-       case DateTime.monday:
-         return '${times.monday?.startTime} - ${times.monday?.endTime}';
-       case DateTime.tuesday:
-         return '${times.tuesday?.startTime} - ${times.tuesday?.endTime}';
-       case DateTime.wednesday:
-         return '${times.wednesday?.startTime} - ${times.wednesday?.endTime}';
-       case DateTime.thursday:
-         return '${times.thursday?.startTime} - ${times.thursday?.endTime}';
-       case DateTime.friday:
-         return '${times.friday?.startTime} - ${times.friday?.endTime}';
-       case DateTime.saturday:
-         return '${times.saturday?.startTime} - ${times.saturday?.endTime}';
-       case DateTime.sunday:
-         return '${times.sunday?.startTime} - ${times.sunday?.endTime}';
-       default:
-         return 'Closed'; // Fallback for any unexpected cases
-     }
-   }
+  String getServiceHoursForToday(Times times, int day) {
+    switch (day) {
+      case DateTime.monday:
+        return '${times.monday?.startTime} - ${times.monday?.endTime}';
+      case DateTime.tuesday:
+        return '${times.tuesday?.startTime} - ${times.tuesday?.endTime}';
+      case DateTime.wednesday:
+        return '${times.wednesday?.startTime} - ${times.wednesday?.endTime}';
+      case DateTime.thursday:
+        return '${times.thursday?.startTime} - ${times.thursday?.endTime}';
+      case DateTime.friday:
+        return '${times.friday?.startTime} - ${times.friday?.endTime}';
+      case DateTime.saturday:
+        return '${times.saturday?.startTime} - ${times.saturday?.endTime}';
+      case DateTime.sunday:
+        return '${times.sunday?.startTime} - ${times.sunday?.endTime}';
+      default:
+        return 'Closed'; // Fallback for any unexpected cases
+    }
+  }
 }

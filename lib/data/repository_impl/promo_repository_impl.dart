@@ -26,6 +26,11 @@ class PromoRepositoryImpl extends BaseRepositoryImpl
     return execute(apiClient.createPromo(request));
   }
 
+  @override
+  Future<ApiResponse<PromoModel>> promoList() {
+    return execute(apiClient.getPromoCodeList());
+  }
+
 
 
 

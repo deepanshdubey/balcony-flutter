@@ -1,3 +1,6 @@
+import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/data/model/response/promo_model.dart';
+import 'package:balcony/ui/home/store/promo_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/model/promotion_item.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
@@ -7,6 +10,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mobx/mobx.dart';
 
 class PromotionWidget extends StatefulWidget {
   const PromotionWidget({
@@ -20,20 +24,77 @@ class PromotionWidget extends StatefulWidget {
 class _PromotionWidgetState extends BaseState<PromotionWidget> {
   late GlobalKey<FormState> formKey;
   int maxUnits = 10;
+  List<ReactionDisposer>? disposers;
+  final promoStore = PromoStore();
 
   List<PromotionItem> promotions = [];
 
   @override
   void initState() {
+    addDisposer();
+    promoStore.getPromoList();
     formKey = GlobalKey<FormState>();
     super.initState();
   }
 
   @override
   void dispose() {
+    removeDisposer();
     formKey.currentState?.dispose();
     super.dispose();
   }
+
+  void addDisposer() {
+    disposers ??= [
+      reaction((_) => promoStore.errorMessage, (String? errorMessage) {
+        if (errorMessage != null) {
+          alertManager.showError(context, errorMessage);
+        }
+      }),
+      reaction((_) => promoStore.createPromoResponse, (PromoModel? promo) {
+        if (promo?.success ??false) {
+          alertManager.showSuccess(context, "Promo added");
+        }
+      }), reaction((_) => promoStore.promoListResponse, (PromoModel? promo) {
+        if (promo?.success ??false) {
+        // setPromotionData(promo!);
+         setState(() {
+         });
+        }
+      }),
+    ];
+  }
+
+  void removeDisposer() {
+    if (disposers == null) return;
+    for (final element in disposers!) {
+      element.reaction.dispose();
+    }
+  }
+
+  // void setPromotionData(PromoModel promoModel) {
+  //   promotions.clear(); // Clear existing promotions
+  //   final promoList = promoModel.allPromos;
+  //
+  //   if (promoList != null) {
+  //     for (var promo in promoList) {
+  //       final promotionItem = PromotionItem();
+  //       promotionItem.nameController.text = promo.code ?? 'Regular'; // Default to "Regular"
+  //       promotionItem.valueController.text = promo.discount?.toString() ?? '0'; // Default to "0"
+  //       promotionItem.isPercentage =promo.type == 'percentage'; // Check type for percentage
+  //
+  //       promotions.add(promotionItem);
+  //     }
+  //   } else {
+  //     final defaultPromotion = PromotionItem()
+  //       ..nameController.text = 'Regular'
+  //       ..valueController.text = '0'
+  //       ..isPercentage = true;
+  //
+  //     promotions.add(defaultPromotion);
+  //   }
+  // }
+
 
   @override
   Widget build(BuildContext context) {
@@ -227,7 +288,16 @@ class _PromotionWidgetState extends BaseState<PromotionWidget> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        if (e.key.currentState?.validate() == true) {}
+                        if (e.key.currentState?.validate() == true) {
+                          var req = {
+                            "code": e.nameController.text,
+                            "type": !e.isPercentage ? "flat" : "percentage",
+                            "discount": int.parse(e.valueController.text),
+                            "applicableOn": "workspace"
+                          };
+
+                          promoStore.createPromo(request: req);
+                        }
                       },
                       child: Text(
                         "add",
