@@ -7,8 +7,9 @@ import 'package:balcony/data/model/response/promo_model.dart';
 import 'package:balcony/data/model/response/property_data.dart';
 import 'package:balcony/data/model/response/user_data.dart';
 import 'package:dio/dio.dart';
-import 'package:retrofit/retrofit.dart';
 import 'package:http_parser/http_parser.dart';
+
+import 'package:retrofit/retrofit.dart';
 
 import '../model/response/workspace_data.dart';
 
@@ -101,6 +102,17 @@ abstract class ApiClient {
   @GET("/property/find/{id}")
   Future<PaginationData<PropertyData>> getPropertyDetails(
     @Path("id") String id,
+  );
+
+  @POST("workspace/create")
+  @MultiPart()
+  Future<CommonData> createProperty(
+    @Part(name: "images", contentType: 'image/*') List<MultipartFile> images,
+    @Part(name: "floorPlanImages", contentType: 'image/*') List<MultipartFile>? floorPlanImages,
+    @Part(name: "info") Info info,
+    @Part(name: "currency") String currency,
+    @Part(name: "other") Other other,
+    @Part(name: "amenities") String amenities, @Part(name: "leasingPolicyDoc",) File? image,
   );
 
   // -- promo -- //

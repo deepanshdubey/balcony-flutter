@@ -7,8 +7,10 @@ import 'package:flutter/material.dart';
 
 class AlertManagerImpl implements AlertManager {
   @override
-  void showSuccess(BuildContext context, String message) {
-    _showAlert(context, message, Theme.of(context).colors.greenColor);
+  void showSuccess(BuildContext context, String message,
+      {VoidCallback? afterAlert}) {
+    _showAlert(context, message, Theme.of(context).colors.greenColor,
+        afterAlert: afterAlert);
   }
 
   @override
@@ -16,7 +18,8 @@ class AlertManagerImpl implements AlertManager {
     _showAlert(context, message, Colors.redAccent);
   }
 
-  void _showAlert(BuildContext context, String message, Color color) {
+  void _showAlert(BuildContext context, String message, Color color,
+      {VoidCallback? afterAlert}) {
     showAdaptiveDialog(
       useSafeArea: true,
       context: context,
@@ -27,6 +30,7 @@ class AlertManagerImpl implements AlertManager {
             message: message,
             color: color,
             theme: Theme.of(context),
+            afterAlert: afterAlert,
           ),
         );
       },

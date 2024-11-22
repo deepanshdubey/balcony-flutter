@@ -2,7 +2,7 @@ import 'package:balcony/core/locator/locator.dart';
 import 'package:flutter/cupertino.dart';
 
 abstract class AlertManager {
-  void showSuccess(BuildContext context, String message);
+  void showSuccess(BuildContext context, String message, {VoidCallback? afterAlert});
 
   void showError(BuildContext context, String message);
 

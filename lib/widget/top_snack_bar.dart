@@ -6,6 +6,7 @@ class TopSnackBar extends StatefulWidget {
   final Color color;
   final Duration duration;
   final ThemeData theme;
+  final VoidCallback? afterAlert;
 
   const TopSnackBar({
     super.key,
@@ -13,6 +14,7 @@ class TopSnackBar extends StatefulWidget {
     required this.color,
     required this.theme,
     this.duration = const Duration(seconds: 3),
+    this.afterAlert,
   });
 
   @override
@@ -45,6 +47,9 @@ class _TopSnackBarState extends State<TopSnackBar>
     Future.delayed(widget.duration, () {
       if (mounted) {
         _controller.reverse().then((_) => Navigator.of(context).pop());
+        if (widget.afterAlert != null) {
+          widget.afterAlert!();
+        }
       }
     });
   }

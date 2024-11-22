@@ -22,9 +22,7 @@ import 'package:mobx/mobx.dart';
 
 @RoutePage()
 class CreateWorkspacePage extends StatefulWidget {
-  final VoidCallback onSuccess;
-
-  const CreateWorkspacePage({super.key, required this.onSuccess});
+  const CreateWorkspacePage({super.key});
 
   @override
   State<CreateWorkspacePage> createState() => _CreateWorkspacePageState();
@@ -67,8 +65,13 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
       }),
       reaction((_) => store.createWorkSpaceDetailsResponse, (res) {
         if (res != null) {
-          widget.onSuccess();
-          appRouter.back();
+          alertManager.showSuccess(
+            context,
+            'workspace added successfully',
+            afterAlert: () {
+              appRouter.back();
+            },
+          );
         }
       }),
     ];
