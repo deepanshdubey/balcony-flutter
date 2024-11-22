@@ -129,7 +129,7 @@ class PhotosWidgetState extends BaseState<PhotosWidget> {
   List<File> getApiData() {
     return userSelectedImages
         .map(
-          (e) => File(e!),
+          (e) => File(e ?? ""),
         )
         .toList();
   }

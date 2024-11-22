@@ -183,7 +183,7 @@ class _PricingWidgetState extends BaseState<PricingWidget> {
                 Flexible(
                   flex: 9,
                   child: AppDropdownField(
-                    controller: maintenanceFeeController,
+                    controller: maintenanceFeeTypeController,
                     label: 'fee type',
                     hintText: '2..',
                     items: const ['daily', 'weekly', 'monthly'],

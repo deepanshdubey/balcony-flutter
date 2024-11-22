@@ -1,7 +1,10 @@
-import 'package:dio/dio.dart';
+import 'dart:io';
+
 import 'package:balcony/core/api/api_response/api_exception.dart';
 import 'package:balcony/core/api/api_response/api_response.dart';
 import 'package:balcony/core/locator/locator.dart';
+import 'package:dio/dio.dart';
+import 'package:http_parser/http_parser.dart';
 
 abstract class BaseRepositoryImpl {
   Future<ApiResponse<T>> execute<T>(Future<T> apiCall) async {
@@ -85,5 +88,17 @@ abstract class BaseRepositoryImpl {
           message: message,
         );
     }
+  }
+
+  Future<List<MultipartFile>> prepareImageFiles(List<File> images) async {
+    return Future.wait(
+      images.map((image) async {
+        return await MultipartFile.fromFile(
+          image.path,
+          contentType: MediaType('image',
+              image.path.split("/").last), // Adjust MIME type if needed
+        );
+      }).toList(),
+    );
   }
 }

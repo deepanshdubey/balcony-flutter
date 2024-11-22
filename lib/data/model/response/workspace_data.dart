@@ -63,7 +63,7 @@ class Info {
   final String? city;
   final String? state;
   final String? country;
-  final String? summary;
+  late  String? summary;
 
   Info({
     this.name,

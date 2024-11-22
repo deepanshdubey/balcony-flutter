@@ -17,24 +17,26 @@ class WorkspaceRepositoryImpl extends BaseRepositoryImpl
   @override
   Future<ApiResponse<PaginationData<WorkspaceData>>> getWorkspace(
       {String? status,
-        String? sort,
-        String? select,
-        int? page,
-        int? limit,
-        bool? includeHost}) {
+      String? sort,
+      String? select,
+      int? page,
+      int? limit,
+      bool? includeHost}) {
     return execute(apiClient.getWorkSpaces(
         status, sort, select, page, limit, includeHost));
   }
 
   @override
-  Future<ApiResponse<PaginationData<WorkspaceData>>> getWorkspaceDetail({String? id}) {
+  Future<ApiResponse<PaginationData<WorkspaceData>>> getWorkspaceDetail(
+      {String? id}) {
     return execute(apiClient.getWorkspaceDetails(id!));
   }
 
   @override
   Future<ApiResponse<CommonData>> createWorkspace(List<File> images, Info info,
-      Pricing pricing, Times times, Other other, List<String> amenities) {
-    throw execute(apiClient.createWorkspace(images, info, pricing, times, other, amenities));
+      Pricing pricing, Times times, Other other, List<String> amenities) async {
+    var list = await prepareImageFiles(images);
+    return execute(apiClient.createWorkspace(
+        list, info, pricing, times, other, amenities.join(',')));
   }
-
 }

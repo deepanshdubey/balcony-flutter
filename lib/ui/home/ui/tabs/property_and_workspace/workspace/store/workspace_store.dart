@@ -11,7 +11,6 @@ part 'workspace_store.g.dart';
 class WorkspaceStore = _WorkspaceStoreBase with _$WorkspaceStore;
 
 abstract class _WorkspaceStoreBase with Store {
-
   @observable
   List<WorkspaceData>? workspaceResponse;
 
@@ -93,8 +92,7 @@ abstract class _WorkspaceStoreBase with Store {
     try {
       errorMessage = null;
       isLoading = true;
-      final response = await workspaceRepository.createWorkspace(
-          images, info, pricing, times, other, amenities);
+      final response = await workspaceRepository.createWorkspace(images, info, pricing, times, other, amenities);
       if (response.isSuccess) {
         createWorkSpaceDetailsResponse = response.data;
       } else {
@@ -109,6 +107,5 @@ abstract class _WorkspaceStoreBase with Store {
     }
   }
 }
-
 
 final workspaceStore = WorkspaceStore();

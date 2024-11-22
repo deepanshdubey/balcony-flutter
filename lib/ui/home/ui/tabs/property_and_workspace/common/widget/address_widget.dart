@@ -136,6 +136,7 @@ class _AddressWidgetState extends BaseState<AddressWidget> {
       city: cityController.text.trim(),
       state: stateController.text.trim(),
       country: countryController.text.trim(),
+      summary: 'a'
     );
   }
 

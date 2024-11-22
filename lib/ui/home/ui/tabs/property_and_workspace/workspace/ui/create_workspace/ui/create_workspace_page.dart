@@ -1,6 +1,7 @@
 import 'package:auto_route/annotations.dart';
 import 'package:balcony/core/alert/alert_manager.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
+import 'package:balcony/router/app_router.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/address_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/amenities_widget.dart';
@@ -17,10 +18,13 @@ import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mobx/mobx.dart';
 
 @RoutePage()
 class CreateWorkspacePage extends StatefulWidget {
-  const CreateWorkspacePage({super.key});
+  final VoidCallback onSuccess;
+
+  const CreateWorkspacePage({super.key, required this.onSuccess});
 
   @override
   State<CreateWorkspacePage> createState() => _CreateWorkspacePageState();
@@ -38,6 +42,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
   late GlobalKey<BaseState> termsOfServiceKey;
   late TextEditingController summaryController;
   final store = WorkspaceStore();
+  List<ReactionDisposer>? disposers;
 
   @override
   void initState() {
@@ -49,7 +54,31 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
     amenitiesKey = GlobalKey<BaseState>();
     termsOfServiceKey = GlobalKey<BaseState>();
     summaryController = TextEditingController();
+    addDisposer();
     super.initState();
+  }
+
+  void addDisposer() {
+    disposers ??= [
+      reaction((_) => store.errorMessage, (String? errorMessage) {
+        if (errorMessage != null) {
+          alertManager.showError(context, errorMessage);
+        }
+      }),
+      reaction((_) => store.createWorkSpaceDetailsResponse, (res) {
+        if (res != null) {
+          widget.onSuccess();
+          appRouter.back();
+        }
+      }),
+    ];
+  }
+
+  void removeDisposer() {
+    if (disposers == null) return;
+    for (final element in disposers!) {
+      element.reaction.dispose();
+    }
   }
 
   @override
@@ -62,6 +91,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
     termsOfServiceKey.currentState?.dispose();
     amenitiesKey.currentState?.dispose();
     summaryController.dispose();
+    removeDisposer();
     super.dispose();
   }
 
@@ -163,9 +193,11 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
 
   void submit() {
     if (validate()) {
+      Info info = workspaceInfoKey.currentState!.getApiData();
+      info.summary = summaryController.text.trim();
       store.createWorkSpace(
         photosKey.currentState!.getApiData(),
-        workspaceInfoKey.currentState!.getApiData(),
+        info,
         pricingKey.currentState!.getApiData(),
         availableWorkspaceHoursKey.currentState?.getApiData()!,
         Other(

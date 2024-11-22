@@ -159,9 +159,6 @@ class _AmenitiesWidgetState extends BaseState<AmenitiesWidget> {
     if (otherAmenities != null) {
       checked.add(otherAmenitiesController.text.trim());
     }
-    for (var element in checked) {
-      logger.i(element);
-    }
     return checked;
   }
 

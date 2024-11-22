@@ -75,14 +75,13 @@ abstract class ApiClient {
   @POST("workspace/create")
   @MultiPart()
   Future<CommonData> createWorkspace(
-    @Part(name: "images", contentType: 'image/*') List<File> images,
+    @Part(name: "images", contentType: 'image/*') List<MultipartFile> images,
     @Part(name: "info") Info info,
     @Part(name: "pricing") Pricing pricing,
     @Part(name: "times") Times times,
     @Part(name: "other") Other other,
-    @Part(name: "amenities") List<String> amenities,
-
-  );
+    @Part(name: "amenities") String amenities,
+      );
 
   @GET("property/all")
   Future<PaginationData<PropertyData>> getProperties(

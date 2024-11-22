@@ -33,7 +33,6 @@ class CustomInterceptors extends Interceptor {
       for (var cookie in cookies) {
         if (cookie.startsWith('connect.sid=')) {
           session.sessionCookie = cookie.split(';')[0].split('=')[1];
-          logger.i('Extracted connect.sid cookie: ${session.sessionCookie}');
           break;
         }
       }
