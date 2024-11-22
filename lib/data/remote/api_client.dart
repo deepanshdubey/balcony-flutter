@@ -3,12 +3,12 @@ import 'dart:io';
 
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/pagination_data.dart';
+import 'package:balcony/data/model/response/promo_model.dart';
 import 'package:balcony/data/model/response/property_data.dart';
 import 'package:balcony/data/model/response/user_data.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:http_parser/http_parser.dart';
-
 
 import '../model/response/workspace_data.dart';
 
@@ -59,7 +59,7 @@ abstract class ApiClient {
     @Part(name: "lastName") String lastName,
     @Part(name: "email") String email,
     @Part(name: "phone") String phone,
-    @Part(name: "image",contentType: "image/*") File image,
+    @Part(name: "image", contentType: "image/*") File image,
   );
 
   @GET("workspace/all")
@@ -81,7 +81,7 @@ abstract class ApiClient {
     @Part(name: "times") Times times,
     @Part(name: "other") Other other,
     @Part(name: "amenities") String amenities,
-      );
+  );
 
   @GET("property/all")
   Future<PaginationData<PropertyData>> getProperties(
@@ -101,5 +101,15 @@ abstract class ApiClient {
   @GET("/property/find/{id}")
   Future<PaginationData<PropertyData>> getPropertyDetails(
     @Path("id") String id,
+  );
+
+  // -- promo -- //
+
+  @GET("/promo/create")
+  Future<PromoModel> createPromo(@Body() Map<String, dynamic> request);
+
+  @GET("/promo/find/{code}")
+  Future<PromoModel> getPromoCode(
+    @Path("code") String code,
   );
 }

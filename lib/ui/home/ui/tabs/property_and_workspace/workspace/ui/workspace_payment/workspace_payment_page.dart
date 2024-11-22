@@ -1,6 +1,8 @@
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:balcony/core/alert/alert_manager.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
+import 'package:balcony/ui/home/store/promo_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/wallets/wallet_page.dart';
 import 'package:balcony/values/colors.dart';
@@ -11,6 +13,7 @@ import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mobx/mobx.dart';
 
 @RoutePage()
 class WorkspacePaymentPage extends StatefulWidget {
@@ -25,6 +28,38 @@ class WorkspacePaymentPage extends StatefulWidget {
 
 class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
    TextEditingController promoController = TextEditingController();
+   List<ReactionDisposer>? disposers;
+
+   final promoStore = PromoStore();
+
+   @override
+   void initState() {
+     addDisposer();
+     super.initState();
+   }
+
+   @override
+   void dispose() {
+     removeDisposer();
+     super.dispose();
+   }
+
+   void addDisposer() {
+     disposers ??= [
+       reaction((_) => promoStore.errorMessage, (String? errorMessage) {
+         if (errorMessage != null) {
+           alertManager.showError(context, errorMessage);
+         }
+       }),
+     ];
+   }
+
+   void removeDisposer() {
+     if (disposers == null) return;
+     for (final element in disposers!) {
+       element.reaction.dispose();
+     }
+   }
 
   @override
   Widget build(BuildContext context) {
@@ -206,6 +241,16 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
             hintText: "Promo code",
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next, controller: promoController,
+            suffixIcon: GestureDetector(
+               onTap: () {
+                 promoStore.getPromo(code: promoController.text);
+               },
+              child: Padding(
+                padding: const EdgeInsets.all(13.0).r,
+                child: Text("Apply"),
+              ),
+            ),
+
           ),
         ],
       ),

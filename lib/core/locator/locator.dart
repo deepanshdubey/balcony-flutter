@@ -6,10 +6,13 @@ import 'package:balcony/core/api/api_module.dart';
 import 'package:balcony/core/assets/asset_manager.dart';
 import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/core/session/session.dart';
+import 'package:balcony/data/model/response/promo_model.dart';
 import 'package:balcony/data/model/response/user_data.dart';
+import 'package:balcony/data/repository/promo_repository.dart';
 import 'package:balcony/data/repository/property_repository.dart';
 import 'package:balcony/data/repository/user_repository.dart';
 import 'package:balcony/data/repository/workspace_repository.dart';
+import 'package:balcony/data/repository_impl/promo_repository_impl.dart';
 import 'package:balcony/data/repository_impl/property_repository_impl.dart';
 import 'package:balcony/data/repository_impl/user_repository_impl.dart';
 import 'package:balcony/data/repository_impl/workspace_repository_impl.dart';
@@ -46,6 +49,8 @@ Future<void> setupLocator() async {
       () => WorkspaceRepositoryImpl(locator()));
   locator.registerLazySingleton<PropertyRepository>(
       () => PropertyRepositoryImpl(locator()));
+  locator.registerLazySingleton<PromoRepository>(
+      () => PromoRepositoryImpl(locator()));
   locator.registerLazySingleton<Logger>(() => Logger(level: Level.all));
 
   /// setup API modules with repos which requires [Dio] instance
