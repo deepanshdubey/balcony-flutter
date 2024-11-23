@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:balcony/generated/assets.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/model/unit_item.dart';
@@ -27,7 +29,7 @@ class _UnitListWidgetState extends BaseState<UnitListWidget> {
   late TextEditingController searchController;
   int maxUnits = 6;
 
-  List<UnitItem> unitList = [UnitItem(), UnitItem(), UnitItem()];
+  List<UnitItem> unitList = [UnitItem()];
 
   @override
   void initState() {
@@ -161,8 +163,18 @@ class _UnitListWidgetState extends BaseState<UnitListWidget> {
   }
 
   @override
-  dynamic getApiData() {
-    return null;
+  Map<String, dynamic> getApiData() {
+    return  {
+      'floor_plan_images' : unitList.where((element) => element.floorImage != null,).map((e) => File(e.floorImage!),).toList(),
+      'currency' : currencyController.text.trim(),
+      'units' : unitList.map((e) =>  {
+        "unit": e.unitController.text.trim(),
+        "price": e.priceController.text.trim(),
+        "beds": e.bedController.text.trim(),
+        "baths": e.bathController.text.trim(),
+        "isAvailable": true
+      },).toList()
+    };
   }
 
   @override
@@ -200,7 +212,7 @@ class _UnitListWidgetState extends BaseState<UnitListWidget> {
                 hintText: '\$\$',
                 label: 'price',
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9].'))
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))
                 ],
                 validator: requiredValidator.call,
               ),

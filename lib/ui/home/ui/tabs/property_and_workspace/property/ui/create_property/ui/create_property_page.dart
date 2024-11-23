@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:auto_route/annotations.dart';
 import 'package:balcony/core/alert/alert_manager.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
+import 'package:balcony/router/app_router.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/address_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/amenities_widget.dart';
@@ -20,6 +21,7 @@ import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mobx/mobx.dart';
 
 @RoutePage()
 class CreatePropertyPage extends StatefulWidget {
@@ -42,6 +44,7 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
   late TextEditingController summaryController;
   double? leaseDuration;
   final store = PropertyStore();
+  List<ReactionDisposer>? disposers;
 
   @override
   void initState() {
@@ -53,6 +56,7 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
     amenitiesKey = GlobalKey<BaseState>();
     termsOfServiceKey = GlobalKey<BaseState>();
     summaryController = TextEditingController();
+    addDisposer();
     super.initState();
   }
 
@@ -66,7 +70,36 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
     termsOfServiceKey.currentState?.dispose();
     amenitiesKey.currentState?.dispose();
     summaryController.dispose();
+    removeDisposer();
     super.dispose();
+  }
+
+  void addDisposer() {
+    disposers ??= [
+      reaction((_) => store.errorMessage, (String? errorMessage) {
+        if (errorMessage != null) {
+          alertManager.showError(context, errorMessage);
+        }
+      }),
+      reaction((_) => store.createPropertyResponse, (res) {
+        if (res != null) {
+          alertManager.showSuccess(
+            context,
+            'property added successfully',
+            afterAlert: () {
+              appRouter.back();
+            },
+          );
+        }
+      }),
+    ];
+  }
+
+  void removeDisposer() {
+    if (disposers == null) return;
+    for (final element in disposers!) {
+      element.reaction.dispose();
+    }
   }
 
   @override

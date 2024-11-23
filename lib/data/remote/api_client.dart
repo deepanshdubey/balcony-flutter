@@ -105,7 +105,7 @@ abstract class ApiClient {
     @Path("id") String id,
   );
 
-  @POST("workspace/create")
+  @POST("property/create")
   @MultiPart()
   Future<CommonData> createProperty(
     @Part(name: "images", contentType: 'image/*') List<MultipartFile> images,

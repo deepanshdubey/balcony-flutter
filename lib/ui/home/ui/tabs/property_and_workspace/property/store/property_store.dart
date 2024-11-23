@@ -16,7 +16,7 @@ abstract class _PropertyStoreBase with Store {
   List<PropertyData>? propertyResponse;
 
   @observable
-  CommonData? createWorkspaceResponse;
+  CommonData? createPropertyResponse;
 
   @observable
   bool isLoading = false;
@@ -105,7 +105,7 @@ abstract class _PropertyStoreBase with Store {
           leasingPolicyDoc,
           unitList);
       if (response.isSuccess) {
-        createWorkspaceResponse = response.data;
+        createPropertyResponse = response.data;
       } else {
         errorMessage = response.error!.message;
       }
