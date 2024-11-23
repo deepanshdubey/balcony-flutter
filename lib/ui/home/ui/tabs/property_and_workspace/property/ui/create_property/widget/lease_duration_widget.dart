@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LeaseDurationWidget extends StatefulWidget {
+  final Function(double?) onLeaseDurationUpdated;
+
   const LeaseDurationWidget({
     super.key,
+    required this.onLeaseDurationUpdated,
   });
 
   @override
@@ -42,12 +45,13 @@ class _LeaseDurationWidgetState extends State<LeaseDurationWidget> {
             children: [
               Expanded(
                   child: Slider(
-                    min: 1,
+                min: 1,
                 max: 10,
                 value: selectedLeaseDuration ?? 1,
                 onChanged: (value) {
                   setState(() {
                     selectedLeaseDuration = value;
+                    widget.onLeaseDurationUpdated(selectedLeaseDuration);
                   });
                 },
               )),

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/widget/file_picker_widget.dart';
@@ -95,8 +97,8 @@ class _LeaseTermsAndPolicyWidgetState
   }
 
   @override
-  getApiData() {
-    return null;
+  File getApiData() {
+    return File(selectedFilePath!);
   }
 
   @override

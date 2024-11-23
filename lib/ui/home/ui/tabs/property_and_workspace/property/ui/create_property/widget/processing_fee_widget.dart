@@ -25,8 +25,8 @@ class ProcessingFeeWidgetState extends BaseState<ProcessingFeeWidget> {
   }
 
   @override
-  dynamic getApiData() {
-    return {};
+  bool getApiData() {
+    return feeType!;
   }
 
   @override

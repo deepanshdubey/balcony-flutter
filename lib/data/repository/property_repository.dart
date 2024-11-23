@@ -25,9 +25,10 @@ abstract class PropertyRepository {
     List<File>? floorPlanImages,
     Info info,
     String currency,
-    Other other,
-    String amenities,
+    Map<String, dynamic> other,
+    List<String> amenities,
     File? leasingPolicyDoc,
+    List<Map<String, dynamic>> unitList,
   );
 }
 

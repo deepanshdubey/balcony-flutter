@@ -35,17 +35,28 @@ class PropertyRepositoryImpl extends BaseRepositoryImpl
 
   @override
   Future<ApiResponse<CommonData>> createProperty(
-      List<File> images,
-      List<File>? floorPlanImages,
-      Info info,
-      String currency,
-      Other other,
-      String amenities,
-      File? leasingPolicyDoc) async {
+    List<File> images,
+    List<File>? floorPlanImages,
+    Info info,
+    String currency,
+    Map<String, dynamic> other,
+    List<String> amenities,
+    File? leasingPolicyDoc,
+    List<Map<String, dynamic>> unitList,
+  ) async {
     var list = await prepareImageFiles(images);
     var list2 = floorPlanImages != null
         ? await prepareImageFiles(floorPlanImages)
         : null;
-    return execute(apiClient.createProperty(list, list2, info, currency, other, amenities, leasingPolicyDoc));
+    return execute(apiClient.createProperty(
+      list,
+      list2,
+      info,
+      currency,
+      unitList,
+      other,
+      amenities.join(','),
+      leasingPolicyDoc,
+    ));
   }
 }

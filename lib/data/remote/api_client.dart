@@ -6,6 +6,7 @@ import 'package:balcony/data/model/response/pagination_data.dart';
 import 'package:balcony/data/model/response/promo_model.dart';
 import 'package:balcony/data/model/response/property_data.dart';
 import 'package:balcony/data/model/response/user_data.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/model/unit_item.dart';
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 
@@ -111,7 +112,8 @@ abstract class ApiClient {
     @Part(name: "floorPlanImages", contentType: 'image/*') List<MultipartFile>? floorPlanImages,
     @Part(name: "info") Info info,
     @Part(name: "currency") String currency,
-    @Part(name: "other") Other other,
+    @Part(name: "unitList") List<Map<String, dynamic>> unitList,
+    @Part(name: "other") Map<String, dynamic> other,
     @Part(name: "amenities") String amenities, @Part(name: "leasingPolicyDoc",) File? image,
   );
 

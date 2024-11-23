@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auto_route/annotations.dart';
 import 'package:balcony/core/alert/alert_manager.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
@@ -7,11 +9,11 @@ import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/ame
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/photos_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/short_summary_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/terms_of_service_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/widget/lease_duration_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/widget/lease_terms_and_policy_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/widget/processing_fee_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/widget/unit_list_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/model/amenities_item.dart';
 import 'package:balcony/widget/app_back_button.dart';
 import 'package:balcony/widget/primary_button.dart';
@@ -38,7 +40,8 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
   late GlobalKey<BaseState> amenitiesKey;
   late GlobalKey<BaseState> termsOfServiceKey;
   late TextEditingController summaryController;
-  final store = WorkspaceStore();
+  double? leaseDuration;
+  final store = PropertyStore();
 
   @override
   void initState() {
@@ -111,7 +114,11 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
                         isWorkspace: false,
                       ),
                       30.h.verticalSpace,
-                      const LeaseDurationWidget(),
+                      LeaseDurationWidget(
+                        onLeaseDurationUpdated: (duration) {
+                          leaseDuration = duration;
+                        },
+                      ),
                       30.h.verticalSpace,
                       AmenitiesWidget(
                         key: amenitiesKey,
@@ -172,29 +179,37 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
 
   void submit() {
     if (validate()) {
-      store.createWorkSpace(
+      Map<String, dynamic> unitData = unitListKey.currentState!.getApiData();
+      List<File> floorPlanImages = unitData['floor_plan_images'];
+      String currency = unitData['currency'];
+      List<Map<String, dynamic>> units = unitData['units'];
+      Info info = propertyAddressKey.currentState!.getApiData();
+      info.summary = summaryController.text.trim();
+      bool other = processingFeeKey.currentState!.getApiData();
+
+      store.createProperty(
         photosKey.currentState!.getApiData(),
-        propertyAddressKey.currentState!.getApiData(),
-        processingFeeKey.currentState!.getApiData(),
-        unitListKey.currentState?.getApiData()!,
-        Other(
-          additionalGuests: processingFeeKey.currentState!.additionalGuests(),
-          isCoWorkingWorkspace:
-              leasingTermsKey.currentState!.isWorkspaceStyle(),
-          isIndoorSpace: leasingTermsKey.currentState!.isIndoor(),
-          isOutdoorSpace: leasingTermsKey.currentState!.isOutdoor(),
-        ),
+        floorPlanImages,
+        info,
+        currency,
+        {
+          "chargeFeeFromRent": other,
+          "chargeFeeAsAddition": !other,
+          "leaseDuration": leaseDuration
+        },
         amenitiesKey.currentState!.getApiData(),
+        leasingTermsKey.currentState!.getApiData(),
+        units,
       );
     }
   }
 
   bool validate() {
     for (var element in [
-      unitListKey,
       photosKey,
       propertyAddressKey,
       processingFeeKey,
+      unitListKey,
       leasingTermsKey,
       termsOfServiceKey,
     ]) {
