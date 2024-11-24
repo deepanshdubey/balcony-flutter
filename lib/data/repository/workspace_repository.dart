@@ -18,6 +18,19 @@ abstract class WorkspaceRepository {
 
   Future<ApiResponse<PaginationData<WorkspaceData>>> getWorkspaceDetail({String? id});
 
+  Future<ApiResponse<PaginationData<WorkspaceData>>> searchWorkspace({
+    String? place,
+    String? checkin,
+    String? checkout,
+    int? people,
+    int? page,
+    int? limit,
+    String? sort,
+    String? select,
+    bool? includeHost,
+  });
+
+
   Future<ApiResponse<CommonData>> createWorkspace(
     List<File> images,
     Info info,

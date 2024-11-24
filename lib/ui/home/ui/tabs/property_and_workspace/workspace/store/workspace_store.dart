@@ -18,6 +18,9 @@ abstract class _WorkspaceStoreBase with Store {
   List<WorkspaceData>? workspaceResponse;
 
   @observable
+  List<WorkspaceData>? searchWorkspaceResponse;
+
+  @observable
   WorkspaceData? workspaceDetailsResponse;
 
   @observable
@@ -111,6 +114,49 @@ abstract class _WorkspaceStoreBase with Store {
       isLoading = false;
     }
   }
+
+
+  @action
+  Future searchWorkspace({
+    String? id,
+    String? place,
+    String? checkin,
+    String? checkout,
+    int? people,
+    int? page,
+    int? limit,
+    String? sort,
+    String? select,
+    bool? includeHost,
+  }) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await workspaceRepository.searchWorkspace(
+        place: place,
+        checkin: checkin,
+        checkout: checkout,
+        people: people,
+        page: page,
+        limit: limit,
+        sort: sort,
+        select: select,
+        includeHost: includeHost,
+      );
+      if (response.isSuccess) {
+        searchWorkspaceResponse = response.data?.data?.result ?? [];
+      } else {
+        errorMessage = response.error?.message ?? "Something went wrong";
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
 
   @computed
   num get totalFee {

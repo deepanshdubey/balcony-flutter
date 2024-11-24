@@ -39,4 +39,9 @@ class WorkspaceRepositoryImpl extends BaseRepositoryImpl
     return execute(apiClient.createWorkspace(
         list, info, pricing, times, other, amenities.join(',')));
   }
+
+  @override
+  Future<ApiResponse<PaginationData<WorkspaceData>>> searchWorkspace({ String? place, String? checkin, String? checkout, int? people, int? page, int? limit, String? sort, String? select, bool? includeHost}) {
+    return execute(apiClient.searchWorkspace( place , checkin ,checkout , people , page , limit  ,sort , select , includeHost));
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:balcony/core/locator/locator.dart';
+import 'package:balcony/data/model/response/promo_list_model.dart';
 import 'package:balcony/data/model/response/promo_model.dart';
 import 'package:balcony/data/repository/promo_repository.dart';
 import 'package:mobx/mobx.dart';
@@ -15,7 +16,7 @@ abstract class _PromoStoreBase with Store {
   PromoModel? createPromoResponse;
 
   @observable
-  PromoModel? promoListResponse;
+  PromoListModel? promoListResponse;
 
   @observable
   bool isLoading = false;

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/pagination_data.dart';
+import 'package:balcony/data/model/response/promo_list_model.dart';
 import 'package:balcony/data/model/response/promo_model.dart';
 import 'package:balcony/data/model/response/property_data.dart';
 import 'package:balcony/data/model/response/user_data.dart';
@@ -120,6 +121,21 @@ abstract class ApiClient {
     File? image,
   );
 
+
+  @GET("/workspace/search")
+  Future<PaginationData<WorkspaceData>> searchWorkspace(
+      @Query("place") String? place,
+      @Query("checkin") String? checkin,
+      @Query("checkout") String? checkout,
+      @Query("people") int? people,
+      @Query("page") int? page,
+      @Query("limit") int? limit,
+      @Query("sort") String? sort,
+      @Query("select") String? select,
+      @Query("includeHost") bool? includeHost,
+      );
+
+
   // -- promo -- //
 
   @POST("/promo/create")
@@ -131,6 +147,7 @@ abstract class ApiClient {
   );
 
   @GET("/promo/all")
+  Future<PromoListModel> getPromoCodeList(
   Future<PromoModel> getPromoCodeList();
 
   /// -- support tickets

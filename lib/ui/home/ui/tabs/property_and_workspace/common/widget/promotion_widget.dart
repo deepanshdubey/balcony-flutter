@@ -1,4 +1,5 @@
 import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/data/model/response/promo_list_model.dart';
 import 'package:balcony/data/model/response/promo_model.dart';
 import 'package:balcony/ui/home/store/promo_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
@@ -55,11 +56,12 @@ class _PromotionWidgetState extends BaseState<PromotionWidget> {
         if (promo?.success ??false) {
           alertManager.showSuccess(context, "Promo added");
         }
-      }), reaction((_) => promoStore.promoListResponse, (PromoModel? promo) {
+      }), reaction((_) => promoStore.promoListResponse, (PromoListModel? promo) {
         if (promo?.success ??false) {
-        // setPromotionData(promo!);
-         setState(() {
-         });
+        setPromotionData(promo!);
+        setState(() {
+
+        });
         }
       }),
     ];
@@ -72,28 +74,27 @@ class _PromotionWidgetState extends BaseState<PromotionWidget> {
     }
   }
 
-  // void setPromotionData(PromoModel promoModel) {
-  //   promotions.clear(); // Clear existing promotions
-  //   final promoList = promoModel.allPromos;
-  //
-  //   if (promoList != null) {
-  //     for (var promo in promoList) {
-  //       final promotionItem = PromotionItem();
-  //       promotionItem.nameController.text = promo.code ?? 'Regular'; // Default to "Regular"
-  //       promotionItem.valueController.text = promo.discount?.toString() ?? '0'; // Default to "0"
-  //       promotionItem.isPercentage =promo.type == 'percentage'; // Check type for percentage
-  //
-  //       promotions.add(promotionItem);
-  //     }
-  //   } else {
-  //     final defaultPromotion = PromotionItem()
-  //       ..nameController.text = 'Regular'
-  //       ..valueController.text = '0'
-  //       ..isPercentage = true;
-  //
-  //     promotions.add(defaultPromotion);
-  //   }
-  // }
+  void setPromotionData(PromoListModel promoModel) {
+    promotions.clear(); // Clear existing promotions
+    final promoList = promoModel;
+
+    if (promoList != null) {
+      for (var promo in promoList.promos ?? []) {
+        final promotionItem = PromotionItem();
+        promotionItem.nameController.text = promo.code ?? 'Regular'; // Default to "Regular"
+        promotionItem.valueController.text = promo.discount?.toString() ?? '0'; // Default to "0"
+        promotionItem.isPercentage =promo.type == 'percentage'; // Check type for percentage
+        promotions.add(promotionItem);
+      }
+    } else {
+      final defaultPromotion = PromotionItem()
+        ..nameController.text = 'Regular'
+        ..valueController.text = '0'
+        ..isPercentage = true;
+
+      promotions.add(defaultPromotion);
+    }
+  }
 
 
   @override

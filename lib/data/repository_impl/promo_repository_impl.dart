@@ -1,6 +1,7 @@
 
 import 'package:balcony/core/api/api_response/api_response.dart';
 import 'package:balcony/data/model/response/pagination_data.dart';
+import 'package:balcony/data/model/response/promo_list_model.dart';
 import 'package:balcony/data/model/response/promo_model.dart';
 import 'package:balcony/data/model/response/property_data.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
@@ -27,7 +28,7 @@ class PromoRepositoryImpl extends BaseRepositoryImpl
   }
 
   @override
-  Future<ApiResponse<PromoModel>> promoList() {
+  Future<ApiResponse<PromoListModel>> promoList() {
     return execute(apiClient.getPromoCodeList());
   }
 
