@@ -12,6 +12,9 @@ class WorkspaceStore = _WorkspaceStoreBase with _$WorkspaceStore;
 
 abstract class _WorkspaceStoreBase with Store {
   @observable
+  int totalPages = 0;
+
+  @observable
   List<WorkspaceData>? workspaceResponse;
 
   @observable
@@ -25,7 +28,6 @@ abstract class _WorkspaceStoreBase with Store {
 
   @observable
   String? errorMessage;
-
 
   @action
   Future getWorkspace(
@@ -47,6 +49,7 @@ abstract class _WorkspaceStoreBase with Store {
           includeHost: includeHost);
       if (response.isSuccess) {
         workspaceResponse = response.data?.data?.result ?? [];
+        totalPages = response.data?.data?.totalPages ?? 0;
       } else {
         errorMessage = response.error!.message;
       }
@@ -93,7 +96,8 @@ abstract class _WorkspaceStoreBase with Store {
     try {
       errorMessage = null;
       isLoading = true;
-      final response = await workspaceRepository.createWorkspace(images, info, pricing, times, other, amenities);
+      final response = await workspaceRepository.createWorkspace(
+          images, info, pricing, times, other, amenities);
       if (response.isSuccess) {
         createWorkSpaceDetailsResponse = response.data;
       } else {
@@ -114,7 +118,6 @@ abstract class _WorkspaceStoreBase with Store {
         (workspaceDetailsResponse?.pricing?.maintenance?.fee ?? 0) +
         (workspaceDetailsResponse?.pricing?.additional?.fee ?? 0);
   }
-
 }
 
 final workspaceStore = WorkspaceStore();

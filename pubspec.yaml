@@ -39,6 +39,7 @@ dependencies:
   scrollable_positioned_list: ^0.3.8
   file_picker: ^8.1.4
   country_state_city: ^0.1.6
+  maplibre_gl: ^0.20.0
 
 
 dev_dependencies:

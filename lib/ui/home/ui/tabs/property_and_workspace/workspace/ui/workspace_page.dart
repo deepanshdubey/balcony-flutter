@@ -1,29 +1,59 @@
 import 'package:auto_route/annotations.dart';
-import 'package:balcony/generated/assets.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/widget/workspace_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/user_home/widget/pagination_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/user_home/widget/property_widget.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
+import 'package:balcony/widget/app_back_button.dart';
 import 'package:balcony/widget/app_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:maplibre_gl/maplibre_gl.dart';
 
 @RoutePage()
 class WorkspacePage extends StatefulWidget {
-  const WorkspacePage({super.key});
+  final bool showBack;
+
+  const WorkspacePage({super.key, this.showBack = true});
 
   @override
   WorkspacePageState createState() => WorkspacePageState();
 }
 
 class WorkspacePageState extends State<WorkspacePage> {
-  int currentPage = 2;
-  final int totalPages = 20;
+  final workspaceStore = WorkspaceStore();
+  int currentPage = 1;
   bool isMapViewSelected = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchWorkspaces();
+  }
+
+  Future<void> _fetchWorkspaces() async {
+    await workspaceStore.getWorkspace(page: currentPage, limit: 10);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: isMapViewSelected ? mapView() : listView(),
+      body: Observer(
+        builder: (_) {
+          if (workspaceStore.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (workspaceStore.errorMessage != null) {
+            return Center(
+              child: Text(
+                workspaceStore.errorMessage!,
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
+            );
+          }
+          return isMapViewSelected ? mapView() : listView();
+        },
+      ),
     );
   }
 
@@ -35,8 +65,11 @@ class WorkspacePageState extends State<WorkspacePage> {
         child: ListView(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                const AppBackButton(
+                  text: 'back',
+                ),
+                const Spacer(),
                 GestureDetector(
                   onTap: () {
                     setState(() {
@@ -59,14 +92,14 @@ class WorkspacePageState extends State<WorkspacePage> {
                           fontSize: 12.spMin,
                           fontWeight: FontWeight.w500,
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
                 16.w.horizontalSpace,
                 GestureDetector(
                   onTap: () {
-                    // Map view action
+                    // Filter action
                   },
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -84,7 +117,7 @@ class WorkspacePageState extends State<WorkspacePage> {
                           fontSize: 12.spMin,
                           fontWeight: FontWeight.w500,
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -101,28 +134,30 @@ class WorkspacePageState extends State<WorkspacePage> {
             ),
             10.h.verticalSpace,
             ListView.builder(
-              itemCount: 10,
+              itemCount: workspaceStore.workspaceResponse?.length ?? 0,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                return PropertyWidget(
-                  title: 'Backyard w. NYC View',
-                  location: 'Paris',
-                  rating: 4.5,
-                  price: '\$123.45',
-                  reviews: 221,
+                final workspace = workspaceStore.workspaceResponse![index];
+                return WorkspaceWidget(
+                  data: workspace,
                 );
               },
             ),
-            PaginationControl(
-              currentPage: currentPage,
-              totalPages: totalPages,
-              onPageChanged: (newPage) {
-                setState(() {
-                  currentPage = newPage;
-                });
-              },
-            ),
+            Observer(builder: (context) {
+              var totalPages = workspaceStore.totalPages;
+              return PaginationControl(
+                currentPage: currentPage,
+                totalPages: totalPages,
+                // Replace with actual total pages if available
+                onPageChanged: (newPage) {
+                  setState(() {
+                    currentPage = newPage;
+                  });
+                  _fetchWorkspaces();
+                },
+              );
+            }),
             60.h.verticalSpace,
           ],
         ),
@@ -135,12 +170,18 @@ class WorkspacePageState extends State<WorkspacePage> {
     return Stack(
       alignment: Alignment.topLeft,
       children: [
-        AppImage(
-          height: context.height,
-          width: context.width,
-          assetPath: Assets.dummyMap,
-          boxFit: BoxFit.cover,
-          alignment: Alignment.bottomCenter,
+        MapLibreMap(
+          styleString: 'https://maps.tilehosting.com/styles/basic/style.json?key=Np0YtMXcGscEPnJKgTsu', // Replace with your style URL
+          initialCameraPosition: const CameraPosition(
+            target: LatLng(25.276987, 55.296249), // Default location (Dubai)
+            zoom: 12,
+          ),
+          onMapCreated: (controller) {
+            /*_onMapCreated(controller);*/
+          },
+          onStyleLoadedCallback: () {
+            /*_addMarkers();*/
+          },
         ),
         Positioned(
           right: 20.r,
@@ -176,14 +217,14 @@ class WorkspacePageState extends State<WorkspacePage> {
                             fontSize: 12.spMin,
                             fontWeight: FontWeight.w500,
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
                   16.w.horizontalSpace,
                   GestureDetector(
                     onTap: () {
-                      // Map view action
+                      // Map filter action
                     },
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -201,7 +242,7 @@ class WorkspacePageState extends State<WorkspacePage> {
                             fontSize: 12.spMin,
                             fontWeight: FontWeight.w500,
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -210,29 +251,6 @@ class WorkspacePageState extends State<WorkspacePage> {
             ),
           ),
         ),
-        Positioned(
-            top: context.height * .5,
-            left: 0,
-            right: 0,
-            child: SizedBox(
-              height: context.height * .4,
-              child: ListView.separated(
-                itemCount: 10,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  return PropertyWidget(
-                    title: 'Backyard w. NYC View',
-                    location: 'Paris',
-                    rating: 4.5,
-                    price: '\$123.45',
-                    reviews: 221,
-                  );
-                },
-                separatorBuilder: (BuildContext context, int index) {
-                  return 10.w.horizontalSpace;
-                },
-              ),
-            )),
       ],
     );
   }

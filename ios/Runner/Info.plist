@@ -51,5 +51,8 @@
     <string>We need access to your photo library to select photos.</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>We need permission to save photos to your photo library.</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>To populate workspace and properties on map</string>
+
 </dict>
 </plist>

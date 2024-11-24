@@ -228,7 +228,7 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
         {
           "chargeFeeFromRent": other,
           "chargeFeeAsAddition": !other,
-          "leaseDuration": leaseDuration
+          "leaseDuration": leaseDuration?.toInt()
         },
         amenitiesKey.currentState!.getApiData(),
         leasingTermsKey.currentState!.getApiData(),

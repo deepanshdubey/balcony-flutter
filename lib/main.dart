@@ -16,9 +16,9 @@ Future<void> main() async {
     () async {
       try {
         WidgetsFlutterBinding.ensureInitialized();
-
         await setupLocator();
         await locator.isReady<Session>();
+        //MapTilerConfig.setApiKey('Np0YtMXcGscEPnJKgTsu');
       } catch (error, st) {
         logger.e(error);
         logger.e(st);
