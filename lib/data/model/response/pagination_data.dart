@@ -21,14 +21,13 @@ class PaginationData<T> {
   PaginationData( {required this.success, this.data, this.workspace,this.property,});
 
   factory PaginationData.fromJson(
-    Map<String, dynamic> json,
-    T Function(Object? json) fromJsonT,
-  ) =>
+      Map<String, dynamic> json,
+      T Function(Object? json) fromJsonT,
+      ) =>
       _$PaginationDataFromJson(json, fromJsonT);
 
   Map<String, dynamic> toJson(Object Function(T value) toJsonT) =>
-      _$PaginationDataToJson(this, toJsonT);
-}
+      _$PaginationDataToJson(this, toJsonT);}
 
 @JsonSerializable(genericArgumentFactories: true)
 class PaginationItem<T> {

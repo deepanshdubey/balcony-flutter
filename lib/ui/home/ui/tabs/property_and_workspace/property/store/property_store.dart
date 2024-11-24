@@ -12,6 +12,10 @@ part 'property_store.g.dart';
 class PropertyStore = _PropertyStoreBase with _$PropertyStore;
 
 abstract class _PropertyStoreBase with Store {
+
+  @observable
+  int totalPages = 0;
+
   @observable
   List<PropertyData>? propertyResponse;
 
@@ -47,6 +51,7 @@ abstract class _PropertyStoreBase with Store {
           includeHost: includeHost);
       if (response.isSuccess) {
         propertyResponse = response.data?.data?.result ?? [];
+        totalPages = response.data?.data?.totalPages ?? 0;
       } else {
         errorMessage = response.error!.message;
       }

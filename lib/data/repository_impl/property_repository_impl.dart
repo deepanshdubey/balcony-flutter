@@ -24,7 +24,7 @@ class PropertyRepositoryImpl extends BaseRepositoryImpl
       int? limit,
       bool? includeHost}) {
     return execute(apiClient.getProperties(
-        status, sort, select, page, limit, includeHost));
+        status ?? 'active', sort, select, page, limit, includeHost));
   }
 
   @override

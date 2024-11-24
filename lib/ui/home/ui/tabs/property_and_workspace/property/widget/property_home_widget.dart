@@ -1,4 +1,5 @@
 import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/router/app_router.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/widget/property_widget.dart';
 import 'package:balcony/ui/home/widget/home_listing_widget.dart';
@@ -56,7 +57,7 @@ class _PropertyHomeWidgetState extends State<PropertyHomeWidget> {
                 ? HomeListingWidget(
                     title: "properties",
                     onMoreClick: () {
-                      //open listing page
+                      appRouter.push(PropertyRoute());
                     },
                     isLoading: store.isLoading,
 
