@@ -1,3 +1,4 @@
+import 'package:balcony/data/model/response/support_ticket_data.dart';
 import 'package:balcony/data/model/response/user_data.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -17,11 +18,15 @@ class CommonData {
   @JsonKey(name: 'user')
   UserData? user;
 
+  @JsonKey(name: 'tickets')
+  List<SupportTicketData>? tickets;
+
   CommonData({
     this.success,
     this.message,
     this.user,
     this.token,
+    this.tickets,
   });
 
   factory CommonData.fromJson(Map<String, dynamic> json) =>

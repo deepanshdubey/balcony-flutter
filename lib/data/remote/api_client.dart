@@ -6,10 +6,8 @@ import 'package:balcony/data/model/response/pagination_data.dart';
 import 'package:balcony/data/model/response/promo_model.dart';
 import 'package:balcony/data/model/response/property_data.dart';
 import 'package:balcony/data/model/response/user_data.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/model/unit_item.dart';
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
-
 import 'package:retrofit/retrofit.dart';
 
 import '../model/response/workspace_data.dart';
@@ -109,12 +107,17 @@ abstract class ApiClient {
   @MultiPart()
   Future<CommonData> createProperty(
     @Part(name: "images", contentType: 'image/*') List<MultipartFile> images,
-    @Part(name: "floorPlanImages", contentType: 'image/*') List<MultipartFile>? floorPlanImages,
+    @Part(name: "floorPlanImages", contentType: 'image/*')
+    List<MultipartFile>? floorPlanImages,
     @Part(name: "info") Info info,
     @Part(name: "currency") String currency,
     @Part(name: "unitList") List<Map<String, dynamic>> unitList,
     @Part(name: "other") Map<String, dynamic> other,
-    @Part(name: "amenities") String amenities, @Part(name: "leasingPolicyDoc",) File? image,
+    @Part(name: "amenities") String amenities,
+    @Part(
+      name: "leasingPolicyDoc",
+    )
+    File? image,
   );
 
   // -- promo -- //
@@ -128,6 +131,20 @@ abstract class ApiClient {
   );
 
   @GET("/promo/all")
-  Future<PromoModel> getPromoCodeList(
+  Future<PromoModel> getPromoCodeList();
+
+  /// -- support tickets
+  @GET("ticket/all")
+  Future<CommonData> getSupportTicket();
+
+  @POST("ticket/create")
+  Future<CommonData> createSupportTicket(@Body()Map<String, dynamic> request);
+
+  @POST("ticket/reply")
+  Future<CommonData> replySupportTicket(@Body()Map<String, dynamic> request);
+
+  @GET("ticket/close/[id}")
+  Future<CommonData> closeSupportTicket(
+    @Path("id") String id,
   );
 }

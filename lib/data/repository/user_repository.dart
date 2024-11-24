@@ -30,6 +30,18 @@ abstract class UserRepository {
   );
 
   Future<ApiResponse<void>> logout();
+
+  Future<ApiResponse<CommonData>> getSupportTicket();
+
+  Future<ApiResponse<CommonData>> createSupportTicket(
+      Map<String, dynamic> request,
+      );
+
+  Future<ApiResponse<CommonData>> replySupportTicket(
+      Map<String, dynamic> request,
+      );
+
+  Future<ApiResponse<CommonData>> closeSupportTicket(String id);
 }
 
 final userRepository = locator<UserRepository>();

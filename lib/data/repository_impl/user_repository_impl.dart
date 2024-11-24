@@ -71,4 +71,26 @@ class UserRepositoryImpl extends BaseRepositoryImpl implements UserRepository {
       image,
     ));
   }
+
+  @override
+  Future<ApiResponse<CommonData>> closeSupportTicket(String id) {
+    return execute(apiClient.closeSupportTicket(id));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> createSupportTicket(
+      Map<String, dynamic> request) {
+    return execute(apiClient.createSupportTicket(request));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> getSupportTicket() {
+    return execute(apiClient.getSupportTicket());
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> replySupportTicket(
+      Map<String, dynamic> request) {
+    return execute(apiClient.replySupportTicket(request));
+  }
 }

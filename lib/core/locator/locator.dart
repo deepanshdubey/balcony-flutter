@@ -16,6 +16,7 @@ import 'package:balcony/data/repository_impl/property_repository_impl.dart';
 import 'package:balcony/data/repository_impl/user_repository_impl.dart';
 import 'package:balcony/data/repository_impl/workspace_repository_impl.dart';
 import 'package:balcony/router/app_router.dart';
+import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/store/support_ticket_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/store/address_store.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:get_it/get_it.dart';
@@ -53,6 +54,7 @@ Future<void> setupLocator() async {
       () => PromoRepositoryImpl(locator()));
   locator.registerLazySingleton<Logger>(() => Logger(level: Level.all));
   locator.registerLazySingleton<AddressStore>(() => AddressStore());
+  locator.registerLazySingleton<SupportTicketStore>(() => SupportTicketStore());
 
   /// setup API modules with repos which requires [Dio] instance
 }

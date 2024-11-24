@@ -18,7 +18,7 @@ class _RantedHistoryPageState extends State<RantedHistoryPage> {
   final ValueNotifier<int> rowsPerPageNotifier = ValueNotifier<int>(3);
   final List<int> rowOptions = [3, 5, 10];
   int currentPage = 1;
-  TextEditingController _filterController = TextEditingController();
+  final TextEditingController _filterController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
