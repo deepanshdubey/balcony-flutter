@@ -5,6 +5,7 @@ import 'package:balcony/router/app_router.dart';
 import 'package:balcony/ui/auth/store/auth_store.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/profile/ui/edit_profile_page.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/ui/support_tickets_page.dart';
+import 'package:balcony/ui/home/ui/tabs/more/ui/wallet/ui/wallet_page.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
 import 'package:balcony/widget/app_image.dart';
@@ -200,6 +201,12 @@ class _MorePageState extends State<MorePage> {
       case 'support':
         {
           showAppBottomSheet(context, SupportTicketsPage());
+          break;
+        }
+
+      case 'wallet':
+        {
+          showAppBottomSheet(context, WalletPage());
           break;
         }
       case 'logout':

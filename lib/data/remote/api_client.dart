@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:balcony/data/model/response/card_data.dart';
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/pagination_data.dart';
 import 'package:balcony/data/model/response/promo_list_model.dart';
@@ -163,4 +164,23 @@ abstract class ApiClient {
   Future<CommonData> closeSupportTicket(
     @Path("id") String id,
   );
+
+  /// - card
+  @GET("card/all")
+  Future<CommonData> getAllCards();
+
+  @POST("card/create")
+  Future<CommonData> createCard(@Body() Map<String, dynamic> request);
+
+  @PUT("card/update/{id}")
+  Future<CommonData> updateCard(
+      @Path("id") String id,
+      @Body() Map<String, dynamic> request,
+      );
+
+  @PUT("card/set-default")
+  Future<CommonData> setDefaultCard(@Field("cardId") String id);
+
+  @DELETE("card/delete/{id}")
+  Future<CommonData> deleteCard(@Path("id") String id);
 }

@@ -10,13 +10,16 @@ import 'package:balcony/data/model/response/user_data.dart';
 import 'package:balcony/data/repository/promo_repository.dart';
 import 'package:balcony/data/repository/property_repository.dart';
 import 'package:balcony/data/repository/user_repository.dart';
+import 'package:balcony/data/repository/wallet_repository.dart';
 import 'package:balcony/data/repository/workspace_repository.dart';
 import 'package:balcony/data/repository_impl/promo_repository_impl.dart';
 import 'package:balcony/data/repository_impl/property_repository_impl.dart';
 import 'package:balcony/data/repository_impl/user_repository_impl.dart';
+import 'package:balcony/data/repository_impl/wallet_repository_impl.dart';
 import 'package:balcony/data/repository_impl/workspace_repository_impl.dart';
 import 'package:balcony/router/app_router.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/store/support_ticket_store.dart';
+import 'package:balcony/ui/home/ui/tabs/more/ui/wallet/store/wallet_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/store/address_store.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:get_it/get_it.dart';
@@ -52,9 +55,12 @@ Future<void> setupLocator() async {
       () => PropertyRepositoryImpl(locator()));
   locator.registerLazySingleton<PromoRepository>(
       () => PromoRepositoryImpl(locator()));
+  locator.registerLazySingleton<WalletRepository>(
+      () => WalletRepositoryImpl(locator()));
   locator.registerLazySingleton<Logger>(() => Logger(level: Level.all));
   locator.registerLazySingleton<AddressStore>(() => AddressStore());
   locator.registerLazySingleton<SupportTicketStore>(() => SupportTicketStore());
+  locator.registerLazySingleton<WalletStore>(() => WalletStore());
 
   /// setup API modules with repos which requires [Dio] instance
 }
