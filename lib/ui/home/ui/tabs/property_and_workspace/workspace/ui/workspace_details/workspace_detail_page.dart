@@ -67,10 +67,6 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
     }
   }
 
-  final List<Map<String, dynamic>> facilities = [
-    {'icon': Icons.local_parking, 'title': 'Parking'},
-    {'icon': Icons.pool, 'title': 'Swimming Pool'},
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -167,7 +163,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                             dateSelected.value = true;
                           },
                         ),
-                        51.verticalSpace,
+                        30.verticalSpace,
                         ValueListenableBuilder<bool>(
                           valueListenable: dateSelected,
                           builder: (context, value, child) {
@@ -185,13 +181,12 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                             openBottomSheet(context , data);
                           },
                         ),
-                        55.verticalSpace,
+                        30.verticalSpace,
                         const Divider(
                           color: Color(0xff005451),
                           thickness: 0.5,
                         ),
                         16.verticalSpace,
-                        // Contact Host
                         Text(
                           "Contact Host for Support",
                           style: theme.textTheme.titleMedium?.copyWith(
@@ -200,19 +195,26 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        Text(
-                          "Chat &/or call with the workspace host before booking",
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontSize: 14.spMin,
-                            color: appColor.primaryColor,
+                        4.verticalSpace,
+                        Container(
+                          width: 200.w,
+                          child: Text(
+                            "Chat &/or call with the workspace host before booking",
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontSize: 14.spMin,
+                              color: appColor.primaryColor,
+                            ),
                           ),
                         ),
                         16.verticalSpace,
-                        const Divider(
-                          color: Color(0xff005451),
-                          thickness: 0.5,
+                        Container(
+                          width: 200.w,
+                          child: const Divider(
+                            color: Color(0xff005451),
+                            thickness: 0.5,
+                          ),
                         ),
                         16.verticalSpace,
                         Row(
@@ -302,7 +304,6 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                         // Workspace Overview
                         Container(
                           width: 1.sw,
-                          height: 320.h,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8).r,
                             border: Border.all(color: appColor.primaryColor),
@@ -334,6 +335,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
+                                30.verticalSpace
                               ],
                             ),
                           ),

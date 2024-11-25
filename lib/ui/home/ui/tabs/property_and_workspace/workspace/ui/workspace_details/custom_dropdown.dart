@@ -7,10 +7,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class CustomDropdown extends StatefulWidget {
   final String title;
   final List<Map<String, dynamic>> items;
-  final int visibleItem ;
+  final int visibleItem;
   final String? iconImage;
 
-  CustomDropdown({required this.title, required this.items, required this.visibleItem, this.iconImage});
+  CustomDropdown({
+    required this.title,
+    required this.items,
+    required this.visibleItem,
+    this.iconImage,
+  });
 
   @override
   _CustomDropdownState createState() => _CustomDropdownState();
@@ -19,7 +24,11 @@ class CustomDropdown extends StatefulWidget {
 class _CustomDropdownState extends State<CustomDropdown> {
   @override
   Widget build(BuildContext context) {
-     int maxVisibleItems = widget.visibleItem; // Maximum items visible before scrolling
+    if (widget.items.isEmpty) {
+      return SizedBox.shrink(); // Return an empty widget if there are no items
+    }
+
+    int maxVisibleItems = widget.visibleItem; // Maximum items visible before scrolling
 
     return Container(
       decoration: BoxDecoration(
@@ -45,8 +54,13 @@ class _CustomDropdownState extends State<CustomDropdown> {
                     fontWeight: FontWeight.normal,
                     fontSize: 12.spMin,
                   ),
-                ),8.horizontalSpace,
-                Image.asset(Assets.imagesChevronsUpDown,height: 12.r,width: 12.r,)
+                ),
+                8.horizontalSpace,
+                Image.asset(
+                  Assets.imagesChevronsUpDown,
+                  height: 12.r,
+                  width: 12.r,
+                ),
               ],
             ),
           ),
@@ -62,27 +76,35 @@ class _CustomDropdownState extends State<CustomDropdown> {
                 children: widget.items.map((item) {
                   return Column(
                     children: [
-
                       Padding(
-                        padding: const EdgeInsets.all(16.0).r,
+                        padding:
+                        const EdgeInsets.symmetric(horizontal: 8.0, vertical: 20).r,
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [Image.asset(
-                            widget.iconImage ==null ?  AssetHelper.getAssetForAmenity(item['title']) : widget.iconImage??"",
-                            height: 16.r,
-                            width: 16.r,
-                            color: appColor.primaryColor,
-                          ),20.horizontalSpace,Text(
-                            item['title'],
-                            style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.normal,
-                              fontSize: 14.spMin,
+                          children: [
+                            Image.asset(
+                              widget.iconImage == null
+                                  ? AssetHelper.getAssetForAmenity(item['title'])
+                                  : widget.iconImage ?? "",
+                              height: 16.r,
+                              width: 16.r,
+                              color: appColor.primaryColor,
                             ),
-                          )],
+                            8.horizontalSpace,
+                            Text(
+                              item['title'],
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                fontWeight: FontWeight.normal,
+                                fontSize: 14.spMin,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                       Divider(
+                      Divider(
                         color: Color(0xffE2E8F0),
                         thickness: 0.5,
                       ),

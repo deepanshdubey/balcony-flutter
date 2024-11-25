@@ -12,7 +12,6 @@ import 'package:balcony/widget/app_image.dart';
 import 'package:balcony/widget/app_text_field.dart';
 import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobx/mobx.dart';
 
@@ -35,7 +34,8 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
   TextEditingController promoController = TextEditingController();
   List<ReactionDisposer>? disposers;
   ValueNotifier<String?> fieldError = ValueNotifier(null);
-  ValueNotifier<int> promoDiscount = ValueNotifier(0) ;
+  ValueNotifier<int> promoDiscount = ValueNotifier(0);
+
   final promoStore = PromoStore();
 
   @override
@@ -55,12 +55,19 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
       reaction((_) => promoStore.errorMessage, (String? errorMessage) {
         if (errorMessage != null) {
           fieldError.value = errorMessage;
-
         }
-      }),     reaction((_) => promoStore.promoResponse, (PromoModel? promoDetails) {
+      }),
+      reaction((_) => promoStore.promoResponse, (PromoModel? promoDetails) {
         if (promoDetails?.success ?? false) {
           alertManager.showSuccess(context, "Promo applied");
-         promoDiscount.value = promoDetails?.promo?.discount ?? 0 ;
+          if (promoDetails?.promo?.type == "percentage") {
+            num totalValue = (widget.workspaceData?.pricing?.totalPerDay ?? 0) *
+                    (widget.selectedDays ?? 0) +
+                (workspaceStore.totalFee);
+            promoDiscount.value = ((totalValue * (promoDetails?.promo?.discount ?? 0)) / 100).toInt();
+          } else {
+            promoDiscount.value = promoDetails?.promo?.discount ?? 0;
+          }
         }
       }),
     ];
@@ -155,6 +162,7 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          20.verticalSpace,
           Text(
             'Order Details',
             style: Theme.of(context)
@@ -171,13 +179,15 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
           _buildKeyValueRow('Subtotal',
               "\$${(widget.workspaceData?.pricing?.totalPerDay ?? 0) * (widget.selectedDays ?? 0)}"),
           12.verticalSpace,
-          _buildKeyValueRow(
-              'Service Fee', "\$${workspaceStore.totalFee}"),
+          _buildKeyValueRow('Service Fee', "\$${workspaceStore.totalFee}"),
           12.verticalSpace,
-          ValueListenableBuilder(valueListenable: promoDiscount, builder: (context, value, child) {
-            return _buildKeyValueRow('Total',
-                "\$${(widget.workspaceData?.pricing?.totalPerDay ?? 0) * (widget.selectedDays ?? 0) + (workspaceStore.totalFee) - value} ");
-          },),
+          ValueListenableBuilder(
+            valueListenable: promoDiscount,
+            builder: (context, value, child) {
+              return _buildKeyValueRow('Total',
+                  "\$${(widget.workspaceData?.pricing?.totalPerDay ?? 0) * (widget.selectedDays ?? 0) + (workspaceStore.totalFee) - value} ");
+            },
+          ),
           16.verticalSpace,
           const Divider(),
         ],
@@ -209,6 +219,7 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
   }
 
   Widget _buildUserInfoSection() {
+    final host = widget.workspaceData?.host as Host;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24).r,
       child: Column(
@@ -224,11 +235,11 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
                   ?.copyWith(fontWeight: FontWeight.w600, fontSize: 13.spMin)),
           16.verticalSpace,
           const SizedBox(height: 4),
-          _buildKeyValueRow('Name', "name"),
+          _buildKeyValueRow('Name', host.firstName ?? ""),
           12.verticalSpace,
-          _buildKeyValueRow('Email', "email"),
+          _buildKeyValueRow('Email', host.email ?? ""),
           12.verticalSpace,
-          _buildKeyValueRow('Phone', "phone"),
+          _buildKeyValueRow('Phone', host.phone ?? ""),
         ],
       ),
     );

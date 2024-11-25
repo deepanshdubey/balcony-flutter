@@ -29,48 +29,25 @@ class AssetHelper {
 class TimesHelper {
   static List<Map<String, dynamic>> mapTimesToDropdownItems(Times? times) {
     final List<Map<String, dynamic>> items = [];
-    if (times?.sunday != null) {
-      items.add({
-        'title': '${formatDayTime(times?.sunday)} Sunday',
-        'icon': Icons.watch_later,
-      });
+
+    // Helper function to add items conditionally
+    void addItem(String day, DayTime? dayTime) {
+      if (dayTime != null && dayTime.startTime != null && dayTime.endTime != null) {
+        items.add({
+          'title': '${formatDayTime(dayTime)} $day',
+          'icon': Icons.watch_later,
+        });
+      }
     }
-    if (times?.monday != null) {
-      items.add({
-        'title': '${formatDayTime(times?.monday)} Monday',
-        'icon': Icons.watch_later,
-      });
-    }
-    if (times?.tuesday != null) {
-      items.add({
-        'title': '${formatDayTime(times?.tuesday)} Tuesday',
-        'icon': Icons.watch_later,
-      });
-    }
-    if (times?.wednesday != null) {
-      items.add({
-        'title': '${formatDayTime(times?.wednesday)} Wednesday',
-        'icon': Icons.watch_later,
-      });
-    }
-    if (times?.thursday != null) {
-      items.add({
-        'title': '${formatDayTime(times?.thursday)} Thursday',
-        'icon': Icons.watch_later,
-      });
-    }
-    if (times?.friday != null) {
-      items.add({
-        'title': '${formatDayTime(times?.friday)} Friday',
-        'icon': Icons.watch_later,
-      });
-    }
-    if (times?.saturday != null) {
-      items.add({
-        'title': '${formatDayTime(times?.saturday)} Saturday',
-        'icon': Icons.watch_later,
-      });
-    }
+
+    // Add items for each day
+    addItem('Sunday', times?.sunday);
+    addItem('Monday', times?.monday);
+    addItem('Tuesday', times?.tuesday);
+    addItem('Wednesday', times?.wednesday);
+    addItem('Thursday', times?.thursday);
+    addItem('Friday', times?.friday);
+    addItem('Saturday', times?.saturday);
 
     return items;
   }
@@ -82,4 +59,5 @@ class TimesHelper {
     return '${dayTime.startTime} - ${dayTime.endTime} EST';
   }
 }
+
 

@@ -147,8 +147,7 @@ abstract class ApiClient {
   );
 
   @GET("/promo/all")
-  Future<PromoListModel> getPromoCodeList(
-  Future<PromoModel> getPromoCodeList();
+  Future<PromoListModel> getPromoCodeList();
 
   /// -- support tickets
   @GET("ticket/all")

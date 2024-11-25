@@ -23,8 +23,9 @@ class WorkspaceData {
   @JsonKey(name: 'geocode')
   final Geocode? geocode;
 
-   // @JsonKey(name: 'host')
-   // final Host? host;
+    @JsonKey(name: 'host')
+    @HostConverter()
+    final dynamic? host;
 
   @JsonKey(name: 'pricing')
   final Pricing? pricing;
@@ -48,7 +49,7 @@ class WorkspaceData {
       this.pricing,
       this.times,
       this.other,
-      this.amenities,
+      this.amenities,this.host
     });
 
   factory WorkspaceData.fromJson(Map<String, dynamic> json) =>
@@ -233,4 +234,28 @@ class Host {
   factory Host.fromJson(Map<String, dynamic> json) => _$HostFromJson(json);
 
   Map<String, dynamic> toJson() => _$HostToJson(this);
+}
+
+class HostConverter implements JsonConverter<dynamic, dynamic> {
+  const HostConverter();
+
+  @override
+  dynamic fromJson(dynamic json) {
+    if (json is Map<String, dynamic>) {
+      return Host.fromJson(json); // Deserialize to Host model
+    } else if (json is String) {
+      return json; // Return string as is
+    }
+    return null; // Handle null case
+  }
+
+  @override
+  dynamic toJson(dynamic object) {
+    if (object is Host) {
+      return object.toJson(); // Serialize Host model
+    } else if (object is String) {
+      return object; // Return string as is
+    }
+    return null;
+  }
 }

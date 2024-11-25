@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class BookingCalendar extends StatefulWidget {
-  final Function(String formattedRange , int days) onDateSelected;
+  final Function(String formattedRange, int days) onDateSelected;
 
   BookingCalendar({required this.onDateSelected});
 
@@ -20,25 +20,26 @@ class _BookingCalendarState extends State<BookingCalendar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 276.w,
+      // Updated decoration to match the original code
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8).r,
-        border: Border.all(color: appColor.primaryColor),
+        borderRadius: BorderRadius.circular(12).r, // Updated radius
+        border: Border.all(color: appColor.primaryColor.withOpacity(0.5)),
       ),
+      padding: EdgeInsets.all(8.r), // Consistent padding
       child: TableCalendar(
         firstDay: DateTime.utc(2020, 1, 1),
         lastDay: DateTime.utc(2030, 12, 31),
         focusedDay: _focusedDay,
         selectedDayPredicate: (day) {
           if (_startDate != null && _endDate != null) {
-            return day.isAtSameMomentAs(_startDate!) || day.isAtSameMomentAs(_endDate!) ||
+            return day.isAtSameMomentAs(_startDate!) ||
+                day.isAtSameMomentAs(_endDate!) ||
                 (day.isAfter(_startDate!) && day.isBefore(_endDate!));
           }
           return isSameDay(_startDate, day);
         },
         onDaySelected: (selectedDay, focusedDay) {
           if (selectedDay.isBefore(DateTime.now())) {
-
             return;
           }
 
@@ -55,14 +56,13 @@ class _BookingCalendarState extends State<BookingCalendar> {
             _focusedDay = focusedDay;
           });
 
-
           widget.onDateSelected(
             _formatSelectedRange(),
             _endDate == null ? 1 : _endDate!.difference(_startDate!).inDays + 1,
           );
-
         },
         calendarStyle: CalendarStyle(
+          // Updated styles to match initial design
           todayDecoration: BoxDecoration(
             color: appColor.primaryColor.withOpacity(0.3),
             shape: BoxShape.circle,
@@ -80,11 +80,11 @@ class _BookingCalendarState extends State<BookingCalendar> {
             color: appColor.primaryColor,
           ),
           todayTextStyle: TextStyle(
-            color: Colors.white,
+            color: Colors.white, // Contrast for today’s date
             fontWeight: FontWeight.bold,
           ),
           selectedTextStyle: TextStyle(
-            color: Colors.white,
+            color: Colors.white, // Contrast for selected date
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -92,11 +92,12 @@ class _BookingCalendarState extends State<BookingCalendar> {
           formatButtonVisible: false,
           titleCentered: true,
           titleTextStyle: TextStyle(
-            color: appColor.primaryColor,
+            color: appColor.primaryColor, // Title color
             fontSize: 16.sp,
             fontWeight: FontWeight.bold,
           ),
           leftChevronIcon: Container(
+            // Chevron style updates
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8).r,
               border: Border.all(color: appColor.primaryColor),
@@ -112,14 +113,14 @@ class _BookingCalendarState extends State<BookingCalendar> {
               borderRadius: BorderRadius.circular(8).r,
               border: Border.all(color: appColor.primaryColor),
             ),
-            padding: EdgeInsets.all(6.0),
+            padding: const EdgeInsets.all(6.0),
             child: Icon(
               Icons.chevron_right,
               color: appColor.primaryColor,
             ),
           ),
-          decoration: BoxDecoration(
-            color: Colors.white,
+          decoration: const BoxDecoration(
+            color: Colors.white, // Background color for header
           ),
         ),
         daysOfWeekStyle: DaysOfWeekStyle(
