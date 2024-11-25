@@ -7,6 +7,7 @@ import 'package:balcony/data/model/response/pagination_data.dart';
 import 'package:balcony/data/model/response/promo_list_model.dart';
 import 'package:balcony/data/model/response/promo_model.dart';
 import 'package:balcony/data/model/response/property_data.dart';
+import 'package:balcony/data/model/response/subscription_list_model.dart';
 import 'package:balcony/data/model/response/user_data.dart';
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
@@ -122,20 +123,18 @@ abstract class ApiClient {
     File? image,
   );
 
-
   @GET("/workspace/search")
   Future<PaginationData<WorkspaceData>> searchWorkspace(
-      @Query("place") String? place,
-      @Query("checkin") String? checkin,
-      @Query("checkout") String? checkout,
-      @Query("people") int? people,
-      @Query("page") int? page,
-      @Query("limit") int? limit,
-      @Query("sort") String? sort,
-      @Query("select") String? select,
-      @Query("includeHost") bool? includeHost,
-      );
-
+    @Query("place") String? place,
+    @Query("checkin") String? checkin,
+    @Query("checkout") String? checkout,
+    @Query("people") int? people,
+    @Query("page") int? page,
+    @Query("limit") int? limit,
+    @Query("sort") String? sort,
+    @Query("select") String? select,
+    @Query("includeHost") bool? includeHost,
+  );
 
   // -- promo -- //
 
@@ -151,14 +150,15 @@ abstract class ApiClient {
   Future<PromoListModel> getPromoCodeList();
 
   /// -- support tickets
+
   @GET("ticket/all")
   Future<CommonData> getSupportTicket();
 
   @POST("ticket/create")
-  Future<CommonData> createSupportTicket(@Body()Map<String, dynamic> request);
+  Future<CommonData> createSupportTicket(@Body() Map<String, dynamic> request);
 
   @POST("ticket/reply")
-  Future<CommonData> replySupportTicket(@Body()Map<String, dynamic> request);
+  Future<CommonData> replySupportTicket(@Body() Map<String, dynamic> request);
 
   @GET("ticket/close/[id}")
   Future<CommonData> closeSupportTicket(
@@ -174,13 +174,18 @@ abstract class ApiClient {
 
   @PUT("card/update/{id}")
   Future<CommonData> updateCard(
-      @Path("id") String id,
-      @Body() Map<String, dynamic> request,
-      );
+    @Path("id") String id,
+    @Body() Map<String, dynamic> request,
+  );
 
   @PUT("card/set-default")
   Future<CommonData> setDefaultCard(@Field("cardId") String id);
 
   @DELETE("card/delete/{id}")
   Future<CommonData> deleteCard(@Path("id") String id);
+
+  /// -- Subscription plan
+  @GET("/subscription/all")
+  Future<SubscriptionListModel> getSubscription(
+      @Query("currency") String? currency);
 }

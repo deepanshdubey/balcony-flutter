@@ -87,11 +87,11 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        25.verticalSpace,
+                        45.verticalSpace,
                         const AppBackButton(
                           text: "back",
                         ),
-                        20.verticalSpace,
+                        30.verticalSpace,
                         AppImage(
                           url: data?.images?.first ??
                               Assets.fontsHostYourWorkspaceOrProperty,

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:balcony/core/api/api_response/api_response.dart';
 import 'package:balcony/data/model/response/common_data.dart';
+import 'package:balcony/data/model/response/subscription_list_model.dart';
 import 'package:balcony/data/remote/api_client.dart';
 import 'package:balcony/data/repository/user_repository.dart';
 import 'package:balcony/data/repository_impl/base_repository_impl.dart';
@@ -92,5 +93,10 @@ class UserRepositoryImpl extends BaseRepositoryImpl implements UserRepository {
   Future<ApiResponse<CommonData>> replySupportTicket(
       Map<String, dynamic> request) {
     return execute(apiClient.replySupportTicket(request));
+  }
+
+  @override
+  Future<ApiResponse<SubscriptionListModel>> subscriptionList(String currency) {
+    return execute(apiClient.getSubscription(currency));
   }
 }

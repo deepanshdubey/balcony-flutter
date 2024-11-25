@@ -1,26 +1,15 @@
 import 'package:auto_route/annotations.dart';
+import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/data/model/response/subscription_list_model.dart';
 import 'package:balcony/generated/assets.dart';
+import 'package:balcony/ui/auth/store/auth_store.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:balcony/widget/app_back_button.dart';
 import 'package:balcony/widget/plan_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-class Plan {
-  final String name;
-  final String description;
-  final double? price; // Null for free plans
-  final List<String> features;
-  bool isSelected;
-
-  Plan({
-    required this.name,
-    required this.description,
-    this.price,
-    required this.features,
-    this.isSelected = false,
-  });
-}
+import 'package:mobx/mobx.dart';
 
 @RoutePage()
 class PlansPage extends StatefulWidget {
@@ -30,103 +19,111 @@ class PlansPage extends StatefulWidget {
 
 class _PlansPageState extends State<PlansPage> {
   final ValueNotifier<int> selectedPlanNotifier = ValueNotifier<int>(0);
+  List<ReactionDisposer>? disposers;
 
-  final List<Plan> plans = [
-    Plan(
-      name: "Free Plan",
-      description: "Always free",
-      features: [
-        "Up to 3 total property units",
-        "Dashboard access",
-        "Leasing onboarding",
-        "Tenant rental payment access",
-      ],
-      isSelected: true,
-    ),
-    Plan(
-      name: "Villa Plan",
-      description: "\$25/mo",
-      price: 25,
-      features: [
-        "Up to 50 total property units",
-        "Dashboard access",
-        "Leasing onboarding",
-        "Tenant rental payment access",
-      ],
-    ),
-    Plan(
-      name: "Pro Plan",
-      description: "\$50/mo",
-      price: 50,
-      features: [
-        "Up to 100 total property units",
-        "Dashboard access",
-        "Leasing onboarding",
-        "Priority support",
-      ],
-    ),
-    Plan(
-      name: "Enterprise Plan",
-      description: "Custom Pricing",
-      features: [
-        "Unlimited property units",
-        "Dashboard access",
-        "Custom integrations",
-        "Dedicated account manager",
-      ],
-    ),
-  ];
+  final authStore = AuthStore();
+
+  @override
+  void initState() {
+    authStore.getSubscriptionList("eur");
+    addDisposer();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    removeDisposer();
+    super.dispose();
+  }
+
+  void addDisposer() {
+    disposers ??= [
+      reaction((_) => authStore.errorMessage, (String? errorMessage) {
+        if (errorMessage != null) {
+          alertManager.showError(context, errorMessage);
+        }
+      }),
+    ];
+  }
+
+  void removeDisposer() {
+    if (disposers == null) return;
+    for (final element in disposers!) {
+      element.reaction.dispose();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16).r,
-        child: ValueListenableBuilder<int>(
-          valueListenable: selectedPlanNotifier,
-          builder: (context, selectedPlan, _) {
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  20.verticalSpace,
-                   const AppBackButton(
-                    text: "back",
-                  ),
-                  20.verticalSpace,
-                  Text(
-                    "pricing",
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontSize: 28.spMin,
-                      color: appColor.primaryColor,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  40.verticalSpace,
-                  Column(
-                    children: plans.asMap().entries.map((entry) {
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              20.verticalSpace,
+              const AppBackButton(
+                text: "back",
+              ),
+              20.verticalSpace,
+              Text(
+                "pricing",
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontSize: 28.spMin,
+                  color: appColor.primaryColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              40.verticalSpace,
+              Observer(
+                builder: (context) {
+                  if (authStore.isLoading) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: appColor.primaryColor,
+                      ),
+                    );
+                  }
+
+                  final subscriptions = authStore.subscriptionListResponse;
+
+                  if (subscriptions == null || subscriptions.isEmpty) {
+                    return Center(
+                      child: Text(
+                        "No plans available",
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: appColor.primaryColor,
+                        ),
+                      ),
+                    );
+                  }
+
+                  return Column(
+                    children: subscriptions.asMap().entries.map((entry) {
                       final index = entry.key;
                       final plan = entry.value;
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: PlanCard(
                           plan: plan,
-                          isSelected: selectedPlan == index,
+                          isSelected: selectedPlanNotifier.value == index,
                           onTap: () {
                             selectedPlanNotifier.value = index;
                           },
                         ),
                       );
                     }).toList(),
-                  ),
-                ],
+                  );
+                },
               ),
-            );
-          },
+            ],
+          ),
         ),
       ),
     );
   }
+
 }
 
 class PlanCard extends StatelessWidget {
@@ -148,11 +145,20 @@ class PlanCard extends StatelessWidget {
       child: Stack(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(16).r, // Rounded corners for the image
+            borderRadius:
+                BorderRadius.circular(16).r, // Rounded corners for the image
             child: Image.asset(
-              isSelected ? Assets.imagesContainerEmpty : Assets.imagesContainerFill, // Replace with your image asset path
-              width: 1.sw, // Width of the image
-              height: 370.h, // Height of the image
+              isSelected
+                  ? Assets.imagesContainerEmpty
+                  : Assets
+                      .imagesContainerFill, // Replace with your image asset path
+              width: 1.sw,
+              height: plan.id != "free_plan_subscription"
+                  ? plan.id == "custom_plan"
+                      ? 200.h
+                      : 650.h
+                  : 560.h,
+              // Width of the image
               fit: BoxFit.fill, // Make the image cover the entire container
             ),
           ),
@@ -160,11 +166,12 @@ class PlanCard extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(16.0).r,
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   20.verticalSpace,
                   Text(
-                    plan.name,
+                    plan.name ?? "",
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontSize: 27.spMin,
                           color: appColor.primaryColor,
@@ -173,44 +180,78 @@ class PlanCard extends StatelessWidget {
                   ),
                   25.verticalSpace,
                   PlanButton(
-                    text: "Book Workspace",
+                    text: "Get Started",
                     isSelected: isSelected,
                     isLoading: false, // Loader condition can be added
                     onPressed: onTap,
                   ),
                   14.verticalSpace,
-                  Text(
-                    plan.description,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontSize: 27.spMin,
-                          color: appColor.primaryColor,
-                          fontWeight: FontWeight.w800,
+                  if (plan.id != "custom_plan")
+                    Text(
+                      plan.price == 0 ? "Always free" : "\$${plan.price}",
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontSize: 27.spMin,
+                            color: appColor.primaryColor,
+                            fontWeight: FontWeight.w800,
+                          ),
+                    ),
+                  if (plan.id != "custom_plan") 18.verticalSpace,
+                  if (plan.id != "custom_plan")
+                    Divider(
+                      color: appColor.grayBorder,
+                    ),
+                  if (plan.id != "custom_plan") 20.verticalSpace,
+                  if (plan.id != "custom_plan")
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10.0).r,
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                Assets.imagesCheckCircle,
+                                height: 14.r,
+                                width: 14.r,
+                              ),
+                              10.horizontalSpace,
+                              Expanded(
+                                child: Text(
+                                  "up to ${plan.units} total property units",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(
+                                        fontSize: 13.spMin,
+                                        color: appColor.primaryColor,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                  ),
-                  18.verticalSpace,
-                  Divider(
-                    color: appColor.grayBorder,
-                  ),
-                  20.verticalSpace,
-                  Column(
-                    children: plan.features.map(
-                      (feature) {
-                        int index = plan.features.indexOf(feature);
-                        return Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10.0).r,
-                              child: Row(
-                                children: [
-                                  Image.asset(
-                                    Assets.imagesCheckCircle,
-                                    height: 14.r,
-                                    width: 14.r,
-                                  ),
-                                  10.horizontalSpace,
-                                  Expanded(
-                                    child: Text(
-                                      feature,
+                        Divider(
+                          color: appColor.primaryColor.withOpacity(0.5),
+                          thickness: 1.0,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10.0).r,
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                Assets.imagesCheckCircle,
+                                height: 14.r,
+                                width: 14.r,
+                              ),
+                              10.horizontalSpace,
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Dashboard access",
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleMedium
@@ -220,21 +261,329 @@ class PlanCard extends StatelessWidget {
                                             fontWeight: FontWeight.w500,
                                           ),
                                     ),
+                                    Text(
+                                      "• property listing / showcasing",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontSize: 13.spMin,
+                                            color: appColor.primaryColor,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                    ),
+                                    Text(
+                                      "• **prospect tenant screening** (coming soon)",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontSize: 13.spMin,
+                                            color: appColor.primaryColor,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                    ),
+                                    Text(
+                                      "• communication (leads / tenants)",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontSize: 13.spMin,
+                                            color: appColor.primaryColor,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        5.verticalSpace,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10.0).r,
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                Assets.imagesCheckCircle,
+                                height: 14.r,
+                                width: 14.r,
+                              ),
+                              10.horizontalSpace,
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Stripe connect (Express):",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontSize: 13.spMin,
+                                            color: appColor.primaryColor,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                    ),
+                                    Text(
+                                      "• analytics and reporting tools",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontSize: 13.spMin,
+                                            color: appColor.primaryColor,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                    ),
+                                    Text(
+                                      "• cash flow analysis",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontSize: 13.spMin,
+                                            color: appColor.primaryColor,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                    ),
+                                    Text(
+                                      "• rent payouts",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontSize: 13.spMin,
+                                            color: appColor.primaryColor,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        5.verticalSpace,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10.0).r,
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                Assets.imagesCheckCircle,
+                                height: 14.r,
+                                width: 14.r,
+                              ),
+                              10.horizontalSpace,
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "leasing onboarding & automation",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontSize: 13.spMin,
+                                            color: appColor.primaryColor,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        5.verticalSpace,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10.0).r,
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                Assets.imagesCheckCircle,
+                                height: 14.r,
+                                width: 14.r,
+                              ),
+                              10.horizontalSpace,
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "tenant rental payment access",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontSize: 13.spMin,
+                                            color: appColor.primaryColor,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                    ),
+                                    Text(
+                                      "• Collect rent by card & /or ACH transfer",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontSize: 13.spMin,
+                                            color: appColor.primaryColor,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                    ),
+                                    Text(
+                                      "• tenant maintence request",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontSize: 13.spMin,
+                                            color: appColor.primaryColor,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        5.verticalSpace,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10.0).r,
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                Assets.imagesCheckCircle,
+                                height: 14.r,
+                                width: 14.r,
+                              ),
+                              10.horizontalSpace,
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "send automated payment reminders",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontSize: 13.spMin,
+                                            color: appColor.primaryColor,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (plan.id != "free_plan_subscription" &&
+                            plan.id != "custom_plan")
+                          5.verticalSpace,
+                        if (plan.id != "free_plan_subscription" &&
+                            plan.id != "custom_plan")
+                          Divider(
+                            color: appColor.primaryColor.withOpacity(0.5),
+                            thickness: 1.0,
+                          ),
+                        if (plan.id != "free_plan_subscription" &&
+                            plan.id != "custom_plan")
+                          Text(
+                            "add-ons if needed*",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  decoration: TextDecoration.underline,
+                                  fontSize: 13.spMin,
+                                  color: appColor.primaryColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                          ),
+                        if (plan.id != "free_plan_subscription" &&
+                            plan.id != "custom_plan")
+                          5.verticalSpace,
+                        if (plan.id != "free_plan_subscription" &&
+                            plan.id != "custom_plan")
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(vertical: 10.0).r,
+                            child: Row(
+                              children: [
+                                Image.asset(
+                                  Assets.imagesCheckCircle,
+                                  height: 14.r,
+                                  width: 14.r,
+                                ),
+                                10.horizontalSpace,
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "+ \$${plan.concierge} : Concierge CRM",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium
+                                            ?.copyWith(
+                                              fontSize: 13.spMin,
+                                              color: appColor.primaryColor,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                      ),
+                                      Text(
+                                        "• Package / Parcel Management",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium
+                                            ?.copyWith(
+                                              fontSize: 13.spMin,
+                                              color: appColor.primaryColor,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                      ),
+                                      Text(
+                                        "• Tenant Notification",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium
+                                            ?.copyWith(
+                                              fontSize: 13.spMin,
+                                              color: appColor.primaryColor,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                      ),
+                                      Text(
+                                        "• rent payouts",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium
+                                            ?.copyWith(
+                                              fontSize: 13.spMin,
+                                              color: appColor.primaryColor,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                            if (index == 0) // Add a divider after all items except the last one
-                              Divider(
-                                color: appColor.primaryColor.withOpacity(0.5),
-                                thickness: 1.0,
-                              ),
-                          ],
-                        );
-                      },
-                    ).toList(),
-                  ),
-
+                          ),
+                      ],
+                    ),
                 ],
               ),
             ),

@@ -83,7 +83,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  25.verticalSpace,
+                  45.verticalSpace,
                   const AppBackButton(
                     text: "back",
                   ),

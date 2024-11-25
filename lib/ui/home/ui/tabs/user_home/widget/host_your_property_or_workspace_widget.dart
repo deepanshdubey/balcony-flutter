@@ -142,6 +142,6 @@ class HostYourPropertyOrWorkspaceWidget extends StatelessWidget {
   }
 
   void navigateToCreateProperty(BuildContext context) {
-    appRouter.push(const CreatePropertyRoute());
+    appRouter.push(const PlansRoute());
   }
 }

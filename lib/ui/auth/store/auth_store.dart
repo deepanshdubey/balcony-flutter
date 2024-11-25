@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:balcony/core/locator/locator.dart';
 import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/data/model/response/common_data.dart';
+import 'package:balcony/data/model/response/subscription_list_model.dart';
 import 'package:balcony/data/repository/user_repository.dart';
 import 'package:balcony/ui/auth/ui/bottomsheet/alert/verification_alert.dart';
 import 'package:mobx/mobx.dart';
@@ -44,6 +45,9 @@ abstract class _AuthStoreBase with Store {
 
   @observable
   CommonData? updateProfileResponse;
+
+  @observable
+  List<Plan>? subscriptionListResponse;
 
   @action
   Future login(Map<String, dynamic> request) async {
@@ -189,6 +193,8 @@ abstract class _AuthStoreBase with Store {
     }
   }
 
+
+
   @action
   Future updateProfile(Map<String, dynamic> request) async {
     try {
@@ -226,6 +232,28 @@ abstract class _AuthStoreBase with Store {
       if (response.isSuccess) {
         updateProfileResponse = response.data!;
         session.user = response.data!.user!;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+
+
+  @action
+  Future getSubscriptionList(String currency) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await userRepository.subscriptionList(currency);
+      if (response.isSuccess) {
+        subscriptionListResponse = response.data?.plans;
       } else {
         errorMessage = response.error!.message;
       }
