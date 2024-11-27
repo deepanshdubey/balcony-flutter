@@ -3,6 +3,8 @@ import 'package:balcony/data/model/response/support_ticket_data.dart';
 import 'package:balcony/data/model/response/user_data.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import 'bookings_data.dart';
+
 part 'common_data.g.dart';
 
 @JsonSerializable()
@@ -24,6 +26,9 @@ class CommonData {
 
   @JsonKey(name: 'cards')
   List<CardData>? cards;
+
+  @JsonKey(name: 'bookings')
+  List<BookingsData>? bookings;
 
 
 

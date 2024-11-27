@@ -1,6 +1,8 @@
 import 'package:balcony/core/locator/locator.dart';
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/support_ticket_data.dart';
+import 'package:balcony/data/model/response/workspace_data.dart';
+import 'package:balcony/data/repository/booking_repository.dart';
 import 'package:balcony/data/repository/user_repository.dart';
 import 'package:mobx/mobx.dart';
 
@@ -11,6 +13,8 @@ class SupportTicketStore = _SupportTicketStoreBase with _$SupportTicketStore;
 abstract class _SupportTicketStoreBase with Store {
   @observable
   List<SupportTicketData>? supportTicketsResponse;
+  @observable
+  List<WorkspaceData>? ongoingWorkspaces;
 
   @observable
   CommonData? createSupportTicketResponse;
@@ -35,6 +39,32 @@ abstract class _SupportTicketStoreBase with Store {
       final response = await userRepository.getSupportTicket();
       if (response.isSuccess) {
         supportTicketsResponse = response.data?.tickets ?? [];
+      } else {
+        errorMessage = response.error?.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future getOnGoingWorkspaces() async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await bookingRepository.getMyBookings("in progress");
+      if (response.isSuccess) {
+        ongoingWorkspaces = response.data?.bookings
+                ?.map(
+                  (e) => e.workspace!,
+                )
+                .toSet()
+                .toList() ??
+            [];
       } else {
         errorMessage = response.error?.message;
       }

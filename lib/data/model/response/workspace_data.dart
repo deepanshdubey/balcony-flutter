@@ -39,6 +39,17 @@ class WorkspaceData {
   @JsonKey(name: 'amenities')
   final List<String>? amenities;
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is WorkspaceData &&
+              runtimeType == other.runtimeType &&
+              id == other.id;
+
+  /// Override `hashCode` to ensure it aligns with `==`.
+  @override
+  int get hashCode => id.hashCode;
+
   WorkspaceData(
       {this.id,
       this.status,

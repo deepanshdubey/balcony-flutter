@@ -188,4 +188,41 @@ abstract class ApiClient {
   @GET("/subscription/all")
   Future<SubscriptionListModel> getSubscription(
       @Query("currency") String? currency);
+
+  /// == Booking
+  @POST("booking/create")
+  Future<CommonData> createBooking(@Body() Map<String, dynamic> request);
+
+  @GET("booking/accept/{id}")
+  Future<CommonData> acceptBooking(@Path("id") String id);
+
+  @GET("booking/reject/{id}")
+  Future<CommonData> rejectBooking(@Path("id") String id);
+
+  @GET("booking/me")
+  Future<CommonData> getMyBookings(@Query("status") String status);
+
+  @GET("booking/all/host/{id}")
+  Future<CommonData> getHostBookings(@Path("id") String hostId);
+
+  @GET("booking/booked-dates")
+  Future<CommonData> getBookedDates(@Query("hostId") String hostId);
+
+  @GET("booking/all")
+  Future<CommonData> getAllBookings();
+
+  @GET("booking/find/{id}")
+  Future<CommonData> getBookingById(@Path("id") String bookingId);
+
+  @POST("booking/refund")
+  Future<CommonData> refundBooking(@Body() Map<String, dynamic> request);
+
+  @GET("booking/host/cancel/{id}")
+  Future<CommonData> cancelBookingByHost(@Path("id") String bookingId);
+
+  @GET("booking/user/cancel/{id}")
+  Future<CommonData> cancelBookingByUser(@Path("id") String bookingId);
+
+  @POST("booking/rate")
+  Future<CommonData> rateBooking(@Body() Map<String, dynamic> request);
 }

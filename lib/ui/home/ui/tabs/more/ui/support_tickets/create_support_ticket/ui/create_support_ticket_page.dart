@@ -25,6 +25,7 @@ class _CreateSupportTicketPageState extends State<CreateSupportTicketPage> {
   @override
   void initState() {
     addDisposer();
+    supportTicketStore.getOnGoingWorkspaces();
     super.initState();
   }
 
@@ -66,7 +67,7 @@ class _CreateSupportTicketPageState extends State<CreateSupportTicketPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-               AppBackButton(
+              AppBackButton(
                 text: 'back to support page',
                 onTap: () {
                   Navigator.of(context).pop();
