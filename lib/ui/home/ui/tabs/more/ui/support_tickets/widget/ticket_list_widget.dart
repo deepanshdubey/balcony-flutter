@@ -6,8 +6,10 @@ import 'ticket_row.dart';
 
 class TicketListWidget extends StatelessWidget {
   final List<SupportTicketData> tickets;
+  final bool isLoading;
 
-  TicketListWidget({Key? key, required this.tickets}) : super(key: key);
+  TicketListWidget({Key? key, required this.tickets, required this.isLoading})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class TicketListWidget extends StatelessWidget {
                       onChanged: (value) {},
                     )),
                 Expanded(
-                  flex: 2,
+                  flex: 4,
                   child: Text(
                     'ticket #',
                     style: theme.textTheme.titleMedium?.copyWith(
@@ -37,6 +39,7 @@ class TicketListWidget extends StatelessWidget {
                     ),
                   ),
                 ),
+                8.w.horizontalSpace,
                 Expanded(
                   flex: 3,
                   child: Text(
@@ -57,7 +60,7 @@ class TicketListWidget extends StatelessWidget {
                   itemBuilder: (context, index) {
                     var item = tickets[index];
                     return TicketRow(
-                      ticketNumber: item.id.toString(),
+                      ticketNumber: item.workspace?.info?.name?.toString() ?? "",
                       onViewReply: () {},
                     );
                   },
@@ -69,7 +72,9 @@ class TicketListWidget extends StatelessWidget {
               : Center(
                   child: Padding(
                     padding: EdgeInsets.all(20.r),
-                    child: const Text('no results.'),
+                    child: isLoading
+                        ? CircularProgressIndicator()
+                        : const Text('no results.'),
                   ),
                 ),
         ],

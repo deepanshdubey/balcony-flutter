@@ -56,7 +56,7 @@ abstract class _SupportTicketStoreBase with Store {
     try {
       errorMessage = null;
       isLoading = true;
-      final response = await bookingRepository.getMyBookings("in progress");
+      final response = await bookingRepository.getMyBookings(["in progress","pending"]);
       if (response.isSuccess) {
         ongoingWorkspaces = response.data?.bookings
                 ?.map(

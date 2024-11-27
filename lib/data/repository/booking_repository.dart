@@ -9,7 +9,7 @@ abstract class BookingRepository {
 
   Future<ApiResponse<CommonData>> rejectBooking(String id);
 
-  Future<ApiResponse<CommonData>> getMyBookings(String status);
+  Future<ApiResponse<CommonData>> getMyBookings(List<String> status);
 
   Future<ApiResponse<CommonData>> getHostBookings(String hostId);
 

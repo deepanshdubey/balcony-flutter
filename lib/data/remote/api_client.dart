@@ -94,6 +94,7 @@ abstract class ApiClient {
     @Query("page") int? page,
     @Query("limit") int? limit,
     @Query("includeHost") bool? includeHost,
+      @Query("query") String? query,
   );
 
   @GET("/workspace/find/{id}")

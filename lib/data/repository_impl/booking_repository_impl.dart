@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:balcony/core/api/api_response/api_response.dart';
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/remote/api_client.dart';
 import 'package:balcony/data/repository/booking_repository.dart';
 import 'package:balcony/data/repository_impl/base_repository_impl.dart';
+import 'package:balcony/generated/l10n.dart';
 
 class BookingRepositoryImpl extends BaseRepositoryImpl
     implements BookingRepository {
@@ -27,8 +30,8 @@ class BookingRepositoryImpl extends BaseRepositoryImpl
   }
 
   @override
-  Future<ApiResponse<CommonData>> getMyBookings(String status) async {
-    return await execute(apiClient.getMyBookings(status));
+  Future<ApiResponse<CommonData>> getMyBookings(List<String> status) async {
+    return await execute(apiClient.getMyBookings(jsonEncode(status)));
   }
 
   @override

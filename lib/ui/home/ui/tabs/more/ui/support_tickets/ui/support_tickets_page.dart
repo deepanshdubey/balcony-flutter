@@ -1,6 +1,6 @@
-import 'package:balcony/data/model/response/support_ticket_data.dart';
 import 'package:balcony/generated/assets.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/create_support_ticket/ui/create_support_ticket_page.dart';
+import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/store/support_ticket_store.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/widget/section_title.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/widget/ticket_list_widget.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
@@ -9,6 +9,7 @@ import 'package:balcony/widget/app_image.dart';
 import 'package:balcony/widget/app_outlined_button.dart';
 import 'package:balcony/widget/app_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SupportTicketsPage extends StatefulWidget {
@@ -23,6 +24,12 @@ class _SupportTicketsPageState extends State<SupportTicketsPage> {
   final List<int> rowOptions = [3, 5, 10];
   int currentPage = 1;
   final TextEditingController _filterController = TextEditingController();
+
+  @override
+  void initState() {
+    supportTicketStore.getSupportTickets();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,14 +71,28 @@ class _SupportTicketsPageState extends State<SupportTicketsPage> {
               20.verticalSpace,
               addNewSupportTicket(),
               16.h.verticalSpace,
-              TicketListWidget(tickets: [
-                SupportTicketData(id: "# 234233")
-              ]),
+              Observer(builder: (context) {
+                var activeTickets = supportTicketStore.supportTicketsResponse
+                    ?.where(
+                      (element) => element.status == 'active',
+                    )
+                    .toList();
+                var isLoading = supportTicketStore.isLoading;
+                return TicketListWidget(isLoading: isLoading,tickets: activeTickets ?? []);
+              }),
               16.h.verticalSpace,
               const SectionTitle(
                   title: "support tickets", subtitle: " (inactive)"),
               16.h.verticalSpace,
-              TicketListWidget(tickets: []),
+              Observer(builder: (context) {
+                var isLoading = supportTicketStore.isLoading;
+                var inActiveTickets = supportTicketStore.supportTicketsResponse
+                    ?.where(
+                      (element) => element.status != 'active',
+                    )
+                    .toList();
+                return TicketListWidget(isLoading:isLoading ,tickets: inActiveTickets ?? []);
+              }),
               20.verticalSpace,
             ],
           ),

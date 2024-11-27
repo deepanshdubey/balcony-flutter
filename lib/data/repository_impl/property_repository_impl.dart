@@ -18,13 +18,15 @@ class PropertyRepositoryImpl extends BaseRepositoryImpl
   @override
   Future<ApiResponse<PaginationData<PropertyData>>> getProperties(
       {String? status,
-      String? sort,
-      String? select,
-      int? page,
-      int? limit,
-      bool? includeHost}) {
+        String? sort,
+        String? select,
+        int? page,
+        int? limit,
+        bool? includeHost,
+        String? query,
+      }) {
     return execute(apiClient.getProperties(
-        status ?? 'active', sort, select, page, limit, includeHost));
+        status ?? 'active', sort, select, page, limit, includeHost, query ?? " "));
   }
 
   @override
@@ -34,16 +36,14 @@ class PropertyRepositoryImpl extends BaseRepositoryImpl
   }
 
   @override
-  Future<ApiResponse<CommonData>> createProperty(
-    List<File> images,
-    List<File>? floorPlanImages,
-    Info info,
-    String currency,
-    Map<String, dynamic> other,
-    List<String> amenities,
-    File? leasingPolicyDoc,
-    List<Map<String, dynamic>> unitList,
-  ) async {
+  Future<ApiResponse<CommonData>> createProperty(List<File> images,
+      List<File>? floorPlanImages,
+      Info info,
+      String currency,
+      Map<String, dynamic> other,
+      List<String> amenities,
+      File? leasingPolicyDoc,
+      List<Map<String, dynamic>> unitList,) async {
     var list = await prepareImageFiles(images);
     var list2 = floorPlanImages != null
         ? await prepareImageFiles(floorPlanImages)

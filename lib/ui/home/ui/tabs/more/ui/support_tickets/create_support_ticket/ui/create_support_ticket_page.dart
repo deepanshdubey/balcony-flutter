@@ -1,7 +1,9 @@
 import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/store/support_ticket_store.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/widget/app_back_button.dart';
+import 'package:balcony/widget/app_dropdown_field.dart';
 import 'package:balcony/widget/app_text_field.dart';
 import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +21,10 @@ class CreateSupportTicketPage extends StatefulWidget {
 
 class _CreateSupportTicketPageState extends State<CreateSupportTicketPage> {
   final TextEditingController summaryController = TextEditingController();
+  final TextEditingController workspaceController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey();
   List<ReactionDisposer>? disposers;
+  String? selectedId;
 
   @override
   void initState() {
@@ -40,7 +44,14 @@ class _CreateSupportTicketPageState extends State<CreateSupportTicketPage> {
       reaction((_) => supportTicketStore.createSupportTicketResponse,
           (response) {
         if (response != null) {
-          alertManager.showSuccess(context, 'ticket created successfully');
+          alertManager.showSuccess(
+            context,
+            'ticket created successfully',
+            afterAlert: () {
+              supportTicketStore.getSupportTickets();
+              Navigator.of(context).pop();
+            },
+          );
         }
       }),
       reaction((_) => supportTicketStore.errorMessage, (String? errorMessage) {
@@ -115,6 +126,20 @@ class _CreateSupportTicketPageState extends State<CreateSupportTicketPage> {
                         textInputAction: TextInputAction.next,
                       ),
                       16.h.verticalSpace,
+                      Observer(builder: (context) {
+                        var workspaces = supportTicketStore.ongoingWorkspaces;
+                        return AppDropdownField<WorkspaceData>(
+                          controller: workspaceController,
+                          label: 'select workspace',
+                          hintText: 'select workspace',
+                          items: workspaces ?? <WorkspaceData>[],
+                          itemLabel: (c) => c.info?.name ?? '',
+                          onItemSelected: (p0) {
+                            selectedId = p0.id;
+                          },
+                        );
+                      }),
+                      16.h.verticalSpace,
                       SizedBox(
                         width: context.width - 40.w,
                         child: Observer(builder: (context) {
@@ -125,8 +150,7 @@ class _CreateSupportTicketPageState extends State<CreateSupportTicketPage> {
                             onPressed: () {
                               if (formKey.currentState?.validate() == true) {
                                 supportTicketStore.createSupportTicket({
-                                  /*"workspaceId": "60e3b5f3c7a1f98f8a3d3a75",
-                                  "propertyId": "60e3b5f3c7a1f98f8a3d3a76",*/
+                                  "workspaceId": selectedId,
                                   "context": summaryController.text.trim(),
                                 });
                               }

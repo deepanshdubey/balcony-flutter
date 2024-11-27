@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TicketRow extends StatefulWidget {
   final String ticketNumber;
@@ -36,10 +37,10 @@ class _TicketRowState extends State<TicketRow> {
 
         // Ticket Number
         Expanded(
-          flex: 2,
+          flex: 4,
           child: Text(widget.ticketNumber),
         ),
-
+        8.w.horizontalSpace,
         // View or Reply Button
         Expanded(
           flex: 3,
