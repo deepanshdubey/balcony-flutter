@@ -3,8 +3,10 @@ import 'package:balcony/core/alert/alert_manager.dart';
 import 'package:balcony/data/model/response/subscription_list_model.dart';
 import 'package:balcony/generated/assets.dart';
 import 'package:balcony/ui/auth/store/auth_store.dart';
+import 'package:balcony/ui/home/ui/tabs/plan/plan_payment.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:balcony/widget/app_back_button.dart';
+import 'package:balcony/widget/currencies.dart';
 import 'package:balcony/widget/plan_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -20,12 +22,14 @@ class PlansPage extends StatefulWidget {
 class _PlansPageState extends State<PlansPage> {
   final ValueNotifier<int> selectedPlanNotifier = ValueNotifier<int>(0);
   List<ReactionDisposer>? disposers;
+  String selectedCurrency = 'USD'; // Default selected currency
+  String selectedSymbol = '\$'; // Default selected symbol
 
   final authStore = AuthStore();
 
   @override
   void initState() {
-    authStore.getSubscriptionList("eur");
+    authStore.getSubscriptionList(selectedCurrency.toLowerCase());
     addDisposer();
     super.initState();
   }
@@ -53,6 +57,15 @@ class _PlansPageState extends State<PlansPage> {
     }
   }
 
+  void _onCurrencyChanged(String? newValue) {
+    setState(() {
+      selectedCurrency = newValue!;
+      selectedSymbol = currencies.firstWhere(
+          (currency) => currency['code'] == selectedCurrency)['symbol']!;
+      authStore.getSubscriptionList(selectedCurrency.toLowerCase());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,13 +80,39 @@ class _PlansPageState extends State<PlansPage> {
                 text: "back",
               ),
               20.verticalSpace,
-              Text(
-                "pricing",
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontSize: 28.spMin,
-                  color: appColor.primaryColor,
-                  fontWeight: FontWeight.w500,
-                ),
+              Row(
+                children: [
+                  Text(
+                    "pricing",
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontSize: 28.spMin,
+                          color: appColor.primaryColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                  ),
+                  Spacer(),
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 0.h),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Theme.of(context).primaryColor),
+                      borderRadius:
+                          BorderRadius.circular(12), // For rounded corners
+                    ),
+                    child: DropdownButton<String>(
+                      underline: 0.verticalSpace,
+                      value: selectedCurrency,
+                      onChanged: _onCurrencyChanged,
+                      items:
+                          currencies.map<DropdownMenuItem<String>>((currency) {
+                        return DropdownMenuItem<String>(
+                          value: currency['code'],
+                          child: Text('(${currency['code']})'),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
               ),
               40.verticalSpace,
               Observer(
@@ -93,8 +132,8 @@ class _PlansPageState extends State<PlansPage> {
                       child: Text(
                         "No plans available",
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: appColor.primaryColor,
-                        ),
+                              color: appColor.primaryColor,
+                            ),
                       ),
                     );
                   }
@@ -106,10 +145,12 @@ class _PlansPageState extends State<PlansPage> {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: PlanCard(
+                          symbole: selectedSymbol,
                           plan: plan,
-                          isSelected: selectedPlanNotifier.value == index,
+                          isSelected: 0 == index,
                           onTap: () {
                             selectedPlanNotifier.value = index;
+                            openBottomSheet(context, plan);
                           },
                         ),
                       );
@@ -124,9 +165,30 @@ class _PlansPageState extends State<PlansPage> {
     );
   }
 
+  void openBottomSheet(BuildContext context, Plan plan) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          heightFactor: 0.8,
+          child: PlanPaymentPage(
+            currencySymbol: selectedSymbol,
+            plan: plan,
+          ),
+        );
+      },
+    );
+  }
 }
 
 class PlanCard extends StatelessWidget {
+  final String symbole;
   final Plan plan;
   final bool isSelected;
   final VoidCallback onTap;
@@ -136,6 +198,7 @@ class PlanCard extends StatelessWidget {
     required this.plan,
     required this.isSelected,
     required this.onTap,
+    required this.symbole,
   }) : super(key: key);
 
   @override
@@ -187,13 +250,36 @@ class PlanCard extends StatelessWidget {
                   ),
                   14.verticalSpace,
                   if (plan.id != "custom_plan")
-                    Text(
-                      plan.price == 0 ? "Always free" : "\$${plan.price}",
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontSize: 27.spMin,
-                            color: appColor.primaryColor,
-                            fontWeight: FontWeight.w800,
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: plan.price == 0
+                                ? "Always free"
+                                : "${symbole} ${plan.price}",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  fontSize: 27.spMin,
+                                  color: appColor.primaryColor,
+                                  fontWeight: FontWeight.w800,
+                                ),
                           ),
+                          if (plan.price != 0)
+                            TextSpan(
+                              text: "/mo",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    fontSize: 12.spMin,
+                                    color: appColor.primaryColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                            ),
+                        ],
+                      ),
                     ),
                   if (plan.id != "custom_plan") 18.verticalSpace,
                   if (plan.id != "custom_plan")
