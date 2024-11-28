@@ -88,7 +88,7 @@ abstract class ApiClient {
 
   @GET("property/all")
   Future<PaginationData<PropertyData>> getProperties(
-    @Query("status") String? status,
+    @Query("query") String? status,
     @Query("sort") String? sort,
     @Query("select") String? select,
     @Query("page") int? page,

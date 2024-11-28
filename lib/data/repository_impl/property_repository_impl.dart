@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:balcony/core/api/api_response/api_response.dart';
@@ -25,8 +26,9 @@ class PropertyRepositoryImpl extends BaseRepositoryImpl
         bool? includeHost,
         String? query,
       }) {
+    var query = jsonEncode({"status": status ?? 'active'});
     return execute(apiClient.getProperties(
-        status ?? 'active', sort, select, page, limit, includeHost, query ?? " "));
+    query, sort, select, page, limit, includeHost, query ?? " "));
   }
 
   @override
