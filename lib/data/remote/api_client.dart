@@ -161,7 +161,7 @@ abstract class ApiClient {
   @POST("ticket/reply")
   Future<CommonData> replySupportTicket(@Body() Map<String, dynamic> request);
 
-  @GET("ticket/close/[id}")
+  @GET("ticket/close/{id}")
   Future<CommonData> closeSupportTicket(
     @Path("id") String id,
   );

@@ -1,5 +1,6 @@
 import 'package:balcony/generated/assets.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/create_support_ticket/ui/create_support_ticket_page.dart';
+import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/create_support_ticket/ui/reply_support_ticket_page.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/store/support_ticket_store.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/widget/section_title.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/widget/ticket_list_widget.dart';
@@ -78,7 +79,14 @@ class _SupportTicketsPageState extends State<SupportTicketsPage> {
                     )
                     .toList();
                 var isLoading = supportTicketStore.isLoading;
-                return TicketListWidget(isLoading: isLoading,tickets: activeTickets ?? []);
+                return TicketListWidget(
+                  isLoading: isLoading,
+                  tickets: activeTickets ?? [],
+                  onViewReply: (ticket) {
+                    showAppBottomSheet(
+                        context, ReplySupportTicketPage(ticket: ticket));
+                  },
+                );
               }),
               16.h.verticalSpace,
               const SectionTitle(
@@ -91,7 +99,14 @@ class _SupportTicketsPageState extends State<SupportTicketsPage> {
                       (element) => element.status != 'active',
                     )
                     .toList();
-                return TicketListWidget(isLoading:isLoading ,tickets: inActiveTickets ?? []);
+                return TicketListWidget(
+                  isLoading: isLoading,
+                  tickets: inActiveTickets ?? [],
+                  onViewReply: (ticket) {
+                    showAppBottomSheet(
+                        context, ReplySupportTicketPage(ticket: ticket));
+                  },
+                );
               }),
               20.verticalSpace,
             ],

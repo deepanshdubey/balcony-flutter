@@ -7,9 +7,14 @@ import 'ticket_row.dart';
 class TicketListWidget extends StatelessWidget {
   final List<SupportTicketData> tickets;
   final bool isLoading;
+  final Function(SupportTicketData) onViewReply;
 
-  TicketListWidget({Key? key, required this.tickets, required this.isLoading})
-      : super(key: key);
+  TicketListWidget({
+    Key? key,
+    required this.tickets,
+    required this.isLoading,
+    required this.onViewReply,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -60,8 +65,8 @@ class TicketListWidget extends StatelessWidget {
                   itemBuilder: (context, index) {
                     var item = tickets[index];
                     return TicketRow(
-                      ticketNumber: item.workspace?.info?.name?.toString() ?? "",
-                      onViewReply: () {},
+                      ticket: item,
+                      onViewReply: onViewReply,
                     );
                   },
                   separatorBuilder: (context, index) => Container(
