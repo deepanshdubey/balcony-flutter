@@ -48,7 +48,7 @@ abstract class _PropertyStoreBase with Store {
           select: select,
           page: page,
           limit: limit,
-          includeHost: includeHost);
+          includeHost: includeHost,);
       if (response.isSuccess) {
         propertyResponse = response.data?.data?.result ?? [];
         totalPages = response.data?.data?.totalPages ?? 0;

@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:balcony/core/locator/locator.dart';
 import 'package:balcony/router/app_router.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
 import 'package:balcony/widget/app_image.dart';
@@ -8,6 +9,7 @@ import 'package:balcony/widget/app_text_field.dart';
 import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 class SearchWorkspacesWidget extends StatefulWidget {
   const SearchWorkspacesWidget({super.key});
@@ -26,6 +28,8 @@ class _SearchWorkspacesWidgetState extends State<SearchWorkspacesWidget> {
   late FocusNode checkInNode;
   late FocusNode checkOutNode;
   late FocusNode peopleNode;
+  String checkInDate = " ";
+  String checkOutDate = " ";
 
   @override
   void initState() {
@@ -85,11 +89,24 @@ class _SearchWorkspacesWidgetState extends State<SearchWorkspacesWidget> {
               textInputAction: TextInputAction.next,
             ),
             16.h.verticalSpace,
+            // Example of AppTextField for Check-In and Check-Out with DatePicker
             AppTextField(
               controller: checkInController,
               focusNode: checkInNode,
               readOnly: true,
-              onTap: () {},
+              onTap: () async {
+                DateTime? selectedDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2100),
+                );
+                if (selectedDate != null) {
+                  String formattedDate = DateFormat('MM/dd').format(selectedDate);
+                  checkInController.text = formattedDate;
+                  checkInDate =selectedDate.toIso8601String();
+                }
+              },
               prefixIcon: Padding(
                 padding: EdgeInsets.all(10.r),
                 child: AppImage(
@@ -105,6 +122,21 @@ class _SearchWorkspacesWidgetState extends State<SearchWorkspacesWidget> {
             AppTextField(
               controller: checkOutController,
               focusNode: checkOutNode,
+              readOnly: true,
+              onTap: () async {
+                DateTime? selectedDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2100),
+                );
+
+                if (selectedDate != null) {
+                  String formattedDate = DateFormat('MM/dd').format(selectedDate);
+                  checkOutController.text = formattedDate;
+                  checkOutDate =selectedDate.toIso8601String();
+                }
+              },
               prefixIcon: Padding(
                 padding: EdgeInsets.all(10.r),
                 child: AppImage(
@@ -113,11 +145,10 @@ class _SearchWorkspacesWidgetState extends State<SearchWorkspacesWidget> {
                   assetPath: theme.assets.calender,
                 ),
               ),
-              readOnly: true,
-              onTap: () {},
               label: 'check out',
               hintText: 'MM/DD',
             ),
+
             16.h.verticalSpace,
             SizedBox(
               width: context.width / 2,
@@ -133,7 +164,10 @@ class _SearchWorkspacesWidgetState extends State<SearchWorkspacesWidget> {
             PrimaryButton(
               text: "search",
               onPressed: () {
+                workspaceStore.searchWorkspace(place: placeController.text , checkin: checkInDate , checkout: checkOutDate  , people: 1);
                 if (_formKey.currentState!.validate() == true) {
+
+
                  context.router.push(WorkspaceRoute());
                 }
               },

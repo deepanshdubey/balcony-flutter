@@ -22,7 +22,7 @@ class _PropertyHomeWidgetState extends State<PropertyHomeWidget> {
   void initState() {
     super.initState();
     addDisposer();
-    store.getProperty();
+    store.getProperty(status: "inactive");
   }
 
   @override

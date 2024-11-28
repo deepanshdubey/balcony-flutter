@@ -15,7 +15,6 @@ abstract class PropertyRepository {
     int? page,
     int? limit,
     bool? includeHost,
-    String? query,
   });
 
   Future<ApiResponse<PaginationData<PropertyData>>> getPropertyDetails(

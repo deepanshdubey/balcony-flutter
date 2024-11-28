@@ -57,7 +57,7 @@ ThemeData createTheme(ColorScheme colors, TextTheme textTheme) {
       ),
     ),
     datePickerTheme: DatePickerThemeData(
-      headerBackgroundColor: colors.primaryContainer,
+      headerBackgroundColor: appColor.primaryColor,
       headerForegroundColor: colors.onPrimaryContainer,
       dayStyle: TextStyle(color: colors.onSurface),
     ),
