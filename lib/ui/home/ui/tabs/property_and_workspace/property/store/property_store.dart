@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:balcony/core/locator/locator.dart';
 import 'package:balcony/data/model/response/common_data.dart';
@@ -18,6 +19,9 @@ abstract class _PropertyStoreBase with Store {
 
   @observable
   List<PropertyData>? propertyResponse;
+
+  @observable
+  List<PropertyData>? searchPropertyResponse;
 
   @observable
   CommonData? createPropertyResponse;
@@ -113,6 +117,51 @@ abstract class _PropertyStoreBase with Store {
         createPropertyResponse = response.data;
       } else {
         errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+
+  @action
+  Future searchProperty({
+    String? place,
+    int? beds,
+    int? baths,
+    double? minrange,
+    double? maxrange,
+    int? page,
+    int? limit,
+    String? sort,
+    String? select,
+    bool? includeHost,
+    bool? includeUnitList,
+  }) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await propertyRepository.searchProperties(
+        place: place,
+        beds: beds,
+        baths: baths,
+        minrange: minrange,
+        maxrange: maxrange,
+        page: page,
+        limit: limit,
+        sort: sort,
+        select: select,
+        includeHost: includeHost,
+      );
+      if (response.isSuccess) {
+        searchPropertyResponse = response.data?.data?.result ?? [];
+        totalPages = response.data?.data?.totalPages ?? 0;
+      } else {
+        errorMessage = response.error?.message ?? "Something went wrong";
       }
     } catch (e, st) {
       logger.e(e);

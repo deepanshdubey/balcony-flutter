@@ -102,9 +102,10 @@ class _SearchWorkspacesWidgetState extends State<SearchWorkspacesWidget> {
                   lastDate: DateTime(2100),
                 );
                 if (selectedDate != null) {
-                  String formattedDate = DateFormat('MM/dd').format(selectedDate);
+                  String formattedDate =
+                      DateFormat('MM/dd').format(selectedDate);
                   checkInController.text = formattedDate;
-                  checkInDate =selectedDate.toIso8601String();
+                  checkInDate = selectedDate.toIso8601String();
                 }
               },
               prefixIcon: Padding(
@@ -132,9 +133,10 @@ class _SearchWorkspacesWidgetState extends State<SearchWorkspacesWidget> {
                 );
 
                 if (selectedDate != null) {
-                  String formattedDate = DateFormat('MM/dd').format(selectedDate);
+                  String formattedDate =
+                      DateFormat('MM/dd').format(selectedDate);
                   checkOutController.text = formattedDate;
-                  checkOutDate =selectedDate.toIso8601String();
+                  checkOutDate = selectedDate.toIso8601String();
                 }
               },
               prefixIcon: Padding(
@@ -164,11 +166,18 @@ class _SearchWorkspacesWidgetState extends State<SearchWorkspacesWidget> {
             PrimaryButton(
               text: "search",
               onPressed: () {
-                workspaceStore.searchWorkspace(place: placeController.text , checkin: checkInDate , checkout: checkOutDate  , people: 1);
                 if (_formKey.currentState!.validate() == true) {
-
-
-                 context.router.push(WorkspaceRoute());
+                  workspaceStore.searchWorkspace(
+                      place: placeController.text,
+                      checkin: checkInDate,
+                      checkout: checkOutDate,
+                      people: int.parse(peopleController.text));
+                  Future.delayed(Duration(seconds: 5));
+                  context.router.push(SearchWorkspaceRoute(
+                      place: placeController.text,
+                      checkIn: checkInDate,
+                      checkOut: checkOutDate,
+                      people: int.parse(peopleController.text)));
                 }
               },
             ),

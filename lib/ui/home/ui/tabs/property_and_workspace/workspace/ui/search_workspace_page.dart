@@ -9,8 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 
 @RoutePage()
-class WorkspacePage extends StatefulWidget {
-  final bool? fromSearch;
+class SearchWorkspacePage extends StatefulWidget {
   final bool showBack;
   final String? checkIn;
   final String? checkOut;
@@ -18,14 +17,14 @@ class WorkspacePage extends StatefulWidget {
   final String? place;
 
 
-  const WorkspacePage(
-      {super.key, this.showBack = true, this.fromSearch, this.checkIn, this.checkOut, this.people, this.place});
+  const SearchWorkspacePage(
+      {super.key, this.showBack = true,  this.checkIn, this.checkOut, this.people, this.place});
 
   @override
-  WorkspacePageState createState() => WorkspacePageState();
+  SearchWorkspacePageState createState() => SearchWorkspacePageState();
 }
 
-class WorkspacePageState extends State<WorkspacePage> {
+class SearchWorkspacePageState extends State<SearchWorkspacePage> {
   final workspaceStore = WorkspaceStore();
   int currentPage = 1;
   bool isMapViewSelected = false;
@@ -33,12 +32,9 @@ class WorkspacePageState extends State<WorkspacePage> {
   @override
   void initState() {
     super.initState();
-    _fetchWorkspaces();
+    _fetchWorkspacesSearch();
   }
 
-  Future<void> _fetchWorkspaces() async {
-    await workspaceStore.getWorkspace(page: currentPage, limit: 10);
-  }
 
   Future<void> _fetchWorkspacesSearch() async {
     await workspaceStore.searchWorkspace(page: currentPage,
@@ -149,11 +145,11 @@ class WorkspacePageState extends State<WorkspacePage> {
             ),
             10.h.verticalSpace,
             ListView.builder(
-              itemCount: workspaceStore.workspaceResponse?.length ?? 0,
+              itemCount: workspaceStore.searchWorkspaceResponse?.length ?? 0,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                final workspace = workspaceStore.workspaceResponse![index];
+                final workspace = workspaceStore.searchWorkspaceResponse![index];
                 return WorkspaceWidget(
                   data: workspace,
                 );
@@ -169,7 +165,7 @@ class WorkspacePageState extends State<WorkspacePage> {
                   setState(() {
                     currentPage = newPage;
                   });
-                  _fetchWorkspaces();
+                  _fetchWorkspacesSearch();
                 },
               );
             }),

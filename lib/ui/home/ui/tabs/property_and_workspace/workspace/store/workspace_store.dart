@@ -4,6 +4,7 @@ import 'package:balcony/core/locator/locator.dart';
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/data/repository/workspace_repository.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
 
 part 'workspace_store.g.dart';
@@ -145,6 +146,8 @@ abstract class _WorkspaceStoreBase with Store {
       );
       if (response.isSuccess) {
         searchWorkspaceResponse = response.data?.data?.result ?? [];
+        debugPrint("$searchWorkspaceResponse");
+        totalPages = response.data?.data?.totalPages ?? 0;
       } else {
         errorMessage = response.error?.message ?? "Something went wrong";
       }

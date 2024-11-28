@@ -17,6 +17,20 @@ abstract class PropertyRepository {
     bool? includeHost,
   });
 
+  Future<ApiResponse<PaginationData<PropertyData>>> searchProperties({
+    String? place,
+    int? beds,
+    int? baths,
+    double? minrange,
+    double? maxrange,
+    int? page,
+    int? limit,
+    String? sort,
+    String? select,
+    bool? includeHost,
+    bool? includeUnitList,
+  });
+
   Future<ApiResponse<PaginationData<PropertyData>>> getPropertyDetails(
       {String? id});
 

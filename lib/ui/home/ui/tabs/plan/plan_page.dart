@@ -619,7 +619,7 @@ class PlanCard extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "+ \$${plan.concierge} : Concierge CRM",
+                                        "+ ${symbole} ${plan.concierge} : Concierge CRM",
                                         style: Theme.of(context)
                                             .textTheme
                                             .titleMedium

@@ -1,3 +1,5 @@
+import 'package:balcony/data/model/response/property_data.dart';
+import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/ui/home/ui/tabs/stay/rant_payment_details_page.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:balcony/widget/app_text_field.dart';
@@ -6,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TenantApplicationPage extends StatefulWidget {
-  const TenantApplicationPage({super.key});
+  final PropertyData? propertyData;
+  const TenantApplicationPage({super.key,  this.propertyData});
 
   @override
   State<TenantApplicationPage> createState() => _TenantApplicationPageState();
@@ -18,6 +21,7 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
   late TextEditingController lastNameController;
   late TextEditingController phoneNumberController;
   late TextEditingController emailController;
+  late TextEditingController anticipateController;
   late TextEditingController socialSecurityController;
   late FocusNode firstNameNode;
   late FocusNode lastNameNode;
@@ -29,17 +33,23 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
 
   @override
   void initState() {
+    final host = widget.propertyData?.host as Host;
     super.initState();
     firstNameController = TextEditingController();
     lastNameController = TextEditingController();
     phoneNumberController = TextEditingController();
     emailController = TextEditingController();
+    anticipateController = TextEditingController();
     socialSecurityController = TextEditingController();
     firstNameNode = FocusNode();
     lastNameNode = FocusNode();
     phoneNumberNode = FocusNode();
     emailNode = FocusNode();
     socialSecurityNode = FocusNode();
+    firstNameController.text = host.firstName ?? "";
+    lastNameController.text =host.lastName ?? "";
+    phoneNumberController.text = host.phone ?? "";
+    emailController.text = host.email ?? "";
   }
 
   @override
@@ -57,6 +67,7 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
 
   @override
   Widget build(BuildContext context) {
+    final host = widget.propertyData?.host as Host;
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
@@ -67,7 +78,7 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 4.h),
               child: Text(
-                "hello {first name} we need a few information about you.",
+                "hello ${host.firstName} we need a few information about you.",
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontSize: 28.spMin,
                   fontWeight: FontWeight.w800,
@@ -179,11 +190,11 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
                   ),
                   16.verticalSpace,
                   AppTextField(
-                    controller: emailController,
+                    controller: anticipateController,
                     focusNode: emailNode,
                     label: 'anticipated move-in request',
                     hintText: "01/02/2025",
-                    keyboardType: TextInputType.emailAddress,
+                    keyboardType: TextInputType.number,
                   ),
                   16.verticalSpace
                 ],

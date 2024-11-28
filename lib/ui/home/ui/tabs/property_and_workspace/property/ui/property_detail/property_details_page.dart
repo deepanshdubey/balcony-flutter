@@ -6,12 +6,14 @@ import 'package:balcony/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/tenant_application_page.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/workspace_details/custom_dropdown.dart';
+import 'package:balcony/ui/home/ui/tabs/works/booking_history_page.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
 import 'package:balcony/widget/app_back_button.dart';
 import 'package:balcony/widget/app_image.dart';
 import 'package:balcony/widget/app_text_field.dart';
 import 'package:balcony/widget/primary_button.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,6 +22,7 @@ import 'package:mobx/mobx.dart';
 @RoutePage()
 class PropertyDetailPage extends StatefulWidget {
   final String? propertyId;
+
   const PropertyDetailPage({super.key, this.propertyId});
 
   @override
@@ -30,13 +33,14 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
   List<ReactionDisposer>? disposers;
   late TextEditingController leaseController = TextEditingController();
 
-  final propertyStore = PropertyStore() ;
+
+
+  final propertyStore = PropertyStore();
 
   @override
   void initState() {
     addDisposer();
-    propertyStore.getPropertyDetails(
-        id: widget.propertyId);
+    propertyStore.getPropertyDetails(id: widget.propertyId);
     super.initState();
   }
 
@@ -63,8 +67,6 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
     }
   }
 
-
-
   final List<Map<String, dynamic>> facilities = [
     {'icon': Icons.local_parking, 'title': 'Parking'},
     {'icon': Icons.pool, 'title': 'Swimming Pool'},
@@ -89,7 +91,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                   ),
                   20.verticalSpace,
                   AppImage(
-                    assetPath: data?.images?.first ??
+                    url: data?.images?.first ??
                         Assets.fontsHostYourWorkspaceOrProperty,
                     height: 173.h,
                     width: double.infinity,
@@ -107,7 +109,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                                   right: index == 0 ? 12.w : 0,
                                 ),
                                 child: AppImage(
-                                  assetPath: data.images?[index + 1] ??
+                                  url: data.images?[index + 1] ??
                                       Assets.fontsHostYourWorkspaceOrProperty,
                                   height: 173.h,
                                   boxFit: BoxFit.cover,
@@ -119,7 +121,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                           )
                         : [Container()],
                   ),
-                  47.verticalSpace,
+                  30.verticalSpace,
                   Text(
                     data?.info?.name ?? "",
                     maxLines: 2,
@@ -150,14 +152,13 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                       )
                     ],
                   ),
-                  48.verticalSpace,
+                  30.verticalSpace,
                   PrimaryButton(
                     text: "apply for tenancy",
                     onPressed: () {
-                      showAppBottomSheet(context,  const TenantApplicationPage());
+                      showAppBottomSheet(
+                          context,  TenantApplicationPage(propertyData: propertyStore.propertyDetailsResponse ,));
                     },
-
-
                   ),
                   32.verticalSpace,
                   const Divider(
@@ -185,8 +186,12 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                           Container(
                             width: 50.w,
                             child: AppTextField(
-                              hintText: '1.5',
-                              keyboardType: TextInputType.number, label: 'months to years', controller: leaseController,
+                              readOnly: true,
+                              hintText:
+                                  data?.other?.leaseDuration.toString() ?? "0",
+                              keyboardType: TextInputType.number,
+                              label: 'months to years',
+                              controller: leaseController,
                             ),
                           ),
                         ],
@@ -244,14 +249,22 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                     ],
                   ),
                   25.verticalSpace,
+                  UnitTable(
+                    units: data?.unitList?.map((unit) => unit.toJson()).toList() ?? [],
+                  ),
+                  25.verticalSpace,
                   CustomDropdown(
-                    visibleItem: 1,
                     title: 'Locations',
-                    items: data?.geocode != null
+                    items: data?.info?.address != null
                         ? [
-                            {'icon': Icons.location_pin, 'title': "Unknown"}
+                            {
+                              'icon': Icons.location_pin,
+                              'title': data?.info?.address
+                            }
                           ]
                         : [],
+                    visibleItem: 1,
+                    iconImage: Assets.imagesLocationOn,
                   ),
                   18.verticalSpace,
                   CustomDropdown(
@@ -262,18 +275,15 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                                   'title': amenity,
                                 })
                             .toList() ??
-                        [], visibleItem: 9,
+                        [],
+                    visibleItem: 9,
                   ),
                   18.verticalSpace,
-                  CustomDropdown(
-                    title: 'Facilities',
-                    items: facilities, visibleItem: 3,
-                  ),
+
                   23.verticalSpace,
                   // Workspace Overview
                   Container(
                     width: 1.sw,
-                    height: 320.h,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8).r,
                       border: Border.all(color: appColor.primaryColor),
@@ -295,7 +305,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                           ),
                           30.verticalSpace,
                           Text(
-                            "No description available.",
+                            data?.info?.summary ?? "",
                             maxLines: 70,
                             overflow: TextOverflow.ellipsis,
                             style: theme.textTheme.titleMedium?.copyWith(
@@ -304,6 +314,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
+                          30.verticalSpace
                         ],
                       ),
                     ),
@@ -359,4 +370,143 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
       }),
     );
   }
+
+
 }
+
+
+
+class UnitTable extends StatefulWidget {
+  final List<Map<String, dynamic>> units;
+
+  const UnitTable({
+    required this.units,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<UnitTable> createState() => _UnitTableState();
+}
+
+class _UnitTableState extends State<UnitTable> {
+  final ValueNotifier<int> rowsPerPageNotifier = ValueNotifier<int>(3);
+  final List<int> rowOptions = [3, 5, 10];
+  int currentPage = 1;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Search and Filters Section
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: "Filter search...",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    prefixIcon: const Icon(Icons.search),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              TextButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.add_circle_outline),
+                label: const Text("Status"),
+              ),
+              const SizedBox(width: 8),
+              TextButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.tune),
+                label: const Text("View"),
+              ),
+            ],
+          ),
+     20.verticalSpace,
+          Text(
+            "Availability",
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontSize: 23.spMin,
+
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          20.verticalSpace,
+
+          // Table Header
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    children: [
+                      const SizedBox(width: 40),
+                      const Expanded(
+                        child: Text(
+                          "Unit",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const Icon(Icons.more_horiz),
+                      const SizedBox(width: 40),
+                    ],
+                  ),
+                ),
+                Divider(height: 1, color: Colors.grey.shade300),
+                ...widget.units.map(
+                      (unit) => Column(
+                    children: [
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: unit['selected'] ?? false,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                unit['selected'] = value;
+                              });
+                            },
+                          ),
+                          Expanded(
+                            child: Text(
+                              unit['unit'].toString(),
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                          ),
+                          const Icon(Icons.more_horiz),
+                          const SizedBox(width: 40),
+                        ],
+                      ),
+                      Divider(height: 1, color: Colors.grey.shade300),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text("${widget.units.where((unit) => unit['selected'] == true).length} of ${widget.units.length} row(s) selected."),
+          const SizedBox(height: 20),
+
+        ],
+      ),
+    );
+  }
+}
+

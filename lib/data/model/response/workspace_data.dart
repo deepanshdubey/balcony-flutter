@@ -23,9 +23,9 @@ class WorkspaceData {
   @JsonKey(name: 'geocode')
   final Geocode? geocode;
 
-    @JsonKey(name: 'host')
-    @HostConverter()
-    final dynamic? host;
+  @JsonKey(name: 'host')
+  @HostConverter()
+  final dynamic? host;
 
   @JsonKey(name: 'pricing')
   final Pricing? pricing;
@@ -42,9 +42,9 @@ class WorkspaceData {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is WorkspaceData &&
-              runtimeType == other.runtimeType &&
-              id == other.id;
+      other is WorkspaceData &&
+          runtimeType == other.runtimeType &&
+          id == other.id;
 
   /// Override `hashCode` to ensure it aligns with `==`.
   @override
@@ -60,8 +60,8 @@ class WorkspaceData {
       this.pricing,
       this.times,
       this.other,
-      this.amenities,this.host
-    });
+      this.amenities,
+      this.host});
 
   factory WorkspaceData.fromJson(Map<String, dynamic> json) =>
       _$WorkspaceDataFromJson(json);
@@ -77,7 +77,7 @@ class Info {
   final String? city;
   final String? state;
   final String? country;
-  late  String? summary;
+  late String? summary;
 
   Info({
     this.name,
@@ -200,12 +200,18 @@ class Other {
   final bool? isOutdoorSpace;
   final bool? isCoWorkingWorkspace;
   final int? additionalGuests;
+  final int? leaseDuration;
+  final bool? chargeFeeAsAddition;
+  final bool? chargeFeeFromRent;
 
   Other({
     this.isIndoorSpace,
     this.isOutdoorSpace,
     this.isCoWorkingWorkspace,
     this.additionalGuests,
+    this.leaseDuration,
+    this.chargeFeeAsAddition,
+    this.chargeFeeFromRent,
   });
 
   factory Other.fromJson(Map<String, dynamic> json) => _$OtherFromJson(json);

@@ -8,6 +8,7 @@ import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/creat
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/property_detail/property_details_page.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/property_page.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/ui/create_workspace_page.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/search_workspace_page.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/wallets/wallet_page.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/workspace_details/workspace_detail_page.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/workspace_page.dart';
@@ -42,7 +43,8 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: CreateWorkspaceRoute.page),
         AutoRoute(page: CreatePropertyRoute.page),
         AutoRoute(page: WorkspaceRoute.page),
-        AutoRoute(page: PropertyRoute.page)
+        AutoRoute(page: PropertyRoute.page),
+        AutoRoute(page: SearchWorkspaceRoute.page),
       ];
 }
 

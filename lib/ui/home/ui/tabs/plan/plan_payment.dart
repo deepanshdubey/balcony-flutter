@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:balcony/data/model/response/subscription_list_model.dart';
+import 'package:balcony/router/app_router.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/wallets/wallet_page.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:balcony/widget/primary_button.dart';
@@ -214,7 +215,7 @@ class _PlanPaymentPageState extends State<PlanPaymentPage> {
       child: PrimaryButton(
         text: "Start Subscription and Pay",
         onPressed: () {
-          // Handle subscription logic
+          appRouter.push(const CreatePropertyRoute());
         },
       ),
     );
