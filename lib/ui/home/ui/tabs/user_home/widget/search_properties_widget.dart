@@ -1,4 +1,6 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:balcony/core/locator/locator.dart';
+import 'package:balcony/router/app_router.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
 import 'package:balcony/widget/app_image.dart';
@@ -162,7 +164,12 @@ class _SearchPropertiesWidgetState extends State<SearchPropertiesWidget> {
               text: "search",
               onPressed: () {
                 if (_formKey.currentState!.validate() == true) {
-                  logger.w("message");
+                  context.router.push(SearchPropertyRoute(
+                      place: placeController.text,
+                      beds: int.parse(bedsController.text),
+                      baths: int.parse(bathsController.text),
+                      minRange: int.parse(minRangeController.text),
+                      maxRange: int.parse(maxRangeController.text)));
                 }
               },
             ),

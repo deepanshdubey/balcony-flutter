@@ -167,12 +167,6 @@ class _SearchWorkspacesWidgetState extends State<SearchWorkspacesWidget> {
               text: "search",
               onPressed: () {
                 if (_formKey.currentState!.validate() == true) {
-                  workspaceStore.searchWorkspace(
-                      place: placeController.text,
-                      checkin: checkInDate,
-                      checkout: checkOutDate,
-                      people: int.parse(peopleController.text));
-                  Future.delayed(Duration(seconds: 5));
                   context.router.push(SearchWorkspaceRoute(
                       place: placeController.text,
                       checkIn: checkInDate,
