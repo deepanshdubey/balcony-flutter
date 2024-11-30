@@ -33,6 +33,8 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
   ValueNotifier<bool> dateSelected = ValueNotifier(false);
   String? selectedDate ;
   int? selectedDays;
+  String? startDateIso;
+  String? endDateIso;
 
   final workspaceStore = WorkspaceStore();
 
@@ -157,10 +159,12 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                         ),
                         29.verticalSpace,
                         BookingCalendar(
-                          onDateSelected: (String onDateSelected,int days ) {
+                          onDateSelected: (String onDateSelected,int days,String startDate, String endDate ) {
                             selectedDate = onDateSelected;
                             selectedDays = days ;
                             dateSelected.value = true;
+                            startDateIso = startDate ;
+                            endDateIso = endDate ;
                           },
                         ),
                         30.verticalSpace,
@@ -168,7 +172,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                           valueListenable: dateSelected,
                           builder: (context, value, child) {
                             return !value
-                                ? Text(
+                                ? const Text(
                               "Please select a date",
                               style: TextStyle(color: Colors.red),
                             )
@@ -408,6 +412,8 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
             workspaceData: data,
             selectedData: selectedDate,
               selectedDays: selectedDays,
+            startDate: startDateIso,
+            endDate: endDateIso,
           ),
         );
       },

@@ -67,10 +67,6 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
     }
   }
 
-  final List<Map<String, dynamic>> facilities = [
-    {'icon': Icons.local_parking, 'title': 'Parking'},
-    {'icon': Icons.pool, 'title': 'Swimming Pool'},
-  ];
 
   @override
   Widget build(BuildContext context) {

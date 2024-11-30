@@ -138,23 +138,25 @@ abstract class ApiClient {
 
   @GET("/property/search")
   Future<PaginationData<PropertyData>> searchProperty(
-      @Query("place") String? place,
-      @Query("beds") int? beds,
-      @Query("baths") int? baths,
-      @Query("minrange") double? minrange,
-      @Query("maxrange") double? maxrange,
-      @Query("page") int? page,
-      @Query("limit") int? limit,
-      @Query("sort") String? sort,
-      @Query("select") String? select,
-      @Query("includeHost") bool? includeHost,
-      @Query("includeUnitList") bool? includeUnitList,
-      );
+    @Query("place") String? place,
+    @Query("beds") int? beds,
+    @Query("baths") int? baths,
+    @Query("minrange") double? minrange,
+    @Query("maxrange") double? maxrange,
+    @Query("page") int? page,
+    @Query("limit") int? limit,
+    @Query("sort") String? sort,
+    @Query("select") String? select,
+    @Query("includeHost") bool? includeHost,
+    @Query("includeUnitList") bool? includeUnitList,
+  );
 
+  ///  -- tenant application
 
+  @POST("/tenant/apply")
+  Future<CommonData> applyTenant(@Body() Map<String, dynamic> request);
 
-
-  // -- promo -- //
+  /// -- promo --
 
   @POST("/promo/create")
   Future<PromoModel> createPromo(@Body() Map<String, dynamic> request);

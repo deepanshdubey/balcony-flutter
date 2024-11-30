@@ -1,6 +1,9 @@
+import 'dart:ffi';
+
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/promo_model.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/ui/home/store/promo_store.dart';
@@ -18,13 +21,13 @@ import 'package:mobx/mobx.dart';
 @RoutePage()
 class WorkspacePaymentPage extends StatefulWidget {
   final WorkspaceData? workspaceData;
-
   final String? selectedData;
-
   final num? selectedDays;
+  final String? startDate;
+  final String? endDate;
 
   WorkspacePaymentPage(
-      {super.key, this.workspaceData, this.selectedData, this.selectedDays});
+      {super.key, this.workspaceData, this.selectedData, this.selectedDays, this.startDate, this.endDate});
 
   @override
   State<WorkspacePaymentPage> createState() => _WorkspacePaymentPageState();
@@ -34,9 +37,10 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
   TextEditingController promoController = TextEditingController();
   List<ReactionDisposer>? disposers;
   ValueNotifier<String?> fieldError = ValueNotifier(null);
-  ValueNotifier<int> promoDiscount = ValueNotifier(0);
+  ValueNotifier<double> promoDiscount = ValueNotifier(0.0);
 
   final promoStore = PromoStore();
+  final workspaceStore = WorkspaceStore();
 
   @override
   void initState() {
@@ -54,20 +58,37 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
     disposers ??= [
       reaction((_) => promoStore.errorMessage, (String? errorMessage) {
         if (errorMessage != null) {
-          fieldError.value = errorMessage;
+          //    alertManager.showError(context,"ass");
+          promoDiscount.value = 0;
+        }
+      }),
+      reaction((_) => workspaceStore.errorMessage, (String? errorMessage) {
+        if (errorMessage != null) {
+          alertManager.showError(context, errorMessage);
         }
       }),
       reaction((_) => promoStore.promoResponse, (PromoModel? promoDetails) {
         if (promoDetails?.success ?? false) {
           alertManager.showSuccess(context, "Promo applied");
           if (promoDetails?.promo?.type == "percentage") {
-            num totalValue = (widget.workspaceData?.pricing?.totalPerDay ?? 0) *
-                    (widget.selectedDays ?? 0) +
-                (workspaceStore.totalFee);
-            promoDiscount.value = ((totalValue * (promoDetails?.promo?.discount ?? 0)) / 100).toInt();
+            double totalValue =
+                (widget.workspaceData?.pricing?.totalPerDay?.toDouble() ?? 0) *
+                        (widget.selectedDays ?? 0) +
+                    (workspaceStore.totalFee);
+            promoDiscount.value = ((totalValue *
+                    (promoDetails?.promo?.discount?.toDouble() ?? 0)) /
+                100);
           } else {
-            promoDiscount.value = promoDetails?.promo?.discount ?? 0;
+            promoDiscount.value =
+                promoDetails?.promo?.discount?.toDouble() ?? 0;
           }
+        }
+      }),
+      reaction((_) => workspaceStore.createBookingResponse,
+          (CommonData? promoDetails) {
+        if (promoDetails?.success ?? false) {
+          alertManager.showSuccess(context, "Booking Created !!");
+          context.router.canPop();
         }
       }),
     ];
@@ -260,17 +281,20 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
             controller: promoController,
-            suffixIcon: GestureDetector(
+            onChanged: (p0) {
+              promoStore.getPromo(code: p0);
+            },
+            /*   suffixIcon: GestureDetector(
               onTap: () {
-                promoStore.getPromo(code: promoController.text);
+
               },
               child: Padding(
                 padding: const EdgeInsets.all(13.0).r,
                 child: Text("Apply"),
               ),
-            ),
+            ),*/
           ),
-          ValueListenableBuilder(
+          /*   ValueListenableBuilder(
             valueListenable: fieldError,
             builder: (context, value, child) {
               return value != null
@@ -283,7 +307,7 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
                     )
                   : const SizedBox();
             },
-          )
+          )*/
         ],
       ),
     );
@@ -346,7 +370,16 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
       padding: const EdgeInsets.symmetric(horizontal: 24).r,
       child: PrimaryButton(
         text: "Book Workspace",
-        onPressed: () {},
+        onPressed: () {
+          var request = {
+            "startDate": widget.startDate,
+            "endDate": widget.endDate,
+            "workspaceId": widget.workspaceData?.id,
+            "promoCode": promoController.text
+          };
+          workspaceStore.createBooking(request);
+        },
+
       ),
     );
   }

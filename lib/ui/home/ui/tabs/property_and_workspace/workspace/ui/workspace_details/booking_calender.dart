@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class BookingCalendar extends StatefulWidget {
-  final Function(String formattedRange, int days) onDateSelected;
+  final Function(String formattedRange, int days, String startDate, String endDate) onDateSelected;
 
   BookingCalendar({required this.onDateSelected});
 
@@ -22,7 +22,9 @@ class _BookingCalendarState extends State<BookingCalendar> {
     return Container(
       // Updated decoration to match the original code
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12).r, // Updated radius
+        borderRadius: BorderRadius
+            .circular(12)
+            .r, // Updated radius
         border: Border.all(color: appColor.primaryColor.withOpacity(0.5)),
       ),
       padding: EdgeInsets.all(8.r), // Consistent padding
@@ -44,7 +46,8 @@ class _BookingCalendarState extends State<BookingCalendar> {
           }
 
           setState(() {
-            if (_startDate == null || (_startDate != null && _endDate != null)) {
+            if (_startDate == null ||
+                (_startDate != null && _endDate != null)) {
               _startDate = selectedDay;
               _endDate = null;
             } else if (_startDate != null && selectedDay.isAfter(_startDate!)) {
@@ -57,8 +60,12 @@ class _BookingCalendarState extends State<BookingCalendar> {
           });
 
           widget.onDateSelected(
-            _formatSelectedRange(),
-            _endDate == null ? 1 : _endDate!.difference(_startDate!).inDays + 1,
+              _formatSelectedRange(),
+              _endDate == null ? 1 : _endDate!.difference(_startDate!).inDays +
+                  1,
+              _startDate?.toIso8601String() ?? "",
+              _endDate?.toIso8601String() ?? ""
+
           );
         },
         calendarStyle: CalendarStyle(
@@ -99,7 +106,9 @@ class _BookingCalendarState extends State<BookingCalendar> {
           leftChevronIcon: Container(
             // Chevron style updates
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8).r,
+              borderRadius: BorderRadius
+                  .circular(8)
+                  .r,
               border: Border.all(color: appColor.primaryColor),
             ),
             padding: EdgeInsets.all(6.0),
@@ -110,7 +119,9 @@ class _BookingCalendarState extends State<BookingCalendar> {
           ),
           rightChevronIcon: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8).r,
+              borderRadius: BorderRadius
+                  .circular(8)
+                  .r,
               border: Border.all(color: appColor.primaryColor),
             ),
             padding: const EdgeInsets.all(6.0),
@@ -139,9 +150,11 @@ class _BookingCalendarState extends State<BookingCalendar> {
 
   String _formatSelectedRange() {
     if (_startDate != null && _endDate == null) {
-      return "${_startDate!.monthName()} ${_startDate!.day}${_getDaySuffix(_startDate!.day)}";
+      return "${_startDate!.monthName()} ${_startDate!.day}${_getDaySuffix(
+          _startDate!.day)}";
     } else if (_startDate != null && _endDate != null) {
-      return "${_startDate!.monthName()} ${_startDate!.day}${_getDaySuffix(_startDate!.day)} - ${_endDate!.day}${_getDaySuffix(_endDate!.day)}";
+      return "${_startDate!.monthName()} ${_startDate!.day}${_getDaySuffix(
+          _startDate!.day)} - ${_endDate!.day}${_getDaySuffix(_endDate!.day)}";
     }
     return "No date selected";
   }

@@ -6,6 +6,7 @@ import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/property_data.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/data/repository/property_repository.dart';
+import 'package:balcony/data/repository/tenant_repository.dart';
 import 'package:mobx/mobx.dart';
 
 part 'property_store.g.dart';
@@ -25,6 +26,9 @@ abstract class _PropertyStoreBase with Store {
 
   @observable
   CommonData? createPropertyResponse;
+
+  @observable
+  CommonData? applyTenantResponse;
 
   @observable
   bool isLoading = false;
@@ -115,6 +119,29 @@ abstract class _PropertyStoreBase with Store {
           unitList);
       if (response.isSuccess) {
         createPropertyResponse = response.data;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+
+  @action
+  Future applyTenant(
+    Map<String, dynamic> request,
+  ) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await tenantRepository.applyTenant(request);
+      if (response.isSuccess) {
+        applyTenantResponse = response.data;
       } else {
         errorMessage = response.error!.message;
       }

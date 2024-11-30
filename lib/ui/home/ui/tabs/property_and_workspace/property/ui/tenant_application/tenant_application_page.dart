@@ -1,22 +1,30 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/property_data.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
 import 'package:balcony/ui/home/ui/tabs/stay/rant_payment_details_page.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:balcony/widget/app_text_field.dart';
 import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mobx/mobx.dart';
 
 class TenantApplicationPage extends StatefulWidget {
   final PropertyData? propertyData;
-  const TenantApplicationPage({super.key,  this.propertyData});
+
+  const TenantApplicationPage({super.key, this.propertyData});
 
   @override
   State<TenantApplicationPage> createState() => _TenantApplicationPageState();
 }
 
 class _TenantApplicationPageState extends State<TenantApplicationPage> {
+  List<ReactionDisposer>? disposers;
   late final GlobalKey<FormState> _formKey = GlobalKey();
+  final ValueNotifier<bool> isAgreedNotifier = ValueNotifier(false);
   late TextEditingController firstNameController;
   late TextEditingController lastNameController;
   late TextEditingController phoneNumberController;
@@ -29,11 +37,15 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
   late FocusNode emailNode;
   late FocusNode socialSecurityNode;
   String? selectedTitle;
-  final List<String> titles = ['232.', '232', '343'];
+  String? selectedUnit;
+  String? selectedMoveInDate;
+
+  var propertyStore = PropertyStore();
 
   @override
   void initState() {
     final host = widget.propertyData?.host as Host;
+    addDisposer();
     super.initState();
     firstNameController = TextEditingController();
     lastNameController = TextEditingController();
@@ -47,7 +59,7 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
     emailNode = FocusNode();
     socialSecurityNode = FocusNode();
     firstNameController.text = host.firstName ?? "";
-    lastNameController.text =host.lastName ?? "";
+    lastNameController.text = host.lastName ?? "";
     phoneNumberController.text = host.phone ?? "";
     emailController.text = host.email ?? "";
   }
@@ -62,7 +74,48 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
     lastNameNode.dispose();
     phoneNumberNode.dispose();
     emailNode.dispose();
+    removeDisposer();
     super.dispose();
+  }
+
+  void submitApplication() {
+    if (!isAgreedNotifier.value) {
+      alertManager.showError(
+          context, "Please agree to all terms and conditions");
+      return;
+    }
+
+    var request = {
+      "firstName": firstNameController.text,
+      "lastName": lastNameController.text,
+      "email": emailController.text,
+      "phone": phoneNumberController.text,
+      "selectedUnitId": selectedUnit,
+      "moveInRequest": selectedMoveInDate,
+    };
+
+    propertyStore.applyTenant(request);
+  }
+
+  void addDisposer() {
+    disposers ??= [
+      reaction((_) => propertyStore.errorMessage, (String? errorMessage) {
+        if (errorMessage != null) {
+          alertManager.showError(context, errorMessage);
+        }
+      }),   reaction((_) => propertyStore.applyTenantResponse, (CommonData? response) {
+        if (response?.success ?? false) {
+         context.router.canPop();
+        }
+      }),
+    ];
+  }
+
+  void removeDisposer() {
+    if (disposers == null) return;
+    for (final element in disposers!) {
+      element.reaction.dispose();
+    }
   }
 
   @override
@@ -72,7 +125,7 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
       key: _formKey,
       child: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start ,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             10.verticalSpace,
             Padding(
@@ -80,10 +133,10 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
               child: Text(
                 "hello ${host.firstName} we need a few information about you.",
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontSize: 28.spMin,
-                  fontWeight: FontWeight.w800,
-                  color: appColor.primaryColor,
-                ),
+                      fontSize: 28.spMin,
+                      fontWeight: FontWeight.w800,
+                      color: appColor.primaryColor,
+                    ),
               ),
             ),
             24.verticalSpace,
@@ -174,27 +227,51 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
                     icon: 0.verticalSpace,
                     value: selectedTitle,
                     decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 20).r,
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 20).r,
                       labelText: "Title*",
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.r),
                       ),
                     ),
-                    items: titles
-                        .map((title) => DropdownMenuItem<String>(
-                              value: title,
-                              child: Text(title),
+                    items: widget.propertyData?.unitList
+                        ?.map((title) => DropdownMenuItem<String>(
+                              value: title.unit.toString(),
+                              child: Text(title.unit.toString()),
                             ))
                         .toList(),
-                    onChanged: (value) {},
+                    onChanged: (value) {
+                      selectedUnit = widget.propertyData?.unitList
+                          ?.firstWhere((unit) => unit.unit.toString() == value)
+                          .Id;
+                    },
                   ),
                   16.verticalSpace,
                   AppTextField(
                     controller: anticipateController,
                     focusNode: emailNode,
-                    label: 'anticipated move-in request',
+                    label: 'Anticipated Move-in Request',
                     hintText: "01/02/2025",
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.none,
+                    // Disable keyboard input
+                    readOnly: true,
+                    // Make the field read-only to show picker only
+                    onTap: () async {
+                      DateTime? selectedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                      );
+
+                      if (selectedDate != null) {
+                        anticipateController.text =
+                            "${selectedDate.month.toString().padLeft(2, '0')}/"
+                            "${selectedDate.day.toString().padLeft(2, '0')}/"
+                            "${selectedDate.year}";
+                        selectedMoveInDate = selectedDate.toIso8601String();
+                      }
+                    },
                   ),
                   16.verticalSpace
                 ],
@@ -217,10 +294,10 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
                   Text(
                     "credit check",
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontSize: 28.spMin,
-                      fontWeight: FontWeight.w800,
-                      color: appColor.primaryColor,
-                    ),
+                          fontSize: 28.spMin,
+                          fontWeight: FontWeight.w800,
+                          color: appColor.primaryColor,
+                        ),
                   ),
                   16.h.verticalSpace,
                   AppTextField(
@@ -229,11 +306,12 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
                     label: 'social security number',
                     hintText: "***-******",
                     textInputAction: TextInputAction.next,
-                  ),16.verticalSpace
-
+                  ),
+                  16.verticalSpace
                 ],
               ),
-            ),24.verticalSpace,
+            ),
+            24.verticalSpace,
             Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
@@ -250,32 +328,46 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
                   Text(
                     "terms of service*",
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontSize: 28.spMin,
-                      fontWeight: FontWeight.w800,
-                      color: appColor.primaryColor,
-                    ),
-                  ),16.verticalSpace,
-                  AgreementCheckboxes(onAllChecked: () {  },),
+                          fontSize: 28.spMin,
+                          fontWeight: FontWeight.w800,
+                          color: appColor.primaryColor,
+                        ),
+                  ),
+                  16.verticalSpace,
+                  ValueListenableBuilder<bool>(
+                    valueListenable: isAgreedNotifier,
+                    builder: (context, isAgreed, _) {
+                      return AgreementCheckboxes(
+                        onAllChecked: () {
+                          isAgreedNotifier.value = true;
+                        },
+                      );
+                    },
+                  ),
                   16.h.verticalSpace,
-
                 ],
               ),
             ),
             25.verticalSpace,
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-              child: PrimaryButton(text: "submit application", onPressed: () {
-
-              },),
+              child: PrimaryButton(
+                text: "submit application",
+                onPressed: submitApplication,
+              ),
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-              child: Text("**Note: If application is approved by property manager, then you will be prompted to next step(s) which is usually leasing agreement & first month rent & security.", style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontSize: 11.spMin,
-                fontWeight: FontWeight.w800,
-                color: appColor.primaryColor,
-              ),),
-            ),30.verticalSpace
+              child: Text(
+                "**Note: If application is approved by property manager, then you will be prompted to next step(s) which is usually leasing agreement & first month rent & security.",
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontSize: 11.spMin,
+                      fontWeight: FontWeight.w800,
+                      color: appColor.primaryColor,
+                    ),
+              ),
+            ),
+            30.verticalSpace
           ],
         ),
       ),

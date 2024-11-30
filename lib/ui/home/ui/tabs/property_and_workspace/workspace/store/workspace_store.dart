@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:balcony/core/locator/locator.dart';
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
+import 'package:balcony/data/repository/booking_repository.dart';
 import 'package:balcony/data/repository/workspace_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
@@ -26,6 +27,9 @@ abstract class _WorkspaceStoreBase with Store {
 
   @observable
   CommonData? createWorkSpaceDetailsResponse;
+
+  @observable
+  CommonData? createBookingResponse;
 
   @observable
   bool isLoading = false;
@@ -116,6 +120,25 @@ abstract class _WorkspaceStoreBase with Store {
     }
   }
 
+  @action
+  Future createBooking(Map<String, dynamic> request) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await bookingRepository.createBooking(request);
+      if (response.isSuccess) {
+        createBookingResponse = response.data;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
 
   @action
   Future searchWorkspace({
@@ -159,7 +182,6 @@ abstract class _WorkspaceStoreBase with Store {
       isLoading = false;
     }
   }
-
 
   @computed
   num get totalFee {
