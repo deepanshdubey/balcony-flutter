@@ -1,8 +1,11 @@
+import 'package:balcony/ui/home/ui/tabs/more/ui/wallet/store/wallet_store.dart';
+import 'package:balcony/ui/home/ui/tabs/more/ui/wallet/widget/card_listing_widget.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/widget/app_back_button.dart';
 import 'package:balcony/widget/app_text_field.dart';
 import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class WalletPage extends StatefulWidget {
@@ -49,6 +52,7 @@ class _WalletPageState extends State<WalletPage> {
                 valueListenable: selectedOption,
                 builder: (context, value, _) {
                   if (value == "Card") {
+                    walletStore.getCards();
                     return _buildSavedCardsSection();
                   } else if (value == "Add Card") {
                     return _buildAddCardSection();
@@ -147,23 +151,34 @@ class _WalletPageState extends State<WalletPage> {
   }
 
   Widget _buildSavedCardsSection() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'No card yet!',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14.spMin,
+    return Observer(
+      builder: (context) {
+        var isLoading = walletStore.isLoading;
+        var cards = walletStore.cardsResponse;
+        return isLoading
+            ? Center(
+                child: Padding(
+                  padding: EdgeInsets.all(20.r),
+                  child: const CircularProgressIndicator(),
                 ),
-          ),
-          // const SizedBox(height: 12),
-          // _buildCardInfo("John Doe", "**** **** **** 1234"),
-          // _buildCardInfo("John Doe", "**** **** **** 5678"),
-        ],
-      ),
+              )
+            : cards?.isNotEmpty == true
+                ? CardListingWidget(
+                    cards: cards!,
+                    onEditClicked: (p0) {},
+                    onDeleteClicked: (p0) {},
+                  )
+                : Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      'No card yet!',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14.spMin,
+                          ),
+                    ),
+                  );
+      },
     );
   }
 
