@@ -13,9 +13,13 @@ import 'package:balcony/values/extensions/theme_ext.dart';
 import 'package:balcony/widget/app_back_button.dart';
 import 'package:balcony/widget/app_image.dart';
 import 'package:balcony/widget/primary_button.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:maplibre_gl/maplibre_gl.dart';
+import 'package:maptiler_flutter/maptiler_flutter.dart';
 import 'package:mobx/mobx.dart';
 
 @RoutePage()
@@ -29,9 +33,11 @@ class WorkspaceDetailPage extends StatefulWidget {
 }
 
 class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
+  late MapLibreMapController _mapController;
   List<ReactionDisposer>? disposers;
   ValueNotifier<bool> dateSelected = ValueNotifier(false);
-  String? selectedDate ;
+  String? selectedDate;
+
   int? selectedDays;
   String? startDateIso;
   String? endDateIso;
@@ -41,8 +47,8 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
   @override
   void initState() {
     addDisposer();
-    workspaceStore.getWorkspaceDetail(
-        id: widget.workspaceId);
+    workspaceStore.getWorkspaceDetail(id: widget.workspaceId);
+
     super.initState();
   }
 
@@ -68,6 +74,17 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
       element.reaction.dispose();
     }
   }
+
+  Future<void> onMapCreated(MapLibreMapController controller) async {
+    _mapController = controller;
+  }
+
+  void addCustomMarker() async {
+        ByteData byteData = await rootBundle.load(Assets.imagesLocationOn);
+        final Uint8List imageData = byteData.buffer.asUint8List();
+        await _mapController.addImage('custom-marker', imageData);
+  }
+
 
 
   @override
@@ -159,12 +176,13 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                         ),
                         29.verticalSpace,
                         BookingCalendar(
-                          onDateSelected: (String onDateSelected,int days,String startDate, String endDate ) {
+                          onDateSelected: (String onDateSelected, int days,
+                              String startDate, String endDate) {
                             selectedDate = onDateSelected;
-                            selectedDays = days ;
+                            selectedDays = days;
                             dateSelected.value = true;
-                            startDateIso = startDate ;
-                            endDateIso = endDate ;
+                            startDateIso = startDate;
+                            endDateIso = endDate;
                           },
                         ),
                         30.verticalSpace,
@@ -173,16 +191,16 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                           builder: (context, value, child) {
                             return !value
                                 ? const Text(
-                              "Please select a date",
-                              style: TextStyle(color: Colors.red),
-                            )
+                                    "Please select a date",
+                                    style: TextStyle(color: Colors.red),
+                                  )
                                 : SizedBox.shrink();
                           },
                         ),
                         PrimaryButton(
                           text: "Book Workspace",
-                          onPressed:() {
-                            openBottomSheet(context , data);
+                          onPressed: () {
+                            openBottomSheet(context, data);
                           },
                         ),
                         30.verticalSpace,
@@ -278,29 +296,37 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                           title: 'workspace booking info',
                           items: [
                             {
-                              'title': "\$${data?.pricing?.totalPerDay} per person",
-                            },{
-                              'title': "${data?.other?.additionalGuests} extra guests allowed",
+                              'title':
+                                  "\$${data?.pricing?.totalPerDay} per person",
+                            },
+                            {
+                              'title':
+                                  "${data?.other?.additionalGuests} extra guests allowed",
                             }
                           ],
-                          visibleItem: 3,iconImage: Assets.imagesProfile,
+                          visibleItem: 3,
+                          iconImage: Assets.imagesProfile,
                         ),
                         18.verticalSpace,
                         CustomDropdown(
                           title: 'Hours of Service (Time Frame)',
                           items:
                               TimesHelper.mapTimesToDropdownItems(data?.times),
-                          visibleItem: 3,iconImage: Assets.imagesClock,
+                          visibleItem: 3,
+                          iconImage: Assets.imagesClock,
                         ),
                         18.verticalSpace,
                         CustomDropdown(
                           title: 'workspace info',
                           items: [
-                           if(data?.other?.isCoWorkingWorkspace ?? false) {
-                              'title': "shared co-working space",
-                            },if(data?.other?.isIndoorSpace ?? false){
-                              'title': "conference room",
-                            }
+                            if (data?.other?.isCoWorkingWorkspace ?? false)
+                              {
+                                'title': "shared co-working space",
+                              },
+                            if (data?.other?.isIndoorSpace ?? false)
+                              {
+                                'title': "conference room",
+                              }
                           ],
                           visibleItem: 3,
                         ),
@@ -345,13 +371,76 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                           ),
                         ),
                         23.verticalSpace,
-                        // Map Image Placeholder
-                        Image.asset(
-                          Assets.dummyMap,
-                          height: 200.h,
-                          width: 1.sw,
-                          fit: BoxFit.cover,
+
+                        Observer(
+                          builder: (context) {
+                            var data = workspaceStore.workspaceDetailsResponse;
+                            return workspaceStore
+                                            .workspaceResponse?.isNotEmpty ==
+                                        true ||
+                                    workspaceStore.isLoading
+                                ? Center(
+                                    child: CircularProgressIndicator(
+                                        color: appColor.primaryColor),
+                                  )
+                                : Column(
+                                    children: [
+                                      // Other widgets...
+
+                                      Container(
+                                        height: 200.h,
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(20).r,
+                                          child: MapLibreMap(
+                                            styleString:
+                                                'https://api.maptiler.com/maps/streets-v2/style.json?key=HRmXb4He6yvLBd6RRIcJ',
+                                            myLocationEnabled: true,
+                                            initialCameraPosition:
+                                                CameraPosition(
+                                              target: LatLng(
+                                                  data?.geocode?.lat ?? 0,
+                                                  data?.geocode?.lon ?? 0),
+                                              zoom: 13,
+                                            ),
+                                            trackCameraPosition: true,
+                                            onMapCreated: onMapCreated,
+                                            onStyleLoadedCallback: () async {
+                                              await Future.delayed(const Duration(milliseconds: 500)); // Optional delay
+                                              addCustomMarker();
+                                              try {
+                                                _mapController.addSymbol(
+                                                  SymbolOptions(
+                                                    geometry: LatLng(data?.geocode?.lat ?? 0, data?.geocode?.lon ?? 0),
+                                                    iconImage: 'custom-marker',
+                                                    iconSize: 3.0,
+                                                  ),
+                                                );
+                                                print("Symbol added successfully.");
+                                              } catch (e) {
+                                                print("Error while adding symbol: $e");
+                                              }
+                                            },
+
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                          },
                         ),
+
+                        20.verticalSpace
+                        // Map Image Placeholder
+                        // MapTiler.geocodingAPI.searchByCoordinates(8.55, 47.36667).then((result) {
+                        //   print(result.features);
+                        // }),
+                        //   Image.asset(
+                        //     Assets.dummyMap,
+                        //     height: 200.h,
+                        //     width: 1.sw,
+                        //     fit: BoxFit.cover,
+                        //   ),
                       ],
                     ),
                   );
@@ -396,7 +485,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
     );
   }
 
-  void openBottomSheet(BuildContext context , WorkspaceData? data) {
+  void openBottomSheet(BuildContext context, WorkspaceData? data) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -411,7 +500,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
           child: WorkspacePaymentPage(
             workspaceData: data,
             selectedData: selectedDate,
-              selectedDays: selectedDays,
+            selectedDays: selectedDays,
             startDate: startDateIso,
             endDate: endDateIso,
           ),

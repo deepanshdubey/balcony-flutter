@@ -698,6 +698,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.20.0"
+  maptiler_flutter:
+    dependency: "direct main"
+    description:
+      name: maptiler_flutter
+      sha256: "8254ec1cb538917448161cf1cda454eb3881b570a382801c0bca9fe64faeb605"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   matcher:
     dependency: transitive
     description:

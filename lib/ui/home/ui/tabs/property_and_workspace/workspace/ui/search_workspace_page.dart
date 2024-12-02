@@ -1,9 +1,11 @@
 import 'package:auto_route/annotations.dart';
+import 'package:balcony/generated/assets.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/widget/workspace_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/user_home/widget/pagination_widget.dart';
 import 'package:balcony/widget/app_back_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
@@ -25,6 +27,7 @@ class SearchWorkspacePage extends StatefulWidget {
 }
 
 class SearchWorkspacePageState extends State<SearchWorkspacePage> {
+  late MapLibreMapController _mapController;
   final workspaceStore = WorkspaceStore();
   int currentPage = 1;
   bool isMapViewSelected = false;
@@ -42,6 +45,36 @@ class SearchWorkspacePageState extends State<SearchWorkspacePage> {
         checkin: widget.checkIn,
         checkout: widget.checkOut,
         place: widget.place);
+  }
+
+
+  void addMarkers(MapLibreMapController controller) {
+    // Create a list to hold SymbolOptions
+    List<SymbolOptions> symbolOptionsList = [];
+
+    for (var workspace in workspaceStore.searchWorkspaceResponse!) {
+      double latitude = workspace.geocode?.lat ?? 0;
+      double longitude = workspace.geocode?.lon ?? 0;
+
+      // Add a new SymbolOptions instance to the list
+      symbolOptionsList.add(SymbolOptions(
+        geometry: LatLng(latitude, longitude),
+        iconImage: "custom-marker",
+        iconSize: 3,
+      ));
+      print(symbolOptionsList.length);
+    }
+
+      controller.addSymbols(symbolOptionsList);
+
+  }
+
+
+
+  void addCustomMarker() async {
+    ByteData byteData = await rootBundle.load(Assets.imagesLocationOn);
+    final Uint8List imageData = byteData.buffer.asUint8List();
+    await _mapController.addImage('custom-marker', imageData);
   }
 
   @override
@@ -177,22 +210,29 @@ class SearchWorkspacePageState extends State<SearchWorkspacePage> {
   }
 
   Widget mapView() {
+    final workspace = workspaceStore.searchWorkspaceResponse![0];
     final theme = Theme.of(context);
     return Stack(
       alignment: Alignment.topLeft,
       children: [
         MapLibreMap(
-          styleString: 'https://maps.tilehosting.com/styles/basic/style.json?key=Np0YtMXcGscEPnJKgTsu',
-          // Replace with your style URL
-          initialCameraPosition: const CameraPosition(
-            target: LatLng(25.276987, 55.296249), // Default location (Dubai)
-            zoom: 12,
+          styleString:
+          'https://api.maptiler.com/maps/streets-v2/style.json?key=HRmXb4He6yvLBd6RRIcJ',
+          myLocationEnabled: true,
+          initialCameraPosition: CameraPosition(
+            target: LatLng( workspace.geocode?.lat ?? 0,workspace.geocode?.lon ?? 0),
+            zoom: 1,
           ),
+          trackCameraPosition: true,
           onMapCreated: (controller) {
-            /*_onMapCreated(controller);*/
+            _mapController = controller;
           },
-          onStyleLoadedCallback: () {
-            /*_addMarkers();*/
+          onStyleLoadedCallback: () async {
+            await Future.delayed(const Duration(
+                milliseconds:
+                500));
+            addCustomMarker();
+            addMarkers(_mapController!);
           },
         ),
         Positioned(

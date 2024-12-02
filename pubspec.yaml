@@ -40,6 +40,7 @@ dependencies:
   file_picker: ^8.1.4
   country_state_city: ^0.1.6
   maplibre_gl: ^0.20.0
+  maptiler_flutter: ^0.1.0
 
 
 dev_dependencies:

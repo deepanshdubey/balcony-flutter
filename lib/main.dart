@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:maptiler_flutter/maptiler_flutter.dart';
 
 Future<void> main() async {
   runZonedGuarded(
@@ -18,7 +19,7 @@ Future<void> main() async {
         WidgetsFlutterBinding.ensureInitialized();
         await setupLocator();
         await locator.isReady<Session>();
-        //MapTilerConfig.setApiKey('Np0YtMXcGscEPnJKgTsu');
+        MapTilerConfig.setApiKey('Np0YtMXcGscEPnJKgTsu');
       } catch (error, st) {
         logger.e(error);
         logger.e(st);

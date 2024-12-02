@@ -15,8 +15,10 @@ import 'package:balcony/widget/app_text_field.dart';
 import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:mobx/mobx.dart';
 
 @RoutePage()
@@ -30,11 +32,9 @@ class PropertyDetailPage extends StatefulWidget {
 }
 
 class _PropertyDetailPageState extends State<PropertyDetailPage> {
+  late MapLibreMapController _mapController;
   List<ReactionDisposer>? disposers;
   late TextEditingController leaseController = TextEditingController();
-
-
-
   final propertyStore = PropertyStore();
 
   @override
@@ -67,6 +67,15 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
     }
   }
 
+  Future<void> onMapCreated(MapLibreMapController controller) async {
+    _mapController = controller;
+  }
+
+  void addCustomMarker() async {
+    ByteData byteData = await rootBundle.load(Assets.imagesLocationOn);
+    final Uint8List imageData = byteData.buffer.asUint8List();
+    await _mapController.addImage('custom-marker', imageData);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +162,10 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                     text: "apply for tenancy",
                     onPressed: () {
                       showAppBottomSheet(
-                          context,  TenantApplicationPage(propertyData: propertyStore.propertyDetailsResponse ,));
+                          context,
+                          TenantApplicationPage(
+                            propertyData: propertyStore.propertyDetailsResponse,
+                          ));
                     },
                   ),
                   32.verticalSpace,
@@ -246,7 +258,9 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                   ),
                   25.verticalSpace,
                   UnitTable(
-                    units: data?.unitList?.map((unit) => unit.toJson()).toList() ?? [],
+                    units:
+                        data?.unitList?.map((unit) => unit.toJson()).toList() ??
+                            [],
                   ),
                   25.verticalSpace,
                   CustomDropdown(
@@ -317,11 +331,59 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                   ),
                   23.verticalSpace,
                   // Map Image Placeholder
-                  Image.asset(
-                    Assets.dummyMap,
-                    height: 200.h,
-                    width: 1.sw,
-                    fit: BoxFit.cover,
+                  Observer(
+                    builder: (context) {
+                      var data = propertyStore.propertyDetailsResponse;
+                      return propertyStore.isLoading
+                          ? Center(
+                              child: CircularProgressIndicator(
+                                  color: appColor.primaryColor),
+                            )
+                          : Column(
+                              children: [
+                                // Other widgets...
+
+                                Container(
+                                  height: 200.h,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20).r,
+                                    child: MapLibreMap(
+                                      styleString:
+                                          'https://api.maptiler.com/maps/streets-v2/style.json?key=HRmXb4He6yvLBd6RRIcJ',
+                                      myLocationEnabled: true,
+                                      initialCameraPosition: CameraPosition(
+                                        target: LatLng(data?.geocode?.lat ?? 0,
+                                            data?.geocode?.lon ?? 0),
+                                        zoom: 13,
+                                      ),
+                                      trackCameraPosition: true,
+                                      onMapCreated: onMapCreated,
+                                      onStyleLoadedCallback: () async {
+                                        await Future.delayed(const Duration(
+                                            milliseconds:
+                                                500)); // Optional delay
+                                        addCustomMarker();
+                                        try {
+                                          _mapController.addSymbol(
+                                            SymbolOptions(
+                                              geometry: LatLng(
+                                                  data?.geocode?.lat ?? 0,
+                                                  data?.geocode?.lon ?? 0),
+                                              iconImage: 'custom-marker',
+                                              iconSize: 3.0,
+                                            ),
+                                          );
+                                        } catch (e) {
+                                          print(
+                                              "Error while adding symbol: $e");
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                    },
                   ),
                 ],
               ),
@@ -366,11 +428,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
       }),
     );
   }
-
-
 }
-
-
 
 class UnitTable extends StatefulWidget {
   final List<Map<String, dynamic>> units;
@@ -430,14 +488,13 @@ class _UnitTableState extends State<UnitTable> {
               ),
             ],
           ),
-     20.verticalSpace,
+          20.verticalSpace,
           Text(
             "Availability",
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontSize: 23.spMin,
-
-              fontWeight: FontWeight.w600,
-            ),
+                  fontSize: 23.spMin,
+                  fontWeight: FontWeight.w600,
+                ),
           ),
           20.verticalSpace,
 
@@ -467,7 +524,7 @@ class _UnitTableState extends State<UnitTable> {
                 ),
                 Divider(height: 1, color: Colors.grey.shade300),
                 ...widget.units.map(
-                      (unit) => Column(
+                  (unit) => Column(
                     children: [
                       Row(
                         children: [
@@ -497,12 +554,11 @@ class _UnitTableState extends State<UnitTable> {
             ),
           ),
           const SizedBox(height: 20),
-          Text("${widget.units.where((unit) => unit['selected'] == true).length} of ${widget.units.length} row(s) selected."),
+          Text(
+              "${widget.units.where((unit) => unit['selected'] == true).length} of ${widget.units.length} row(s) selected."),
           const SizedBox(height: 20),
-
         ],
       ),
     );
   }
 }
-
