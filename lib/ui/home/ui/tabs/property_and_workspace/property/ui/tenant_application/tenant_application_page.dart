@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/property_data.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
@@ -44,7 +45,6 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
 
   @override
   void initState() {
-    final host = widget.propertyData?.host as Host;
     addDisposer();
     super.initState();
     firstNameController = TextEditingController();
@@ -58,10 +58,10 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
     phoneNumberNode = FocusNode();
     emailNode = FocusNode();
     socialSecurityNode = FocusNode();
-    firstNameController.text = host.firstName ?? "";
-    lastNameController.text = host.lastName ?? "";
-    phoneNumberController.text = host.phone ?? "";
-    emailController.text = host.email ?? "";
+    firstNameController.text = session.user.firstName ?? "";
+    lastNameController.text = session.user.lastName ?? "";
+    phoneNumberController.text = session.user.phone ?? "";
+    emailController.text = session.user.email ?? "";
   }
 
   @override

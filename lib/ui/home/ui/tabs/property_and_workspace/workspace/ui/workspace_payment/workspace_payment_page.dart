@@ -3,6 +3,8 @@ import 'dart:ffi';
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/core/session/app_session.dart';
+import 'package:balcony/core/session/session.dart';
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/promo_model.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
@@ -240,7 +242,7 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
   }
 
   Widget _buildUserInfoSection() {
-    final host = widget.workspaceData?.host as Host;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24).r,
       child: Column(
@@ -256,11 +258,11 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
                   ?.copyWith(fontWeight: FontWeight.w600, fontSize: 13.spMin)),
           16.verticalSpace,
           const SizedBox(height: 4),
-          _buildKeyValueRow('Name', host.firstName ?? ""),
+          _buildKeyValueRow('Name', session.user.firstName ?? ""),
           12.verticalSpace,
-          _buildKeyValueRow('Email', host.email ?? ""),
+          _buildKeyValueRow('Email', session.user.email ?? ""),
           12.verticalSpace,
-          _buildKeyValueRow('Phone', host.phone ?? ""),
+          _buildKeyValueRow('Phone', session.user.phone ?? ""),
         ],
       ),
     );
