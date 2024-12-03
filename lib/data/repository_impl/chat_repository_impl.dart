@@ -25,6 +25,11 @@ class ChatRepositoryImpl extends BaseRepositoryImpl
     return execute(apiClient.getAllConversations());
   }
 
+  @override
+  Future<ApiResponse<CommonData>> getAllMsg(String conversationId) {
+    return execute(apiClient.getAllMessage(conversationId));
+  }
+
 
 
 

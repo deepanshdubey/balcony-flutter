@@ -1,6 +1,7 @@
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/generated/assets.dart';
 import 'package:balcony/ui/home/ui/tabs/chat/ui/chat_details_page.dart';
@@ -245,7 +246,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                showAppBottomSheet(context, ChatDetailsPage());
+                                showAppBottomSheet(context, ChatDetailsPage(receiverId: session.user.id,));
                               },
                               child: Text(
                                 "chat",

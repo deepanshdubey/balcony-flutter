@@ -3,7 +3,6 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class SocketManager {
   late IO.Socket socket;
-  final Dio dio = Dio(BaseOptions(baseUrl: "https://api.homework.ws/api/v2"));
 
   void initializeSocket(String url) {
     socket = IO.io(url, IO.OptionBuilder()

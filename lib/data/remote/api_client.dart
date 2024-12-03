@@ -254,6 +254,9 @@ abstract class ApiClient {
   @GET("/conversation/all")
   Future<CommonData> getAllConversations();
 
+ @GET("/message/all/{id}")
+  Future<CommonData> getAllMessage(@Path("id") String conversationId);
+
   ///auto
   @GET("auto/status")
   Future<CommonData> getAutoStatus();

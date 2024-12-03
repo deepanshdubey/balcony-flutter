@@ -19,6 +19,9 @@ abstract class _ChatStoreBase with Store {
   CommonData? allConversationResponse;
 
   @observable
+  CommonData? allMsgResponse;
+
+  @observable
   bool isLoading = false;
 
   @observable
@@ -32,6 +35,26 @@ abstract class _ChatStoreBase with Store {
       final response = await chatRepository.getAllConversations();
       if (response.isSuccess) {
         allConversationResponse = response.data;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future getAllMsg(String conversationId) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await chatRepository.getAllMsg(conversationId);
+      if (response.isSuccess) {
+        allMsgResponse = response.data;
       } else {
         errorMessage = response.error!.message;
       }

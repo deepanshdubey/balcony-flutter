@@ -1,3 +1,4 @@
+import 'package:balcony/generated/assets.dart';
 import 'package:balcony/ui/home/ui/tabs/chat/ui/chat_details_page.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/widget/app_image.dart';
@@ -5,7 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ChatWidget extends StatelessWidget {
-  final String image, name, lastMessage, time ;
+  final String image, name, lastMessage, time;
+
+  final String? senderId;
+  final String? receiverId;
+  final String? conversationId;
 
   const ChatWidget({
     super.key,
@@ -13,6 +18,9 @@ class ChatWidget extends StatelessWidget {
     required this.name,
     required this.lastMessage,
     required this.time,
+    this.senderId,
+    this.receiverId,
+    this.conversationId,
   });
 
   @override
@@ -20,7 +28,11 @@ class ChatWidget extends StatelessWidget {
     final theme = Theme.of(context);
     return GestureDetector(
       onTap: () {
-        showAppBottomSheet(context, ChatDetailsPage());
+        showAppBottomSheet(
+            context,
+            ChatDetailsPage(
+              conversationId: conversationId,
+            ));
       },
       child: Column(
         children: [
@@ -31,6 +43,7 @@ class ChatWidget extends StatelessWidget {
               AppImage(
                 url: image,
                 radius: 30.r,
+                 placeholder: Image.asset(Assets.imagesProfile),
               ),
               25.w.horizontalSpace,
               Expanded(
@@ -46,10 +59,10 @@ class ChatWidget extends StatelessWidget {
                   ),
                   5.h.verticalSpace,
                   SizedBox(
-                      width: context.width * .15,
+                      width: context.width * .30,
                       child: Text(
                         lastMessage,
-                        textAlign: TextAlign.center,
+                        textAlign: TextAlign.start,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.titleMedium?.copyWith(

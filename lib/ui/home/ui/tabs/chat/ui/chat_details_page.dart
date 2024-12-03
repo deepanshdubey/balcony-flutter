@@ -1,11 +1,15 @@
+import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/core/socket/socket_manager.dart';
 import 'package:balcony/data/model/response/socket_message.dart';
 import 'package:balcony/generated/assets.dart';
+import 'package:balcony/ui/home/ui/tabs/chat/store/chat_store.dart';
 import 'package:balcony/widget/app_back_button.dart';
 import 'package:balcony/widget/app_image.dart';
 import 'package:balcony/widget/app_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 class ChatDetailsPage extends StatefulWidget {
   final String? senderId;
@@ -22,11 +26,14 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   final SocketManager socketManager = SocketManager();
   final List<SocketMessage> messages = [];
   bool isReceiverOnline = false;
+  final chatStore = ChatStore();
 
   @override
   void initState() {
     super.initState();
     _initializeChat();
+    chatStore.getAllMsg(widget.conversationId ?? " ");
+
   }
 
   @override
@@ -37,8 +44,9 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   }
 
   Future<void> _initializeChat() async {
-    socketManager.initializeSocket("http://your-socket-url.com"); // Replace with socket URL
-    socketManager.addUser(widget.senderId ?? "");
+    socketManager.initializeSocket("https://api.homework.ws/"); // Replace with socket URL
+    socketManager.addUser(session.user.id ?? "" );
+
 
 
 
@@ -180,19 +188,22 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   }
 
   Widget _buildChatList(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        _buildSentMessage(context, 'Hey! How have you been?', '12:15 PM'),
-        _buildSentMessage(context, 'Wanna catch up for a beer?', '12:15 PM'),
-        _buildReceivedMessage('Awesome! Let\'s meet up', '12:20 PM'),
-        _buildReceivedMessage(
-            'Can I also get my cousin along?\nWill that be okay?', '12:20 PM'),
-        _buildSentMessage(context, 'Yeah sure! get him too.', '12:22 PM'),
-        _buildReceivedMessage('Alright! See you soon!', '12:25 PM'),
-        _buildVoiceMessage('12:25 PM', isReceived: true),
-        _buildSentMessage(context, 'okay sure!', '12:25 PM'),
-      ],
+
+    return Observer(
+      builder: (context) {
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: chatStore.allMsgResponse?.messages?.length,
+          itemBuilder: (context, index) {
+            final message = chatStore.allMsgResponse?.messages?[index];
+            if (message?.senderId == session.user.id) {
+              return _buildSentMessage(context, message?.text ?? '', _formatTime(message?.createdAt));
+            } else {
+              return _buildReceivedMessage(message?.text ?? '', _formatTime(message?.createdAt));
+            }
+          },
+        );
+      }
     );
   }
 
@@ -352,4 +363,12 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
       ),
     );
   }
+
+  String _formatTime(String? timestamp) {
+    if (timestamp == null) return '';
+    final dateTime = DateTime.parse(timestamp);
+    final formattedTime = DateFormat.jm().format(dateTime); // Example: "12:15 PM"
+    return formattedTime;
+  }
+
 }

@@ -8,6 +8,7 @@ abstract class ChatRepository {
 
 
   Future<ApiResponse<CommonData>> getAllConversations();
+  Future<ApiResponse<CommonData>> getAllMsg(String conversationId);
 
 
 }

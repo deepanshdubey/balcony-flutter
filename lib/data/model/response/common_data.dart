@@ -39,6 +39,11 @@ class CommonData {
   @JsonKey(name: 'conversations')
   List<ConversationData>? conversations;
 
+  @JsonKey(name: 'messages')
+  List<LastMessage>? messages;
+
+
+
   CommonData({
     this.success,
     this.message,
