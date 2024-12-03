@@ -46,7 +46,7 @@ class CardListingWidget extends StatelessWidget {
             TextButton(onPressed: () {}, child: const Text("Delete")),
           ],
         ),
-        const Divider(),
+
       ],
     );
   }

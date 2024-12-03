@@ -17,12 +17,19 @@ class BookingsData {
   @JsonKey(name: 'endDate')
   final DateTime? endDate;
 
+  @JsonKey(name: 'subtotal')
   final int? subtotal;
+
+  @JsonKey(name: 'discount')
   final int? discount;
 
+  @JsonKey(name: 'status')
   final String? status;
+
+  @JsonKey(name: 'acceptance')
   final String? acceptance;
 
+  @JsonKey(name: 'ratings')
   final int? ratings;
 
   @JsonKey(name: 'createdAt')

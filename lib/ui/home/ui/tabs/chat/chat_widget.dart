@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ChatWidget extends StatelessWidget {
-  final String image, name, lastMessage, time;
+  final String image, name, lastMessage, time ;
 
   const ChatWidget({
     super.key,
@@ -29,7 +29,7 @@ class ChatWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AppImage(
-                assetPath: image,
+                url: image,
                 radius: 30.r,
               ),
               25.w.horizontalSpace,

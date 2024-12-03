@@ -1,3 +1,5 @@
+import 'package:balcony/core/socket/socket_manager.dart';
+import 'package:balcony/data/model/response/socket_message.dart';
 import 'package:balcony/generated/assets.dart';
 import 'package:balcony/widget/app_back_button.dart';
 import 'package:balcony/widget/app_image.dart';
@@ -5,10 +7,111 @@ import 'package:balcony/widget/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class ChatDetailsPage extends StatelessWidget {
-  ChatDetailsPage({super.key});
+class ChatDetailsPage extends StatefulWidget {
+  final String? senderId;
+  final String? receiverId;
+  final String? conversationId;
+  ChatDetailsPage({super.key, this.senderId, this.receiverId, this.conversationId});
 
+  @override
+  State<ChatDetailsPage> createState() => _ChatDetailsPageState();
+}
+
+class _ChatDetailsPageState extends State<ChatDetailsPage> {
   final messageController = TextEditingController();
+  final SocketManager socketManager = SocketManager();
+  final List<SocketMessage> messages = [];
+  bool isReceiverOnline = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeChat();
+  }
+
+  @override
+  void dispose() {
+    socketManager.disConnect();
+    messageController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _initializeChat() async {
+    socketManager.initializeSocket("http://your-socket-url.com"); // Replace with socket URL
+    socketManager.addUser(widget.senderId ?? "");
+
+
+
+    socketManager.onGetMessage((data) {
+      final message = SocketMessage.fromJson(data);
+      if (message.senderId == widget.receiverId) {
+        setState(() {
+          messages.add(message);
+        });
+
+        if (isReceiverOnline) {
+         //call seen api
+        }
+      }
+    });
+
+    // Listen for active users
+    socketManager.onGetUsers((users) {
+      setState(() {
+        isReceiverOnline = users.contains(widget.receiverId);
+      });
+    });
+  }
+
+/*
+  Future<void> _fetchContacts() async {
+    try {
+      final response = await Dio().get("https://api.homework.ws/api/v2/conversation/all");
+      final data = response.data;
+
+      // Extract last messages for this conversation
+      final conversationMessages = data['conversations']
+          .where((conv) => conv['conversationId'] == widget.conversationId)
+          .toList();
+
+      setState(() {
+        messages.clear();
+        for (var msg in conversationMessages) {
+          messages.add(SocketMessage.fromJson(msg));
+        }
+      });
+    } catch (e) {
+      print("Failed to fetch contacts: $e");
+    }
+  }
+*/
+
+  void _sendMessage() async {
+    if (messageController.text.trim().isEmpty) return;
+
+    final message = SocketMessage(
+      senderId: widget.senderId ?? "",
+      receiverId: widget.receiverId ?? "",
+      text: messageController.text.trim(),
+      media: null,
+      seen: false,
+    );
+
+    setState(() {
+      messages.add(message);
+    });
+
+    socketManager.sendMessage(message.toJson());
+
+    // Update conversation
+  //  await socketManager.updateConversation(widget.conversationId ?? "", message.text ?? "");
+
+    if (isReceiverOnline) {
+    //  socketManager.markMessageAsSeen(widget.conversationId?? "");
+    }
+
+    messageController.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -196,6 +299,9 @@ class ChatDetailsPage extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: AppTextField(
+          onFieldSubmitted: (p0) {
+            _sendMessage();
+          },
           controller: messageController,
           inputDecoration: InputDecoration(
             hintText: "Type Message",

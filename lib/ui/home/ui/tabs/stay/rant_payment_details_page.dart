@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/wallets/wallet_page.dart';
+import 'package:balcony/ui/home/ui/tabs/more/ui/wallet/ui/wallet_page.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
 import 'package:balcony/widget/app_back_button.dart';

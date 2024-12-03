@@ -3,6 +3,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:balcony/core/alert/alert_manager.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/generated/assets.dart';
+import 'package:balcony/ui/home/ui/tabs/chat/ui/chat_details_page.dart';
+import 'package:balcony/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/workspace_details/booking_calender.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/workspace_details/custom_dropdown.dart';
@@ -241,12 +243,17 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                         16.verticalSpace,
                         Row(
                           children: [
-                            Text(
-                              "chat",
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                  fontSize: 14.spMin,
-                                  color: appColor.primaryColor,
-                                  decoration: TextDecoration.underline),
+                            GestureDetector(
+                              onTap: () {
+                                showAppBottomSheet(context, ChatDetailsPage());
+                              },
+                              child: Text(
+                                "chat",
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                    fontSize: 14.spMin,
+                                    color: appColor.primaryColor,
+                                    decoration: TextDecoration.underline),
+                              ),
                             ),
                             16.horizontalSpace,
                             Container(

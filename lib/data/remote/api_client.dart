@@ -245,4 +245,13 @@ abstract class ApiClient {
 
   @POST("booking/rate")
   Future<CommonData> rateBooking(@Body() Map<String, dynamic> request);
+
+
+
+  /// chat
+  @GET("/conversation/all")
+  Future<CommonData> getAllConversations();
+
+
+
 }

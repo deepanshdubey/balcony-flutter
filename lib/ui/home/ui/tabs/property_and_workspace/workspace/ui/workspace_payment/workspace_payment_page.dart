@@ -4,19 +4,22 @@ import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:balcony/core/alert/alert_manager.dart';
 import 'package:balcony/core/session/app_session.dart';
-import 'package:balcony/core/session/session.dart';
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/promo_model.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/ui/home/store/promo_store.dart';
+import 'package:balcony/ui/home/ui/tabs/chat/ui/chat_page.dart';
+import 'package:balcony/ui/home/ui/tabs/more/ui/wallet/store/wallet_store.dart';
+import 'package:balcony/ui/home/ui/tabs/more/ui/wallet/ui/wallet_page.dart';
+import 'package:balcony/ui/home/ui/tabs/more/ui/wallet/widget/card_listing_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/wallets/wallet_page.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
 import 'package:balcony/widget/app_image.dart';
 import 'package:balcony/widget/app_text_field.dart';
 import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobx/mobx.dart';
 
@@ -29,7 +32,12 @@ class WorkspacePaymentPage extends StatefulWidget {
   final String? endDate;
 
   WorkspacePaymentPage(
-      {super.key, this.workspaceData, this.selectedData, this.selectedDays, this.startDate, this.endDate});
+      {super.key,
+      this.workspaceData,
+      this.selectedData,
+      this.selectedDays,
+      this.startDate,
+      this.endDate});
 
   @override
   State<WorkspacePaymentPage> createState() => _WorkspacePaymentPageState();
@@ -242,7 +250,6 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
   }
 
   Widget _buildUserInfoSection() {
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24).r,
       child: Column(
@@ -330,37 +337,42 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
                   .titleLarge
                   ?.copyWith(fontWeight: FontWeight.w600, fontSize: 13.spMin)),
           12.verticalSpace,
-          GestureDetector(
-            onTap: () {
-              context.maybePop();
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(20),
-                  ),
-                ),
-                builder: (BuildContext context) {
-                  return const FractionallySizedBox(
-                    heightFactor: 0.8,
-                    child: WalletPage(),
-                  );
-                },
-              );
+          GestureDetector(onTap: () {
+            context.maybePop();
+            showAppBottomSheet(context, WalletPage());
+          }, child: Observer(
+            builder: (context) {
+              var isLoading = walletStore.isLoading;
+              var cards = walletStore.cardsResponse;
+              return isLoading
+                  ? Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(20.r),
+                        child: const CircularProgressIndicator(),
+                      ),
+                    )
+                  : cards?.isNotEmpty == true
+                      ? CardListingWidget(
+                          cards: cards!,
+                          onEditClicked: (p0) {},
+                          onDeleteClicked: (p0) {},
+                        )
+                      : Row(
+                          children: [
+                            Text("No card yet!"),
+                            Spacer(),
+                            Text('add',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(
+                                        fontSize: 14.spMin,
+                                        color: appColor.primaryColor,
+                                        decoration: TextDecoration.underline)),
+                          ],
+                        );
             },
-            child: Row(
-              children: [
-                Text("No card yet!"),
-                Spacer(),
-                Text('add',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontSize: 14.spMin,
-                        color: appColor.primaryColor,
-                        decoration: TextDecoration.underline)),
-              ],
-            ),
-          ),
+          )),
           16.verticalSpace
         ],
       ),
@@ -381,7 +393,6 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
           };
           workspaceStore.createBooking(request);
         },
-
       ),
     );
   }

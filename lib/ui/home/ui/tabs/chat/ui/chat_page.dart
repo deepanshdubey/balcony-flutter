@@ -1,25 +1,45 @@
 import 'package:balcony/generated/assets.dart';
 import 'package:balcony/ui/home/ui/tabs/chat/chat_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/chat/store/chat_store.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class ChatPage extends StatelessWidget {
+class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
 
   @override
+  State<ChatPage> createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
+  final chatStore = ChatStore();
+
+  @override
+  void initState() {
+    chatStore.getAllConversations();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: EdgeInsets.symmetric(horizontal: 24.w),
-      children: List.generate(
-        8,
-        (index) => const ChatWidget(
-          image: Assets.dummyChatUser,
-          name: "Pranav Ray",
-          lastMessage: "okay sure!!",
-          time: "12:25 PM",
-        ),
-      ),
+    return Observer(
+      builder: (context) {
+        var chatData = chatStore.allConversationResponse?.conversations ;
+        return ListView(
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          children: List.generate(
+            chatStore.allConversationResponse?.conversations?.length ?? 0,
+            (index) =>  ChatWidget(
+              image: chatData?[index].member?.image ?? "",
+              name: chatData?[index].member?.firstName ?? "",
+              lastMessage: chatData?[index].lastMessage?.text ?? "",
+              time: chatData?[index].lastMessage?.updatedAt ?? "",
+            ),
+          ),
+        );
+      }
     );
   }
 }
