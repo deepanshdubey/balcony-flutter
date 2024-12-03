@@ -87,18 +87,14 @@ class _BookingAcceptanceWidgetState extends State<BookingAcceptanceWidget> {
           16.h.verticalSpace,
           Observer(builder: (context) {
             var isLoading = store.isLoading;
-            return isLoading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : tabBar(theme);
+            return tabBar(theme, isLoading);
           }),
         ],
       ),
     );
   }
 
-  Widget tabBar(ThemeData theme) {
+  Widget tabBar(ThemeData theme, bool isLoading) {
     return Align(
       alignment: Alignment.centerLeft,
       child: Container(
@@ -106,14 +102,25 @@ class _BookingAcceptanceWidgetState extends State<BookingAcceptanceWidget> {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(12.r)),
             border: Border.all(color: Colors.black.withOpacity(.25))),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildTab(theme, "manually", 0),
-            _buildTab(theme, "automatically", 1),
-          ],
-        ),
+        child: isLoading
+            ? SizedBox(
+                width: context.width * .5,
+                height: 25.h,
+                child: Center(
+                  child: SizedBox(
+                      height: 20.r,
+                      width: 20.r,
+                      child: const CircularProgressIndicator()),
+                ),
+              )
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildTab(theme, "manually", 0),
+                  _buildTab(theme, "automatically", 1),
+                ],
+              ),
       ),
     );
   }

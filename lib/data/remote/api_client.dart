@@ -119,7 +119,7 @@ abstract class ApiClient {
     @Part(
       name: "leasingPolicyDoc",
     )
-    File? image,
+    File image,
   );
 
   @GET("/workspace/search")
@@ -263,4 +263,8 @@ abstract class ApiClient {
 
   @GET("auto/rent-payment")
   Future<CommonData> toggleRentPayment();
+
+  ///update payout info
+  @GET("user/onboarding-account/{type}")
+  Future<CommonData> updatePayoutInfo(@Path("type") String type);
 }

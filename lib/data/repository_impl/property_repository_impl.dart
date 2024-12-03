@@ -73,7 +73,7 @@ class PropertyRepositoryImpl extends BaseRepositoryImpl
     String currency,
     Map<String, dynamic> other,
     List<String> amenities,
-    File? leasingPolicyDoc,
+    File leasingPolicyDoc,
     List<Map<String, dynamic>> unitList,
   ) async {
     var list = await prepareImageFiles(images);

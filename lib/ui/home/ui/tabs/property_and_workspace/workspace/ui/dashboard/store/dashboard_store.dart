@@ -1,6 +1,7 @@
 import 'package:balcony/core/locator/locator.dart';
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/repository/booking_repository.dart';
+import 'package:balcony/data/repository/user_repository.dart';
 import 'package:mobx/mobx.dart';
 
 part 'dashboard_store.g.dart';
@@ -11,6 +12,8 @@ abstract class _DashboardStoreBase with Store {
   @observable
   CommonData? autoStatusResponse;
 
+  @observable
+  String? updatePayoutInfoResponse;
   @observable
   bool isLoading = false;
 
@@ -42,5 +45,26 @@ abstract class _DashboardStoreBase with Store {
       isLoading = false;
     }
   }
-}
 
+  @action
+  Future updatePayoutInfo({
+    bool isWorkspace = true,
+  }) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await userRepository.updatePayoutInfo(isWorkspace ? "workspaces" :"properties");
+      if (response.isSuccess) {
+        updatePayoutInfoResponse = response.data?.url;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+}

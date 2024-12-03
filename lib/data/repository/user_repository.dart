@@ -43,6 +43,7 @@ abstract class UserRepository {
       );
 
   Future<ApiResponse<CommonData>> closeSupportTicket(String id);
+  Future<ApiResponse<CommonData>> updatePayoutInfo(String type);
 
 
   Future<ApiResponse<SubscriptionListModel>> subscriptionList(String currency);

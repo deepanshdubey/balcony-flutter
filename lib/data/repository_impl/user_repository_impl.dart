@@ -99,4 +99,9 @@ class UserRepositoryImpl extends BaseRepositoryImpl implements UserRepository {
   Future<ApiResponse<SubscriptionListModel>> subscriptionList(String currency) {
     return execute(apiClient.getSubscription(currency));
   }
+
+  @override
+  Future<ApiResponse<CommonData>> updatePayoutInfo(String type) {
+    return execute(apiClient.updatePayoutInfo(type));
+  }
 }

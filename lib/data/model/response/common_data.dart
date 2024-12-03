@@ -16,6 +16,9 @@ class CommonData {
   @JsonKey(name: 'message')
   String? message;
 
+  @JsonKey(name: 'url')
+  String? url;
+
   @JsonKey(name: 'token')
   String? token;
 
@@ -44,6 +47,7 @@ class CommonData {
     this.tickets,
     this.cards,
     this.status,
+    this.url,
   });
 
   factory CommonData.fromJson(Map<String, dynamic> json) =>

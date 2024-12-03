@@ -59,7 +59,7 @@ class _WorkspaceDashboardPageState extends State<WorkspaceDashboardPage> {
         16.h.verticalSpace,
         PromotionWidget(),
         16.h.verticalSpace,
-        UpdatePayoutWidget(onUpdatePayoutClickListener: () {}),
+        UpdatePayoutWidget(key: UniqueKey(),),
         16.h.verticalSpace,
         BookingAcceptanceWidget(),
         100.h.verticalSpace,

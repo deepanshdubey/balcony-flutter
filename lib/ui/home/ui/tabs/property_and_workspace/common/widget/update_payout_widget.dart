@@ -1,15 +1,63 @@
+import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/store/dashboard_store.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mobx/mobx.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-typedef UpdatePayoutClickListener = Function();
+class UpdatePayoutWidget extends StatefulWidget {
+  final bool isWorkspace;
 
-class UpdatePayoutWidget extends StatelessWidget {
-  final UpdatePayoutClickListener onUpdatePayoutClickListener;
+  const UpdatePayoutWidget({
+    super.key,
+    this.isWorkspace = true,
+  });
 
-  const UpdatePayoutWidget(
-      {super.key, required this.onUpdatePayoutClickListener});
+  @override
+  State<UpdatePayoutWidget> createState() => _UpdatePayoutWidgetState();
+}
+
+class _UpdatePayoutWidgetState extends State<UpdatePayoutWidget> {
+  List<ReactionDisposer>? disposers;
+  var store = DashboardStore();
+
+  @override
+  void initState() {
+    super.initState();
+    store.autoStatus();
+    addDisposer();
+  }
+
+  @override
+  void dispose() {
+    removeDisposer();
+    super.dispose();
+  }
+
+  void addDisposer() {
+    disposers ??= [
+      reaction((_) => store.updatePayoutInfoResponse, (response) {
+        if (response != null) {
+          openUrl(response);
+        }
+      }),
+      reaction((_) => store.errorMessage, (String? errorMessage) {
+        if (errorMessage != null) {
+          alertManager.showError(context, errorMessage);
+        }
+      }),
+    ];
+  }
+
+  void removeDisposer() {
+    if (disposers == null) return;
+    for (final element in disposers!) {
+      element.reaction.dispose();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,16 +89,29 @@ class UpdatePayoutWidget extends StatelessWidget {
             ),
           ),
           16.h.verticalSpace,
-          PrimaryButton(
-            text: "update payout info",
-            onPressed: () {},
-            icon: Icon(
-              Icons.open_in_new,
-              color: Colors.white,
-            ),
-          ),
+          Observer(builder: (context) {
+            var isLoading = store.isLoading;
+            return PrimaryButton(
+              text: "update payout info",
+              isLoading: isLoading,
+              onPressed: () {
+                store.updatePayoutInfo(isWorkspace: widget.isWorkspace);
+              },
+              icon: const Icon(
+                Icons.open_in_new,
+                color: Colors.white,
+              ),
+            );
+          }),
         ],
       ),
     );
+  }
+}
+
+Future<void> openUrl(String url) async {
+  final Uri uri = Uri.parse(url);
+  if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+    throw 'Could not launch $url';
   }
 }
