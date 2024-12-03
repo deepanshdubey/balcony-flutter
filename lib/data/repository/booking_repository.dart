@@ -26,6 +26,12 @@ abstract class BookingRepository {
   Future<ApiResponse<CommonData>> cancelBookingByUser(String bookingId);
 
   Future<ApiResponse<CommonData>> rateBooking(Map<String, dynamic> request);
+
+  Future<ApiResponse<CommonData>> getAutoStatus();
+
+  Future<ApiResponse<CommonData>> toggleAcceptBooking();
+
+  Future<ApiResponse<CommonData>> toggleRentPayment();
 }
 
 final bookingRepository = locator<BookingRepository>();

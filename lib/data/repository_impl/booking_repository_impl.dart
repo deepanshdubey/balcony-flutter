@@ -5,7 +5,6 @@ import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/remote/api_client.dart';
 import 'package:balcony/data/repository/booking_repository.dart';
 import 'package:balcony/data/repository_impl/base_repository_impl.dart';
-import 'package:balcony/generated/l10n.dart';
 
 class BookingRepositoryImpl extends BaseRepositoryImpl
     implements BookingRepository {
@@ -74,5 +73,20 @@ class BookingRepositoryImpl extends BaseRepositoryImpl
   Future<ApiResponse<CommonData>> rateBooking(
       Map<String, dynamic> request) async {
     return await execute(apiClient.rateBooking(request));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> getAutoStatus() {
+    return execute(apiClient.getAutoStatus());
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> toggleAcceptBooking() {
+    return execute(apiClient.toggleAcceptBooking());
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> toggleRentPayment() {
+    return execute(apiClient.toggleRentPayment());
   }
 }

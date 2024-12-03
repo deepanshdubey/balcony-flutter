@@ -253,4 +253,14 @@ abstract class ApiClient {
   /// chat
   @GET("/conversation/all")
   Future<CommonData> getAllConversations();
+
+  ///auto
+  @GET("auto/status")
+  Future<CommonData> getAutoStatus();
+
+  @GET("auto/accept-booking")
+  Future<CommonData> toggleAcceptBooking();
+
+  @GET("auto/rent-payment")
+  Future<CommonData> toggleRentPayment();
 }

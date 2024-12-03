@@ -1,18 +1,59 @@
+import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/store/dashboard_store.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/values/extensions/theme_ext.dart';
-import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mobx/mobx.dart';
 
 class BookingAcceptanceWidget extends StatefulWidget {
   const BookingAcceptanceWidget({super.key});
 
   @override
-  State<BookingAcceptanceWidget> createState() => _BookingAcceptanceWidgetState();
+  State<BookingAcceptanceWidget> createState() =>
+      _BookingAcceptanceWidgetState();
 }
 
 class _BookingAcceptanceWidgetState extends State<BookingAcceptanceWidget> {
   int _currentIndex = 1;
+  List<ReactionDisposer>? disposers;
+  var store = DashboardStore();
+
+  @override
+  void initState() {
+    super.initState();
+    store.autoStatus();
+    addDisposer();
+  }
+
+  @override
+  void dispose() {
+    removeDisposer();
+    super.dispose();
+  }
+
+  void addDisposer() {
+    disposers ??= [
+      reaction((_) => store.autoStatusResponse, (response) {
+        setState(() {
+          _currentIndex = response?.status?['autoBooking'] == true ? 1 : 0;
+        });
+      }),
+      reaction((_) => store.errorMessage, (String? errorMessage) {
+        if (errorMessage != null) {
+          alertManager.showError(context, errorMessage);
+        }
+      }),
+    ];
+  }
+
+  void removeDisposer() {
+    if (disposers == null) return;
+    for (final element in disposers!) {
+      element.reaction.dispose();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,12 +85,19 @@ class _BookingAcceptanceWidgetState extends State<BookingAcceptanceWidget> {
             ),
           ),
           16.h.verticalSpace,
-          tabBar(theme),
-
+          Observer(builder: (context) {
+            var isLoading = store.isLoading;
+            return isLoading
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : tabBar(theme);
+          }),
         ],
       ),
     );
   }
+
   Widget tabBar(ThemeData theme) {
     return Align(
       alignment: Alignment.centerLeft,
@@ -73,7 +121,7 @@ class _BookingAcceptanceWidgetState extends State<BookingAcceptanceWidget> {
   Widget _buildTab(ThemeData theme, String text, int index) {
     bool isActive = _currentIndex == index;
     return GestureDetector(
-      onTap: () => _onTabTapped(index),
+      onTap: () => _currentIndex != index ? _onTabTapped(index) : null,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
         decoration: BoxDecoration(
@@ -96,8 +144,6 @@ class _BookingAcceptanceWidgetState extends State<BookingAcceptanceWidget> {
   }
 
   void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+    store.autoStatus(isBooking: true);
   }
 }

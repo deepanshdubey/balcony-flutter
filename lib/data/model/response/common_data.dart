@@ -21,6 +21,8 @@ class CommonData {
 
   @JsonKey(name: 'user')
   UserData? user;
+  @JsonKey(name: 'status')
+  Map<String, dynamic>? status;
 
   @JsonKey(name: 'tickets')
   List<SupportTicketData>? tickets;
@@ -34,8 +36,6 @@ class CommonData {
   @JsonKey(name: 'conversations')
   List<ConversationData>? conversations;
 
-
-
   CommonData({
     this.success,
     this.message,
@@ -43,6 +43,7 @@ class CommonData {
     this.token,
     this.tickets,
     this.cards,
+    this.status,
   });
 
   factory CommonData.fromJson(Map<String, dynamic> json) =>
