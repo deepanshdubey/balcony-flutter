@@ -10,6 +10,7 @@ class AppDropdownField<T> extends StatelessWidget {
   final T? selectedItem;
   final void Function(T) onItemSelected;
   final bool showLabelAboveField;
+  final String? Function(String?)? validator;
   final InputDecoration? inputDecoration;
   final bool readOnly;
   final Widget? prefixIcon;
@@ -29,6 +30,7 @@ class AppDropdownField<T> extends StatelessWidget {
     this.readOnly = true,
     this.prefixIcon,
     this.suffixIcon,
+    this.validator,
   });
 
   @override
@@ -56,6 +58,7 @@ class AppDropdownField<T> extends StatelessWidget {
       controller: controller,
       readOnly: readOnly,
       onTap: () => _showBottomSheet(context),
+      validator: validator,
       decoration: inputDecoration ??
           InputDecoration(
             contentPadding: EdgeInsets.symmetric(

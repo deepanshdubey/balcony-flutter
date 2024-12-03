@@ -230,6 +230,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.6"
+  credit_card_form:
+    dependency: "direct main"
+    description:
+      name: credit_card_form
+      sha256: "1943fe2f2b2ab9204d76ca1135c6f313907f59199ab0e546d489cedf55c9fd0a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.7"
   cross_file:
     dependency: transitive
     description:
@@ -408,6 +416,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.9.3"
+  flutter_stripe:
+    dependency: "direct main"
+    description:
+      name: flutter_stripe
+      sha256: "06d7d8ac853470b7c9a9ed81f9fccafaf35f417a151e1b7ddcded56113aadf6f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "11.3.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -426,6 +442,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  freezed_annotation:
+    dependency: transitive
+    description:
+      name: freezed_annotation
+      sha256: c2e2d632dd9b8a2b7751117abcfc2b4888ecfe181bd9fca7170d9ef02e595fe2
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.4"
   frontend_server_client:
     dependency: transitive
     description:
@@ -1143,6 +1167,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  stripe_android:
+    dependency: transitive
+    description:
+      name: stripe_android
+      sha256: bc919b07ba1560b25a69002f9ca67a5973f12bfb96f78033cf9bd6c561f1aa10
+      url: "https://pub.dev"
+    source: hosted
+    version: "11.3.0"
+  stripe_ios:
+    dependency: transitive
+    description:
+      name: stripe_ios
+      sha256: "734a7668babd85a451c8049f0dfa8ca5dc6d80f85600d29732e7fa703dd5ec5e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "11.3.0"
+  stripe_platform_interface:
+    dependency: transitive
+    description:
+      name: stripe_platform_interface
+      sha256: "5cb987074b6ee199e7dd1b81d189c87583f6eaeb19147ffc8c15bc009596e6ce"
+      url: "https://pub.dev"
+    source: hosted
+    version: "11.3.0"
   synchronized:
     dependency: transitive
     description:

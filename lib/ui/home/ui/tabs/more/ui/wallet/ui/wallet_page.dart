@@ -1,70 +1,110 @@
+import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/data/model/response/card_data.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/wallet/store/wallet_store.dart';
+import 'package:balcony/ui/home/ui/tabs/more/ui/wallet/widget/add_card_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/wallet/widget/card_listing_widget.dart';
-import 'package:balcony/values/extensions/context_ext.dart';
+import 'package:balcony/ui/home/ui/tabs/more/ui/wallet/widget/edit_card_widget.dart';
 import 'package:balcony/widget/app_back_button.dart';
-import 'package:balcony/widget/app_text_field.dart';
-import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mobx/mobx.dart';
 
 class WalletPage extends StatefulWidget {
-  const WalletPage({Key? key}) : super(key: key);
+  const WalletPage({super.key});
 
   @override
   State<WalletPage> createState() => _WalletPageState();
 }
 
 class _WalletPageState extends State<WalletPage> {
-  TextEditingController nameController = TextEditingController();
-  TextEditingController cardNumberController = TextEditingController();
-  TextEditingController expireController = TextEditingController();
-  TextEditingController cvcController = TextEditingController();
   final ValueNotifier<String> selectedOption = ValueNotifier<String>("Card");
+  List<ReactionDisposer>? disposers;
+  CardData? selectedCard;
+
+  @override
+  void initState() {
+    super.initState();
+    addDisposer();
+  }
+
+  @override
+  void dispose() {
+    removeDisposer();
+    super.dispose();
+  }
+
+  void addDisposer() {
+    disposers ??= [
+      reaction((_) => walletStore.createCardResponse, (response) {
+        selectedOption.value = "Card";
+      }),
+      reaction((_) => walletStore.deleteCardResponse, (response) {
+        selectedOption.value = "Card";
+      }),
+      reaction((_) => walletStore.errorMessage, (String? errorMessage) {
+        if (errorMessage != null) {
+          alertManager.showError(context, errorMessage);
+        }
+      }),
+    ];
+  }
+
+  void removeDisposer() {
+    if (disposers == null) return;
+    for (final element in disposers!) {
+      element.reaction.dispose();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: AppBackButton(
-            text: "back to menu",
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ),
-        Container(
-          height: context.height * .6,
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-          margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(12.r)),
-              border: Border.all(color: Colors.black.withOpacity(.25))),
-          child: ListView(
-            children: [
-              20.verticalSpace,
-              _buildPaymentMethodSection(),
-              const SizedBox(height: 16),
-              ValueListenableBuilder<String>(
-                valueListenable: selectedOption,
-                builder: (context, value, _) {
-                  if (value == "Card") {
-                    walletStore.getCards();
-                    return _buildSavedCardsSection();
-                  } else if (value == "Add Card") {
-                    return _buildAddCardSection();
-                  }
-                  return const SizedBox
-                      .shrink(); // Default view if nothing is selected
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: AppBackButton(
+                text: "back to menu",
+                onTap: () {
+                  Navigator.of(context).pop();
                 },
               ),
-            ],
-          ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+              margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(12.r)),
+                  border: Border.all(color: Colors.black.withOpacity(.25))),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  20.verticalSpace,
+                  _buildPaymentMethodSection(),
+                  ValueListenableBuilder<String>(
+                    valueListenable: selectedOption,
+                    builder: (context, value, _) {
+                      if (value == "Card") {
+                        walletStore.getCards();
+                        return _buildSavedCardsSection();
+                      } else if (value == "Add Card") {
+                        return AddCardWidget();
+                      } else if (value == "Edit Card" && selectedCard != null) {
+                        return EditCardWidget(cardData: selectedCard!);
+                      }
+                      return const SizedBox
+                          .shrink(); // Default view if nothing is selected
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -163,10 +203,23 @@ class _WalletPageState extends State<WalletPage> {
                 ),
               )
             : cards?.isNotEmpty == true
-                ? CardListingWidget(
-                    cards: cards!,
-                    onEditClicked: (p0) {},
-                    onDeleteClicked: (p0) {},
+                ? Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10.h),
+                    child: CardListingWidget(
+                      cards: cards!,
+                      onEditClicked: (p0) {
+                        selectedCard = p0;
+                        selectedOption.value = "Edit Card";
+                      },
+                      onDeleteClicked: (p0) {
+                        alertManager.showSystemAlertDialog(
+                          context: context,
+                          onConfirm: () {
+                            walletStore.deleteCard(p0.id.toString());
+                          },
+                        );
+                      },
+                    ),
                   )
                 : Padding(
                     padding: const EdgeInsets.all(16.0),
@@ -179,112 +232,6 @@ class _WalletPageState extends State<WalletPage> {
                     ),
                   );
       },
-    );
-  }
-
-  Widget _buildAddCardSection() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AppTextField(
-            label: 'Full Name',
-            hintText: "Full Name",
-            keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.next,
-            controller: nameController,
-          ),
-          20.verticalSpace,
-          AppTextField(
-            label: 'Card number',
-            hintText: "XXXX XXXX XXXX XXXX",
-            keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.next,
-            controller: cardNumberController,
-          ),
-          20.verticalSpace,
-          Row(
-            children: [
-              Expanded(
-                child: AppTextField(
-                  label: 'Expires',
-                  hintText: "MM/YY",
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
-                  controller: expireController,
-                ),
-              ),
-              20.horizontalSpace,
-              Expanded(
-                child: AppTextField(
-                  label: 'CVV',
-                  hintText: "XXX",
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
-                  controller: cvcController,
-                ),
-              ),
-            ],
-          ),
-          20.verticalSpace,
-          PrimaryButton(
-            text: "Add to wallet",
-            onPressed: () {},
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCardInfo(String name, String cardNumber) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "Name: $name",
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontSize: 12.spMin,
-                  ),
-            ),
-            Text(
-              cardNumber,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12.spMin,
-                  ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            TextButton(onPressed: () {}, child: const Text("Edit")),
-            TextButton(onPressed: () {}, child: const Text("Delete")),
-          ],
-        ),
-        const Divider(),
-      ],
-    );
-  }
-
-  Widget _buildTextField(
-      String label, String hintText, TextEditingController controller) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          hintText: hintText,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-      ),
     );
   }
 }

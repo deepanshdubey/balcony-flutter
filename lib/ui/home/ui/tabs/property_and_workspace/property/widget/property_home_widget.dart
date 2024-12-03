@@ -22,7 +22,7 @@ class _PropertyHomeWidgetState extends State<PropertyHomeWidget> {
   void initState() {
     super.initState();
     addDisposer();
-    store.getProperty(status: "inactive");
+    store.getProperty(status: "active");
   }
 
   @override
@@ -60,7 +60,6 @@ class _PropertyHomeWidgetState extends State<PropertyHomeWidget> {
                       appRouter.push(PropertyRoute());
                     },
                     isLoading: store.isLoading,
-
                     children: store.propertyResponse
                             ?.map(
                               (e) => PropertyWidget(data: e),
