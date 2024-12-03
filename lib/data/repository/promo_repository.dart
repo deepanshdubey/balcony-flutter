@@ -12,6 +12,7 @@ abstract class PromoRepository {
 
   Future<ApiResponse<PromoModel>> createPromo(Map<String, dynamic> request);
   Future<ApiResponse<PromoListModel>> promoList();
+  Future<ApiResponse<PromoListModel>> getHostPromoList(String hostId);
 }
 
 final promoRepository = locator<PromoRepository>();

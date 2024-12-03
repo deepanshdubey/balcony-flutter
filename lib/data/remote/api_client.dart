@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:balcony/data/model/response/card_data.dart';
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/pagination_data.dart';
 import 'package:balcony/data/model/response/promo_list_model.dart';
@@ -169,6 +168,11 @@ abstract class ApiClient {
   @GET("/promo/all")
   Future<PromoListModel> getPromoCodeList();
 
+  @GET("promo/all/host/{id}")
+  Future<PromoListModel> getHostPromoList(
+    @Path("id") String id,
+  );
+
   /// -- support tickets
 
   @GET("ticket/all")
@@ -246,12 +250,7 @@ abstract class ApiClient {
   @POST("booking/rate")
   Future<CommonData> rateBooking(@Body() Map<String, dynamic> request);
 
-
-
   /// chat
   @GET("/conversation/all")
   Future<CommonData> getAllConversations();
-
-
-
 }

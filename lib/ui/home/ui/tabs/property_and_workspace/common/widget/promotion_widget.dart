@@ -1,4 +1,5 @@
 import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/data/model/response/promo_list_model.dart';
 import 'package:balcony/data/model/response/promo_model.dart';
 import 'package:balcony/ui/home/store/promo_store.dart';
@@ -33,7 +34,7 @@ class _PromotionWidgetState extends BaseState<PromotionWidget> {
   @override
   void initState() {
     addDisposer();
-    promoStore.getPromoList();
+    promoStore.getPromoList(hostId: session.user.id);
     formKey = GlobalKey<FormState>();
     super.initState();
   }
@@ -53,15 +54,14 @@ class _PromotionWidgetState extends BaseState<PromotionWidget> {
         }
       }),
       reaction((_) => promoStore.createPromoResponse, (PromoModel? promo) {
-        if (promo?.success ??false) {
+        if (promo?.success ?? false) {
           alertManager.showSuccess(context, "Promo added");
         }
-      }), reaction((_) => promoStore.promoListResponse, (PromoListModel? promo) {
-        if (promo?.success ??false) {
-        setPromotionData(promo!);
-        setState(() {
-
-        });
+      }),
+      reaction((_) => promoStore.promoListResponse, (PromoListModel? promo) {
+        if (promo?.success ?? false) {
+          setPromotionData(promo!);
+          setState(() {});
         }
       }),
     ];
@@ -81,9 +81,12 @@ class _PromotionWidgetState extends BaseState<PromotionWidget> {
     if (promoList != null) {
       for (var promo in promoList.promos ?? []) {
         final promotionItem = PromotionItem();
-        promotionItem.nameController.text = promo.code ?? 'Regular'; // Default to "Regular"
-        promotionItem.valueController.text = promo.discount?.toString() ?? '0'; // Default to "0"
-        promotionItem.isPercentage =promo.type == 'percentage'; // Check type for percentage
+        promotionItem.nameController.text =
+            promo.code ?? 'Regular'; // Default to "Regular"
+        promotionItem.valueController.text =
+            promo.discount?.toString() ?? '0'; // Default to "0"
+        promotionItem.isPercentage =
+            promo.type == 'percentage'; // Check type for percentage
         promotions.add(promotionItem);
       }
     } else {
@@ -95,7 +98,6 @@ class _PromotionWidgetState extends BaseState<PromotionWidget> {
       promotions.add(defaultPromotion);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {

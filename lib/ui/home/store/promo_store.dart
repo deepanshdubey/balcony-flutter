@@ -25,9 +25,9 @@ abstract class _PromoStoreBase with Store {
   String? errorMessage;
 
   @action
-  Future getPromo(
-      {String? code,
-     }) async {
+  Future getPromo({
+    String? code,
+  }) async {
     try {
       errorMessage = null;
       isLoading = true;
@@ -47,9 +47,7 @@ abstract class _PromoStoreBase with Store {
   }
 
   @action
-  Future createPromo(
-      {required Map<String, dynamic> request
-     }) async {
+  Future createPromo({required Map<String, dynamic> request}) async {
     try {
       errorMessage = null;
       isLoading = true;
@@ -69,11 +67,13 @@ abstract class _PromoStoreBase with Store {
   }
 
   @action
-  Future getPromoList() async {
+  Future getPromoList({String? hostId}) async {
     try {
       errorMessage = null;
       isLoading = true;
-      final response = await promoRepository.promoList();
+      final response = hostId == null
+          ? await promoRepository.promoList()
+          : await promoRepository.getHostPromoList(hostId!);
       if (response.isSuccess) {
         promoListResponse = response.data;
       } else {
