@@ -9,7 +9,6 @@ import 'package:balcony/data/model/response/property_data.dart';
 import 'package:balcony/data/model/response/subscription_list_model.dart';
 import 'package:balcony/data/model/response/user_data.dart';
 import 'package:dio/dio.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../model/response/workspace_data.dart';
@@ -270,6 +269,14 @@ abstract class ApiClient {
 
  @GET("/message/all/{id}")
   Future<CommonData> getAllMessage(@Path("id") String conversationId);
+
+  @POST("/message/create")
+  @MultiPart()
+  Future<CommonData> createMessage(
+      @Part(name: "conversationId") String conversationId,
+      @Part(name: "text") String? text,
+      @Part(name: "media", contentType: 'application/octet-stream') File? media,
+      );
 
   ///auto
   @GET("auto/status")

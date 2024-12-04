@@ -54,9 +54,15 @@ class CommonData {
   @JsonKey(name: 'messages')
   List<LastMessage>? messages;
 
+  @JsonKey(name: 'messageId')
+  final  String? messageId;
+
+  @JsonKey(name: 'media')
+  final  Media? media;
 
 
-  CommonData({
+
+  CommonData({this.messageId, this.media,
     this.success,
     this.message,
     this.user,

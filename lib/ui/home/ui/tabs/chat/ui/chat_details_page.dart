@@ -1,21 +1,28 @@
+import 'dart:io';
+
 import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/core/socket/socket_manager.dart';
-import 'package:balcony/data/model/response/socket_message.dart';
+import 'package:balcony/data/model/response/conversation_data.dart';
 import 'package:balcony/generated/assets.dart';
 import 'package:balcony/ui/home/ui/tabs/chat/store/chat_store.dart';
 import 'package:balcony/widget/app_back_button.dart';
 import 'package:balcony/widget/app_image.dart';
 import 'package:balcony/widget/app_text_field.dart';
+import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:mobx/mobx.dart';
 
 class ChatDetailsPage extends StatefulWidget {
-  final String? senderId;
   final String? receiverId;
   final String? conversationId;
-  ChatDetailsPage({super.key, this.senderId, this.receiverId, this.conversationId});
+  final String? image;
+  final String? name;
+
+  ChatDetailsPage(
+      {super.key, this.receiverId, this.conversationId, this.image, this.name});
 
   @override
   State<ChatDetailsPage> createState() => _ChatDetailsPageState();
@@ -24,102 +31,117 @@ class ChatDetailsPage extends StatefulWidget {
 class _ChatDetailsPageState extends State<ChatDetailsPage> {
   final messageController = TextEditingController();
   final SocketManager socketManager = SocketManager();
-  final List<SocketMessage> messages = [];
-  bool isReceiverOnline = false;
+  final ValueNotifier<List<LastMessage>> messages = ValueNotifier([]);
+  ValueNotifier<bool> isReceiverOnline = ValueNotifier(false);
   final chatStore = ChatStore();
+  List<ReactionDisposer>? disposers;
+  final ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _initializeChat();
     chatStore.getAllMsg(widget.conversationId ?? " ");
-
+    addDisposer();
   }
 
   @override
   void dispose() {
     socketManager.disConnect();
     messageController.dispose();
+    removeDisposer();
     super.dispose();
   }
 
-  Future<void> _initializeChat() async {
-    socketManager.initializeSocket("https://api.homework.ws/"); // Replace with socket URL
-    socketManager.addUser(session.user.id ?? "" );
+  void addDisposer() {
+    disposers ??= [
+      reaction((_) => chatStore.allMsgResponse, (response) {
+        messages.value = chatStore.allMsgResponse?.messages ?? [];
+      }),
+    ];
+  }
 
-
-
-
-    socketManager.onGetMessage((data) {
-      final message = SocketMessage.fromJson(data);
-      if (message.senderId == widget.receiverId) {
-        setState(() {
-          messages.add(message);
-        });
-
-        if (isReceiverOnline) {
-         //call seen api
-        }
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (scrollController.hasClients) {
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
       }
     });
+  }
 
-    // Listen for active users
+  void removeDisposer() {
+    if (disposers == null) return;
+    for (final element in disposers!) {
+      element.reaction.dispose();
+    }
+  }
+
+  Future<void> _initializeChat() async {
+    socketManager.initializeSocket(
+        "https://api.homework.ws/"); // Replace with socket URL
+    socketManager.addUser(session.user.id ?? "");
+
+    socketManager.onGetMessage((data) {
+      final message = LastMessage.fromJson(data);
+      final messageWithTime = LastMessage(
+        senderId: message.senderId,
+        text: message.text,
+        createdAt: DateTime.now().toIso8601String(), // Current time
+      );
+      if (messageWithTime.senderId != session.user.id) {
+        messages.value = [...messages.value, messageWithTime];
+      }
+      _scrollToBottom();
+    });
+
     socketManager.onGetUsers((users) {
-      setState(() {
-        isReceiverOnline = users.contains(widget.receiverId);
-      });
+      isReceiverOnline.value = users.contains(widget.receiverId);
     });
   }
 
-/*
-  Future<void> _fetchContacts() async {
-    try {
-      final response = await Dio().get("https://api.homework.ws/api/v2/conversation/all");
-      final data = response.data;
-
-      // Extract last messages for this conversation
-      final conversationMessages = data['conversations']
-          .where((conv) => conv['conversationId'] == widget.conversationId)
-          .toList();
-
-      setState(() {
-        messages.clear();
-        for (var msg in conversationMessages) {
-          messages.add(SocketMessage.fromJson(msg));
-        }
-      });
-    } catch (e) {
-      print("Failed to fetch contacts: $e");
-    }
-  }
-*/
-
-  void _sendMessage() async {
+  void _sendMessage() {
     if (messageController.text.trim().isEmpty) return;
-
-    final message = SocketMessage(
-      senderId: widget.senderId ?? "",
-      receiverId: widget.receiverId ?? "",
+    chatStore.createMsg(conversationId: widget.conversationId ?? "",msg: messageController.text.trim() );
+    final newMessage = LastMessage(
+      senderId: session.user.id ?? "",
       text: messageController.text.trim(),
-      media: null,
-      seen: false,
+      createdAt: DateTime.now().toIso8601String(),
     );
 
-    setState(() {
-      messages.add(message);
-    });
+    messages.value = [...messages.value, newMessage];
+    final socketMessage = {
+      "senderId": session.user.id ?? "",
+      "receiverId": widget.receiverId ?? "",
+      "text": messageController.text.trim(),
+      "seen": false,
+    };
 
-    socketManager.sendMessage(message.toJson());
-
-    // Update conversation
-  //  await socketManager.updateConversation(widget.conversationId ?? "", message.text ?? "");
-
-    if (isReceiverOnline) {
-    //  socketManager.markMessageAsSeen(widget.conversationId?? "");
-    }
-
+    socketManager.sendMessage(socketMessage);
     messageController.clear();
+    _scrollToBottom();
   }
+
+  Future<void> _pickAndSendMedia() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.any, // Customize for specific types: FileType.image, FileType.video, etc.
+    );
+
+    if (result != null && result.files.isNotEmpty) {
+      final file = File(result.files.single.path ?? '');
+
+      final mediaFile = await MultipartFile.fromFile(
+        file.path,
+        filename: file.path.split('/').last,
+      );
+
+      chatStore.createMsg(conversationId: widget.conversationId ?? "",msg: messageController.text.trim() );
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -160,25 +182,30 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
           const Spacer(),
           AppImage(
             radius: 21.r,
-            assetPath: Assets.dummyChatUser,
+            url: widget.image,
           ),
           10.w.horizontalSpace,
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Pranav Ray',
+                widget.name ?? "",
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontSize: 17.spMin,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Text(
-                'Online',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontSize: 12.spMin,
-                  fontWeight: FontWeight.w500,
-                ),
+              ValueListenableBuilder(
+                valueListenable: isReceiverOnline,
+                builder: (context, value, child) {
+                  return Text(
+                    value ? 'Online' : 'offline',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontSize: 12.spMin,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  );
+                },
               ),
             ],
           ),
@@ -188,22 +215,25 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   }
 
   Widget _buildChatList(BuildContext context) {
-
-    return Observer(
-      builder: (context) {
+    return ValueListenableBuilder<List<LastMessage>>(
+      valueListenable: messages,
+      builder: (context, messageList, _) {
         return ListView.builder(
+          controller: scrollController,
           padding: const EdgeInsets.all(16),
-          itemCount: chatStore.allMsgResponse?.messages?.length,
+          itemCount: messageList.length,
           itemBuilder: (context, index) {
-            final message = chatStore.allMsgResponse?.messages?[index];
-            if (message?.senderId == session.user.id) {
-              return _buildSentMessage(context, message?.text ?? '', _formatTime(message?.createdAt));
+            final message = messageList[index];
+            if (message.senderId == session.user.id) {
+              return _buildSentMessage(
+                  context, message.text ?? "", _formatTime(message.createdAt));
             } else {
-              return _buildReceivedMessage(message?.text ?? '', _formatTime(message?.createdAt));
+              return _buildReceivedMessage(
+                  message.text ?? "", _formatTime(message.createdAt));
             }
           },
         );
-      }
+      },
     );
   }
 
@@ -335,7 +365,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
             contentPadding:
                 EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
             suffixIcon: IconButton(
-              onPressed: () {},
+              onPressed: _pickAndSendMedia,
               icon: Container(
                 padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
@@ -367,8 +397,8 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   String _formatTime(String? timestamp) {
     if (timestamp == null) return '';
     final dateTime = DateTime.parse(timestamp);
-    final formattedTime = DateFormat.jm().format(dateTime); // Example: "12:15 PM"
+    final formattedTime =
+        DateFormat.jm().format(dateTime); // Example: "12:15 PM"
     return formattedTime;
   }
-
 }

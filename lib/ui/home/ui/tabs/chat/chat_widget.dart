@@ -31,7 +31,10 @@ class ChatWidget extends StatelessWidget {
         showAppBottomSheet(
             context,
             ChatDetailsPage(
+              receiverId: receiverId,
               conversationId: conversationId,
+              name: name,
+              image: image,
             ));
       },
       child: Column(

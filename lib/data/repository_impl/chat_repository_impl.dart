@@ -1,4 +1,4 @@
-
+import 'dart:io';
 import 'package:balcony/core/api/api_response/api_response.dart';
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/pagination_data.dart';
@@ -12,13 +12,12 @@ import 'package:balcony/data/repository/promo_repository.dart';
 import 'package:balcony/data/repository/property_repository.dart';
 import 'package:balcony/data/repository/workspace_repository.dart';
 import 'package:balcony/data/repository_impl/base_repository_impl.dart';
+import 'package:dio/dio.dart';
 
-class ChatRepositoryImpl extends BaseRepositoryImpl
-    implements ChatRepository {
+class ChatRepositoryImpl extends BaseRepositoryImpl implements ChatRepository {
   final ApiClient apiClient;
 
   ChatRepositoryImpl(this.apiClient);
-
 
   @override
   Future<ApiResponse<CommonData>> getAllConversations() {
@@ -30,7 +29,13 @@ class ChatRepositoryImpl extends BaseRepositoryImpl
     return execute(apiClient.getAllMessage(conversationId));
   }
 
-
-
-
+  @override
+  Future<ApiResponse<CommonData>> createMsg(
+      File? media, String conversationId, String? msg) async {
+    return execute(apiClient.createMessage(
+      conversationId,
+      msg,
+      media,
+    ));
+  }
 }

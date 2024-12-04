@@ -21,6 +21,10 @@ abstract class _ChatStoreBase with Store {
   @observable
   CommonData? allMsgResponse;
 
+
+  @observable
+  CommonData? createMsgResponse;
+
   @observable
   bool isLoading = false;
 
@@ -55,6 +59,27 @@ abstract class _ChatStoreBase with Store {
       final response = await chatRepository.getAllMsg(conversationId);
       if (response.isSuccess) {
         allMsgResponse = response.data;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+
+  @action
+  Future createMsg({File? media, required String conversationId, String? msg}) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await chatRepository.createMsg( media,  conversationId,  msg);
+      if (response.isSuccess) {
+        createMsgResponse = response.data;
       } else {
         errorMessage = response.error!.message;
       }

@@ -37,6 +37,7 @@ class _ChatPageState extends State<ChatPage> {
             lastMessage: chatData?[index].lastMessage?.text ?? "",
             time: _formatTime(chatData?[index].lastMessage?.updatedAt),
             conversationId: chatData?[index].Id ?? "",
+            receiverId: chatData?[index].member?.Id ?? "",
           ),
         ),
       );
