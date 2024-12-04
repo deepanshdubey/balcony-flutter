@@ -39,6 +39,9 @@ class CommonData {
   @JsonKey(name: 'conversations')
   List<ConversationData>? conversations;
 
+  @JsonKey(name: 'dates')
+  List<String>? bookingsDates;
+
   @JsonKey(name: 'earnings')
   num? earnings;
   @JsonKey(name: 'deposits')
@@ -63,6 +66,7 @@ class CommonData {
     this.bookings,
     this.conversations,
     this.messages,
+    this.bookingsDates,
   });
 
   factory CommonData.fromJson(Map<String, dynamic> json) =>

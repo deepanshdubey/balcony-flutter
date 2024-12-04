@@ -1,4 +1,5 @@
 import 'package:balcony/core/locator/locator.dart';
+import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/repository/booking_repository.dart';
 import 'package:balcony/data/repository/user_repository.dart';
@@ -9,6 +10,9 @@ part 'dashboard_store.g.dart';
 class DashboardStore = _DashboardStoreBase with _$DashboardStore;
 
 abstract class _DashboardStoreBase with Store {
+  @observable
+  ObservableList<String> bookingDates = ObservableList<String>();
+
   @observable
   CommonData? autoStatusResponse;
 
@@ -80,10 +84,32 @@ abstract class _DashboardStoreBase with Store {
     try {
       errorMessage = null;
       isLoading = true;
-      final response = await userRepository
-          .getEarnings(hostId,isWorkspace ? "workspaces" : "properties");
+      final response = await userRepository.getEarnings(
+          hostId, isWorkspace ? "workspaces" : "properties");
       if (response.isSuccess) {
         earningsResponse = response.data;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future getBookingDates() async {
+    try {
+      errorMessage = null;
+      bookingDates.clear();
+      isLoading = true;
+      final response =
+          await bookingRepository.getBookedDates(session.user.id.toString());
+      if (response.isSuccess) {
+        bookingDates.addAll(response.data?.bookingsDates ?? []);
       } else {
         errorMessage = response.error!.message;
       }
