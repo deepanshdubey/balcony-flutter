@@ -13,6 +13,9 @@ abstract class _DashboardStoreBase with Store {
   CommonData? autoStatusResponse;
 
   @observable
+  CommonData? earningsResponse;
+
+  @observable
   String? updatePayoutInfoResponse;
   @observable
   bool isLoading = false;
@@ -53,9 +56,34 @@ abstract class _DashboardStoreBase with Store {
     try {
       errorMessage = null;
       isLoading = true;
-      final response = await userRepository.updatePayoutInfo(isWorkspace ? "workspaces" :"properties");
+      final response = await userRepository
+          .updatePayoutInfo(isWorkspace ? "workspaces" : "properties");
       if (response.isSuccess) {
         updatePayoutInfoResponse = response.data?.url;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future getEarnings(
+    String hostId, {
+    bool isWorkspace = true,
+  }) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await userRepository
+          .getEarnings(hostId,isWorkspace ? "workspaces" : "properties");
+      if (response.isSuccess) {
+        earningsResponse = response.data;
       } else {
         errorMessage = response.error!.message;
       }

@@ -7,12 +7,15 @@ class EarningWidget extends StatelessWidget {
   final int progress;
   final String title, formattedEarningsWithCurrency, formattedTimePeriod;
 
+  final bool isLoading;
+
   const EarningWidget({
     super.key,
     required this.progress,
     required this.formattedEarningsWithCurrency,
     required this.formattedTimePeriod,
     required this.title,
+    bool this.isLoading = false,
   });
 
   @override
@@ -52,26 +55,30 @@ class EarningWidget extends StatelessWidget {
             ),
           ),
           24.h.verticalSpace,
-          ClipRRect(
-            borderRadius: BorderRadius.circular(16.r),
-            child: SizedBox(
-              height: 16.r,
-              child: Row(
-                children: [
-                  Flexible(
-                      flex: progress,
-                      child: Container(
-                        color: appColor.primaryColor,
-                      )),
-                  Flexible(
-                      flex: 100 - progress,
-                      child: Container(
-                        color: appColor.grayBorder.withOpacity(.2),
-                      )),
-                ],
-              ),
-            ),
-          ),
+          isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : ClipRRect(
+                  borderRadius: BorderRadius.circular(16.r),
+                  child: SizedBox(
+                    height: 16.r,
+                    child: Row(
+                      children: [
+                        Flexible(
+                            flex: progress,
+                            child: Container(
+                              color: appColor.primaryColor,
+                            )),
+                        Flexible(
+                            flex: 100 - progress,
+                            child: Container(
+                              color: appColor.grayBorder.withOpacity(.2),
+                            )),
+                      ],
+                    ),
+                  ),
+                ),
         ],
       ),
     );

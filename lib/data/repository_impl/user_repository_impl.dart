@@ -104,4 +104,9 @@ class UserRepositoryImpl extends BaseRepositoryImpl implements UserRepository {
   Future<ApiResponse<CommonData>> updatePayoutInfo(String type) {
     return execute(apiClient.updatePayoutInfo(type));
   }
+
+  @override
+  Future<ApiResponse<CommonData>> getEarnings(String hostId, String type) {
+    return execute(apiClient.getEarnings(hostId, type));
+  }
 }

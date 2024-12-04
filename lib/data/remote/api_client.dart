@@ -270,4 +270,7 @@ abstract class ApiClient {
   ///update payout info
   @GET("user/onboarding-account/{type}")
   Future<CommonData> updatePayoutInfo(@Path("type") String type);
+
+  @GET("user/balance/{hostId}")
+  Future<CommonData> getEarnings(@Path("hostId") String hostId, @Query("type") String type);
 }

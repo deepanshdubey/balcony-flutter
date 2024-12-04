@@ -35,18 +35,20 @@ abstract class UserRepository {
   Future<ApiResponse<CommonData>> getSupportTicket();
 
   Future<ApiResponse<CommonData>> createSupportTicket(
-      Map<String, dynamic> request,
-      );
+    Map<String, dynamic> request,
+  );
 
   Future<ApiResponse<CommonData>> replySupportTicket(
-      Map<String, dynamic> request,
-      );
+    Map<String, dynamic> request,
+  );
 
   Future<ApiResponse<CommonData>> closeSupportTicket(String id);
+
   Future<ApiResponse<CommonData>> updatePayoutInfo(String type);
 
-
   Future<ApiResponse<SubscriptionListModel>> subscriptionList(String currency);
+
+  Future<ApiResponse<CommonData>> getEarnings(String hostId, String type);
 }
 
 final userRepository = locator<UserRepository>();

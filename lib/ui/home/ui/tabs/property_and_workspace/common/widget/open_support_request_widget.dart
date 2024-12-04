@@ -1,18 +1,17 @@
+import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/ui/support_tickets_page.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-typedef OnViewRequestClickListener = Function();
-
 class OpenSupportRequestWidget extends StatelessWidget {
   final int openSupportRequestCount;
-  final OnViewRequestClickListener onViewRequestClickListener;
+  final bool isLoading;
 
   const OpenSupportRequestWidget(
       {super.key,
       required this.openSupportRequestCount,
-      required this.onViewRequestClickListener});
+      this.isLoading = false});
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +56,10 @@ class OpenSupportRequestWidget extends StatelessWidget {
           ),
           PrimaryButton(
             text: "view requests",
-            onPressed: onViewRequestClickListener,
+            isLoading: isLoading,
+            onPressed: () {
+              showAppBottomSheet(context, const SupportTicketsPage());
+            },
           ),
         ],
       ),

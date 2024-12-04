@@ -19,11 +19,11 @@ class _PropertyDashboardPageState extends State<PropertyDashboardPage> {
       children: [
         Row(
           children: [
-            Flexible(
+            const Flexible(
                 flex: 1,
                 child: OpenSupportRequestWidget(
                   openSupportRequestCount: 5,
-                  onViewRequestClickListener: () {},
+
                 )),
             16.w.horizontalSpace,
             const Spacer(),
@@ -53,7 +53,7 @@ class _PropertyDashboardPageState extends State<PropertyDashboardPage> {
           ],
         ),
         16.h.verticalSpace,
-        PromotionWidget(),
+        const PromotionWidget(),
         16.h.verticalSpace,
         UpdatePayoutWidget(
           key: UniqueKey(),
