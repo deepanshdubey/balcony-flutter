@@ -41,7 +41,34 @@ class WorkspaceRepositoryImpl extends BaseRepositoryImpl
   }
 
   @override
-  Future<ApiResponse<PaginationData<WorkspaceData>>> searchWorkspace({ String? place, String? checkin, String? checkout, int? people, int? page, int? limit, String? sort, String? select, bool? includeHost}) {
-    return execute(apiClient.searchWorkspace( place , checkin ,checkout , people , page , limit  ,sort , select , includeHost));
+  Future<ApiResponse<PaginationData<WorkspaceData>>> searchWorkspace(
+      {String? place,
+      String? checkin,
+      String? checkout,
+      int? people,
+      int? page,
+      int? limit,
+      String? sort,
+      String? select,
+      bool? includeHost}) {
+    return execute(apiClient.searchWorkspace(place, checkin, checkout, people,
+        page, limit, sort, select, includeHost));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> getHostWorkspaces(String id) {
+    return execute(apiClient.getHostWorkspaces(id));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> updateWorkspaceStatus(
+      String id, bool status) {
+    return execute(
+        apiClient.updateWorkspaceStatus(id, status ? 'active' : 'inactive'));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> deleteWorkspace(String id) {
+    return execute(apiClient.deleteWorkspace(id));
   }
 }

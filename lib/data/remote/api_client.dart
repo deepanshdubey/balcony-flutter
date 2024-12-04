@@ -74,6 +74,20 @@ abstract class ApiClient {
     @Query("includeHost") bool? includeHost,
   );
 
+  @GET("workspace/all/host/{id}")
+  Future<CommonData> getHostWorkspaces(
+    @Path("id") String id,
+  );
+
+  @DELETE("/workspace/delete/{id}")
+  Future<CommonData> deleteWorkspace(@Path("id") String id,);
+
+  @PUT("/workspace/update-status/{id}")
+  Future<CommonData> updateWorkspaceStatus(
+    @Path("id") String id,
+    @Field("status") String status,
+  );
+
   @POST("workspace/create")
   @MultiPart()
   Future<CommonData> createWorkspace(
@@ -272,5 +286,6 @@ abstract class ApiClient {
   Future<CommonData> updatePayoutInfo(@Path("type") String type);
 
   @GET("user/balance/{hostId}")
-  Future<CommonData> getEarnings(@Path("hostId") String hostId, @Query("type") String type);
+  Future<CommonData> getEarnings(
+      @Path("hostId") String hostId, @Query("type") String type);
 }

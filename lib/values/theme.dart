@@ -50,6 +50,36 @@ ThemeData createTheme(ColorScheme colors, TextTheme textTheme) {
     dialogTheme: DialogTheme(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6.r)),
     ),
+    switchTheme: SwitchThemeData(
+      thumbColor: MaterialStateProperty.resolveWith<Color>(
+            (states) {
+          if (states.contains(MaterialState.selected)) {
+            return appColor.primaryColor; // Color when the switch is ON
+          }
+          return appColor.strokeColor; // Color when the switch is OFF
+        },
+      ),
+      trackColor: MaterialStateProperty.resolveWith<Color>(
+            (states) {
+          if (states.contains(MaterialState.selected)) {
+            return appColor.primaryColor.withOpacity(0.5); // Track color when ON
+          }
+          return appColor.strokeColor.withOpacity(0.3); // Track color when OFF
+        },
+      ),
+      overlayColor: MaterialStateProperty.resolveWith<Color?>(
+            (states) {
+          if (states.contains(MaterialState.pressed)) {
+            return appColor.primaryColor.withOpacity(0.2); // Ripple color when pressed
+          }
+          if (states.contains(MaterialState.hovered)) {
+            return appColor.primaryColor.withOpacity(0.1); // Hover effect
+          }
+          return null; // Default: no overlay
+        },
+      ),
+      splashRadius: 20.0, // Radius for the ripple effect
+    ),
     dropdownMenuTheme: DropdownMenuThemeData(
       menuStyle: MenuStyle(
         backgroundColor: WidgetStateProperty.all(colors.surface),

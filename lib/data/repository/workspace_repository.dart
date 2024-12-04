@@ -16,7 +16,13 @@ abstract class WorkspaceRepository {
     bool? includeHost,
   });
 
-  Future<ApiResponse<PaginationData<WorkspaceData>>> getWorkspaceDetail({String? id});
+  Future<ApiResponse<PaginationData<WorkspaceData>>> getWorkspaceDetail(
+      {String? id});
+
+  Future<ApiResponse<CommonData>> getHostWorkspaces(String id);
+  Future<ApiResponse<CommonData>> deleteWorkspace(String id);
+
+  Future<ApiResponse<CommonData>> updateWorkspaceStatus(String id, bool status);
 
   Future<ApiResponse<PaginationData<WorkspaceData>>> searchWorkspace({
     String? place,
@@ -29,7 +35,6 @@ abstract class WorkspaceRepository {
     String? select,
     bool? includeHost,
   });
-
 
   Future<ApiResponse<CommonData>> createWorkspace(
     List<File> images,

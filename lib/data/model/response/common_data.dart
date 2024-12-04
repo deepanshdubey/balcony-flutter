@@ -2,6 +2,7 @@ import 'package:balcony/data/model/response/card_data.dart';
 import 'package:balcony/data/model/response/conversation_data.dart';
 import 'package:balcony/data/model/response/support_ticket_data.dart';
 import 'package:balcony/data/model/response/user_data.dart';
+import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'bookings_data.dart';
@@ -38,6 +39,9 @@ class CommonData {
 
   @JsonKey(name: 'conversations')
   List<ConversationData>? conversations;
+
+  @JsonKey(name: 'workspaces')
+  List<WorkspaceData>? workspaces;
 
   @JsonKey(name: 'dates')
   List<String>? bookingsDates;

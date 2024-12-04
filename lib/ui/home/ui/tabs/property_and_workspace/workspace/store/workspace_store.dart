@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:balcony/core/locator/locator.dart';
+import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/data/repository/booking_repository.dart';
@@ -27,6 +28,9 @@ abstract class _WorkspaceStoreBase with Store {
 
   @observable
   CommonData? createWorkSpaceDetailsResponse;
+
+  @observable
+  CommonData? workspaceStatusResponse;
 
   @observable
   CommonData? createBookingResponse;
@@ -188,6 +192,69 @@ abstract class _WorkspaceStoreBase with Store {
     return (workspaceDetailsResponse?.pricing?.cleaning?.fee ?? 0) +
         (workspaceDetailsResponse?.pricing?.maintenance?.fee ?? 0) +
         (workspaceDetailsResponse?.pricing?.additional?.fee ?? 0);
+  }
+
+  @action
+  Future getHostWorkspaces() async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await workspaceRepository
+          .getHostWorkspaces(session.user.id.toString());
+      if (response.isSuccess) {
+        workspaceResponse = response.data?.workspaces;
+        totalPages = workspaceResponse?.length ?? 0;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future updateWorkspaceStatus(String id, bool status) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response =
+          await workspaceRepository.updateWorkspaceStatus(id, status);
+      if (response.isSuccess) {
+        workspaceStatusResponse = response.data;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future deleteWorkspace(String id) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await workspaceRepository.deleteWorkspace(id);
+      if (response.isSuccess) {
+        getHostWorkspaces();
+      } else {
+        isLoading = false;
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      isLoading = false;
+      errorMessage = e.toString();
+    } finally {}
   }
 }
 
