@@ -286,14 +286,6 @@ abstract class ApiClient {
   @GET("/message/all/{id}")
   Future<CommonData> getAllMessage(@Path("id") String conversationId);
 
-  @POST("/message/create")
-  @MultiPart()
-  Future<CommonData> createMessage(
-      @Part(name: "conversationId") String conversationId,
-      @Part(name: "text") String? text,
-      @Part(name: "media", contentType: 'application/octet-stream') File? media,
-      );
-
   ///auto
   @GET("auto/status")
   Future<CommonData> getAutoStatus();
