@@ -79,7 +79,9 @@ abstract class ApiClient {
   );
 
   @DELETE("/workspace/delete/{id}")
-  Future<CommonData> deleteWorkspace(@Path("id") String id,);
+  Future<CommonData> deleteWorkspace(
+    @Path("id") String id,
+  );
 
   @PUT("/workspace/update-status/{id}")
   Future<CommonData> updateWorkspaceStatus(
@@ -267,7 +269,21 @@ abstract class ApiClient {
   @GET("/conversation/all")
   Future<CommonData> getAllConversations();
 
- @GET("/message/all/{id}")
+  @POST("/message/create")
+  @MultiPart()
+  Future<CommonData> createMessageWithMedia(
+    @Part(name: "conversationId") String conversationId,
+    @Part(name: "media") File media,
+  );
+
+  @POST("/message/create")
+  @MultiPart()
+  Future<CommonData> createMessage(
+    @Part(name: "conversationId") String conversationId,
+    @Part(name: "text") String text,
+  );
+
+  @GET("/message/all/{id}")
   Future<CommonData> getAllMessage(@Path("id") String conversationId);
 
   @POST("/message/create")

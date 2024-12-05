@@ -9,8 +9,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PhotosWidget extends StatefulWidget {
   final bool isWorkspace;
+  final List<String>? existingImages;
 
-  const PhotosWidget({super.key, this.isWorkspace = true});
+  const PhotosWidget({super.key, this.isWorkspace = true, this.existingImages});
 
   @override
   State<PhotosWidget> createState() => PhotosWidgetState();
@@ -37,7 +38,7 @@ class PhotosWidgetState extends BaseState<PhotosWidget> {
         children: [
           16.h.verticalSpace,
           Text(
-            widget.isWorkspace ? "workspace photos*" : "property photos*",
+            widget.isWorkspace ? "workspace photos* " : "property photos*",
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w500,
               fontSize: 24.spMin,
@@ -73,12 +74,16 @@ class PhotosWidgetState extends BaseState<PhotosWidget> {
             color: theme.primaryColor,
             borderRadius: BorderRadius.all(Radius.circular(12.r)),
           ),
-          child: userSelectedImages[index] != null
+          child: userSelectedImages[index] != null ||
+                  widget.existingImages?[index] != null
               ? AppImage(
                   height: double.infinity,
                   width: double.infinity,
                   radius: 12.r,
                   boxFit: BoxFit.cover,
+                  url: (userSelectedImages[index] == null)
+                      ? (widget.existingImages?[index])
+                      : null,
                   file: userSelectedImages[index],
                 )
               : const SizedBox.shrink(),
@@ -106,7 +111,10 @@ class PhotosWidgetState extends BaseState<PhotosWidget> {
                     ),
                     6.w.horizontalSpace,
                     Text(
-                      userSelectedImages[index] != null ? 'update' : 'add',
+                      (userSelectedImages[index] != null ||
+                              widget.existingImages?[index] != null)
+                          ? 'update'
+                          : 'add',
                       style: theme.textTheme.bodyLarge?.copyWith(
                         fontSize: 14.spMin,
                       ),

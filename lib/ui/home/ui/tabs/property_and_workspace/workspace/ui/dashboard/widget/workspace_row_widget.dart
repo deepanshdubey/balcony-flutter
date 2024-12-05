@@ -98,7 +98,7 @@ class _WorkspaceRowWidgetState extends State<WorkspaceRowWidget> {
             children: [
               GestureDetector(
                   onTap: () {
-                    appRouter.push(CreateWorkspaceRoute());
+                    appRouter.push(CreateWorkspaceRoute(editWorkspaceItem: widget.workspace));
                   },
                   child: Text(
                     "update",

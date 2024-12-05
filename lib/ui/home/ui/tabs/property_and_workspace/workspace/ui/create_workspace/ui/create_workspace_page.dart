@@ -22,7 +22,9 @@ import 'package:mobx/mobx.dart';
 
 @RoutePage()
 class CreateWorkspacePage extends StatefulWidget {
-  const CreateWorkspacePage({super.key});
+  final WorkspaceData? editWorkspaceItem;
+
+  const CreateWorkspacePage({super.key, this.editWorkspaceItem});
 
   @override
   State<CreateWorkspacePage> createState() => _CreateWorkspacePageState();
@@ -30,7 +32,8 @@ class CreateWorkspacePage extends StatefulWidget {
 
 class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
   ThemeData get theme => Theme.of(context);
-
+  late bool isEdit;
+  late WorkspaceData workspaceData;
   late GlobalKey<BaseState> workspaceInfoKey;
   late GlobalKey<BaseState> pricingKey;
   late GlobalKey<BaseState> photosKey;
@@ -44,6 +47,10 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
 
   @override
   void initState() {
+    isEdit = widget.editWorkspaceItem != null;
+    if (isEdit) {
+      workspaceData = widget.editWorkspaceItem!;
+    }
     workspaceInfoKey = GlobalKey<BaseState>();
     pricingKey = GlobalKey<BaseState>();
     photosKey = GlobalKey<BaseState>();
@@ -121,6 +128,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
                       divider(),
                       PhotosWidget(
                         key: photosKey,
+                        existingImages: isEdit ? workspaceData.images : null,
                       ),
                       30.h.verticalSpace,
                       AddressWidget(
