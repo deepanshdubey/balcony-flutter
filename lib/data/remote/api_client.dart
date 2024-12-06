@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:balcony/data/model/response/coversation_response.dart';
+import 'package:balcony/data/model/response/create_msg_response.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/pagination_data.dart';
 import 'package:balcony/data/model/response/promo_list_model.dart';
@@ -269,16 +271,19 @@ abstract class ApiClient {
   @GET("/conversation/all")
   Future<CommonData> getAllConversations();
 
+  @POST("/conversation/start")
+  Future<CoversationResponse> startConversation(@Body() Map<String, dynamic> request);
+
   @POST("/message/create")
   @MultiPart()
-  Future<CommonData> createMessageWithMedia(
+  Future<CreateMsgResponse> createMessageWithMedia(
     @Part(name: "conversationId") String conversationId,
-    @Part(name: "media") File media,
+    @Part(name: "media", contentType: "image/*") File media,
   );
 
   @POST("/message/create")
   @MultiPart()
-  Future<CommonData> createMessage(
+  Future<CreateMsgResponse> createMessage(
     @Part(name: "conversationId") String conversationId,
     @Part(name: "text") String text,
   );

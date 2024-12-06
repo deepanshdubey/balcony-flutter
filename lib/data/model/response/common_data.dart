@@ -48,6 +48,7 @@ class CommonData {
 
   @JsonKey(name: 'earnings')
   num? earnings;
+
   @JsonKey(name: 'deposits')
   num? deposits;
 

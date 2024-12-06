@@ -3,6 +3,8 @@ import 'dart:math';
 
 import 'package:balcony/core/locator/locator.dart';
 import 'package:balcony/data/model/response/common_data.dart';
+import 'package:balcony/data/model/response/coversation_response.dart';
+import 'package:balcony/data/model/response/create_msg_response.dart';
 import 'package:balcony/data/model/response/property_data.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/data/repository/chat_repository.dart';
@@ -18,12 +20,16 @@ abstract class _ChatStoreBase with Store {
   @observable
   CommonData? allConversationResponse;
 
+
+  @observable
+  CoversationResponse? startConversationResponse;
+
   @observable
   CommonData? allMsgResponse;
 
 
   @observable
-  CommonData? createMsgResponse;
+  CreateMsgResponse? createMsgResponse;
 
   @observable
   bool isLoading = false;
@@ -39,6 +45,26 @@ abstract class _ChatStoreBase with Store {
       final response = await chatRepository.getAllConversations();
       if (response.isSuccess) {
         allConversationResponse = response.data;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future startConversations(Map<String , dynamic> request) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await chatRepository.startConversation(request);
+      if (response.isSuccess) {
+        startConversationResponse = response.data;
       } else {
         errorMessage = response.error!.message;
       }
@@ -77,7 +103,7 @@ abstract class _ChatStoreBase with Store {
     try {
       errorMessage = null;
       isLoading = true;
-      final response = await chatRepository.createMsg( media,  conversationId,  msg);
+      final response = await chatRepository.createMessage( conversationId,  msg, media);
       if (response.isSuccess) {
         createMsgResponse = response.data;
       } else {

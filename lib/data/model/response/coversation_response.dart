@@ -1,10 +1,23 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:json_annotation/json_annotation.dart'; 
 
-part 'conversation_data.g.dart';
-
+part 'coversation_response.g.dart'; 
 
 @JsonSerializable(ignoreUnannotated: true)
-class ConversationData {
+class CoversationResponse {
+  @JsonKey(name: 'success')
+  final  bool? success;
+  @JsonKey(name: 'conversation')
+  final  Conversation? conversation;
+
+  CoversationResponse({this.success, this.conversation});
+
+   factory CoversationResponse.fromJson(Map<String, dynamic> json) => _$CoversationResponseFromJson(json);
+
+   Map<String, dynamic> toJson() => _$CoversationResponseToJson(this);
+}
+
+@JsonSerializable(ignoreUnannotated: true)
+class Conversation {
   @JsonKey(name: '_id')
   final  String? Id;
   @JsonKey(name: 'member')
@@ -18,11 +31,11 @@ class ConversationData {
   @JsonKey(name: 'updatedAt')
   final  String? updatedAt;
 
-  ConversationData({this.Id, this.member, this.lastMessage, this.seen, this.createdAt, this.updatedAt});
+  Conversation({this.Id, this.member, this.lastMessage, this.seen, this.createdAt, this.updatedAt});
 
-   factory ConversationData.fromJson(Map<String, dynamic> json) => _$ConversationDataFromJson(json);
+   factory Conversation.fromJson(Map<String, dynamic> json) => _$ConversationFromJson(json);
 
-   Map<String, dynamic> toJson() => _$ConversationDataToJson(this);
+   Map<String, dynamic> toJson() => _$ConversationToJson(this);
 }
 
 @JsonSerializable(ignoreUnannotated: true)
@@ -83,14 +96,10 @@ class LastMessage {
 class Media {
   @JsonKey(name: 'url')
   final  String? url;
-
   @JsonKey(name: 'type')
   final  String? type;
 
-  @JsonKey(name: 'fieldname')
-  final  String? fieldname;
-
-  Media({ this.url, this.type ,this.fieldname});
+  Media({this.url, this.type});
 
    factory Media.fromJson(Map<String, dynamic> json) => _$MediaFromJson(json);
 

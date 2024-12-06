@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/core/socket/socket_manager.dart';
 import 'package:balcony/data/model/response/conversation_data.dart';
-import 'package:balcony/generated/assets.dart';
+
+import 'package:dio/dio.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:balcony/ui/home/ui/tabs/chat/store/chat_store.dart';
 import 'package:balcony/widget/app_back_button.dart';
 import 'package:balcony/widget/app_image.dart';
@@ -57,6 +59,39 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     disposers ??= [
       reaction((_) => chatStore.allMsgResponse, (response) {
         messages.value = chatStore.allMsgResponse?.messages ?? [];
+        _scrollToBottom();
+
+      }),
+      reaction((_) => chatStore.createMsgResponse, (response) {
+
+
+
+        final socketMessage = {
+          "senderId": session.user.id ?? "",
+          "receiverId": widget.receiverId ?? "",
+          "text": messageController.text.trim().isNotEmpty
+              ? messageController.text.trim()
+              : null, // Only include text if it's not empty
+          "media": response?.media?.isNotEmpty == true
+              ? {
+            "url": response?.media?[0].url,
+            "type": response?.media?[0].type,
+          }
+              : null,  // If no media, set it to null
+          "seen": false,
+        };
+
+
+        socketManager.sendMessage(socketMessage);
+
+        final newMessage = LastMessage(
+          senderId: session.user.id ?? "",
+          text: messageController.text.trim(),
+          media: Media(url:response?.media?[0].url, type: response?.media?[0].url), // Use the file URL or upload it if needed
+          createdAt: DateTime.now().toIso8601String(),
+        );
+        messageController.clear();
+        messages.value = [...messages.value, newMessage];
       }),
     ];
   }
@@ -67,7 +102,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
         scrollController.animateTo(
           scrollController.position.maxScrollExtent,
           duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
+          curve: Curves.bounceIn,
         );
       }
     });
@@ -86,59 +121,63 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     socketManager.addUser(session.user.id ?? "");
 
     socketManager.onGetMessage((data) {
-      final message = LastMessage.fromJson(data);
+      Media? media; // Initialize as null (optional)
+      if (data['media'] != null && data['media'].isNotEmpty) {
+        final mediaData = data['media'][0];
+        media = Media.fromJson({
+          'fieldname': 'media', // Static value
+          'url': mediaData['url'],
+          'type': mediaData['type'],
+        });
+      }
       final messageWithTime = LastMessage(
-        senderId: message.senderId,
-        text: message.text,
+        senderId: data['senderId'],
+        text: data['text'] ?? '',
+        media: media,
         createdAt: DateTime.now().toIso8601String(), // Current time
       );
-      if (messageWithTime.senderId != session.user.id) {
+
+      if (data['senderId'] != session.user.id) {
         messages.value = [...messages.value, messageWithTime];
       }
       _scrollToBottom();
     });
 
+
+
     socketManager.onGetUsers((users) {
-      isReceiverOnline.value = users.contains(widget.receiverId);
+      isReceiverOnline.value =
+          users.any((user) => user['userId'] == widget.receiverId);
     });
   }
 
   void _sendMessage() {
     if (messageController.text.trim().isEmpty) return;
-    chatStore.createMsg(conversationId: widget.conversationId ?? "",msg: messageController.text.trim() );
-    final newMessage = LastMessage(
-      senderId: session.user.id ?? "",
-      text: messageController.text.trim(),
-      createdAt: DateTime.now().toIso8601String(),
-    );
+    chatStore.createMsg(
+        conversationId: widget.conversationId ?? "",
+        msg: messageController.text.trim());
 
-    messages.value = [...messages.value, newMessage];
-    final socketMessage = {
-      "senderId": session.user.id ?? "",
-      "receiverId": widget.receiverId ?? "",
-      "text": messageController.text.trim(),
-      "seen": false,
-    };
 
-    socketManager.sendMessage(socketMessage);
-    messageController.clear();
     _scrollToBottom();
   }
 
-  Future<void> _pickAndSendMedia() async {
+  Future<void> _pickAndSendImage() async {
+    // Pick an image file
     final result = await FilePicker.platform.pickFiles(
-      type: FileType.any, // Customize for specific types: FileType.image, FileType.video, etc.
+      type: FileType.image, // Restrict to images
+      allowMultiple: false,
     );
 
     if (result != null && result.files.isNotEmpty) {
       final file = File(result.files.single.path ?? '');
 
-      final mediaFile = await MultipartFile.fromFile(
-        file.path,
-        filename: file.path.split('/').last,
+      // Upload media or send the image message (depending on your app's requirements)
+      await chatStore.createMsg(
+        conversationId: widget.conversationId ?? "",
+        media: file, // Send the file as media
       );
 
-      chatStore.createMsg(conversationId: widget.conversationId ?? "",msg: messageController.text.trim() );
+      _scrollToBottom();
     }
   }
 
@@ -226,10 +265,15 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
             final message = messageList[index];
             if (message.senderId == session.user.id) {
               return _buildSentMessage(
-                  context, message.text ?? "", _formatTime(message.createdAt));
+                  context: context,
+                  time: _formatTime(message.createdAt),
+                  text: message.text,
+                  mediaUrl: message.media?.url);
             } else {
               return _buildReceivedMessage(
-                  message.text ?? "", _formatTime(message.createdAt));
+                  time: _formatTime(message.createdAt),
+                  text: message.text,
+                  mediaUrl: message.media?.url);
             }
           },
         );
@@ -237,25 +281,49 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     );
   }
 
-  Widget _buildSentMessage(BuildContext context, String text, String time) {
+
+// Widget to build sent message
+  Widget _buildSentMessage({
+    required BuildContext context,
+    String? text,
+    required String time,
+    String? mediaUrl, // URL for image or file path
+  }) {
     final theme = Theme.of(context);
     return Align(
       alignment: Alignment.centerRight,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            margin: const EdgeInsets.only(top: 10),
-            decoration: BoxDecoration(
-              color: Colors.teal.shade300,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              text,
-              style: const TextStyle(color: Colors.white),
-            ),
-          ),
+          // Display text if available
+          if (text != null && text.isNotEmpty)
+            Container(
+              padding: const EdgeInsets.all(12),
+              margin: const EdgeInsets.only(top: 10),
+              decoration: BoxDecoration(
+                color: Colors.teal.shade300,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                text,
+                style: const TextStyle(color: Colors.white),
+              ),
+            )
+          // Display image if mediaUrl is available
+          else if (mediaUrl != null && mediaUrl.isNotEmpty)
+            AppImage(
+              url: mediaUrl.startsWith('file://')
+                  ? null
+                  : mediaUrl,  // If it's a local file, pass null for URL
+              file: mediaUrl.startsWith('file://')
+                  ? mediaUrl.replaceFirst('file://', '')
+                  : null,  // Extract the local file path
+              height: 200.r,
+              width: 200.r,
+              radius: 10.r,
+            )
+          else
+            const SizedBox.shrink(),  // Empty space if no media or text
           const SizedBox(height: 5),
           Text(
             time,
@@ -266,24 +334,37 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     );
   }
 
-  Widget _buildReceivedMessage(String text, String time) {
+
+
+  Widget _buildReceivedMessage(
+      {String? text, required String time, String? mediaUrl}) {
     return Align(
       alignment: Alignment.centerLeft,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            margin: const EdgeInsets.only(top: 10),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              text,
-              style: const TextStyle(color: Colors.black),
-            ),
-          ),
+          // If text is available, display it. Otherwise, show media.
+          text != null && text.isNotEmpty
+              ? Container(
+                  padding: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.only(top: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    text,
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                )
+              : mediaUrl != null && mediaUrl.isNotEmpty
+                  ? AppImage(
+                      url: mediaUrl,
+                      height: 200.r,
+                      width: 200.r,
+                      radius: 10.r,
+                    )
+                  : const SizedBox.shrink(),
           const SizedBox(height: 5),
           Text(
             time,
@@ -365,7 +446,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
             contentPadding:
                 EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
             suffixIcon: IconButton(
-              onPressed: _pickAndSendMedia,
+              onPressed: _pickAndSendImage,
               icon: Container(
                 padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(

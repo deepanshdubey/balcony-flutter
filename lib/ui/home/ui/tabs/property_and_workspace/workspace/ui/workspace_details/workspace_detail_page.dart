@@ -4,6 +4,7 @@ import 'package:balcony/core/alert/alert_manager.dart';
 import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/generated/assets.dart';
+import 'package:balcony/ui/home/ui/tabs/chat/store/chat_store.dart';
 import 'package:balcony/ui/home/ui/tabs/chat/ui/chat_details_page.dart';
 import 'package:balcony/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
@@ -40,12 +41,12 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
   List<ReactionDisposer>? disposers;
   ValueNotifier<bool> dateSelected = ValueNotifier(false);
   String? selectedDate;
-
   int? selectedDays;
   String? startDateIso;
   String? endDateIso;
 
   final workspaceStore = WorkspaceStore();
+  final chatStore = ChatStore();
 
   @override
   void initState() {
@@ -68,6 +69,17 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
           alertManager.showError(context, errorMessage);
         }
       }),
+      reaction((_) => chatStore.startConversationResponse, (response) {
+        var host = workspaceStore.workspaceDetailsResponse?.host as Host;
+        showAppBottomSheet(
+            context,
+            ChatDetailsPage(
+              image: host.image,
+              name: host.firstName,
+              conversationId: response?.conversation?.Id??"",
+              receiverId: session.user.id,
+            ));
+      }),
     ];
   }
 
@@ -83,12 +95,10 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
   }
 
   void addCustomMarker() async {
-        ByteData byteData = await rootBundle.load(Assets.imagesLocationOn);
-        final Uint8List imageData = byteData.buffer.asUint8List();
-        await _mapController.addImage('custom-marker', imageData);
+    ByteData byteData = await rootBundle.load(Assets.imagesLocationOn);
+    final Uint8List imageData = byteData.buffer.asUint8List();
+    await _mapController.addImage('custom-marker', imageData);
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -246,7 +256,12 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                showAppBottomSheet(context, ChatDetailsPage(receiverId: session.user.id,));
+                                var host = data?.host as Host;
+
+                                var request = {
+                                  "userId": host.Id
+                                };
+                                chatStore.startConversations(request);
                               },
                               child: Text(
                                 "chat",
@@ -414,22 +429,28 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                                             trackCameraPosition: true,
                                             onMapCreated: onMapCreated,
                                             onStyleLoadedCallback: () async {
-                                              await Future.delayed(const Duration(milliseconds: 500)); // Optional delay
+                                              await Future.delayed(const Duration(
+                                                  milliseconds:
+                                                      500)); // Optional delay
                                               addCustomMarker();
                                               try {
                                                 _mapController.addSymbol(
                                                   SymbolOptions(
-                                                    geometry: LatLng(data?.geocode?.lat ?? 0, data?.geocode?.lon ?? 0),
+                                                    geometry: LatLng(
+                                                        data?.geocode?.lat ?? 0,
+                                                        data?.geocode?.lon ??
+                                                            0),
                                                     iconImage: 'custom-marker',
                                                     iconSize: 3.0,
                                                   ),
                                                 );
-                                                print("Symbol added successfully.");
+                                                print(
+                                                    "Symbol added successfully.");
                                               } catch (e) {
-                                                print("Error while adding symbol: $e");
+                                                print(
+                                                    "Error while adding symbol: $e");
                                               }
                                             },
-
                                           ),
                                         ),
                                       ),
