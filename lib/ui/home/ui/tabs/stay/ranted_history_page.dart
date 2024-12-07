@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:balcony/generated/assets.dart';
 import 'package:balcony/ui/home/ui/tabs/stay/rant_payment_details_page.dart';
-import 'package:balcony/ui/home/ui/tabs/works/booking_dates_page.dart';
+import 'package:balcony/ui/home/ui/tabs/works/booking_details_page.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
 import 'package:balcony/widget/app_text_field.dart';

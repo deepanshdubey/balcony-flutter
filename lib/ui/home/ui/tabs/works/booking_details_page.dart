@@ -1,20 +1,34 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:balcony/data/model/response/bookings_data.dart';
+import 'package:balcony/ui/home/ui/tabs/works/store/booking_listing_store.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:balcony/widget/app_back_button.dart';
 import 'package:balcony/widget/bokking_dialog.dart';
 import 'package:balcony/widget/button_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
-class BookingDatePages extends StatefulWidget {
-  const BookingDatePages({super.key});
+class BookingsDetailsPage extends StatefulWidget {
+  final String id;
+  final BookingsData? bookingsData;
+
+  const BookingsDetailsPage({super.key, required this.id, this.bookingsData});
 
   @override
-  State<BookingDatePages> createState() => _BookingDatePagesState();
+  State<BookingsDetailsPage> createState() => _BookingsDetailsPageState();
 }
 
-class _BookingDatePagesState extends State<BookingDatePages> {
+class _BookingsDetailsPageState extends State<BookingsDetailsPage> {
   final TextEditingController promoController = TextEditingController();
+  final store = BookingListingStore();
+
+  @override
+  void initState() {
+    store.getBookingDetails(widget.id);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +45,20 @@ class _BookingDatePagesState extends State<BookingDatePages> {
                 onTap: () => context.router.maybePop(),
               ),
               20.verticalSpace,
-              _buildOrderContainer(context),
-              20.verticalSpace,
-              _buildSupportSection(context),
-              16.verticalSpace,
-              _buildContactOptions(context),
+              Observer(
+                  builder: (context) => store.isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : bookingListingStore.bookingDetails != null ||
+                              widget.bookingsData != null
+                          ? bookingDetailsSection(
+                              bookingListingStore.bookingDetails ??
+                                  widget.bookingsData!)
+                          : Text(
+                              "no data found",
+                              style: Theme.of(context).textTheme.titleMedium,
+                            )),
             ],
           ),
         ),
@@ -43,7 +66,19 @@ class _BookingDatePagesState extends State<BookingDatePages> {
     );
   }
 
-  Widget _buildOrderContainer(BuildContext context) {
+  Widget bookingDetailsSection(BookingsData bookingsData) {
+    return Column(
+      children: [
+        _buildOrderContainer(context, bookingsData),
+        20.verticalSpace,
+        _buildSupportSection(context, bookingsData),
+        16.verticalSpace,
+        _buildContactOptions(context, bookingsData),
+      ],
+    );
+  }
+
+  Widget _buildOrderContainer(BuildContext context, BookingsData bookingsData) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8).r,
@@ -52,44 +87,53 @@ class _BookingDatePagesState extends State<BookingDatePages> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SectionTitle(title: "Order Oe31b70H", date: "November 23, 2023"),
+          SectionTitle(
+              title: "Order ${bookingsData.id}",
+              date: DateFormat("MMMM dd, yyyy")
+                  .format(bookingsData.createdAt ?? DateTime.now())),
           20.verticalSpace,
-          _buildOrderDetails(context),
+          _buildOrderDetails(context,bookingsData),
           20.verticalSpace,
-           Padding(
-             padding: const EdgeInsets.symmetric(horizontal: 20).r,
-             child: Divider(),
-           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20).r,
+            child: const Divider(),
+          ),
           20.verticalSpace,
-          _buildUserInfoSection(context),
+          _buildUserInfoSection(context,bookingsData),
           _buildCancelOrderSection(context),
         ],
       ),
     );
   }
 
-  Widget _buildOrderDetails(BuildContext context) {
+  Widget _buildOrderDetails(BuildContext context, BookingsData bookingsData) {
     return SectionContainer(
       title: "Order Details",
       children: [
-        KeyValueRow(label: '9 Bushwick Lofts x 2 days'),
+        KeyValueRow(
+          label:
+              '${bookingsData.workspace?.info?.name} x ${bookingsData.workspace?.times?.nonNullCount} days',
+          value: '\$${bookingsData.subtotal}',
+        ),
         20.verticalSpace,
         const Divider(),
         20.verticalSpace,
-        KeyValueRow(label: 'Subtotal'),
-        KeyValueRow(label: 'Service Fee'),
-        KeyValueRow(label: 'Total', value: "\$250.00"),
+        KeyValueRow(label: 'Subtotal', value: '\$${bookingsData.subtotal}'),
+        KeyValueRow(label: 'Discount', value: '\$${bookingsData.discount}'),
+        KeyValueRow(
+            label: 'Total',
+            value:
+                '\$${(bookingsData.subtotal ?? 0) - (bookingsData.discount ?? 0)}'),
       ],
     );
   }
-
-  Widget _buildUserInfoSection(BuildContext context) {
+  Widget _buildUserInfoSection(BuildContext context, BookingsData bookingsData) {
     return SectionContainer(
       title: "User's info",
       children: [
-        KeyValueRow(label: 'Name', value: "name"),
-        KeyValueRow(label: 'Email', value: "email"),
-        KeyValueRow(label: 'Phone', value: "phone"),
+        KeyValueRow(label: 'Name', value: bookingsData.workspace?.host.firstName),
+        KeyValueRow(label: 'Email', value: bookingsData.workspace?.host.email),
+        KeyValueRow(label: 'Phone', value: bookingsData.workspace?.host.phone),
         20.verticalSpace
       ],
     );
@@ -103,17 +147,17 @@ class _BookingDatePagesState extends State<BookingDatePages> {
         Text(
           'Cancel order',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-            fontSize: 13.spMin,
-          ),
+                fontWeight: FontWeight.w600,
+                fontSize: 13.spMin,
+              ),
         ),
         6.verticalSpace,
         Text(
           'You can cancel before 24 hours of the book start date/time for a full refund. Failure to cancel before 24 hours results in a 25% late cancelation charge.',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-            fontSize: 8.spMin,
-          ),
+                fontWeight: FontWeight.w600,
+                fontSize: 8.spMin,
+              ),
         ),
         20.verticalSpace,
         BorderButton(
@@ -125,7 +169,7 @@ class _BookingDatePagesState extends State<BookingDatePages> {
                 return CompleteDialog(
                   title: "Your all set!",
                   message:
-                  "You should receive an email with the booking details. You can also visit the booking detail page as well.",
+                      "You should receive an email with the booking details. You can also visit the booking detail page as well.",
                   primaryButtonText: "Visit booking details page",
                   secondaryButtonText: "Done",
                   onPrimaryButtonPressed: () {
@@ -144,41 +188,41 @@ class _BookingDatePagesState extends State<BookingDatePages> {
     );
   }
 
-  Widget _buildSupportSection(BuildContext context) {
+  Widget _buildSupportSection(BuildContext context, BookingsData bookingsData) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "Contact Host for Support",
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontSize: 14.spMin,
-            color: appColor.primaryColor,
-            fontWeight: FontWeight.w600,
-          ),
+                fontSize: 14.spMin,
+                color: appColor.primaryColor,
+                fontWeight: FontWeight.w600,
+              ),
         ),
         Text(
           "Chat &/or call with the workspace host before booking",
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontSize: 14.spMin,
-            color: appColor.primaryColor,
-          ),
+                fontSize: 14.spMin,
+                color: appColor.primaryColor,
+              ),
         ),
       ],
     );
   }
 
-  Widget _buildContactOptions(BuildContext context) {
+  Widget _buildContactOptions(BuildContext context, BookingsData bookingsData) {
     return Row(
       children: [
         Text(
           "chat",
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontSize: 14.spMin,
-            color: appColor.primaryColor,
-            decoration: TextDecoration.underline,
-          ),
+                fontSize: 14.spMin,
+                color: appColor.primaryColor,
+                decoration: TextDecoration.underline,
+              ),
         ),
         16.horizontalSpace,
         Container(
@@ -190,10 +234,10 @@ class _BookingDatePagesState extends State<BookingDatePages> {
         Text(
           "call",
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontSize: 14.spMin,
-            decoration: TextDecoration.underline,
-            color: appColor.primaryColor,
-          ),
+                fontSize: 14.spMin,
+                decoration: TextDecoration.underline,
+                color: appColor.primaryColor,
+              ),
         ),
       ],
     );
@@ -217,7 +261,7 @@ class SectionTitle extends StatelessWidget {
       height: 98.h,
       decoration: BoxDecoration(
         color: const Color(0xffCCDDDC),
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(10),
           topRight: Radius.circular(10),
         ).r,
@@ -231,9 +275,9 @@ class SectionTitle extends StatelessWidget {
             Text(
               title,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w700,
-                fontSize: 17.spMin,
-              ),
+                    fontWeight: FontWeight.w700,
+                    fontSize: 17.spMin,
+                  ),
             ),
             8.verticalSpace,
             Text("Date: $date"),
@@ -265,9 +309,9 @@ class SectionContainer extends StatelessWidget {
             Text(
               title!,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-                fontSize: 13.spMin,
-              ),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 13.spMin,
+                  ),
             ),
             12.verticalSpace,
           ],
@@ -298,22 +342,20 @@ class KeyValueRow extends StatelessWidget {
           Text(
             label,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.normal,
-              fontSize: 13.spMin,
-              color: const Color(0xff71717A),
-            ),
+                  fontWeight: FontWeight.normal,
+                  fontSize: 13.spMin,
+                  color: const Color(0xff71717A),
+                ),
           ),
           Text(
             value,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.normal,
-              fontSize: 13.spMin,
-            ),
+                  fontWeight: FontWeight.normal,
+                  fontSize: 13.spMin,
+                ),
           ),
         ],
       ),
     );
   }
 }
-
-

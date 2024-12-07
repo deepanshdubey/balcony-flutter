@@ -176,6 +176,18 @@ class Times {
   factory Times.fromJson(Map<String, dynamic> json) => _$TimesFromJson(json);
 
   Map<String, dynamic> toJson() => _$TimesToJson(this);
+
+  int get nonNullCount {
+    return [
+      sunday,
+      monday,
+      tuesday,
+      wednesday,
+      thursday,
+      friday,
+      saturday,
+    ].where((day) => day != null).length;
+  }
 }
 
 @JsonSerializable()

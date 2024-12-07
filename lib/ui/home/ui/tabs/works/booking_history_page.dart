@@ -1,11 +1,12 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:balcony/data/model/response/bookings_data.dart';
 import 'package:balcony/generated/assets.dart';
-import 'package:balcony/ui/home/ui/tabs/works/booking_dates_page.dart';
+import 'package:balcony/ui/home/ui/tabs/works/booking_details_page.dart';
+import 'package:balcony/ui/home/ui/tabs/works/store/booking_listing_store.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:balcony/values/extensions/context_ext.dart';
-import 'package:balcony/widget/app_text_field.dart';
-import 'package:balcony/widget/button_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class BookingHistoryPage extends StatefulWidget {
@@ -14,10 +15,14 @@ class BookingHistoryPage extends StatefulWidget {
 }
 
 class _BookingHistoryPageState extends State<BookingHistoryPage> {
-  final ValueNotifier<int> rowsPerPageNotifier = ValueNotifier<int>(3);
-  final List<int> rowOptions = [3, 5, 10];
-  int currentPage = 1;
-  TextEditingController _filterController = TextEditingController();
+  final store = BookingListingStore();
+
+  @override
+  void initState() {
+    store.getOngoingBookings();
+    store.getPastBookings();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,64 +33,53 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(flex:5 , child: AppTextField(controller:_filterController , hintText: "Filter search...")),
-                  20.horizontalSpace,
-                  Expanded(flex:2 ,child: BorderButton(label: 'filter',onTap: (){},))
-                ],
-              ),
+              const SectionTitle(
+                  title: "booking in progress ", subtitle: "(active)"),
               20.verticalSpace,
-              const SectionTitle(title: "booking in progress ", subtitle: "(active)"),
-              20.verticalSpace,
-              BookingTable(
-                isActive: true,
-                bookings: _getBookings(isActive: true),
-              ),
+              Observer(builder: (context) {
+                var bookings = store.bookingsInProgress;
+                var isLoading = store.isLoading;
+                return isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : bookings?.isNotEmpty == true
+                        ? BookingTable(
+                            isActive: true,
+                            bookings: bookings ?? [],
+                          )
+                        : Center(
+                            child: Text(
+                              "no bookings available",
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          );
+              }),
               40.verticalSpace,
-              const SectionTitle(title: "booking history", subtitle: "(inactive)"),
+              const SectionTitle(
+                  title: "booking history", subtitle: "(inactive)"),
               20.verticalSpace,
-              BookingTable(
-                isActive: false,
-                bookings: _getBookings(isActive: false),
-              ),
+              Observer(builder: (context) {
+                var bookings = store.pastBookings;
+                var isLoading = store.isLoading;
+                return isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : bookings?.isNotEmpty == true
+                        ? BookingTable(
+                            isActive: true,
+                            bookings: bookings ?? [],
+                          )
+                        : Center(
+                            child: Text(
+                              "no bookings available",
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          );
+              }),
               20.verticalSpace,
-              const Text("0 of 100 row(s) selected."),
-              20.verticalSpace,
-              PaginationControls(
-                rowsPerPageNotifier: rowsPerPageNotifier,
-                rowOptions: rowOptions,
-                currentPage: currentPage,
-              ),
-              20.verticalSpace,
-              NavigationControls(),
             ],
           ),
         ),
       ),
     );
-  }
-
-  List<Map<String, dynamic>> _getBookings({required bool isActive}) {
-    return [
-      {
-        "workspace": "9 Homestead",
-        "status": isActive ? "awaiting host to respond" : null,
-        "date": isActive ? null : "01/24/2024",
-      },
-      {
-        "workspace": "15 Garland",
-        "status": isActive ? "accepted - 01/24/2024" : null,
-        "date": isActive ? null : "01/20/2024",
-      },
-      {
-        "workspace": "3432 Beachside",
-        "status": isActive ? "accepted - 01/02/2024" : null,
-        "date": isActive ? null : "01/18/2024",
-      },
-    ];
   }
 }
 
@@ -103,18 +97,18 @@ class SectionTitle extends StatelessWidget {
         Text(
           title,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontSize: 28.spMin,
-            fontWeight: FontWeight.w800,
-            color: appColor.primaryColor,
-          ),
+                fontSize: 28.spMin,
+                fontWeight: FontWeight.w800,
+                color: appColor.primaryColor,
+              ),
         ),
         Text(
           subtitle,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontSize: 12.spMin,
-            fontWeight: FontWeight.w400,
-            color: appColor.primaryColor,
-          ),
+                fontSize: 12.spMin,
+                fontWeight: FontWeight.w400,
+                color: appColor.primaryColor,
+              ),
         ),
       ],
     );
@@ -123,7 +117,7 @@ class SectionTitle extends StatelessWidget {
 
 class BookingTable extends StatelessWidget {
   final bool isActive;
-  final List<Map<String, dynamic>> bookings;
+  final List<BookingsData> bookings;
 
   const BookingTable({required this.isActive, required this.bookings});
 
@@ -138,7 +132,8 @@ class BookingTable extends StatelessWidget {
         children: [
           TableHeader(isActive: isActive),
           const Divider(height: 1, color: Colors.grey),
-          ...bookings.map((booking) => TableRowWidget(booking: booking, isActive: isActive)),
+          ...bookings.map((booking) =>
+              TableRowWidget(booking: booking, isActive: isActive)),
         ],
       ),
     );
@@ -161,18 +156,18 @@ class TableHeader extends StatelessWidget {
             child: Text(
               "Workspace",
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontSize: 13.spMin,
-                color: appColor.primaryColor,
-              ),
+                    fontSize: 13.spMin,
+                    color: appColor.primaryColor,
+                  ),
             ),
           ),
           Expanded(
             child: Text(
               isActive ? "Status / Date of Booking" : "More Info",
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontSize: 13.spMin,
-                color: appColor.primaryColor,
-              ),
+                    fontSize: 13.spMin,
+                    color: appColor.primaryColor,
+                  ),
             ),
           ),
         ],
@@ -182,7 +177,7 @@ class TableHeader extends StatelessWidget {
 }
 
 class TableRowWidget extends StatelessWidget {
-  final Map<String, dynamic> booking;
+  final BookingsData booking;
   final bool isActive;
 
   const TableRowWidget({required this.booking, required this.isActive});
@@ -192,7 +187,12 @@ class TableRowWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         context.router.maybePop();
-        showAppBottomSheet(context,  BookingDatePages());
+        showAppBottomSheet(
+            context,
+            BookingsDetailsPage(
+              id: booking.id.toString(),
+              bookingsData: booking,
+            ));
       },
       child: Column(
         children: [
@@ -207,23 +207,24 @@ class TableRowWidget extends StatelessWidget {
                 Expanded(
                   flex: 3,
                   child: Text(
-                    booking["workspace"],
+                    booking.workspace?.info?.name ?? 'no name',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontSize: 13.spMin,
-                      color: appColor.primaryColor,
-                    ),
+                          fontSize: 13.spMin,
+                          color: appColor.primaryColor,
+                        ),
                   ),
                 ),
                 Expanded(
                   flex: 3,
                   child: isActive
                       ? Text(
-                    booking["status"] ?? "",
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontSize: 13.spMin,
-                      color: appColor.primaryColor,
-                    ),
-                  )
+                          booking.status ?? booking.acceptance ?? '-',
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontSize: 13.spMin,
+                                    color: appColor.primaryColor,
+                                  ),
+                        )
                       : const Icon(Icons.more_horiz, color: Colors.grey),
                 ),
               ],
@@ -254,10 +255,10 @@ class PaginationControls extends StatelessWidget {
         Text(
           "Rows per page",
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontSize: 12.spMin,
-            fontWeight: FontWeight.w500,
-            color: appColor.primaryColor,
-          ),
+                fontSize: 12.spMin,
+                fontWeight: FontWeight.w500,
+                color: appColor.primaryColor,
+              ),
         ),
         36.horizontalSpace,
         Container(
@@ -294,10 +295,10 @@ class PaginationControls extends StatelessWidget {
         Text(
           "Page $currentPage of 10",
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontSize: 12.spMin,
-            fontWeight: FontWeight.w500,
-            color: appColor.primaryColor,
-          ),
+                fontSize: 12.spMin,
+                fontWeight: FontWeight.w500,
+                color: appColor.primaryColor,
+              ),
         ),
       ],
     );
