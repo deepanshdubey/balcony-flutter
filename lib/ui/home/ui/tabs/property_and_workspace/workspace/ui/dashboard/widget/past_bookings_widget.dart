@@ -1,41 +1,35 @@
-import 'package:balcony/generated/assets.dart';
-import 'package:balcony/router/app_router.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/widget/section_title.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/workspace_row_widget.dart';
-import 'package:balcony/widget/app_image.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/past_bookings_row_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class WorkspaceManagerWidget extends StatefulWidget {
-  const WorkspaceManagerWidget({Key? key}) : super(key: key);
+class PastBookingsWidget extends StatefulWidget {
+  const PastBookingsWidget({Key? key}) : super(key: key);
 
   @override
-  State<WorkspaceManagerWidget> createState() => _WorkspaceManagerWidgetState();
+  State<PastBookingsWidget> createState() => _PastBookingsWidgetState();
 }
 
-class _WorkspaceManagerWidgetState extends State<WorkspaceManagerWidget> {
+class _PastBookingsWidgetState extends State<PastBookingsWidget> {
   final workspaceStore = WorkspaceStore();
 
   @override
   void initState() {
     super.initState();
-    workspaceStore
-        .getHostWorkspaces(); // Trigger the API call to fetch workspaces
+    workspaceStore.getPastBookings();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Observer(builder: (context) {
-      var workspaces = workspaceStore.workspaceResponse;
+      var bookings = workspaceStore.bookingsResponse;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SectionTitle(title: "workspace manager", subtitle: ""),
-          8.h.verticalSpace,
-          addNewWorkspace(),
+          const SectionTitle(title: "past bookings", subtitle: ""),
           8.h.verticalSpace,
           Container(
             decoration: BoxDecoration(
@@ -46,7 +40,6 @@ class _WorkspaceManagerWidgetState extends State<WorkspaceManagerWidget> {
               children: [
                 // Header Row
                 Container(
-                  color: Colors.grey[200],
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(12.r),
@@ -87,7 +80,7 @@ class _WorkspaceManagerWidgetState extends State<WorkspaceManagerWidget> {
                         flex: 3,
                         child: Center(
                           child: Text(
-                            'update space',
+                            'order number',
                             style: theme.textTheme.titleMedium?.copyWith(
                               color: Colors.black54,
                             ),
@@ -103,19 +96,16 @@ class _WorkspaceManagerWidgetState extends State<WorkspaceManagerWidget> {
                         padding: EdgeInsets.all(20.r),
                         child: const CircularProgressIndicator(),
                       )
-                    : workspaces?.isNotEmpty == true
+                    : bookings?.isNotEmpty == true
                         ? ListView.separated(
-                            itemCount: workspaces!.length,
+                            itemCount: bookings!.length,
                             shrinkWrap: true,
                             padding: EdgeInsets.zero,
                             itemBuilder: (context, index) {
-                              final workspace = workspaces[index];
-                              return WorkspaceRowWidget(
-                                workspace: workspace,
-                                onDelete: () {
-                                  workspaceStore
-                                      .deleteWorkspace(workspace.id.toString());
-                                },
+                              final workspace = bookings[index];
+                              return PastBookingsRowWidget(
+                                booking: workspace,
+
                               );
                             },
                             separatorBuilder: (context, index) => Divider(
@@ -126,7 +116,7 @@ class _WorkspaceManagerWidgetState extends State<WorkspaceManagerWidget> {
                         : Center(
                             child: Padding(
                               padding: EdgeInsets.all(20.r),
-                              child: const Text('no workspaces available.'),
+                              child: const Text('no bookings available.'),
                             ),
                           ),
               ],
@@ -135,25 +125,5 @@ class _WorkspaceManagerWidgetState extends State<WorkspaceManagerWidget> {
         ],
       );
     });
-  }
-
-  Widget addNewWorkspace() {
-    return GestureDetector(
-        onTap: () {
-          appRouter.push(CreateWorkspaceRoute());
-        },
-        child: Row(
-          children: [
-            AppImage(
-                height: 30.r, width: 30.r, assetPath: Assets.imagesLargePlus),
-            16.w.horizontalSpace,
-            Expanded(
-              child: Text(
-                "add new workspace",
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            )
-          ],
-        ));
   }
 }

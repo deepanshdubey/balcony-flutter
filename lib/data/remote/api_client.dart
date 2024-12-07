@@ -244,7 +244,10 @@ abstract class ApiClient {
   Future<CommonData> getMyBookings(@Query("status") String status);
 
   @GET("booking/all/host/{id}")
-  Future<CommonData> getHostBookings(@Path("id") String hostId);
+  Future<CommonData> getHostBookings(
+    @Path("id") String hostId,
+    @Query("status") String? status,
+  );
 
   @GET("booking/booked-dates")
   Future<CommonData> getBookedDates(@Query("hostId") String hostId);

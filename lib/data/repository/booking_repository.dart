@@ -11,7 +11,7 @@ abstract class BookingRepository {
 
   Future<ApiResponse<CommonData>> getMyBookings(List<String> status);
 
-  Future<ApiResponse<CommonData>> getHostBookings(String hostId);
+  Future<ApiResponse<CommonData>> getHostBookings(String hostId, String? status);
 
   Future<ApiResponse<CommonData>> getBookedDates(String hostId);
 

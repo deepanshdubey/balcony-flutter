@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:balcony/core/locator/locator.dart';
 import 'package:balcony/core/session/app_session.dart';
+import 'package:balcony/data/model/response/bookings_data.dart';
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/data/repository/booking_repository.dart';
@@ -18,7 +19,38 @@ abstract class _WorkspaceStoreBase with Store {
   int totalPages = 0;
 
   @observable
+  bool? isBookingAccepted; // null initially, true for accepted, false for rejected
+
+  @action
+  Future<void> handleBooking(String id, bool accept) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+
+      final response = accept
+          ? await bookingRepository.acceptBooking(id)
+          : await bookingRepository.rejectBooking(id);
+
+      if (response.isSuccess) {
+        isBookingAccepted = accept;
+      } else {
+        errorMessage = response.error?.message ?? "Something went wrong";
+        isBookingAccepted = null; // Reset to null if operation failed
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+      isBookingAccepted = null; // Reset to null on exception
+    } finally {
+      isLoading = false;
+    }
+  }
+  @observable
   List<WorkspaceData>? workspaceResponse;
+
+  @observable
+  List<BookingsData>? bookingsResponse;
 
   @observable
   List<WorkspaceData>? searchWorkspaceResponse;
@@ -255,6 +287,50 @@ abstract class _WorkspaceStoreBase with Store {
       isLoading = false;
       errorMessage = e.toString();
     } finally {}
+  }
+
+  @action
+  Future getOngoingBookings() async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      const status = '["pending", "in progress"]';
+      final response = await bookingRepository.getHostBookings(
+          session.user.id.toString(), status);
+      if (response.isSuccess) {
+        bookingsResponse = response.data?.bookings;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future getPastBookings() async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      const status = '["done", "partially refunded", "canceled"]';
+      final response = await bookingRepository.getHostBookings(
+          session.user.id.toString(), status);
+      if (response.isSuccess) {
+        bookingsResponse = response.data?.bookings;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
   }
 }
 

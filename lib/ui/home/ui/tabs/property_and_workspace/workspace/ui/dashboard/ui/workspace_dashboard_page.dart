@@ -1,4 +1,3 @@
-import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/store/support_ticket_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/earning_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/open_support_request_widget.dart';
@@ -7,6 +6,8 @@ import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/upd
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/store/dashboard_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/booking_acceptance_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/bookings_overview_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/ongoing_bookings_widget.dart';
+import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/past_bookings_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/workspace_manager_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -34,7 +35,7 @@ class _WorkspaceDashboardPageState extends State<WorkspaceDashboardPage> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        /*Observer(builder: (context) {
+        Observer(builder: (context) {
           var count = supportTicketStore.supportTicketsResponse
               ?.where(
                 (element) => element.status == 'active',
@@ -87,17 +88,21 @@ class _WorkspaceDashboardPageState extends State<WorkspaceDashboardPage> {
           );
         }),
         16.h.verticalSpace,
-        BookingsOverviewWidget(),*/
+        BookingsOverviewWidget(),
         16.h.verticalSpace,
         WorkspaceManagerWidget(),
-        /*16.h.verticalSpace,
+        16.h.verticalSpace,
+        OnGoingBookingsWidget(),
+        16.h.verticalSpace,
+        PastBookingsWidget(),
+        16.h.verticalSpace,
         PromotionWidget(),
         16.h.verticalSpace,
         UpdatePayoutWidget(
           key: UniqueKey(),
         ),
         16.h.verticalSpace,
-        BookingAcceptanceWidget(),*/
+        BookingAcceptanceWidget(),
         100.h.verticalSpace,
       ],
     );

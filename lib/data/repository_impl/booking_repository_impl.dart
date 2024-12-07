@@ -34,8 +34,8 @@ class BookingRepositoryImpl extends BaseRepositoryImpl
   }
 
   @override
-  Future<ApiResponse<CommonData>> getHostBookings(String hostId) async {
-    return await execute(apiClient.getHostBookings(hostId));
+  Future<ApiResponse<CommonData>> getHostBookings(String hostId, String? status) async {
+    return await execute(apiClient.getHostBookings(hostId,status));
   }
 
   @override
