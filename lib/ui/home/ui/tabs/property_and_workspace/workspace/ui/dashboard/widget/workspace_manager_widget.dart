@@ -46,7 +46,6 @@ class _WorkspaceManagerWidgetState extends State<WorkspaceManagerWidget> {
               children: [
                 // Header Row
                 Container(
-                  color: Colors.grey[200],
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(12.r),

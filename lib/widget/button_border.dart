@@ -6,11 +6,16 @@ class BorderButton extends StatelessWidget {
   final VoidCallback onTap;
   final double? height;
   final EdgeInsetsGeometry? padding;
+  final bool isLoading, enabled;
 
   const BorderButton({
     required this.label,
     required this.onTap,
-    super.key, this.height, this.padding,
+    super.key,
+    this.height,
+    this.padding,
+    this.isLoading = false,
+    this.enabled = false,
   });
 
   @override
@@ -19,19 +24,22 @@ class BorderButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         height: height ?? 40.h,
-        padding:padding ?? EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+        padding:
+            padding ?? EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
         decoration: BoxDecoration(
           border: Border.all(color: Theme.of(context).primaryColor),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Center(
-          child: Text(
-            label,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w500,
-              fontSize: 14.spMin,
-            ),
-          ),
+          child: isLoading
+              ? const CircularProgressIndicator()
+              : Text(
+                  label,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14.spMin,
+                      ),
+                ),
         ),
       ),
     );

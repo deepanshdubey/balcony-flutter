@@ -1,5 +1,6 @@
 import 'package:balcony/core/locator/locator.dart';
 import 'package:balcony/data/model/response/bookings_data.dart';
+import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/repository/booking_repository.dart';
 import 'package:mobx/mobx.dart';
 
@@ -10,6 +11,9 @@ class BookingListingStore = _BookingListingStoreBase with _$BookingListingStore;
 abstract class _BookingListingStoreBase with Store {
   @observable
   List<BookingsData>? bookingsInProgress;
+
+  @observable
+  CommonData? cancelBookingResponse;
 
   @observable
   List<BookingsData>? pastBookings;
@@ -73,6 +77,31 @@ abstract class _BookingListingStoreBase with Store {
       final response = await bookingRepository.getBookingById(id);
       if (response.isSuccess) {
         bookingDetails = response.data?.booking;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future cancelBooking(String id, bool isHost) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+
+      // Determine the API endpoint based on the user type
+      final response = isHost
+          ? await bookingRepository.cancelBookingByHost(id)
+          : await bookingRepository.cancelBookingByUser(id);
+
+      if (response.isSuccess) {
+        cancelBookingResponse = response.data;
       } else {
         errorMessage = response.error!.message;
       }

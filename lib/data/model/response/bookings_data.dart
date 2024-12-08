@@ -1,6 +1,6 @@
+import 'package:balcony/data/model/response/user_data.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:json_annotation/json_annotation.dart';
-
 
 part 'bookings_data.g.dart';
 
@@ -8,8 +8,12 @@ part 'bookings_data.g.dart';
 class BookingsData {
   @JsonKey(name: '_id')
   final String? id;
-
+  @JsonKey(name: 'workspace')
   final WorkspaceData? workspace;
+
+  @JsonKey(name: 'user')
+  @HostConverter()
+  final dynamic? user;
 
   @JsonKey(name: 'startDate')
   final DateTime? startDate;
@@ -50,6 +54,7 @@ class BookingsData {
     this.ratings,
     this.createdAt,
     this.updatedAt,
+    this.user,
   });
 
   /// Creates an instance of `BookingsData` from JSON.

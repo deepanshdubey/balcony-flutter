@@ -1,20 +1,25 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/data/model/response/bookings_data.dart';
+import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/ui/home/ui/tabs/works/store/booking_listing_store.dart';
 import 'package:balcony/values/colors.dart';
 import 'package:balcony/widget/app_back_button.dart';
-import 'package:balcony/widget/bokking_dialog.dart';
 import 'package:balcony/widget/button_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:mobx/mobx.dart';
 
 class BookingsDetailsPage extends StatefulWidget {
   final String id;
   final BookingsData? bookingsData;
+  final VoidCallback? onOrderCancelled;
 
-  const BookingsDetailsPage({super.key, required this.id, this.bookingsData});
+  const BookingsDetailsPage(
+      {super.key, required this.id, this.bookingsData, this.onOrderCancelled});
 
   @override
   State<BookingsDetailsPage> createState() => _BookingsDetailsPageState();
@@ -27,6 +32,21 @@ class _BookingsDetailsPageState extends State<BookingsDetailsPage> {
   @override
   void initState() {
     store.getBookingDetails(widget.id);
+    reaction(
+      (p0) => store.cancelBookingResponse,
+      (p0) {
+        widget.onOrderCancelled ?? ();
+        Navigator.of(context).pop();
+      },
+    );
+    reaction(
+      (p0) => store.errorMessage,
+      (p0) {
+        if (p0 != null) {
+          alertManager.showError(context, p0);
+        }
+      },
+    );
     super.initState();
   }
 
@@ -92,15 +112,17 @@ class _BookingsDetailsPageState extends State<BookingsDetailsPage> {
               date: DateFormat("MMMM dd, yyyy")
                   .format(bookingsData.createdAt ?? DateTime.now())),
           20.verticalSpace,
-          _buildOrderDetails(context,bookingsData),
+          _buildOrderDetails(context, bookingsData),
           20.verticalSpace,
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20).r,
             child: const Divider(),
           ),
           20.verticalSpace,
-          _buildUserInfoSection(context,bookingsData),
-          _buildCancelOrderSection(context),
+          _buildUserInfoSection(context, bookingsData),
+          if (bookingsData.status == "pending" ||
+              bookingsData.status == "in progress")
+            _buildCancelOrderSection(context, bookingsData),
         ],
       ),
     );
@@ -127,19 +149,33 @@ class _BookingsDetailsPageState extends State<BookingsDetailsPage> {
       ],
     );
   }
-  Widget _buildUserInfoSection(BuildContext context, BookingsData bookingsData) {
+
+  Widget _buildUserInfoSection(
+      BuildContext context, BookingsData bookingsData) {
+    var host = bookingsData.workspace?.host;
+    var isHost = session.user.id ==
+        ((host is String)
+            ? host
+            : (host is Host)
+                ? host.Id
+                : -1);
+    var user = isHost
+        ? bookingsData.user
+        : host is Host
+            ? bookingsData.workspace?.host
+            : null;
     return SectionContainer(
-      title: "User's info",
+      title: "${isHost ? "customer" : "host"}'s info",
       children: [
-        KeyValueRow(label: 'Name', value: bookingsData.workspace?.host.firstName),
-        KeyValueRow(label: 'Email', value: bookingsData.workspace?.host.email),
-        KeyValueRow(label: 'Phone', value: bookingsData.workspace?.host.phone),
+        KeyValueRow(label: 'name', value: user?.firstName),
+        KeyValueRow(label: 'email', value: user?.email),
+        KeyValueRow(label: 'phone', value: user?.phone),
         20.verticalSpace
       ],
     );
   }
 
-  Widget _buildCancelOrderSection(BuildContext context) {
+  Widget _buildCancelOrderSection(BuildContext context, BookingsData booking) {
     return SectionContainer(
       children: [
         const Divider(),
@@ -160,28 +196,27 @@ class _BookingsDetailsPageState extends State<BookingsDetailsPage> {
               ),
         ),
         20.verticalSpace,
-        BorderButton(
-          label: "cancel booking",
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return CompleteDialog(
-                  title: "Your all set!",
-                  message:
-                      "You should receive an email with the booking details. You can also visit the booking detail page as well.",
-                  primaryButtonText: "Visit booking details page",
-                  secondaryButtonText: "Done",
-                  onPrimaryButtonPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  onSecondaryButtonPressed: () {
-                    Navigator.of(context).pop(); // Dismiss the dialog
-                  },
-                );
-              },
-            );
-          },
+        Observer(
+          builder: (context) => BorderButton(
+            label: "cancel booking",
+            isLoading: store.isLoading,
+            onTap: () {
+              var host = booking.workspace?.host;
+              var isHost = session.user.id ==
+                  ((host is String)
+                      ? host
+                      : (host is Host)
+                          ? host.Id
+                          : -1);
+
+              alertManager.showSystemAlertDialog(
+                context: context,
+                onConfirm: () {
+                  store.cancelBooking(booking.id.toString(), isHost);
+                },
+              );
+            },
+          ),
         ),
         20.verticalSpace
       ],
@@ -324,7 +359,7 @@ class SectionContainer extends StatelessWidget {
 
 class KeyValueRow extends StatelessWidget {
   final String label;
-  final String value;
+  final String? value;
 
   const KeyValueRow({
     required this.label,
@@ -348,7 +383,7 @@ class KeyValueRow extends StatelessWidget {
                 ),
           ),
           Text(
-            value,
+            value ?? '-',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.normal,
                   fontSize: 13.spMin,

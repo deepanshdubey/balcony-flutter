@@ -45,6 +45,10 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
                         ? BookingTable(
                             isActive: true,
                             bookings: bookings ?? [],
+                            onBookingCancelled: () {
+                              store.getOngoingBookings();
+                              store.getPastBookings();
+                            },
                           )
                         : Center(
                             child: Text(
@@ -66,6 +70,10 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
                         ? BookingTable(
                             isActive: true,
                             bookings: bookings ?? [],
+                            onBookingCancelled: () {
+                              store.getOngoingBookings();
+                              store.getPastBookings();
+                            },
                           )
                         : Center(
                             child: Text(
@@ -118,8 +126,12 @@ class SectionTitle extends StatelessWidget {
 class BookingTable extends StatelessWidget {
   final bool isActive;
   final List<BookingsData> bookings;
+  final VoidCallback? onBookingCancelled;
 
-  const BookingTable({required this.isActive, required this.bookings});
+  const BookingTable(
+      {required this.isActive,
+      required this.bookings,
+      this.onBookingCancelled});
 
   @override
   Widget build(BuildContext context) {
@@ -132,8 +144,11 @@ class BookingTable extends StatelessWidget {
         children: [
           TableHeader(isActive: isActive),
           const Divider(height: 1, color: Colors.grey),
-          ...bookings.map((booking) =>
-              TableRowWidget(booking: booking, isActive: isActive)),
+          ...bookings.map((booking) => TableRowWidget(
+                booking: booking,
+                isActive: isActive,
+                onBookingCancelled: onBookingCancelled,
+              )),
         ],
       ),
     );
@@ -179,8 +194,10 @@ class TableHeader extends StatelessWidget {
 class TableRowWidget extends StatelessWidget {
   final BookingsData booking;
   final bool isActive;
+  final VoidCallback? onBookingCancelled;
 
-  const TableRowWidget({required this.booking, required this.isActive});
+  const TableRowWidget(
+      {required this.booking, required this.isActive, this.onBookingCancelled});
 
   @override
   Widget build(BuildContext context) {
@@ -192,6 +209,7 @@ class TableRowWidget extends StatelessWidget {
             BookingsDetailsPage(
               id: booking.id.toString(),
               bookingsData: booking,
+              onOrderCancelled: onBookingCancelled,
             ));
       },
       child: Column(
