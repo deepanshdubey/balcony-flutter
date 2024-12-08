@@ -20,6 +20,7 @@ abstract class WorkspaceRepository {
       {String? id});
 
   Future<ApiResponse<CommonData>> getHostWorkspaces(String id);
+
   Future<ApiResponse<CommonData>> deleteWorkspace(String id);
 
   Future<ApiResponse<CommonData>> updateWorkspaceStatus(String id, bool status);
@@ -37,8 +38,17 @@ abstract class WorkspaceRepository {
   });
 
   Future<ApiResponse<CommonData>> createWorkspace(
-      bool isEdit,
     List<File> images,
+    Info info,
+    Pricing pricing,
+    Times times,
+    Other other,
+    List<String> amenities,
+  );
+
+  Future<ApiResponse<CommonData>> updateWorkspace(
+    String id,
+    List<String> images,
     Info info,
     Pricing pricing,
     Times times,

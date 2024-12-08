@@ -33,17 +33,10 @@ class WorkspaceRepositoryImpl extends BaseRepositoryImpl
   }
 
   @override
-  Future<ApiResponse<CommonData>> createWorkspace(
-      bool isEdit,
-      List<File> images,
-      Info info,
-      Pricing pricing,
-      Times times,
-      Other other,
-      List<String> amenities) async {
+  Future<ApiResponse<CommonData>> createWorkspace(List<File> images, Info info,
+      Pricing pricing, Times times, Other other, List<String> amenities) async {
     var list = await prepareImageFiles(images);
-    return execute(isEdit ? apiClient.editWorkspace(list, info, pricing, times, other, amenities.join(',')) : apiClient.createWorkspace(list, info, pricing, times, other, amenities.join(',')));
-
+    return execute(apiClient.createWorkspace(list, info, pricing, times, other, amenities.join(',')));
   }
 
   @override
@@ -76,5 +69,17 @@ class WorkspaceRepositoryImpl extends BaseRepositoryImpl
   @override
   Future<ApiResponse<CommonData>> deleteWorkspace(String id) {
     return execute(apiClient.deleteWorkspace(id));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> updateWorkspace(
+      String id,
+      List<String> images,
+      Info info,
+      Pricing pricing,
+      Times times,
+      Other other,
+      List<String> amenities) {
+    return execute(apiClient.editWorkspace(id, images, info, pricing, times, other, amenities.join(',')));
   }
 }

@@ -49,6 +49,8 @@ abstract class UserRepository {
   Future<ApiResponse<SubscriptionListModel>> subscriptionList(String currency);
 
   Future<ApiResponse<CommonData>> getEarnings(String hostId, String type);
+
+  Future<ApiResponse<CommonData>> uploadFiles(List<File> files);
 }
 
 final userRepository = locator<UserRepository>();

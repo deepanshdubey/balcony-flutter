@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:balcony/core/locator/locator.dart';
+import 'package:balcony/data/model/response/property_data.dart';
 import 'package:balcony/ui/auth/ui/start_page.dart';
 import 'package:balcony/ui/home/ui/home_page.dart';
 import 'package:balcony/ui/home/ui/tabs/host_home/ui/host_home_page.dart';

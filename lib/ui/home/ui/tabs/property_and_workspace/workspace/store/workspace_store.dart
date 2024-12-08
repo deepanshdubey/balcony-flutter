@@ -6,6 +6,7 @@ import 'package:balcony/data/model/response/bookings_data.dart';
 import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/data/repository/booking_repository.dart';
+import 'package:balcony/data/repository/user_repository.dart';
 import 'package:balcony/data/repository/workspace_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
@@ -132,7 +133,6 @@ abstract class _WorkspaceStoreBase with Store {
 
   @action
   Future createWorkSpace(
-    bool isEdit,
     List<File> images,
     Info info,
     Pricing pricing,
@@ -143,7 +143,79 @@ abstract class _WorkspaceStoreBase with Store {
     try {
       errorMessage = null;
       isLoading = true;
-      final response = await workspaceRepository.createWorkspace(isEdit, images, info, pricing, times, other, amenities);
+      final response = await workspaceRepository.createWorkspace(
+          images, info, pricing, times, other, amenities);
+      if (response.isSuccess) {
+        createWorkSpaceDetailsResponse = response.data;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future updateWorkspace(
+    String id,
+    List<String> images,
+    Info info,
+    Pricing pricing,
+    Times times,
+    Other other,
+    List<String> amenities,
+  ) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+
+      // Separate file paths from URLs
+      List<String> localFilePaths = [];
+      List<int> fileIndices = []; // To track positions of file paths
+
+      for (int i = 0; i < images.length; i++) {
+        if (!images[i].startsWith('http://') &&
+            !images[i].startsWith('https://')) {
+          localFilePaths.add(images[i]);
+          fileIndices.add(i);
+        }
+      }
+
+      // If there are files to upload
+      if (localFilePaths.isNotEmpty) {
+        final response = await userRepository.uploadFiles(localFilePaths
+            .map(
+              (e) => File(e),
+            )
+            .toList());
+
+        if (response.isSuccess) {
+          final List<String> uploadedUrls = response.data?.urls ?? [];
+          // Replace file paths with server URLs
+          for (int j = 0; j < fileIndices.length; j++) {
+            images[fileIndices[j]] = uploadedUrls[j];
+          }
+        } else {
+          errorMessage = response.error!.message;
+          return;
+        }
+      }
+
+      // Proceed with updated images list
+      final response = await workspaceRepository.updateWorkspace(
+        id,
+        images,
+        info,
+        pricing,
+        times,
+        other,
+        amenities,
+      );
+
       if (response.isSuccess) {
         createWorkSpaceDetailsResponse = response.data;
       } else {

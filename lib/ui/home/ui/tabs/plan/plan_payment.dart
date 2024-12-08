@@ -215,7 +215,7 @@ class _PlanPaymentPageState extends State<PlanPaymentPage> {
       child: PrimaryButton(
         text: "Start Subscription and Pay",
         onPressed: () {
-          appRouter.push(const CreatePropertyRoute());
+          appRouter.push(CreatePropertyRoute());
         },
       ),
     );

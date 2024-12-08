@@ -109,4 +109,10 @@ class UserRepositoryImpl extends BaseRepositoryImpl implements UserRepository {
   Future<ApiResponse<CommonData>> getEarnings(String hostId, String type) {
     return execute(apiClient.getEarnings(hostId, type));
   }
+
+  @override
+  Future<ApiResponse<CommonData>> uploadFiles(List<File> files) async {
+    var list = await prepareImageFiles(files);
+    return execute(apiClient.uploadImages(list));
+  }
 }

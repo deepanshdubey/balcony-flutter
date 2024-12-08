@@ -192,7 +192,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
                         return SizedBox(
                           width: double.infinity,
                           child: PrimaryButton(
-                            text: "add new workspace",
+                            text: isEdit ? "update workspace" : "add new workspace",
                             onPressed: submit,
                             isLoading: isLoading,
                           ),
@@ -237,21 +237,38 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
     if (validate()) {
       Info info = workspaceInfoKey.currentState!.getApiData();
       info.summary = summaryController.text.trim();
-      store.createWorkSpace(
-        isEdit,
-        photosKey.currentState!.getApiData(),
-        info,
-        pricingKey.currentState!.getApiData(),
-        availableWorkspaceHoursKey.currentState?.getApiData()!,
-        Other(
-          additionalGuests: pricingKey.currentState!.additionalGuests(),
-          isCoWorkingWorkspace:
-              hostingSpaceKey.currentState!.isWorkspaceStyle(),
-          isIndoorSpace: hostingSpaceKey.currentState!.isIndoor(),
-          isOutdoorSpace: hostingSpaceKey.currentState!.isOutdoor(),
-        ),
-        amenitiesKey.currentState!.getApiData(),
-      );
+      if (isEdit) {
+        store.updateWorkspace(
+          workspaceData.id.toString(),
+          photosKey.currentState!.getApiData(),
+          info,
+          pricingKey.currentState!.getApiData(),
+          availableWorkspaceHoursKey.currentState?.getApiData()!,
+          Other(
+            additionalGuests: pricingKey.currentState!.additionalGuests(),
+            isCoWorkingWorkspace:
+                hostingSpaceKey.currentState!.isWorkspaceStyle(),
+            isIndoorSpace: hostingSpaceKey.currentState!.isIndoor(),
+            isOutdoorSpace: hostingSpaceKey.currentState!.isOutdoor(),
+          ),
+          amenitiesKey.currentState!.getApiData(),
+        );
+      } else {
+        store.createWorkSpace(
+          photosKey.currentState!.getApiData(),
+          info,
+          pricingKey.currentState!.getApiData(),
+          availableWorkspaceHoursKey.currentState?.getApiData()!,
+          Other(
+            additionalGuests: pricingKey.currentState!.additionalGuests(),
+            isCoWorkingWorkspace:
+                hostingSpaceKey.currentState!.isWorkspaceStyle(),
+            isIndoorSpace: hostingSpaceKey.currentState!.isIndoor(),
+            isOutdoorSpace: hostingSpaceKey.currentState!.isOutdoor(),
+          ),
+          amenitiesKey.currentState!.getApiData(),
+        );
+      }
     }
   }
 

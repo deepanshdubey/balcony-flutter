@@ -130,16 +130,30 @@ class PhotosWidgetState extends BaseState<PhotosWidget> {
   @override
   bool validate() {
     bool isNotValid = userSelectedImages.any((element) => element == null);
-    return !isNotValid;
+    return widget.existingImages != null ? true : !isNotValid;
   }
 
   @override
-  List<File> getApiData() {
-    return userSelectedImages
-        .map(
-          (e) => File(e ?? ""),
-        )
-        .toList();
+  List<dynamic> getApiData() {
+    return widget.existingImages != null
+        ? userSelectedImages.asMap().entries.map((entry) {
+            final index = entry.key;
+            final selectedImage = entry.value;
+
+            // Check if the selected image is null
+            if (selectedImage == null) {
+              // Return the URL from the existing URLs list
+              return widget.existingImages?[index] as String; // existingUrls should be defined elsewhere
+            }
+
+            // Otherwise, create a File from the selected image
+            return selectedImage;
+          }).toList() // this should be list of String not String?
+        : userSelectedImages
+            .map(
+              (e) => File(e ?? ""),
+            )
+            .toList();
   }
 
   @override

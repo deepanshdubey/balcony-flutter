@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
+
+import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/coversation_response.dart';
 import 'package:balcony/data/model/response/create_msg_response.dart';
-import 'package:http_parser/http_parser.dart';
-import 'package:balcony/data/model/response/common_data.dart';
 import 'package:balcony/data/model/response/pagination_data.dart';
 import 'package:balcony/data/model/response/promo_list_model.dart';
 import 'package:balcony/data/model/response/promo_model.dart';
@@ -11,6 +11,7 @@ import 'package:balcony/data/model/response/property_data.dart';
 import 'package:balcony/data/model/response/subscription_list_model.dart';
 import 'package:balcony/data/model/response/user_data.dart';
 import 'package:dio/dio.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../model/response/workspace_data.dart';
@@ -105,13 +106,14 @@ abstract class ApiClient {
   @PUT("workspace/update/{id}")
   @MultiPart()
   Future<CommonData> editWorkspace(
-      @Part(name: "images", contentType: 'image/*') List<MultipartFile> images,
-      @Part(name: "info") Info info,
-      @Part(name: "pricing") Pricing pricing,
-      @Part(name: "times") Times times,
-      @Part(name: "other") Other other,
-      @Part(name: "amenities") String amenities,
-      );
+    @Path("id") String workspaceId,
+    @Part(name: "images") List<String> images,
+    @Part(name: "info") Info info,
+    @Part(name: "pricing") Pricing pricing,
+    @Part(name: "times") Times times,
+    @Part(name: "other") Other other,
+    @Part(name: "amenities") String amenities,
+  );
 
   @GET("property/all")
   Future<PaginationData<PropertyData>> getProperties(
@@ -144,9 +146,7 @@ abstract class ApiClient {
     @Part(name: "unitList") List<Map<String, dynamic>> unitList,
     @Part(name: "other") Map<String, dynamic> other,
     @Part(name: "amenities") String amenities,
-    @Part(
-      name: "leasingPolicyDoc",
-    )
+    @Part(name: "leasingPolicyDoc")
     File image,
   );
 
@@ -286,7 +286,8 @@ abstract class ApiClient {
   Future<CommonData> getAllConversations();
 
   @POST("/conversation/start")
-  Future<CoversationResponse> startConversation(@Body() Map<String, dynamic> request);
+  Future<CoversationResponse> startConversation(
+      @Body() Map<String, dynamic> request);
 
   @POST("/message/create")
   @MultiPart()
@@ -322,4 +323,8 @@ abstract class ApiClient {
   @GET("user/balance/{hostId}")
   Future<CommonData> getEarnings(
       @Path("hostId") String hostId, @Query("type") String type);
+
+  @POST("upload/")
+  @MultiPart()
+  Future<CommonData> uploadImages(@Part(name: "files") List<MultipartFile> images,);
 }
