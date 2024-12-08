@@ -58,7 +58,8 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
     hostingSpaceKey = GlobalKey<BaseState>();
     amenitiesKey = GlobalKey<BaseState>();
     termsOfServiceKey = GlobalKey<BaseState>();
-    summaryController = TextEditingController();
+    summaryController = TextEditingController(
+        text: isEdit ? workspaceData.info?.summary : null);
     addDisposer();
     super.initState();
   }
@@ -133,6 +134,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
                       30.h.verticalSpace,
                       AddressWidget(
                         key: workspaceInfoKey,
+                        existingAddress: isEdit ? workspaceData.info : null,
                       ),
                       30.h.verticalSpace,
                       ShortSummaryWidget(

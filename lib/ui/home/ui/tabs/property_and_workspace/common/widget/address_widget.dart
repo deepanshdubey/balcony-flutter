@@ -13,8 +13,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AddressWidget extends StatefulWidget {
   final bool isWorkSpace;
+  final Info? existingAddress;
 
-  const AddressWidget({super.key, this.isWorkSpace = true});
+  const AddressWidget({super.key, this.isWorkSpace = true, this.existingAddress});
 
   @override
   State<AddressWidget> createState() => _AddressWidgetState();
@@ -32,12 +33,12 @@ class _AddressWidgetState extends BaseState<AddressWidget> {
   @override
   void initState() {
     formKey = GlobalKey<FormState>();
-    nameController = TextEditingController();
-    floorController = TextEditingController();
-    addressController = TextEditingController();
-    cityController = TextEditingController();
-    stateController = TextEditingController();
-    countryController = TextEditingController();
+    nameController = TextEditingController(text: widget.existingAddress?.name );
+    floorController = TextEditingController(text: widget.existingAddress?.floor );
+    addressController = TextEditingController(text: widget.existingAddress?.address );
+    cityController = TextEditingController(text: widget.existingAddress?.city );
+    stateController = TextEditingController(text: widget.existingAddress?.state );
+    countryController = TextEditingController(text: widget.existingAddress?.country );
     super.initState();
   }
 

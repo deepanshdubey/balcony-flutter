@@ -9,8 +9,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PricingWidget extends StatefulWidget {
+  final Pricing? existingPricing;
+
   const PricingWidget({
     super.key,
+    this.existingPricing,
   });
 
   @override
@@ -32,7 +35,7 @@ class _PricingWidgetState extends BaseState<PricingWidget> {
   @override
   void initState() {
     formKey = GlobalKey<FormState>();
-    currencyController = TextEditingController(text: "USD");
+    currencyController = TextEditingController(text: widget.existingPricing?.currency ?? "USD");
     totalPerDayController = TextEditingController();
     additionalGuestsController = TextEditingController();
     cleaningFeeController = TextEditingController();
@@ -263,6 +266,7 @@ class _PricingWidgetState extends BaseState<PricingWidget> {
 
   @override
   int additionalGuests() {
-    return int.tryParse(additionalGuestsController.text.trim()) ?? super.additionalGuests();
+    return int.tryParse(additionalGuestsController.text.trim()) ??
+        super.additionalGuests();
   }
 }
