@@ -102,6 +102,17 @@ abstract class ApiClient {
     @Part(name: "amenities") String amenities,
   );
 
+  @PUT("workspace/update/{id}")
+  @MultiPart()
+  Future<CommonData> editWorkspace(
+      @Part(name: "images", contentType: 'image/*') List<MultipartFile> images,
+      @Part(name: "info") Info info,
+      @Part(name: "pricing") Pricing pricing,
+      @Part(name: "times") Times times,
+      @Part(name: "other") Other other,
+      @Part(name: "amenities") String amenities,
+      );
+
   @GET("property/all")
   Future<PaginationData<PropertyData>> getProperties(
     @Query("query") String? status,

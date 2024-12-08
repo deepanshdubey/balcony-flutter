@@ -10,10 +10,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PricingWidget extends StatefulWidget {
   final Pricing? existingPricing;
+  final int? additionalGuests;
 
   const PricingWidget({
     super.key,
     this.existingPricing,
+    this.additionalGuests,
   });
 
   @override
@@ -35,15 +37,24 @@ class _PricingWidgetState extends BaseState<PricingWidget> {
   @override
   void initState() {
     formKey = GlobalKey<FormState>();
-    currencyController = TextEditingController(text: widget.existingPricing?.currency ?? "USD");
-    totalPerDayController = TextEditingController();
-    additionalGuestsController = TextEditingController();
-    cleaningFeeController = TextEditingController();
-    cleaningFeeTypeController = TextEditingController();
-    maintenanceFeeController = TextEditingController();
-    maintenanceFeeTypeController = TextEditingController();
-    additionalGeneralFeeController = TextEditingController();
-    additionalGeneralFeeTypeController = TextEditingController();
+    currencyController =
+        TextEditingController(text: widget.existingPricing?.currency ?? "USD");
+    totalPerDayController = TextEditingController(
+        text: widget.existingPricing?.totalPerDay?.toString());
+    additionalGuestsController =
+        TextEditingController(text: widget.additionalGuests?.toString());
+    cleaningFeeController = TextEditingController(
+        text: widget.existingPricing?.cleaning?.fee?.toString());
+    cleaningFeeTypeController = TextEditingController(
+        text: widget.existingPricing?.cleaning?.type?.toString());
+    maintenanceFeeController = TextEditingController(
+        text: widget.existingPricing?.maintenance?.fee?.toString());
+    maintenanceFeeTypeController = TextEditingController(
+        text: widget.existingPricing?.maintenance?.type?.toString());
+    additionalGeneralFeeController = TextEditingController(
+        text: widget.existingPricing?.additional?.fee?.toString());
+    additionalGeneralFeeTypeController = TextEditingController(
+        text: widget.existingPricing?.additional?.type?.toString());
     super.initState();
   }
 

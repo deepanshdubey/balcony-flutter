@@ -177,7 +177,7 @@ class Times {
 
   Map<String, dynamic> toJson() => _$TimesToJson(this);
 
-  int get nonNullCount {
+  List<DayTime> get nonNull {
     return [
       sunday,
       monday,
@@ -186,7 +186,11 @@ class Times {
       thursday,
       friday,
       saturday,
-    ].where((day) => day != null).length;
+    ].whereType<DayTime>().toList();
+  }
+
+  int get nonNullCount {
+    return nonNull.length;
   }
 }
 

@@ -4,16 +4,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HostingSpaceWidget extends StatefulWidget {
-  const HostingSpaceWidget({super.key});
+  final bool hostingSpaceIndoor;
+  final bool hostingSpaceOutdoor;
+  final bool workspaceStyle;
+
+  const HostingSpaceWidget(
+      {super.key,
+      required this.hostingSpaceIndoor,
+      required this.hostingSpaceOutdoor,
+      required this.workspaceStyle});
 
   @override
   HostingSpaceWidgetState createState() => HostingSpaceWidgetState();
 }
 
 class HostingSpaceWidgetState extends BaseState<HostingSpaceWidget> {
-  bool hostingSpaceIndoor = false;
-  bool hostingSpaceOutdoor = false;
-  bool workspaceStyle = false;
+  late bool hostingSpaceIndoor;
+  late bool hostingSpaceOutdoor;
+  late bool workspaceStyle;
+
+  @override
+  void initState() {
+    hostingSpaceIndoor = widget.hostingSpaceIndoor;
+    hostingSpaceOutdoor = widget.hostingSpaceOutdoor;
+    workspaceStyle = widget.workspaceStyle;
+    super.initState();
+  }
 
   @override
   bool validate() {
@@ -172,5 +188,3 @@ class HostingSpaceWidgetState extends BaseState<HostingSpaceWidget> {
     return workspaceStyle;
   }
 }
-
-

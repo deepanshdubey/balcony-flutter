@@ -34,7 +34,7 @@ class _OnGoingBookingsRowWidgetState extends State<OnGoingBookingsRowWidget> {
     bookingStatus = widget.booking.status ?? "pending";
     reaction((_) => workspaceStore.isBookingAccepted, (response) {
       if (response != null) {
-        widget.onBookingUpdated ?? ();
+        widget.onBookingUpdated?.call();
       }
     });
 

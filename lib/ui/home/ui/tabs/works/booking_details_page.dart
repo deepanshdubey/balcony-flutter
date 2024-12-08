@@ -35,7 +35,7 @@ class _BookingsDetailsPageState extends State<BookingsDetailsPage> {
     reaction(
       (p0) => store.cancelBookingResponse,
       (p0) {
-        widget.onOrderCancelled ?? ();
+        widget.onOrderCancelled?.call();
         Navigator.of(context).pop();
       },
     );

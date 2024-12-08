@@ -1,3 +1,4 @@
+import 'package:balcony/core/session/app_session.dart';
 import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/store/support_ticket_store.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/earning_widget.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/open_support_request_widget.dart';
@@ -26,8 +27,8 @@ class _WorkspaceDashboardPageState extends State<WorkspaceDashboardPage> {
 
   @override
   void initState() {
-    /*supportTicketStore.getSupportTickets();
-    dashboardStore.getEarnings(session.user.id.toString());*/
+    supportTicketStore.getSupportTickets();
+    dashboardStore.getEarnings(session.user.id.toString());
     super.initState();
   }
 

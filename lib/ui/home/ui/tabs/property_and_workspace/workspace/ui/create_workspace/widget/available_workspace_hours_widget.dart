@@ -1,3 +1,4 @@
+import 'package:balcony/core/locator/locator.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/model/availability_slot_item.dart';
@@ -8,7 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AvailableWorkspaceHoursWidget extends StatefulWidget {
-  const AvailableWorkspaceHoursWidget({super.key});
+  final Times? existingTimes;
+
+  const AvailableWorkspaceHoursWidget({super.key, this.existingTimes});
 
   @override
   State<AvailableWorkspaceHoursWidget> createState() =>
@@ -22,16 +25,37 @@ class _AvailableWorkspaceHoursWidgetState
 
   @override
   void initState() {
+    // Map existing times to a day-to-DayTime dictionary
+    final timesMap = {
+      'sunday': widget.existingTimes?.sunday,
+      'monday': widget.existingTimes?.monday,
+      'tuesday': widget.existingTimes?.tuesday,
+      'wednesday': widget.existingTimes?.wednesday,
+      'thursday': widget.existingTimes?.thursday,
+      'friday': widget.existingTimes?.friday,
+      'saturday': widget.existingTimes?.saturday,
+    };
+
+    // Create slots and set the controllers during the initialization
     slots = AvailabilitySlotItem.preset()
         .map(
-          (day) => AvailabilitySlotItem(
-              TextEditingController(), TextEditingController(),
-              day: day),
-        )
+          (day) {
+        final dayTime = timesMap[day.toLowerCase()];
+        return AvailabilitySlotItem(
+          TextEditingController(text: dayTime?.startTime ?? ''),
+          TextEditingController(text: dayTime?.endTime ?? ''),
+          day: day,
+        )..isChecked = dayTime != null; // Mark as checked if times exist
+      },
+    )
         .toList();
+
+    // Generate all time slots
     allSlots = generateTimeSlots();
+
     super.initState();
   }
+
 
   List<String> generateTimeSlots() {
     List<String> timeSlots = [];

@@ -139,7 +139,11 @@ class _WorkspaceManagerWidgetState extends State<WorkspaceManagerWidget> {
   Widget addNewWorkspace() {
     return GestureDetector(
         onTap: () {
-          appRouter.push(CreateWorkspaceRoute());
+          appRouter.push(CreateWorkspaceRoute(
+            onEdited: () {
+              workspaceStore.getHostWorkspaces();
+            },
+          ));
         },
         child: Row(
           children: [

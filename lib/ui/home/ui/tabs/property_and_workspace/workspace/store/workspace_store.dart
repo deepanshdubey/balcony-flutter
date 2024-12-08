@@ -19,7 +19,8 @@ abstract class _WorkspaceStoreBase with Store {
   int totalPages = 0;
 
   @observable
-  bool? isBookingAccepted; // null initially, true for accepted, false for rejected
+  bool?
+      isBookingAccepted; // null initially, true for accepted, false for rejected
 
   @action
   Future<void> handleBooking(String id, bool accept) async {
@@ -46,6 +47,7 @@ abstract class _WorkspaceStoreBase with Store {
       isLoading = false;
     }
   }
+
   @observable
   List<WorkspaceData>? workspaceResponse;
 
@@ -130,6 +132,7 @@ abstract class _WorkspaceStoreBase with Store {
 
   @action
   Future createWorkSpace(
+    bool isEdit,
     List<File> images,
     Info info,
     Pricing pricing,
@@ -140,8 +143,7 @@ abstract class _WorkspaceStoreBase with Store {
     try {
       errorMessage = null;
       isLoading = true;
-      final response = await workspaceRepository.createWorkspace(
-          images, info, pricing, times, other, amenities);
+      final response = await workspaceRepository.createWorkspace(isEdit, images, info, pricing, times, other, amenities);
       if (response.isSuccess) {
         createWorkSpaceDetailsResponse = response.data;
       } else {

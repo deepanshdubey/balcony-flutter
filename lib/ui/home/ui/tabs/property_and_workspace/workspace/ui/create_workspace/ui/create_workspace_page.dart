@@ -23,8 +23,9 @@ import 'package:mobx/mobx.dart';
 @RoutePage()
 class CreateWorkspacePage extends StatefulWidget {
   final WorkspaceData? editWorkspaceItem;
+  final VoidCallback? onEdited;
 
-  const CreateWorkspacePage({super.key, this.editWorkspaceItem});
+  const CreateWorkspacePage({super.key, this.editWorkspaceItem, this.onEdited});
 
   @override
   State<CreateWorkspacePage> createState() => _CreateWorkspacePageState();
@@ -33,6 +34,7 @@ class CreateWorkspacePage extends StatefulWidget {
 class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
   ThemeData get theme => Theme.of(context);
   late bool isEdit;
+
   late WorkspaceData workspaceData;
   late GlobalKey<BaseState> workspaceInfoKey;
   late GlobalKey<BaseState> pricingKey;
@@ -75,8 +77,9 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
         if (res != null) {
           alertManager.showSuccess(
             context,
-            'workspace added successfully',
+            'workspace ${isEdit ? "updated" : "added"} successfully',
             afterAlert: () {
+              widget.onEdited?.call();
               appRouter.back();
             },
           );
@@ -144,29 +147,55 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
                       30.h.verticalSpace,
                       PricingWidget(
                         key: pricingKey,
+                        existingPricing: isEdit ? workspaceData.pricing : null,
+                        additionalGuests: isEdit
+                            ? workspaceData.other?.additionalGuests
+                            : null,
                       ),
                       30.h.verticalSpace,
                       AvailableWorkspaceHoursWidget(
                         key: availableWorkspaceHoursKey,
+                        existingTimes: isEdit ? workspaceData.times : null,
                       ),
                       30.h.verticalSpace,
                       HostingSpaceWidget(
                         key: hostingSpaceKey,
+                        hostingSpaceIndoor: isEdit
+                            ? workspaceData.other?.isIndoorSpace ?? false
+                            : false,
+                        hostingSpaceOutdoor: isEdit
+                            ? workspaceData.other?.isOutdoorSpace ?? false
+                            : false,
+                        workspaceStyle: isEdit
+                            ? workspaceData.other?.isCoWorkingWorkspace ?? false
+                            : false,
                       ),
                       30.h.verticalSpace,
                       AmenitiesWidget(
-                          key: amenitiesKey, amenities: AmenitiesItem.preset()),
+                        key: amenitiesKey,
+                        amenities: AmenitiesItem.preset().map((amenity) {
+                          final isChecked = isEdit &&
+                              workspaceData.amenities?.contains(amenity.name) ==
+                                  true;
+                          amenity.isChecked = isChecked;
+                          return amenity;
+                        }).toList(),
+                      ),
                       divider(),
                       TermsOfServiceWidget(
                         key: termsOfServiceKey,
+                        isEdit: isEdit,
                       ),
                       30.h.verticalSpace,
                       Observer(builder: (context) {
                         var isLoading = store.isLoading;
-                        return PrimaryButton(
-                          text: "add new workspace",
-                          onPressed: submit,
-                          isLoading: isLoading,
+                        return SizedBox(
+                          width: double.infinity,
+                          child: PrimaryButton(
+                            text: "add new workspace",
+                            onPressed: submit,
+                            isLoading: isLoading,
+                          ),
                         );
                       }),
                     ],
@@ -209,6 +238,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
       Info info = workspaceInfoKey.currentState!.getApiData();
       info.summary = summaryController.text.trim();
       store.createWorkSpace(
+        isEdit,
         photosKey.currentState!.getApiData(),
         info,
         pricingKey.currentState!.getApiData(),

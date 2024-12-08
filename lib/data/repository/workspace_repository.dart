@@ -37,6 +37,7 @@ abstract class WorkspaceRepository {
   });
 
   Future<ApiResponse<CommonData>> createWorkspace(
+      bool isEdit,
     List<File> images,
     Info info,
     Pricing pricing,

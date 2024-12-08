@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:auto_route/annotations.dart';
 import 'package:balcony/core/alert/alert_manager.dart';
+import 'package:balcony/data/model/response/property_data.dart';
 import 'package:balcony/data/model/response/workspace_data.dart';
 import 'package:balcony/router/app_router.dart';
 import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
@@ -25,7 +26,9 @@ import 'package:mobx/mobx.dart';
 
 @RoutePage()
 class CreatePropertyPage extends StatefulWidget {
-  const CreatePropertyPage({super.key});
+  final PropertyData? existingProperty;
+
+  const CreatePropertyPage({super.key, this.existingProperty});
 
   @override
   State<CreatePropertyPage> createState() => _CreatePropertyPageState();
@@ -33,7 +36,7 @@ class CreatePropertyPage extends StatefulWidget {
 
 class _CreatePropertyPageState extends State<CreatePropertyPage> {
   ThemeData get theme => Theme.of(context);
-
+  late bool isEdit;
   late GlobalKey<BaseState> propertyAddressKey;
   late GlobalKey<BaseState> processingFeeKey;
   late GlobalKey<BaseState> photosKey;
@@ -48,6 +51,7 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
 
   @override
   void initState() {
+    isEdit = widget.existingProperty != null;
     propertyAddressKey = GlobalKey<BaseState>();
     processingFeeKey = GlobalKey<BaseState>();
     photosKey = GlobalKey<BaseState>();
@@ -165,6 +169,7 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
                       divider(),
                       TermsOfServiceWidget(
                         key: termsOfServiceKey,
+                        isEdit: isEdit,
                       ),
                       30.h.verticalSpace,
                       Observer(builder: (context) {

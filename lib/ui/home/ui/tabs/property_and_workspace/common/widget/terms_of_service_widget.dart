@@ -5,8 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TermsOfServiceWidget extends StatefulWidget {
+  final bool isEdit;
+
   const TermsOfServiceWidget({
     super.key,
+    required this.isEdit,
   });
 
   @override
@@ -14,7 +17,14 @@ class TermsOfServiceWidget extends StatefulWidget {
 }
 
 class _TermsOfServiceWidgetState extends BaseState<TermsOfServiceWidget> {
-  bool firstTerm = false, secondTerm = false;
+  late bool firstTerm, secondTerm;
+
+  @override
+  void initState() {
+    firstTerm = widget.isEdit;
+    secondTerm = widget.isEdit;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
