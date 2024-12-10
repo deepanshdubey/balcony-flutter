@@ -1,4 +1,4 @@
-import 'package:balcony/data/model/response/workspace_data.dart';
+import 'package:homework/data/model/response/workspace_data.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 

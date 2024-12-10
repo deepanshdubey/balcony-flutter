@@ -1,15 +1,15 @@
-import 'package:balcony/core/session/app_session.dart';
-import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/store/support_ticket_store.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/earning_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/open_support_request_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/promotion_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/update_payout_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/store/dashboard_store.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/booking_acceptance_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/bookings_overview_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/ongoing_bookings_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/past_bookings_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/workspace_manager_widget.dart';
+import 'package:homework/core/session/app_session.dart';
+import 'package:homework/ui/home/ui/tabs/more/ui/support_tickets/store/support_ticket_store.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/widget/earning_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/widget/open_support_request_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/widget/promotion_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/widget/update_payout_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/store/dashboard_store.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/booking_acceptance_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/bookings_overview_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/ongoing_bookings_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/past_bookings_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/workspace_manager_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -39,7 +39,8 @@ class _WorkspaceDashboardPageState extends State<WorkspaceDashboardPage> {
         Observer(builder: (context) {
           var count = supportTicketStore.supportTicketsResponse
               ?.where(
-                (element) => element.status == 'active',
+                (element) =>
+                    element.status == 'active' && element.workspace != null,
               )
               .length;
           var isLoading = supportTicketStore.isLoading;

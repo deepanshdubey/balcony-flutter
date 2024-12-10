@@ -1,7 +1,7 @@
 import 'package:auto_route/annotations.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/dashboard/ui/property_dashboard_page.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/ui/workspace_dashboard_page.dart';
-import 'package:balcony/values/extensions/theme_ext.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/dashboard/ui/property_dashboard_page.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/ui/workspace_dashboard_page.dart';
+import 'package:homework/values/extensions/theme_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'package:balcony/core/locator/locator.dart';
-import 'package:balcony/core/session/session.dart';
-import 'package:balcony/core/socket/socket_provider.dart';
-import 'package:balcony/generated/l10n.dart';
-import 'package:balcony/router/app_router.dart';
-import 'package:balcony/values/theme.dart';
+import 'package:homework/core/locator/locator.dart';
+import 'package:homework/core/session/session.dart';
+import 'package:homework/core/socket/socket_provider.dart';
+import 'package:homework/generated/l10n.dart';
+import 'package:homework/router/app_router.dart';
+import 'package:homework/values/theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

@@ -1,4 +1,4 @@
-import 'package:balcony/values/extensions/theme_ext.dart';
+import 'package:homework/values/extensions/theme_ext.dart';
 import 'package:flutter/material.dart';
 
 class LoadingWidget extends StatefulWidget {

@@ -1,5 +1,5 @@
-import 'package:balcony/core/locator/locator.dart';
-import 'package:balcony/generated/assets.dart';
+import 'package:homework/core/locator/locator.dart';
+import 'package:homework/generated/assets.dart';
 
 class AssetManager {
   String get splashBg => Assets.imagesSplashBg;

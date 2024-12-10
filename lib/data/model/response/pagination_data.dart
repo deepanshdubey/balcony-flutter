@@ -1,4 +1,4 @@
-import 'package:balcony/data/model/response/property_data.dart';
+import 'package:homework/data/model/response/property_data.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'workspace_data.dart'; // Import the WorkspaceData model.

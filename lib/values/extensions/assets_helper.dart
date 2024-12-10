@@ -1,5 +1,5 @@
-import 'package:balcony/data/model/response/workspace_data.dart';
-import 'package:balcony/generated/assets.dart';
+import 'package:homework/data/model/response/workspace_data.dart';
+import 'package:homework/generated/assets.dart';
 import 'package:flutter/material.dart';
 
 class AssetHelper {

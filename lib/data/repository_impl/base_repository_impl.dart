@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:balcony/core/api/api_response/api_exception.dart';
-import 'package:balcony/core/api/api_response/api_response.dart';
-import 'package:balcony/core/locator/locator.dart';
+import 'package:homework/core/api/api_response/api_exception.dart';
+import 'package:homework/core/api/api_response/api_response.dart';
+import 'package:homework/core/locator/locator.dart';
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 

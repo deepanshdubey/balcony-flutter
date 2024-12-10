@@ -1,8 +1,8 @@
-import 'package:balcony/router/app_router.dart';
-import 'package:balcony/ui/auth/ui/reset_password_page.dart';
-import 'package:balcony/ui/auth/ui/sign_in_page.dart';
-import 'package:balcony/ui/auth/ui/sign_up_page.dart';
-import 'package:balcony/values/extensions/theme_ext.dart';
+import 'package:homework/router/app_router.dart';
+import 'package:homework/ui/auth/ui/reset_password_page.dart';
+import 'package:homework/ui/auth/ui/sign_in_page.dart';
+import 'package:homework/ui/auth/ui/sign_up_page.dart';
+import 'package:homework/values/extensions/theme_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

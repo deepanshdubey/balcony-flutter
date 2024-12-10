@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:balcony/core/locator/locator.dart';
-import 'package:balcony/data/model/response/common_data.dart';
-import 'package:balcony/data/model/response/property_data.dart';
-import 'package:balcony/data/model/response/workspace_data.dart';
-import 'package:balcony/data/repository/property_repository.dart';
-import 'package:balcony/data/repository/tenant_repository.dart';
+import 'package:homework/core/locator/locator.dart';
+import 'package:homework/data/model/response/common_data.dart';
+import 'package:homework/data/model/response/property_data.dart';
+import 'package:homework/data/model/response/workspace_data.dart';
+import 'package:homework/data/repository/property_repository.dart';
+import 'package:homework/data/repository/tenant_repository.dart';
 import 'package:mobx/mobx.dart';
 
 part 'property_store.g.dart';

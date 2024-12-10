@@ -1,7 +1,7 @@
-import 'package:balcony/core/locator/locator.dart';
-import 'package:balcony/data/model/response/bookings_data.dart';
-import 'package:balcony/data/model/response/common_data.dart';
-import 'package:balcony/data/repository/booking_repository.dart';
+import 'package:homework/core/locator/locator.dart';
+import 'package:homework/data/model/response/bookings_data.dart';
+import 'package:homework/data/model/response/common_data.dart';
+import 'package:homework/data/repository/booking_repository.dart';
 import 'package:mobx/mobx.dart';
 
 part 'booking_listing_store.g.dart';

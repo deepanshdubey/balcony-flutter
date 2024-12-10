@@ -1,11 +1,11 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:balcony/generated/assets.dart';
-import 'package:balcony/ui/home/ui/tabs/stay/rant_payment_details_page.dart';
-import 'package:balcony/ui/home/ui/tabs/works/booking_details_page.dart';
-import 'package:balcony/values/colors.dart';
-import 'package:balcony/values/extensions/context_ext.dart';
-import 'package:balcony/widget/app_text_field.dart';
-import 'package:balcony/widget/button_border.dart';
+import 'package:homework/generated/assets.dart';
+import 'package:homework/ui/home/ui/tabs/stay/rant_payment_details_page.dart';
+import 'package:homework/ui/home/ui/tabs/works/booking_details_page.dart';
+import 'package:homework/values/colors.dart';
+import 'package:homework/values/extensions/context_ext.dart';
+import 'package:homework/widget/app_text_field.dart';
+import 'package:homework/widget/button_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

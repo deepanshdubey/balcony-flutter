@@ -1,7 +1,7 @@
-import 'package:balcony/core/locator/locator.dart';
-import 'package:balcony/data/model/response/card_data.dart';
-import 'package:balcony/data/model/response/common_data.dart';
-import 'package:balcony/data/repository/wallet_repository.dart';
+import 'package:homework/core/locator/locator.dart';
+import 'package:homework/data/model/response/card_data.dart';
+import 'package:homework/data/model/response/common_data.dart';
+import 'package:homework/data/repository/wallet_repository.dart';
 import 'package:credit_card_form/credit_card_form.dart';
 import 'package:flutter_stripe/flutter_stripe.dart' as stripe;
 import 'package:mobx/mobx.dart';

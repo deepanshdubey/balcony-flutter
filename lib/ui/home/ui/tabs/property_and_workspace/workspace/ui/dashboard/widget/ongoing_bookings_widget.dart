@@ -1,6 +1,6 @@
-import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/widget/section_title.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/ongoing_bookings_row_widget.dart';
+import 'package:homework/ui/home/ui/tabs/more/ui/support_tickets/widget/section_title.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/ongoing_bookings_row_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

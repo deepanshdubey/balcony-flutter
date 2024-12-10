@@ -1,9 +1,9 @@
 import 'package:auto_route/annotations.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/widget/map_workspace_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/widget/workspace_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/user_home/widget/pagination_widget.dart';
-import 'package:balcony/widget/app_back_button.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/widget/map_workspace_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/widget/workspace_widget.dart';
+import 'package:homework/ui/home/ui/tabs/user_home/widget/pagination_widget.dart';
+import 'package:homework/widget/app_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

@@ -1,4 +1,4 @@
-import 'package:balcony/core/locator/locator.dart';
+import 'package:homework/core/locator/locator.dart';
 import 'package:country_state_city/country_state_city.dart';
 import 'package:mobx/mobx.dart';
 

@@ -1,4 +1,4 @@
-import 'package:balcony/generated/assets.dart';
+import 'package:homework/generated/assets.dart';
 
 class AmenitiesItem {
   final String name;

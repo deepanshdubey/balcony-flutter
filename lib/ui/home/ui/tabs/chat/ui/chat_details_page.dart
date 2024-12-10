@@ -1,15 +1,15 @@
 import 'dart:io';
 
-import 'package:balcony/core/session/app_session.dart';
-import 'package:balcony/core/socket/socket_manager.dart';
-import 'package:balcony/data/model/response/conversation_data.dart';
+import 'package:homework/core/session/app_session.dart';
+import 'package:homework/core/socket/socket_manager.dart';
+import 'package:homework/data/model/response/conversation_data.dart';
 
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
-import 'package:balcony/ui/home/ui/tabs/chat/store/chat_store.dart';
-import 'package:balcony/widget/app_back_button.dart';
-import 'package:balcony/widget/app_image.dart';
-import 'package:balcony/widget/app_text_field.dart';
+import 'package:homework/ui/home/ui/tabs/chat/store/chat_store.dart';
+import 'package:homework/widget/app_back_button.dart';
+import 'package:homework/widget/app_image.dart';
+import 'package:homework/widget/app_text_field.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';

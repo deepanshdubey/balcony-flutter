@@ -1,9 +1,9 @@
-import 'package:balcony/data/model/response/workspace_data.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
-import 'package:balcony/values/extensions/context_ext.dart';
-import 'package:balcony/values/validators.dart';
-import 'package:balcony/widget/app_dropdown_field.dart';
-import 'package:balcony/widget/app_text_field.dart';
+import 'package:homework/data/model/response/workspace_data.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
+import 'package:homework/values/extensions/context_ext.dart';
+import 'package:homework/values/validators.dart';
+import 'package:homework/widget/app_dropdown_field.dart';
+import 'package:homework/widget/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

@@ -1,5 +1,5 @@
-import 'package:balcony/data/model/response/card_data.dart';
-import 'package:balcony/values/colors.dart';
+import 'package:homework/data/model/response/card_data.dart';
+import 'package:homework/values/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

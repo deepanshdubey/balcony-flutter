@@ -1,9 +1,9 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:balcony/data/model/response/property_data.dart';
-import 'package:balcony/data/model/response/workspace_data.dart';
-import 'package:balcony/router/app_router.dart';
-import 'package:balcony/values/extensions/context_ext.dart';
-import 'package:balcony/widget/app_image.dart';
+import 'package:homework/data/model/response/property_data.dart';
+import 'package:homework/data/model/response/workspace_data.dart';
+import 'package:homework/router/app_router.dart';
+import 'package:homework/values/extensions/context_ext.dart';
+import 'package:homework/widget/app_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

@@ -1,15 +1,15 @@
-import 'package:balcony/core/alert/alert_manager.dart';
-import 'package:balcony/core/session/app_session.dart';
-import 'package:balcony/generated/assets.dart';
-import 'package:balcony/router/app_router.dart';
-import 'package:balcony/ui/auth/store/auth_store.dart';
-import 'package:balcony/ui/home/ui/tabs/more/ui/profile/ui/edit_profile_page.dart';
-import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/ui/support_tickets_page.dart';
-import 'package:balcony/ui/home/ui/tabs/more/ui/wallet/ui/wallet_page.dart';
-import 'package:balcony/values/extensions/context_ext.dart';
-import 'package:balcony/values/extensions/theme_ext.dart';
-import 'package:balcony/widget/app_image.dart';
-import 'package:balcony/widget/loading_widget.dart';
+import 'package:homework/core/alert/alert_manager.dart';
+import 'package:homework/core/session/app_session.dart';
+import 'package:homework/generated/assets.dart';
+import 'package:homework/router/app_router.dart';
+import 'package:homework/ui/auth/store/auth_store.dart';
+import 'package:homework/ui/home/ui/tabs/more/ui/profile/ui/edit_profile_page.dart';
+import 'package:homework/ui/home/ui/tabs/more/ui/support_tickets/ui/support_tickets_page.dart';
+import 'package:homework/ui/home/ui/tabs/more/ui/wallet/ui/wallet_page.dart';
+import 'package:homework/values/extensions/context_ext.dart';
+import 'package:homework/values/extensions/theme_ext.dart';
+import 'package:homework/widget/app_image.dart';
+import 'package:homework/widget/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -213,7 +213,7 @@ class _MorePageState extends State<MorePage> {
         {
           alertManager.showSystemAlertDialog(
             context: context,
-            title: 'balcony',
+            title: 'homework',
             message: "are you sure want to logout",
             confirmButtonText: 'logout',
             onConfirm: () {

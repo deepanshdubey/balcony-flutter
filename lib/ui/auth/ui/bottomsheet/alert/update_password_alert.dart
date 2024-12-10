@@ -1,9 +1,9 @@
-import 'package:balcony/core/alert/alert_manager.dart';
-import 'package:balcony/ui/auth/store/auth_store.dart';
-import 'package:balcony/values/validators.dart';
-import 'package:balcony/widget/app_outlined_button.dart';
-import 'package:balcony/widget/password_field.dart';
-import 'package:balcony/widget/primary_button.dart';
+import 'package:homework/core/alert/alert_manager.dart';
+import 'package:homework/ui/auth/store/auth_store.dart';
+import 'package:homework/values/validators.dart';
+import 'package:homework/widget/app_outlined_button.dart';
+import 'package:homework/widget/password_field.dart';
+import 'package:homework/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

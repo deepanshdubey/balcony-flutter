@@ -1,11 +1,11 @@
-import 'package:balcony/core/session/app_session.dart';
-import 'package:balcony/router/app_router.dart';
-import 'package:balcony/ui/auth/ui/bottomsheet/onboarding_bottomsheet.dart';
-import 'package:balcony/values/extensions/context_ext.dart';
-import 'package:balcony/values/extensions/theme_ext.dart';
-import 'package:balcony/widget/app_image.dart';
-import 'package:balcony/widget/app_outlined_button.dart';
-import 'package:balcony/widget/primary_button.dart';
+import 'package:homework/core/session/app_session.dart';
+import 'package:homework/router/app_router.dart';
+import 'package:homework/ui/auth/ui/bottomsheet/onboarding_bottomsheet.dart';
+import 'package:homework/values/extensions/context_ext.dart';
+import 'package:homework/values/extensions/theme_ext.dart';
+import 'package:homework/widget/app_image.dart';
+import 'package:homework/widget/app_outlined_button.dart';
+import 'package:homework/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

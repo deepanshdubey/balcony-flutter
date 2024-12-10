@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
-import 'package:balcony/core/api/interceptor/custom_interceptors.dart';
-import 'package:balcony/core/locator/locator.dart';
-import 'package:balcony/data/remote/api_client.dart';
+import 'package:homework/core/api/interceptor/custom_interceptors.dart';
+import 'package:homework/core/locator/locator.dart';
+import 'package:homework/data/remote/api_client.dart';
 
 class ApiModule {
   Future<void> provides() async {

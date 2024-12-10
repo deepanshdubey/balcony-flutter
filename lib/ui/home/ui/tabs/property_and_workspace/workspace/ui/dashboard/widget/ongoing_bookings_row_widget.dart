@@ -1,9 +1,9 @@
-import 'package:balcony/core/alert/alert_manager.dart';
-import 'package:balcony/data/model/response/bookings_data.dart';
-import 'package:balcony/ui/home/ui/tabs/chat/ui/chat_page.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
-import 'package:balcony/ui/home/ui/tabs/works/booking_details_page.dart';
-import 'package:balcony/values/colors.dart';
+import 'package:homework/core/alert/alert_manager.dart';
+import 'package:homework/data/model/response/bookings_data.dart';
+import 'package:homework/ui/home/ui/tabs/chat/ui/chat_page.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
+import 'package:homework/ui/home/ui/tabs/works/booking_details_page.dart';
+import 'package:homework/values/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

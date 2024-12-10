@@ -1,7 +1,7 @@
-import 'package:balcony/core/alert/alert_manager.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/store/dashboard_store.dart';
-import 'package:balcony/values/extensions/context_ext.dart';
-import 'package:balcony/values/extensions/theme_ext.dart';
+import 'package:homework/core/alert/alert_manager.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/store/dashboard_store.dart';
+import 'package:homework/values/extensions/context_ext.dart';
+import 'package:homework/values/extensions/theme_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

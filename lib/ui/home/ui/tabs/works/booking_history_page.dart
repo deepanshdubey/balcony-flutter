@@ -1,10 +1,10 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:balcony/data/model/response/bookings_data.dart';
-import 'package:balcony/generated/assets.dart';
-import 'package:balcony/ui/home/ui/tabs/works/booking_details_page.dart';
-import 'package:balcony/ui/home/ui/tabs/works/store/booking_listing_store.dart';
-import 'package:balcony/values/colors.dart';
-import 'package:balcony/values/extensions/context_ext.dart';
+import 'package:homework/data/model/response/bookings_data.dart';
+import 'package:homework/generated/assets.dart';
+import 'package:homework/ui/home/ui/tabs/works/booking_details_page.dart';
+import 'package:homework/ui/home/ui/tabs/works/store/booking_listing_store.dart';
+import 'package:homework/values/colors.dart';
+import 'package:homework/values/extensions/context_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

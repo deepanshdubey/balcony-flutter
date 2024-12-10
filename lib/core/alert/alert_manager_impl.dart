@@ -1,8 +1,8 @@
-import 'package:balcony/core/alert/alert_manager.dart';
-import 'package:balcony/values/extensions/theme_ext.dart';
-import 'package:balcony/widget/app_outlined_button.dart';
-import 'package:balcony/widget/primary_button.dart';
-import 'package:balcony/widget/top_snack_bar.dart';
+import 'package:homework/core/alert/alert_manager.dart';
+import 'package:homework/values/extensions/theme_ext.dart';
+import 'package:homework/widget/app_outlined_button.dart';
+import 'package:homework/widget/primary_button.dart';
+import 'package:homework/widget/top_snack_bar.dart';
 import 'package:flutter/material.dart';
 
 class AlertManagerImpl implements AlertManager {

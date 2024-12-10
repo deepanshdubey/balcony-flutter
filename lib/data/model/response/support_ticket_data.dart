@@ -1,5 +1,5 @@
-import 'package:balcony/data/model/response/property_data.dart';
-import 'package:balcony/data/model/response/workspace_data.dart';
+import 'package:homework/data/model/response/property_data.dart';
+import 'package:homework/data/model/response/workspace_data.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'support_ticket_data.g.dart';

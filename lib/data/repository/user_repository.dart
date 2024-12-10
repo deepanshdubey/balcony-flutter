@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:balcony/core/api/api_response/api_response.dart';
-import 'package:balcony/core/locator/locator.dart';
-import 'package:balcony/data/model/response/common_data.dart';
-import 'package:balcony/data/model/response/subscription_list_model.dart';
-import 'package:balcony/ui/auth/ui/bottomsheet/alert/verification_alert.dart';
+import 'package:homework/core/api/api_response/api_response.dart';
+import 'package:homework/core/locator/locator.dart';
+import 'package:homework/data/model/response/common_data.dart';
+import 'package:homework/data/model/response/subscription_list_model.dart';
+import 'package:homework/ui/auth/ui/bottomsheet/alert/verification_alert.dart';
 
 abstract class UserRepository {
   Future<ApiResponse<CommonData>> register(Map<String, dynamic> request);

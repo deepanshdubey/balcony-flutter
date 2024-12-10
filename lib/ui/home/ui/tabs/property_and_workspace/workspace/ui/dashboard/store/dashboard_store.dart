@@ -1,8 +1,8 @@
-import 'package:balcony/core/locator/locator.dart';
-import 'package:balcony/core/session/app_session.dart';
-import 'package:balcony/data/model/response/common_data.dart';
-import 'package:balcony/data/repository/booking_repository.dart';
-import 'package:balcony/data/repository/user_repository.dart';
+import 'package:homework/core/locator/locator.dart';
+import 'package:homework/core/session/app_session.dart';
+import 'package:homework/data/model/response/common_data.dart';
+import 'package:homework/data/repository/booking_repository.dart';
+import 'package:homework/data/repository/user_repository.dart';
 import 'package:mobx/mobx.dart';
 
 part 'dashboard_store.g.dart';

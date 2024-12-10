@@ -1,6 +1,6 @@
-import 'package:balcony/generated/assets.dart';
-import 'package:balcony/values/colors.dart';
-import 'package:balcony/values/extensions/assets_helper.dart';
+import 'package:homework/generated/assets.dart';
+import 'package:homework/values/colors.dart';
+import 'package:homework/values/extensions/assets_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

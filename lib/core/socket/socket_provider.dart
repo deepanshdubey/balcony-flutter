@@ -1,5 +1,5 @@
-import 'package:balcony/core/socket/socket_manager.dart';
-import 'package:balcony/data/model/response/socket_message.dart';
+import 'package:homework/core/socket/socket_manager.dart';
+import 'package:homework/data/model/response/socket_message.dart';
 import 'package:flutter/material.dart';
 
 class SocketProvider extends ChangeNotifier {

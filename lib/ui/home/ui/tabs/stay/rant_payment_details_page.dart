@@ -1,11 +1,11 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:balcony/ui/home/ui/tabs/more/ui/wallet/ui/wallet_page.dart';
-import 'package:balcony/values/colors.dart';
-import 'package:balcony/values/extensions/theme_ext.dart';
-import 'package:balcony/widget/app_back_button.dart';
-import 'package:balcony/widget/app_text_field.dart';
-import 'package:balcony/widget/bokking_dialog.dart';
-import 'package:balcony/widget/primary_button.dart';
+import 'package:homework/ui/home/ui/tabs/more/ui/wallet/ui/wallet_page.dart';
+import 'package:homework/values/colors.dart';
+import 'package:homework/values/extensions/theme_ext.dart';
+import 'package:homework/widget/app_back_button.dart';
+import 'package:homework/widget/app_text_field.dart';
+import 'package:homework/widget/bokking_dialog.dart';
+import 'package:homework/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

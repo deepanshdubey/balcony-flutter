@@ -1,15 +1,15 @@
 
-import 'package:balcony/core/api/api_response/api_response.dart';
-import 'package:balcony/data/model/response/pagination_data.dart';
-import 'package:balcony/data/model/response/promo_list_model.dart';
-import 'package:balcony/data/model/response/promo_model.dart';
-import 'package:balcony/data/model/response/property_data.dart';
-import 'package:balcony/data/model/response/workspace_data.dart';
-import 'package:balcony/data/remote/api_client.dart';
-import 'package:balcony/data/repository/promo_repository.dart';
-import 'package:balcony/data/repository/property_repository.dart';
-import 'package:balcony/data/repository/workspace_repository.dart';
-import 'package:balcony/data/repository_impl/base_repository_impl.dart';
+import 'package:homework/core/api/api_response/api_response.dart';
+import 'package:homework/data/model/response/pagination_data.dart';
+import 'package:homework/data/model/response/promo_list_model.dart';
+import 'package:homework/data/model/response/promo_model.dart';
+import 'package:homework/data/model/response/property_data.dart';
+import 'package:homework/data/model/response/workspace_data.dart';
+import 'package:homework/data/remote/api_client.dart';
+import 'package:homework/data/repository/promo_repository.dart';
+import 'package:homework/data/repository/property_repository.dart';
+import 'package:homework/data/repository/workspace_repository.dart';
+import 'package:homework/data/repository_impl/base_repository_impl.dart';
 
 class PromoRepositoryImpl extends BaseRepositoryImpl
     implements PromoRepository {

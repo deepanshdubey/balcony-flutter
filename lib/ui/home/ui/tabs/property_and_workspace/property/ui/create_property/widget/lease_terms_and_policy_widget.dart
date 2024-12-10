@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
-import 'package:balcony/values/extensions/context_ext.dart';
-import 'package:balcony/widget/file_picker_widget.dart';
-import 'package:balcony/widget/image_picker_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
+import 'package:homework/values/extensions/context_ext.dart';
+import 'package:homework/widget/file_picker_widget.dart';
+import 'package:homework/widget/image_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

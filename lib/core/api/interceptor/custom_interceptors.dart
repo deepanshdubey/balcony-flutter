@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:balcony/core/locator/locator.dart';
-import 'package:balcony/core/session/app_session.dart';
+import 'package:homework/core/locator/locator.dart';
+import 'package:homework/core/session/app_session.dart';
 import 'package:dio/dio.dart';
 
 class CustomInterceptors extends Interceptor {

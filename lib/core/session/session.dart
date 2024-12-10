@@ -1,4 +1,4 @@
-import 'package:balcony/data/model/response/user_data.dart';
+import 'package:homework/data/model/response/user_data.dart';
 
 abstract class Session {
   T getValue<T>(String key, {T? defaultValue});

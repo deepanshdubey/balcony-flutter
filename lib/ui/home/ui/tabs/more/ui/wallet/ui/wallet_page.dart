@@ -1,10 +1,10 @@
-import 'package:balcony/core/alert/alert_manager.dart';
-import 'package:balcony/data/model/response/card_data.dart';
-import 'package:balcony/ui/home/ui/tabs/more/ui/wallet/store/wallet_store.dart';
-import 'package:balcony/ui/home/ui/tabs/more/ui/wallet/widget/add_card_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/more/ui/wallet/widget/card_listing_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/more/ui/wallet/widget/edit_card_widget.dart';
-import 'package:balcony/widget/app_back_button.dart';
+import 'package:homework/core/alert/alert_manager.dart';
+import 'package:homework/data/model/response/card_data.dart';
+import 'package:homework/ui/home/ui/tabs/more/ui/wallet/store/wallet_store.dart';
+import 'package:homework/ui/home/ui/tabs/more/ui/wallet/widget/add_card_widget.dart';
+import 'package:homework/ui/home/ui/tabs/more/ui/wallet/widget/card_listing_widget.dart';
+import 'package:homework/ui/home/ui/tabs/more/ui/wallet/widget/edit_card_widget.dart';
+import 'package:homework/widget/app_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

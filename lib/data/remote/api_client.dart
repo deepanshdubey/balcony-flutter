@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:balcony/data/model/response/common_data.dart';
-import 'package:balcony/data/model/response/coversation_response.dart';
-import 'package:balcony/data/model/response/create_msg_response.dart';
-import 'package:balcony/data/model/response/pagination_data.dart';
-import 'package:balcony/data/model/response/promo_list_model.dart';
-import 'package:balcony/data/model/response/promo_model.dart';
-import 'package:balcony/data/model/response/property_data.dart';
-import 'package:balcony/data/model/response/subscription_list_model.dart';
-import 'package:balcony/data/model/response/user_data.dart';
+import 'package:homework/data/model/response/common_data.dart';
+import 'package:homework/data/model/response/coversation_response.dart';
+import 'package:homework/data/model/response/create_msg_response.dart';
+import 'package:homework/data/model/response/pagination_data.dart';
+import 'package:homework/data/model/response/promo_list_model.dart';
+import 'package:homework/data/model/response/promo_model.dart';
+import 'package:homework/data/model/response/property_data.dart';
+import 'package:homework/data/model/response/subscription_list_model.dart';
+import 'package:homework/data/model/response/user_data.dart';
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:retrofit/retrofit.dart';

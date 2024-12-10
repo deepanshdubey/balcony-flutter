@@ -1,5 +1,5 @@
-import 'package:balcony/data/model/response/user_data.dart';
-import 'package:balcony/data/model/response/workspace_data.dart';
+import 'package:homework/data/model/response/user_data.dart';
+import 'package:homework/data/model/response/workspace_data.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'bookings_data.g.dart';

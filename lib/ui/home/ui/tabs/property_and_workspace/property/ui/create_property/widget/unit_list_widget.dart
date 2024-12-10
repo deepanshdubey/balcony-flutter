@@ -1,15 +1,15 @@
 import 'dart:io';
 
-import 'package:balcony/generated/assets.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/model/unit_item.dart';
-import 'package:balcony/values/extensions/context_ext.dart';
-import 'package:balcony/values/validators.dart';
-import 'package:balcony/widget/app_dropdown_field.dart';
-import 'package:balcony/widget/app_image.dart';
-import 'package:balcony/widget/app_outlined_button.dart';
-import 'package:balcony/widget/app_text_field.dart';
-import 'package:balcony/widget/image_picker_widget.dart';
+import 'package:homework/generated/assets.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/model/unit_item.dart';
+import 'package:homework/values/extensions/context_ext.dart';
+import 'package:homework/values/validators.dart';
+import 'package:homework/widget/app_dropdown_field.dart';
+import 'package:homework/widget/app_image.dart';
+import 'package:homework/widget/app_outlined_button.dart';
+import 'package:homework/widget/app_text_field.dart';
+import 'package:homework/widget/image_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

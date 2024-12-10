@@ -1,4 +1,4 @@
-package com.balcony.app.balcony
+package com.homework.app.homework
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

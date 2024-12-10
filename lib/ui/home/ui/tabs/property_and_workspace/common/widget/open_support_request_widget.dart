@@ -1,6 +1,6 @@
-import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/ui/support_tickets_page.dart';
-import 'package:balcony/values/extensions/context_ext.dart';
-import 'package:balcony/widget/primary_button.dart';
+import 'package:homework/ui/home/ui/tabs/more/ui/support_tickets/ui/support_tickets_page.dart';
+import 'package:homework/values/extensions/context_ext.dart';
+import 'package:homework/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

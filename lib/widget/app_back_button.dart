@@ -1,4 +1,4 @@
-import 'package:balcony/router/app_router.dart';
+import 'package:homework/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

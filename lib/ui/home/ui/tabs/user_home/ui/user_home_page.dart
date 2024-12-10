@@ -1,10 +1,10 @@
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/property/widget/property_home_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/widget/workspace_home_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/user_home/widget/host_your_property_or_workspace_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/user_home/widget/search_properties_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/user_home/widget/search_workspaces_widget.dart';
-import 'package:balcony/values/extensions/theme_ext.dart';
-import 'package:balcony/widget/app_image.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/widget/property_home_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/widget/workspace_home_widget.dart';
+import 'package:homework/ui/home/ui/tabs/user_home/widget/host_your_property_or_workspace_widget.dart';
+import 'package:homework/ui/home/ui/tabs/user_home/widget/search_properties_widget.dart';
+import 'package:homework/ui/home/ui/tabs/user_home/widget/search_workspaces_widget.dart';
+import 'package:homework/values/extensions/theme_ext.dart';
+import 'package:homework/widget/app_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

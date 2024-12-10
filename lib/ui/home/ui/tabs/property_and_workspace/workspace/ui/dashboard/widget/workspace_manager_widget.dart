@@ -1,9 +1,9 @@
-import 'package:balcony/generated/assets.dart';
-import 'package:balcony/router/app_router.dart';
-import 'package:balcony/ui/home/ui/tabs/more/ui/support_tickets/widget/section_title.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/workspace_row_widget.dart';
-import 'package:balcony/widget/app_image.dart';
+import 'package:homework/generated/assets.dart';
+import 'package:homework/router/app_router.dart';
+import 'package:homework/ui/home/ui/tabs/more/ui/support_tickets/widget/section_title.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/workspace_row_widget.dart';
+import 'package:homework/widget/app_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

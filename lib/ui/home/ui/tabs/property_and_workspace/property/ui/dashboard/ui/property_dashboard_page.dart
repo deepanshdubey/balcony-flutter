@@ -1,9 +1,14 @@
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/earning_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/open_support_request_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/promotion_widget.dart';
-import 'package:balcony/ui/home/ui/tabs/property_and_workspace/common/widget/update_payout_widget.dart';
+import 'package:homework/core/session/app_session.dart';
+import 'package:homework/ui/home/ui/tabs/more/ui/support_tickets/store/support_ticket_store.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/widget/earning_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/widget/open_support_request_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/widget/promotion_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/widget/update_payout_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/store/dashboard_store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 class PropertyDashboardPage extends StatefulWidget {
   const PropertyDashboardPage({super.key});
@@ -13,45 +18,71 @@ class PropertyDashboardPage extends StatefulWidget {
 }
 
 class _PropertyDashboardPageState extends State<PropertyDashboardPage> {
+  final dashboardStore = DashboardStore();
+
+  @override
+  void initState() {
+    dashboardStore.getEarnings(session.user.id.toString(), isWorkspace: false);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          children: [
-            const Flexible(
-                flex: 1,
-                child: OpenSupportRequestWidget(
-                  openSupportRequestCount: 5,
-
-                )),
-            16.w.horizontalSpace,
-            const Spacer(),
-          ],
-        ),
+        Observer(builder: (context) {
+          var count = supportTicketStore.supportTicketsResponse
+              ?.where(
+                (element) =>
+                    element.status == 'active' && element.property != null,
+              )
+              .length;
+          var isLoading = supportTicketStore.isLoading;
+          return Row(
+            children: [
+              Flexible(
+                  flex: 1,
+                  child: OpenSupportRequestWidget(
+                    openSupportRequestCount: count ?? 0,
+                    isLoading: isLoading,
+                  )),
+              16.w.horizontalSpace,
+              const Spacer(),
+            ],
+          );
+        }),
         16.h.verticalSpace,
-        Row(
-          children: [
-            const Flexible(
-              flex: 1,
-              child: EarningWidget(
-                progress: 22,
-                formattedEarningsWithCurrency: '\$1,329',
-                formattedTimePeriod: 'this month',
-                title: 'total earned',
+        Observer(builder: (context) {
+          var isLoading = dashboardStore.isLoading;
+          var totalEarned = dashboardStore.earningsResponse?.earnings ?? 0;
+          var totalDeposited = dashboardStore.earningsResponse?.deposits ?? 0;
+          var format = NumberFormat("\$###,###,###");
+          return Row(
+            children: [
+              Flexible(
+                flex: 1,
+                child: EarningWidget(
+                  progress: 22,
+                  formattedEarningsWithCurrency: format.format(totalEarned),
+                  formattedTimePeriod: 'this month',
+                  title: 'total earned',
+                  isLoading: isLoading,
+                ),
               ),
-            ),
-            16.w.horizontalSpace,
-            const Flexible(
-              flex: 1,
-              child: EarningWidget(
-                  title: 'total deposited',
-                  progress: 74,
-                  formattedEarningsWithCurrency: '\$5,329',
-                  formattedTimePeriod: 'this year'),
-            ),
-          ],
-        ),
+              16.w.horizontalSpace,
+              Flexible(
+                flex: 1,
+                child: EarningWidget(
+                    title: 'total deposited',
+                    progress: 74,
+                    isLoading: isLoading,
+                    formattedEarningsWithCurrency:
+                        format.format(totalDeposited),
+                    formattedTimePeriod: 'this year'),
+              ),
+            ],
+          );
+        }),
         16.h.verticalSpace,
         const PromotionWidget(),
         16.h.verticalSpace,

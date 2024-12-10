@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:balcony/core/api/api_response/api_response.dart';
-import 'package:balcony/data/model/response/common_data.dart';
-import 'package:balcony/data/model/response/pagination_data.dart';
-import 'package:balcony/data/model/response/workspace_data.dart';
-import 'package:balcony/data/remote/api_client.dart';
-import 'package:balcony/data/repository/workspace_repository.dart';
-import 'package:balcony/data/repository_impl/base_repository_impl.dart';
+import 'package:homework/core/api/api_response/api_response.dart';
+import 'package:homework/data/model/response/common_data.dart';
+import 'package:homework/data/model/response/pagination_data.dart';
+import 'package:homework/data/model/response/workspace_data.dart';
+import 'package:homework/data/remote/api_client.dart';
+import 'package:homework/data/repository/workspace_repository.dart';
+import 'package:homework/data/repository_impl/base_repository_impl.dart';
 
 class WorkspaceRepositoryImpl extends BaseRepositoryImpl
     implements WorkspaceRepository {

@@ -1,4 +1,4 @@
-import 'package:balcony/data/model/response/support_ticket_data.dart';
+import 'package:homework/data/model/response/support_ticket_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

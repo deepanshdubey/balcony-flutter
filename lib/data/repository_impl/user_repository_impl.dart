@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:balcony/core/api/api_response/api_response.dart';
-import 'package:balcony/data/model/response/common_data.dart';
-import 'package:balcony/data/model/response/subscription_list_model.dart';
-import 'package:balcony/data/remote/api_client.dart';
-import 'package:balcony/data/repository/user_repository.dart';
-import 'package:balcony/data/repository_impl/base_repository_impl.dart';
-import 'package:balcony/ui/auth/ui/bottomsheet/alert/verification_alert.dart';
+import 'package:homework/core/api/api_response/api_response.dart';
+import 'package:homework/data/model/response/common_data.dart';
+import 'package:homework/data/model/response/subscription_list_model.dart';
+import 'package:homework/data/remote/api_client.dart';
+import 'package:homework/data/repository/user_repository.dart';
+import 'package:homework/data/repository_impl/base_repository_impl.dart';
+import 'package:homework/ui/auth/ui/bottomsheet/alert/verification_alert.dart';
 
 class UserRepositoryImpl extends BaseRepositoryImpl implements UserRepository {
   final ApiClient apiClient;

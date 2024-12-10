@@ -1,4 +1,4 @@
-import 'package:balcony/core/locator/locator.dart';
+import 'package:homework/core/locator/locator.dart';
 import 'package:flutter/cupertino.dart';
 
 abstract class AlertManager {
