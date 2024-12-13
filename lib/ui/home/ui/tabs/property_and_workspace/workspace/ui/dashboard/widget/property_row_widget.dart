@@ -100,7 +100,7 @@ class _PropertyRowWidgetState extends State<PropertyRowWidget> {
             children: [
               GestureDetector(
                   onTap: () {
-                    appRouter.push(CreatePropertyRoute(/*editWorkspaceItem: widget.property*/));
+                    appRouter.push(CreatePropertyRoute(existingProperty: widget.property));
                   },
                   child: Text(
                     "update",

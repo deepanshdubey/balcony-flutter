@@ -139,11 +139,7 @@ class _PropertyManagerWidgetState extends State<PropertyManagerWidget> {
   Widget addNewProperty() {
     return GestureDetector(
         onTap: () {
-          appRouter.push(CreatePropertyRoute(
-              /*onEdited: () {
-              workspaceStore.getHostWorkspaces();
-            },*/
-              ));
+          appRouter.push(CreatePropertyRoute());
         },
         child: Row(
           children: [
