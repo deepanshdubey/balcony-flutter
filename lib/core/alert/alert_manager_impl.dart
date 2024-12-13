@@ -1,12 +1,16 @@
-import 'package:balcony/core/alert/alert_manager.dart';
-import 'package:balcony/values/extensions/theme_ext.dart';
-import 'package:balcony/widget/top_snack_bar.dart';
+import 'package:homework/core/alert/alert_manager.dart';
+import 'package:homework/values/extensions/theme_ext.dart';
+import 'package:homework/widget/app_outlined_button.dart';
+import 'package:homework/widget/primary_button.dart';
+import 'package:homework/widget/top_snack_bar.dart';
 import 'package:flutter/material.dart';
 
 class AlertManagerImpl implements AlertManager {
   @override
-  void showSuccess(BuildContext context, String message) {
-    _showAlert(context, message, Theme.of(context).appColors.greenColor);
+  void showSuccess(BuildContext context, String message,
+      {VoidCallback? afterAlert}) {
+    _showAlert(context, message, Theme.of(context).colors.greenColor,
+        afterAlert: afterAlert);
   }
 
   @override
@@ -14,15 +18,20 @@ class AlertManagerImpl implements AlertManager {
     _showAlert(context, message, Colors.redAccent);
   }
 
-  void _showAlert(BuildContext context, String message, Color color) {
+  void _showAlert(BuildContext context, String message, Color color,
+      {VoidCallback? afterAlert}) {
     showAdaptiveDialog(
-      useSafeArea: false,
+      useSafeArea: true,
       context: context,
       builder: (context) {
-        return TopSnackBar(
-          message: message,
-          color: color,
-          theme: Theme.of(context),
+        return SafeArea(
+          top: false,
+          child: TopSnackBar(
+            message: message,
+            color: color,
+            theme: Theme.of(context),
+            afterAlert: afterAlert,
+          ),
         );
       },
     );
@@ -46,23 +55,31 @@ class AlertManagerImpl implements AlertManager {
           title: Text(title),
           content: Text(message),
           actions: [
-            TextButton(
+            AppOutlinedButton(
               onPressed: () {
                 if (onCancel != null) onCancel();
                 Navigator.of(context).pop();
               },
-              child: Text(cancelButtonText),
+              text: cancelButtonText,
             ),
-            TextButton(
+            PrimaryButton(
               onPressed: () {
                 if (onConfirm != null) onConfirm();
                 Navigator.of(context).pop();
               },
-              child: Text(confirmButtonText),
+              text: confirmButtonText,
             ),
           ],
         );
       },
+    );
+  }
+
+  @override
+  void showAlert(BuildContext context, Widget alert) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => alert,
     );
   }
 }

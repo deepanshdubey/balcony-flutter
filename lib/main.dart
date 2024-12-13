@@ -1,24 +1,27 @@
 import 'dart:async';
-
-import 'package:balcony/core/locator/locator.dart';
-import 'package:balcony/core/session/session.dart';
-import 'package:balcony/generated/l10n.dart';
-import 'package:balcony/router/app_router.dart';
-import 'package:balcony/values/theme.dart';
+import 'package:homework/core/locator/locator.dart';
+import 'package:homework/core/session/session.dart';
+import 'package:homework/core/socket/socket_provider.dart';
+import 'package:homework/generated/l10n.dart';
+import 'package:homework/router/app_router.dart';
+import 'package:homework/values/theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:maptiler_flutter/maptiler_flutter.dart';
+import 'package:provider/provider.dart';
+
 
 Future<void> main() async {
   runZonedGuarded(
-    () async {
+        () async {
       try {
         WidgetsFlutterBinding.ensureInitialized();
-
         await setupLocator();
         await locator.isReady<Session>();
+        MapTilerConfig.setApiKey('Np0YtMXcGscEPnJKgTsu');
       } catch (error, st) {
         logger.e(error);
         logger.e(st);
@@ -29,18 +32,20 @@ Future<void> main() async {
         debugPrint = (String? message, {int? wrapWidth}) {};
       }
 
-      // initialize firebase app
-      //await Firebase.initializeApp();
-
       // Fixing App Orientation.
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
         DeviceOrientation.portraitDown,
       ]).then(
-        (value) => runApp(MyApp(appRouter: locator<AppRouter>())),
+            (value) => runApp(
+          ChangeNotifierProvider(
+            create: (_) => SocketProvider()..initializeSocket(),
+            child: MyApp(appRouter: locator<AppRouter>()),
+          ),
+        ),
       );
     },
-    (error, stack) => (Object error, StackTrace stackTrace) {
+        (error, stack) => (Object error, StackTrace stackTrace) {
       if (!kReleaseMode) {
         debugPrint('[Error]: $error');
         debugPrint('[Stacktrace]: $stackTrace');
@@ -59,15 +64,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  ThemeMode _themeMode = ThemeMode.system;
-
-  void _toggleTheme() {
-    setState(() {
-      _themeMode =
-          _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
@@ -81,9 +77,9 @@ class _MyAppState extends State<MyApp> {
             child: child!,
           );
           child = MediaQuery(
-            child: child,
             data: MediaQuery.of(context).copyWith(
                 textScaler: const TextScaler.linear(1.0), boldText: false),
+            child: child,
           );
           return child;
         },

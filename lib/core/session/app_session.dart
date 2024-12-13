@@ -1,4 +1,6 @@
-import 'package:balcony/core/session/session.dart';
+import 'package:homework/core/locator/locator.dart';
+import 'package:homework/core/session/session.dart';
+import 'package:homework/data/model/response/user_data.dart';
 import 'package:hive/hive.dart';
 
 class AppSession implements Session {
@@ -38,8 +40,38 @@ class AppSession implements Session {
   set fcmToken(String update) => setValue("fcm_token", update);
 
   @override
+  String? get sessionCookie => getValue("session_cookie", defaultValue: null);
+
+  @override
+  set sessionCookie(String? update) => setValue("session_cookie", update);
+
+  @override
   void logout() {
     token = "";
     isLogin = false;
+    isLoginSkipped = false;
+    isWalkthroughSeen = false;
+    sessionCookie = null;
   }
+
+  @override
+  bool get isWalkthroughSeen =>
+      getValue("isWalkthroughSeen", defaultValue: false);
+
+  @override
+  set isWalkthroughSeen(bool update) => setValue("isWalkthroughSeen", update);
+
+  @override
+  bool get isLoginSkipped => getValue("isLoginSkipped", defaultValue: false);
+
+  @override
+  set isLoginSkipped(bool update) => setValue("isLoginSkipped", update);
+
+  @override
+  UserData get user => getValue("user");
+
+  @override
+  set user(UserData user) => setValue("user", user);
 }
+
+final session = locator<Session>();

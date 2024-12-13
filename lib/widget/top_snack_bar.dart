@@ -6,14 +6,16 @@ class TopSnackBar extends StatefulWidget {
   final Color color;
   final Duration duration;
   final ThemeData theme;
+  final VoidCallback? afterAlert;
 
   const TopSnackBar({
-    Key? key,
+    super.key,
     required this.message,
     required this.color,
     required this.theme,
     this.duration = const Duration(seconds: 3),
-  }) : super(key: key);
+    this.afterAlert,
+  });
 
   @override
   _TopSnackBarState createState() => _TopSnackBarState();
@@ -45,6 +47,9 @@ class _TopSnackBarState extends State<TopSnackBar>
     Future.delayed(widget.duration, () {
       if (mounted) {
         _controller.reverse().then((_) => Navigator.of(context).pop());
+        if (widget.afterAlert != null) {
+          widget.afterAlert!();
+        }
       }
     });
   }
@@ -65,10 +70,12 @@ class _TopSnackBarState extends State<TopSnackBar>
         children: [
           Container(
             width: double.infinity,
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
                 color: widget.color,
-                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(16.r), bottomRight: Radius.circular(16.r))),
+                borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(16.r),
+                    bottomRight: Radius.circular(16.r))),
             child: SafeArea(
               child: Text(
                 widget.message,

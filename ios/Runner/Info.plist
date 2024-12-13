@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Balcony</string>
+	<string>homework</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>balcony</string>
+	<string>homework</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -45,5 +45,14 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+    <string>We need access to your camera to take photos.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>We need access to your photo library to select photos.</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>We need permission to save photos to your photo library.</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>To populate workspace and properties on map</string>
+
 </dict>
 </plist>
