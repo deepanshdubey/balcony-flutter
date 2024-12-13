@@ -1,4 +1,7 @@
 import 'package:auto_route/annotations.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/core/alert/alert_manager.dart';
 import 'package:homework/data/model/response/workspace_data.dart';
 import 'package:homework/router/app_router.dart';
@@ -15,9 +18,6 @@ import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/cre
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/pricing_widget.dart';
 import 'package:homework/widget/app_back_button.dart';
 import 'package:homework/widget/primary_button.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobx/mobx.dart';
 
 @RoutePage()
@@ -52,6 +52,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
     isEdit = widget.editWorkspaceItem != null;
     if (isEdit) {
       workspaceData = widget.editWorkspaceItem!;
+      store.getWorkspaceDetail(id: workspaceData.id.toString());
     }
     workspaceInfoKey = GlobalKey<BaseState>();
     pricingKey = GlobalKey<BaseState>();
@@ -71,6 +72,13 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
       reaction((_) => store.errorMessage, (String? errorMessage) {
         if (errorMessage != null) {
           alertManager.showError(context, errorMessage);
+        }
+      }),
+      reaction((_) => store.workspaceDetailsResponse, (data) {
+        if (data != null) {
+          setState(() {
+            workspaceData = data;
+          });
         }
       }),
       reaction((_) => store.createWorkSpaceDetailsResponse, (res) {
@@ -192,7 +200,9 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
                         return SizedBox(
                           width: double.infinity,
                           child: PrimaryButton(
-                            text: isEdit ? "update workspace" : "add new workspace",
+                            text: isEdit
+                                ? "update workspace"
+                                : "add new workspace",
                             onPressed: submit,
                             isLoading: isLoading,
                           ),
