@@ -4,6 +4,7 @@ import 'package:homework/core/locator/locator.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/data/model/response/common_data.dart';
 import 'package:homework/data/model/response/property_data.dart';
+import 'package:homework/data/model/response/tenant_details.dart';
 import 'package:homework/data/model/response/workspace_data.dart';
 import 'package:homework/data/repository/property_repository.dart';
 import 'package:homework/data/repository/tenant_repository.dart';
@@ -28,6 +29,9 @@ abstract class _PropertyStoreBase with Store {
 
   @observable
   CommonData? applyTenantResponse;
+
+  @observable
+  List<Tenants>? tenantsByHostResponse;
 
   @observable
   bool isLoading = false;
@@ -101,7 +105,7 @@ abstract class _PropertyStoreBase with Store {
   Future createProperty(
     List<File> images,
     List<File> floorPlanImages,
-    Info info,
+    info,
     String currency,
     Map<String, dynamic> other,
     List<String> amenities,
@@ -144,6 +148,29 @@ abstract class _PropertyStoreBase with Store {
       final response = await tenantRepository.applyTenant(request);
       if (response.isSuccess) {
         applyTenantResponse = response.data;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+
+  @action
+  Future getTenantsByHostId(
+  ) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      var status = ["pending requests","current tenants","awaiting payments"];
+      final response = await tenantRepository.getTenantsByHostId(session.user.id.toString() , status: status);
+      if (response.isSuccess) {
+        tenantsByHostResponse = response.data?.tenants;
       } else {
         errorMessage = response.error!.message;
       }

@@ -161,7 +161,7 @@ class _RentPaymentDetailsPageState extends State<RentPaymentDetailsPage> {
                 ),
               ),
               builder: (BuildContext context) {
-                return FractionallySizedBox(
+                return const FractionallySizedBox(
                   heightFactor: 0.8,
                   child: WalletPage(),
                 );
@@ -170,8 +170,8 @@ class _RentPaymentDetailsPageState extends State<RentPaymentDetailsPage> {
           },
           child: Row(
             children: [
-              Text("No card yet!"),
-              Spacer(),
+              const Text("No card yet!"),
+              const Spacer(),
               Text('add',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontSize: 14.spMin,

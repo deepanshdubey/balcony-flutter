@@ -200,6 +200,12 @@ abstract class ApiClient {
   @POST("/tenant/apply")
   Future<CommonData> applyTenant(@Body() Map<String, dynamic> request);
 
+  @GET("/tenant/all/host/{id}")
+  Future<CommonData> getTenantsByHostId(
+      @Path("id") String hostId,
+      @Query("status") String? status, // Optional query parameter
+      );
+
   /// -- promo --
 
   @POST("/promo/create")
@@ -297,6 +303,9 @@ abstract class ApiClient {
 
   @POST("booking/rate")
   Future<CommonData> rateBooking(@Body() Map<String, dynamic> request);
+
+  @GET("/tenant/me")
+  Future<CommonData> getTenant(@Query("status") String status);
 
   /// chat
   @GET("/conversation/all")

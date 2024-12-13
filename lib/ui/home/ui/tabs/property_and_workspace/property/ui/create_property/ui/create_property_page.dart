@@ -258,7 +258,7 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
           "leaseDuration": leaseDuration?.toInt()
         },
         amenitiesKey.currentState!.getApiData(),
-        leasingTermsKey.currentState!.getApiData(),
+        leasingTermsKey.currentState!. getApiData(),
         units,
       );
     }

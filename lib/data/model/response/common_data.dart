@@ -2,6 +2,7 @@ import 'package:homework/data/model/response/card_data.dart';
 import 'package:homework/data/model/response/conversation_data.dart';
 import 'package:homework/data/model/response/property_data.dart';
 import 'package:homework/data/model/response/support_ticket_data.dart';
+import 'package:homework/data/model/response/tenant_details.dart';
 import 'package:homework/data/model/response/user_data.dart';
 import 'package:homework/data/model/response/workspace_data.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -71,7 +72,11 @@ class CommonData {
   @JsonKey(name: 'media')
   final Media? media;
 
-  CommonData({
+
+  @JsonKey(name: 'tenants')
+  final List<Tenants>? tenants;
+
+  CommonData(this.tenants, {
     this.messageId,
     this.media,
     this.success,

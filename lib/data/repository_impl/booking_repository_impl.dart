@@ -33,6 +33,12 @@ class BookingRepositoryImpl extends BaseRepositoryImpl
     return await execute(apiClient.getMyBookings(jsonEncode(status)));
   }
 
+
+  @override
+  Future<ApiResponse<CommonData>> getMyTenant(List<String> status) async {
+    return await execute(apiClient.getTenant(jsonEncode(status)));
+  }
+
   @override
   Future<ApiResponse<CommonData>> getHostBookings(String hostId, String? status) async {
     return await execute(apiClient.getHostBookings(hostId,status));
