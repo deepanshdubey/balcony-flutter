@@ -1,6 +1,9 @@
 import 'dart:io';
 
 import 'package:auto_route/annotations.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/core/alert/alert_manager.dart';
 import 'package:homework/data/model/response/property_data.dart';
 import 'package:homework/data/model/response/workspace_data.dart';
@@ -19,16 +22,14 @@ import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/crea
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/model/amenities_item.dart';
 import 'package:homework/widget/app_back_button.dart';
 import 'package:homework/widget/primary_button.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobx/mobx.dart';
 
 @RoutePage()
 class CreatePropertyPage extends StatefulWidget {
   final PropertyData? existingProperty;
+  final VoidCallback? onEdited;
 
-  const CreatePropertyPage({super.key, this.existingProperty});
+  const CreatePropertyPage({super.key, this.existingProperty, this.onEdited});
 
   @override
   State<CreatePropertyPage> createState() => _CreatePropertyPageState();
@@ -37,6 +38,7 @@ class CreatePropertyPage extends StatefulWidget {
 class _CreatePropertyPageState extends State<CreatePropertyPage> {
   ThemeData get theme => Theme.of(context);
   late bool isEdit;
+  late PropertyData propertyData;
   late GlobalKey<BaseState> propertyAddressKey;
   late GlobalKey<BaseState> processingFeeKey;
   late GlobalKey<BaseState> photosKey;
@@ -52,6 +54,10 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
   @override
   void initState() {
     isEdit = widget.existingProperty != null;
+    if (isEdit) {
+      propertyData = widget.existingProperty!;
+      store.getPropertyDetails(id: propertyData.id.toString());
+    }
     propertyAddressKey = GlobalKey<BaseState>();
     processingFeeKey = GlobalKey<BaseState>();
     photosKey = GlobalKey<BaseState>();
@@ -59,7 +65,8 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
     leasingTermsKey = GlobalKey<BaseState>();
     amenitiesKey = GlobalKey<BaseState>();
     termsOfServiceKey = GlobalKey<BaseState>();
-    summaryController = TextEditingController();
+    summaryController =
+        TextEditingController(text: isEdit ? propertyData.info?.summary : null);
     addDisposer();
     super.initState();
   }
@@ -83,6 +90,13 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
       reaction((_) => store.errorMessage, (String? errorMessage) {
         if (errorMessage != null) {
           alertManager.showError(context, errorMessage);
+        }
+      }),
+      reaction((_) => store.propertyDetailsResponse, (data) {
+        if (data != null) {
+          setState(() {
+            propertyData = data;
+          });
         }
       }),
       reaction((_) => store.createPropertyResponse, (res) {
@@ -129,12 +143,14 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
                       divider(),
                       PhotosWidget(
                         key: photosKey,
+                        existingImages: isEdit ? propertyData.images : null,
                         isWorkspace: false,
                       ),
                       30.h.verticalSpace,
                       AddressWidget(
                         key: propertyAddressKey,
                         isWorkSpace: false,
+                        existingAddress: isEdit ? propertyData.info : null,
                       ),
                       30.h.verticalSpace,
                       ProcessingFeeWidget(
@@ -160,7 +176,13 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
                       AmenitiesWidget(
                         key: amenitiesKey,
                         isWorkspace: false,
-                        amenities: AmenitiesItem.preset(),
+                        amenities: AmenitiesItem.preset().map((amenity) {
+                          final isChecked = isEdit &&
+                              propertyData.amenities?.contains(amenity.name) ==
+                                  true;
+                          amenity.isChecked = isChecked;
+                          return amenity;
+                        }).toList(),
                       ),
                       30.h.verticalSpace,
                       LeaseTermsAndPolicyWidget(
@@ -175,7 +197,7 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
                       Observer(builder: (context) {
                         var isLoading = store.isLoading;
                         return PrimaryButton(
-                          text: "add new property",
+                          text: isEdit ? "update property" : "add new property",
                           onPressed: submit,
                           isLoading: isLoading,
                         );
