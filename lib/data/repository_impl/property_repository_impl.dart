@@ -91,4 +91,19 @@ class PropertyRepositoryImpl extends BaseRepositoryImpl
       leasingPolicyDoc,
     ));
   }
+
+  @override
+  Future<ApiResponse<CommonData>> deleteProperty(String id) {
+    return execute(apiClient.deleteProperty(id));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> getHostProperties(String id) {
+    return execute(apiClient.getHostProperties(id));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> updatePropertyStatus(String id, bool status) {
+    return execute(apiClient.updatePropertyStatus(id, status ? 'active' : 'inactive'));
+  }
 }

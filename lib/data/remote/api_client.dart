@@ -81,16 +81,33 @@ abstract class ApiClient {
     @Path("id") String id,
   );
 
+
+  @GET("property/all/host/{id}")
+  Future<CommonData> getHostProperties(
+      @Path("id") String id,
+      );
+
   @DELETE("/workspace/delete/{id}")
   Future<CommonData> deleteWorkspace(
     @Path("id") String id,
   );
+
+  @DELETE("/property/delete/{id}")
+  Future<CommonData> deleteProperty(
+      @Path("id") String id,
+      );
 
   @PUT("/workspace/update-status/{id}")
   Future<CommonData> updateWorkspaceStatus(
     @Path("id") String id,
     @Field("status") String status,
   );
+
+  @PUT("property/update-status/{id}")
+  Future<CommonData> updatePropertyStatus(
+      @Path("id") String id,
+      @Field("status") String status,
+      );
 
   @POST("workspace/create")
   @MultiPart()

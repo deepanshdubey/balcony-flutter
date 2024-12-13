@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/ui/home/ui/tabs/more/ui/support_tickets/store/support_ticket_store.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/widget/earning_widget.dart';
@@ -5,9 +8,8 @@ import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/widget/op
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/widget/promotion_widget.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/widget/update_payout_widget.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/store/dashboard_store.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/property_manager_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/workspace_manager_widget.dart';
 import 'package:intl/intl.dart';
 
 class PropertyDashboardPage extends StatefulWidget {
@@ -83,6 +85,8 @@ class _PropertyDashboardPageState extends State<PropertyDashboardPage> {
             ],
           );
         }),
+        16.h.verticalSpace,
+        PropertyManagerWidget(),
         16.h.verticalSpace,
         const PromotionWidget(),
         16.h.verticalSpace,

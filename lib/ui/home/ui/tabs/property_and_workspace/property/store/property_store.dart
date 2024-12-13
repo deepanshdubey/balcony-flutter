@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:homework/core/locator/locator.dart';
+import 'package:homework/core/session/app_session.dart';
 import 'package:homework/data/model/response/common_data.dart';
 import 'package:homework/data/model/response/property_data.dart';
 import 'package:homework/data/model/response/workspace_data.dart';
@@ -14,7 +14,6 @@ part 'property_store.g.dart';
 class PropertyStore = _PropertyStoreBase with _$PropertyStore;
 
 abstract class _PropertyStoreBase with Store {
-
   @observable
   int totalPages = 0;
 
@@ -39,6 +38,9 @@ abstract class _PropertyStoreBase with Store {
   @observable
   PropertyData? propertyDetailsResponse;
 
+  @observable
+  CommonData? propertyStatusResponse;
+
   @action
   Future getProperty(
       {String? status,
@@ -51,12 +53,13 @@ abstract class _PropertyStoreBase with Store {
       errorMessage = null;
       isLoading = true;
       final response = await propertyRepository.getProperties(
-          status: status,
-          sort: sort,
-          select: select,
-          page: page,
-          limit: limit,
-          includeHost: includeHost,);
+        status: status,
+        sort: sort,
+        select: select,
+        page: page,
+        limit: limit,
+        includeHost: includeHost,
+      );
       if (response.isSuccess) {
         propertyResponse = response.data?.data?.result ?? [];
         totalPages = response.data?.data?.totalPages ?? 0;
@@ -131,7 +134,6 @@ abstract class _PropertyStoreBase with Store {
     }
   }
 
-
   @action
   Future applyTenant(
     Map<String, dynamic> request,
@@ -153,7 +155,6 @@ abstract class _PropertyStoreBase with Store {
       isLoading = false;
     }
   }
-
 
   @action
   Future searchProperty({
@@ -197,5 +198,68 @@ abstract class _PropertyStoreBase with Store {
     } finally {
       isLoading = false;
     }
+  }
+
+  @action
+  Future getHostProperties() async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await propertyRepository
+          .getHostProperties(session.user.id.toString());
+      if (response.isSuccess) {
+        propertyResponse = response.data?.properties;
+        totalPages = propertyResponse?.length ?? 0;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future updatePropertyStatus(String id, bool status) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response =
+          await propertyRepository.updatePropertyStatus(id, status);
+      if (response.isSuccess) {
+        propertyStatusResponse = response.data;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future deleteWorkspace(String id) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await propertyRepository.deleteProperty(id);
+      if (response.isSuccess) {
+        getHostProperties();
+      } else {
+        isLoading = false;
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      isLoading = false;
+      errorMessage = e.toString();
+    } finally {}
   }
 }

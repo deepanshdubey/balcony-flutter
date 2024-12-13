@@ -1,5 +1,6 @@
 import 'package:homework/data/model/response/card_data.dart';
 import 'package:homework/data/model/response/conversation_data.dart';
+import 'package:homework/data/model/response/property_data.dart';
 import 'package:homework/data/model/response/support_ticket_data.dart';
 import 'package:homework/data/model/response/user_data.dart';
 import 'package:homework/data/model/response/workspace_data.dart';
@@ -46,6 +47,9 @@ class CommonData {
   @JsonKey(name: 'workspaces')
   List<WorkspaceData>? workspaces;
 
+  @JsonKey(name: 'properties')
+  List<PropertyData>? properties;
+
   @JsonKey(name: 'dates')
   List<String>? bookingsDates;
 
@@ -86,6 +90,7 @@ class CommonData {
     this.bookingsDates,
     this.booking,
     this.urls,
+    this.properties,
   });
 
   factory CommonData.fromJson(Map<String, dynamic> json) =>
