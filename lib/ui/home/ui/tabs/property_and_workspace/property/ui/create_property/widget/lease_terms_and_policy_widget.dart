@@ -98,16 +98,16 @@ class _LeaseTermsAndPolicyWidgetState
 
   @override
   File getApiData() {
-    return File(selectedFilePath!);
+    return File(selectedFilePath ?? "");
   }
 
   @override
   String? getError() {
-    return validate() ? null : 'please agree to terms of service';
+    return validate() ? null : 'please upload lease terms and privacy policy';
   }
 
   @override
   bool validate() {
-    return true;
+    return selectedFilePath != null;
   }
 }
