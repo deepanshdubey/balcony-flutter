@@ -81,11 +81,10 @@ abstract class ApiClient {
     @Path("id") String id,
   );
 
-
   @GET("property/all/host/{id}")
   Future<CommonData> getHostProperties(
-      @Path("id") String id,
-      );
+    @Path("id") String id,
+  );
 
   @DELETE("/workspace/delete/{id}")
   Future<CommonData> deleteWorkspace(
@@ -94,8 +93,8 @@ abstract class ApiClient {
 
   @DELETE("/property/delete/{id}")
   Future<CommonData> deleteProperty(
-      @Path("id") String id,
-      );
+    @Path("id") String id,
+  );
 
   @PUT("/workspace/update-status/{id}")
   Future<CommonData> updateWorkspaceStatus(
@@ -105,9 +104,9 @@ abstract class ApiClient {
 
   @PUT("property/update-status/{id}")
   Future<CommonData> updatePropertyStatus(
-      @Path("id") String id,
-      @Field("status") String status,
-      );
+    @Path("id") String id,
+    @Field("status") String status,
+  );
 
   @POST("workspace/create")
   @MultiPart()
@@ -163,8 +162,7 @@ abstract class ApiClient {
     @Part(name: "unitList") List<Map<String, dynamic>> unitList,
     @Part(name: "other") Map<String, dynamic> other,
     @Part(name: "amenities") String amenities,
-    @Part(name: "leasingPolicyDoc")
-    File image,
+    @Part(name: "leasingPolicyDoc") File image,
   );
 
   @GET("/workspace/search")
@@ -200,11 +198,23 @@ abstract class ApiClient {
   @POST("/tenant/apply")
   Future<CommonData> applyTenant(@Body() Map<String, dynamic> request);
 
+  @PUT("/tenant/update/{id}")
+  Future<CommonData> updateTenant(
+      @Path("id") String id, @Body() Map<String, dynamic> request);
+
+  @PUT("/tenant/approve/{id}")
+  Future<CommonData> approveTenant(
+      @Path("id") String id, @Body() Map<String, dynamic> request);
+
+  @GET("/tenant/reject/{id}")
+  Future<CommonData> rejectTenant(
+      @Path("id") String id);
+
   @GET("/tenant/all/host/{id}")
   Future<CommonData> getTenantsByHostId(
-      @Path("id") String hostId,
-      @Query("status") String? status, // Optional query parameter
-      );
+    @Path("id") String hostId,
+    @Query("status") String? status, // Optional query parameter
+  );
 
   /// -- promo --
 
@@ -352,5 +362,7 @@ abstract class ApiClient {
 
   @POST("upload/")
   @MultiPart()
-  Future<CommonData> uploadImages(@Part(name: "files") List<MultipartFile> images,);
+  Future<CommonData> uploadImages(
+    @Part(name: "files") List<MultipartFile> images,
+  );
 }

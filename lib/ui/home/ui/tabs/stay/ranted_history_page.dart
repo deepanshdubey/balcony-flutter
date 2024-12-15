@@ -1,13 +1,18 @@
 import 'dart:ui';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:homework/data/model/response/tenant_details.dart';
 import 'package:homework/generated/assets.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/tenant_application_page.dart';
+import 'package:homework/ui/home/ui/tabs/stay/finish_application.dart';
 import 'package:homework/ui/home/ui/tabs/stay/rant_payment_details_page.dart';
+import 'package:homework/ui/home/ui/tabs/stay/tenant_details_page.dart';
 import 'package:homework/ui/home/ui/tabs/works/store/booking_listing_store.dart';
 import 'package:homework/values/colors.dart';
 import 'package:homework/values/extensions/context_ext.dart';
+import 'package:homework/widget/app_outlined_button.dart';
 import 'package:homework/widget/button_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -89,16 +94,16 @@ class _RantedHistoryPageState extends State<RantedHistoryPage> {
                 return isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : tenants?.isNotEmpty == true
-                    ? RantedTable(
-                  isActive: true,
-                  tenants: tenants ?? [],
-                )
-                    : Center(
-                  child: Text(
-                    "no renting available",
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                );
+                        ? RantedTable(
+                            isActive: true,
+                            tenants: tenants ?? [],
+                          )
+                        : Center(
+                            child: Text(
+                              "no renting available",
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          );
               }),
               40.verticalSpace,
               const SectionTitle(
@@ -110,19 +115,19 @@ class _RantedHistoryPageState extends State<RantedHistoryPage> {
                 return isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : tenants?.isNotEmpty == true
-                    ? BookingTable(
-                  isActive: true,
-                  tenants: tenants ?? [],
-                )
-                    : Center(
-                  child: Text(
-                    "no history available",
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                );
+                        ? BookingTable(
+                            isActive: true,
+                            tenants: tenants ?? [],
+                          )
+                        : Center(
+                            child: Text(
+                              "no history available",
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          );
               }),
               20.verticalSpace,
-            /*  const Text("0 of 100 row(s) selected."),
+              /*  const Text("0 of 100 row(s) selected."),
               20.verticalSpace,
               PaginationControls(
                 rowsPerPageNotifier: rowsPerPageNotifier,
@@ -137,7 +142,6 @@ class _RantedHistoryPageState extends State<RantedHistoryPage> {
       ),
     );
   }
-
 }
 
 class SectionTitle extends StatelessWidget {
@@ -189,8 +193,10 @@ class BookingTable extends StatelessWidget {
         children: [
           TableHeader(isActive: isActive),
           const Divider(height: 1, color: Colors.grey),
-          ...tenants.map(
-              (tenant) => TableRowWidget( isActive: isActive, tenant: tenant,)),
+          ...tenants.map((tenant) => TableRowWidget(
+                isActive: isActive,
+                tenant: tenant,
+              )),
         ],
       ),
     );
@@ -214,8 +220,8 @@ class RantedTable extends StatelessWidget {
         children: [
           TableHeader(isActive: isActive),
           const Divider(height: 1, color: Colors.grey),
-          ...tenants.map((tenant) =>
-              TableRantingRow(tenant: tenant, isActive: isActive)),
+          ...tenants.map(
+              (tenant) => TableRantingRow(tenant: tenant, isActive: isActive)),
         ],
       ),
     );
@@ -289,17 +295,73 @@ class TableRowWidget extends StatelessWidget {
                 ),
               ),
               Expanded(
-                flex: 3,
-                child: isActive
-                    ? Text(
-                        tenant.acceptance ?? "",
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontSize: 13.spMin,
-                                  color: appColor.primaryColor,
-                                ),
+                flex: 4,
+                child: tenant.acceptance?.toLowerCase() == 'pending'
+                    ? RichText(
+                        text: TextSpan(
+                          text: 'Pending Approval: ',
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontSize: 13.spMin,
+                                    color: Colors.grey, // Base text color
+                                  ),
+                          children: [
+                            TextSpan(
+                              text: 'Review App',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontSize: 13.spMin,
+                                    color: appColor.primaryColor,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  showAppBottomSheet(
+                                    context,
+                                    TenantApplicationPage(
+                                      tenant: tenant,
+                                      isUpdate: true,
+                                    ),
+                                  );
+                                },
+                            ),
+                          ],
+                        ),
                       )
-                    : const Icon(Icons.more_horiz, color: Colors.grey),
+                    : tenant.acceptance?.toLowerCase() == 'approved'
+                        ? AppOutlinedButton(
+                            padding: EdgeInsets.symmetric(horizontal: 10).r,
+                            style: TextStyle(fontSize: 10.spMin),
+                            text: "approved finish application",
+                            onPressed: () {
+                              showAppBottomSheet(
+                                  context,
+                                  FinishApplicationPage(
+                                    tenants: tenant,
+                                  ));
+                            })
+                        : GestureDetector(
+                            onTap: () {
+                              showAppBottomSheet(
+                                context,
+                                TenantDetailsPage(
+                                  tenants: tenant,
+                                ),
+                              );
+                            },
+                            child: Text(
+                              tenant.acceptance ?? "",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontSize: 13.spMin,
+                                    color: appColor.primaryColor,
+                                  ),
+                            ),
+                          ),
               ),
             ],
           ),

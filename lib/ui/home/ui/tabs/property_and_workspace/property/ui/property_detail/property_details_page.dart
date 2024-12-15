@@ -9,7 +9,6 @@ import 'package:homework/ui/home/ui/tabs/chat/ui/chat_details_page.dart';
 import 'package:homework/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/tenant_application_page.dart';
-import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/workspace_details/custom_dropdown.dart';
 import 'package:homework/values/colors.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
@@ -24,6 +23,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:mobx/mobx.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 @RoutePage()
 class PropertyDetailPage extends StatefulWidget {
@@ -93,6 +93,18 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
     final Uint8List imageData = byteData.buffer.asUint8List();
     await _mapController.addImage('custom-marker', imageData);
   }
+
+
+  void _makingPhoneCall(String number) async {
+    final Uri url = Uri.parse("tel://1111111111");
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -272,12 +284,18 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                         width: 1.w,
                       ),
                       16.horizontalSpace,
-                      Text(
-                        "call",
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontSize: 14.spMin,
-                          decoration: TextDecoration.underline,
-                          color: appColor.primaryColor,
+                      GestureDetector(
+                        onTap:  () {
+                          var host = data?.host as Host;
+                          _makingPhoneCall(host.phone.toString());
+                        },
+                        child: Text(
+                          "call",
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontSize: 14.spMin,
+                            decoration: TextDecoration.underline,
+                            color: appColor.primaryColor,
+                          ),
                         ),
                       ),
                     ],

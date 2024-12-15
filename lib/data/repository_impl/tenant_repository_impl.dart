@@ -18,9 +18,27 @@ class TenantRepositoryImpl extends BaseRepositoryImpl
     return await execute(apiClient.applyTenant(request));
   }
 
-
-  Future<ApiResponse<CommonData>> getTenantsByHostId(String hostId, {List<String>? status}) async {
-      return await execute(apiClient.getTenantsByHostId(hostId, jsonEncode(status)));
+  @override
+  Future<ApiResponse<CommonData>> updateTenant(
+      String id, Map<String, dynamic> request) async {
+    return await execute(apiClient.updateTenant(id, request));
   }
 
+  @override
+  Future<ApiResponse<CommonData>> approveTenant(
+      String id, Map<String, dynamic> request) async {
+    return await execute(apiClient.approveTenant(id, request));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> rejectTenant(
+      String id) async {
+    return await execute(apiClient.rejectTenant(id));
+  }
+
+  Future<ApiResponse<CommonData>> getTenantsByHostId(String hostId,
+      {List<String>? status}) async {
+    return await execute(
+        apiClient.getTenantsByHostId(hostId, jsonEncode(status)));
+  }
 }

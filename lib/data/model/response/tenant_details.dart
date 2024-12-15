@@ -1,4 +1,6 @@
-import 'package:json_annotation/json_annotation.dart'; 
+import 'package:homework/data/model/response/property_data.dart';
+import 'package:homework/data/model/response/workspace_data.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 part 'tenant_details.g.dart'; 
 
@@ -95,7 +97,7 @@ class SelectedUnit {
   @JsonKey(name: 'status')
   final  String? status;
   @JsonKey(name: 'property')
-  final  Property? property;
+  final  PropertyData? property;
 
   SelectedUnit({this.Id, this.unit, this.price, this.beds, this.baths, this.floorPlanImg, this.isAvailable, this.status, this.property});
 
@@ -136,95 +138,6 @@ class Property {
    Map<String, dynamic> toJson() => _$PropertyToJson(this);
 }
 
-@JsonSerializable(ignoreUnannotated: true)
-class Host {
-  @JsonKey(name: '_id')
-  final  String? Id;
-  @JsonKey(name: 'firstName')
-  final  String? firstName;
-  @JsonKey(name: 'lastName')
-  final  String? lastName;
-  @JsonKey(name: 'email')
-  final  String? email;
-  @JsonKey(name: 'phone')
-  final  String? phone;
-  @JsonKey(name: 'image')
-  final  String? image;
-  @JsonKey(name: 'role')
-  final  String? role;
-  @JsonKey(name: 'status')
-  final  String? status;
-  @JsonKey(name: 'isWorkspaceAccountConnected')
-  final  bool? isWorkspaceAccountConnected;
-  @JsonKey(name: 'isPropertyAccountConnected')
-  final  bool? isPropertyAccountConnected;
-
-  Host({this.Id, this.firstName, this.lastName, this.email, this.phone, this.image, this.role, this.status, this.isWorkspaceAccountConnected, this.isPropertyAccountConnected});
-
-   factory Host.fromJson(Map<String, dynamic> json) => _$HostFromJson(json);
-
-   Map<String, dynamic> toJson() => _$HostToJson(this);
-}
-
-
-
-@JsonSerializable(ignoreUnannotated: true)
-class Geocode {
-  @JsonKey(name: 'lat')
-  final  double? lat;
-  @JsonKey(name: 'lon')
-  final  double? lon;
-
-  Geocode({this.lat, this.lon});
-
-   factory Geocode.fromJson(Map<String, dynamic> json) => _$GeocodeFromJson(json);
-
-   Map<String, dynamic> toJson() => _$GeocodeToJson(this);
-}
-
-@JsonSerializable(ignoreUnannotated: true)
-class UnitList {
-  @JsonKey(name: '_id')
-  final  String? Id;
-  @JsonKey(name: 'unit')
-  final  int? unit;
-  @JsonKey(name: 'price')
-  final  int? price;
-  @JsonKey(name: 'beds')
-  final  int? beds;
-  @JsonKey(name: 'baths')
-  final  int? baths;
-  @JsonKey(name: 'floorPlanImg')
-  final  String? floorPlanImg;
-  @JsonKey(name: 'isAvailable')
-  final  bool? isAvailable;
-  @JsonKey(name: 'status')
-  final  String? status;
-
-  UnitList({this.Id, this.unit, this.price, this.beds, this.baths, this.floorPlanImg, this.isAvailable, this.status});
-
-   factory UnitList.fromJson(Map<String, dynamic> json) => _$UnitListFromJson(json);
-
-   Map<String, dynamic> toJson() => _$UnitListToJson(this);
-}
-
-@JsonSerializable(ignoreUnannotated: true)
-class Other {
-  @JsonKey(name: 'chargeFeeFromRent')
-  final  bool? chargeFeeFromRent;
-  @JsonKey(name: 'chargeFeeAsAddition')
-  final  bool? chargeFeeAsAddition;
-  @JsonKey(name: 'leaseDuration')
-  final  int? leaseDuration;
-  @JsonKey(name: 'leasingPolicyDoc')
-  final  String? leasingPolicyDoc;
-
-  Other({this.chargeFeeFromRent, this.chargeFeeAsAddition, this.leaseDuration, this.leasingPolicyDoc});
-
-   factory Other.fromJson(Map<String, dynamic> json) => _$OtherFromJson(json);
-
-   Map<String, dynamic> toJson() => _$OtherToJson(this);
-}
 
 @JsonSerializable(ignoreUnannotated: true)
 class Agreement {

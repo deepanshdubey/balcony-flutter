@@ -9,6 +9,7 @@ import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/widget/pr
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/widget/update_payout_widget.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/store/dashboard_store.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/property_manager_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/prospact_tenant_view.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/tenant_manager_widget.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/workspace_manager_widget.dart';
 import 'package:intl/intl.dart';
@@ -86,6 +87,8 @@ class _PropertyDashboardPageState extends State<PropertyDashboardPage> {
             ],
           );
         }),
+        16.h.verticalSpace,
+        ProspactTenantWidget(),
         16.h.verticalSpace,
         PropertyManagerWidget(),
         16.h.verticalSpace,

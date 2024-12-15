@@ -1,9 +1,8 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:homework/core/alert/alert_manager.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/data/model/response/common_data.dart';
 import 'package:homework/data/model/response/property_data.dart';
-import 'package:homework/data/model/response/workspace_data.dart';
+import 'package:homework/data/model/response/tenant_details.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
 import 'package:homework/ui/home/ui/tabs/stay/rant_payment_details_page.dart';
 import 'package:homework/values/colors.dart';
@@ -15,8 +14,11 @@ import 'package:mobx/mobx.dart';
 
 class TenantApplicationPage extends StatefulWidget {
   final PropertyData? propertyData;
+  final Tenants? tenant;
+  final bool? isUpdate;
 
-  const TenantApplicationPage({super.key, this.propertyData});
+  const TenantApplicationPage(
+      {super.key, this.propertyData, this.tenant, this.isUpdate});
 
   @override
   State<TenantApplicationPage> createState() => _TenantApplicationPageState();
@@ -97,15 +99,36 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
     propertyStore.applyTenant(request);
   }
 
+  void updateApplication() {
+    if (!isAgreedNotifier.value) {
+      alertManager.showError(
+          context, "Please agree to all terms and conditions");
+      return;
+    }
+
+    var request = {
+      "firstName": firstNameController.text,
+      "lastName": lastNameController.text,
+      "email": emailController.text,
+      "phone": phoneNumberController.text,
+      "selectedUnitId": selectedUnit,
+      "moveInRequest": selectedMoveInDate,
+    };
+
+    propertyStore.updateTenant(widget.tenant?.Id ?? "", request);
+  }
+
   void addDisposer() {
     disposers ??= [
       reaction((_) => propertyStore.errorMessage, (String? errorMessage) {
         if (errorMessage != null) {
           alertManager.showError(context, errorMessage);
         }
-      }),   reaction((_) => propertyStore.applyTenantResponse, (CommonData? response) {
+      }),
+      reaction((_) => propertyStore.applyTenantResponse,
+          (CommonData? response) {
         if (response?.success ?? false) {
-         context.router.canPop();
+          alertManager.showSuccess(context, response?.message ?? "");
         }
       }),
     ];
@@ -120,7 +143,6 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final host = widget.propertyData?.host as Host;
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
@@ -131,7 +153,7 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 4.h),
               child: Text(
-                "hello ${host.firstName} we need a few information about you.",
+                "hello ${session.user.firstName} we need a few information about you.",
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontSize: 28.spMin,
                       fontWeight: FontWeight.w800,
@@ -227,25 +249,29 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
                     icon: 0.verticalSpace,
                     value: selectedTitle,
                     decoration: InputDecoration(
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 20).r,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 20).r,
                       labelText: "Title*",
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.r),
                       ),
                     ),
-                    items: widget.propertyData?.unitList
+                    items: (widget.isUpdate??false
+                        ? widget.tenant?.selectedUnit?.property?.unitList
+                        : widget.propertyData?.unitList)
                         ?.map((title) => DropdownMenuItem<String>(
-                              value: title.unit.toString(),
-                              child: Text(title.unit.toString()),
-                            ))
+                      value: title.unit.toString(),
+                      child: Text(title.unit.toString()),
+                    ))
                         .toList(),
                     onChanged: (value) {
-                      selectedUnit = widget.propertyData?.unitList
+                      selectedUnit = (widget.isUpdate??false
+                          ? widget.tenant?.selectedUnit?.property?.unitList
+                          : widget.propertyData?.unitList)
                           ?.firstWhere((unit) => unit.unit.toString() == value)
                           .Id;
                     },
                   ),
+
                   16.verticalSpace,
                   AppTextField(
                     controller: anticipateController,
@@ -352,8 +378,12 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
               child: PrimaryButton(
-                text: "submit application",
-                onPressed: submitApplication,
+                text: widget.isUpdate ?? false
+                    ? "update Application"
+                    : "submit application",
+                onPressed: widget.isUpdate ?? false
+                    ? updateApplication
+                    : submitApplication,
               ),
             ),
             Padding(

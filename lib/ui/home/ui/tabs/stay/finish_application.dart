@@ -1,6 +1,12 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:homework/core/alert/alert_manager.dart';
+import 'package:homework/core/session/app_session.dart';
+import 'package:homework/data/model/response/card_data.dart';
 import 'package:homework/data/model/response/tenant_details.dart';
+import 'package:homework/ui/home/ui/tabs/more/ui/wallet/store/wallet_store.dart';
 import 'package:homework/ui/home/ui/tabs/more/ui/wallet/ui/wallet_page.dart';
+import 'package:homework/ui/home/ui/tabs/more/ui/wallet/widget/card_listing_widget.dart';
 import 'package:homework/values/colors.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
 import 'package:homework/widget/app_back_button.dart';
@@ -9,25 +15,35 @@ import 'package:homework/widget/bokking_dialog.dart';
 import 'package:homework/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
-class RentPaymentDetailsPage extends StatefulWidget {
+class FinishApplicationPage extends StatefulWidget {
   final Tenants? tenants;
-  const RentPaymentDetailsPage({super.key, this.tenants});
+
+  const FinishApplicationPage({super.key, this.tenants});
 
   @override
-  State<RentPaymentDetailsPage> createState() => _RentPaymentDetailsPageState();
+  State<FinishApplicationPage> createState() => _FinishApplicationPageState();
 }
 
-class _RentPaymentDetailsPageState extends State<RentPaymentDetailsPage> {
+class _FinishApplicationPageState extends State<FinishApplicationPage> {
   final TextEditingController promoController = TextEditingController();
   final TextEditingController routingController = TextEditingController();
   final TextEditingController accountController = TextEditingController();
   int _currentIndex = 0;
+  CardData? selectedCard;
+  final ValueNotifier<String> selectedOption = ValueNotifier<String>("Card");
 
   void _onTabTapped(int index) {
     setState(() {
       _currentIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    walletStore.getCards();
+    super.initState();
   }
 
   @override
@@ -46,15 +62,6 @@ class _RentPaymentDetailsPageState extends State<RentPaymentDetailsPage> {
               20.verticalSpace,
               _buildPropertyDetailsSection(context),
               40.verticalSpace,
-              Text(
-                "- OR -",
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 23.spMin,
-                    ),
-              ),
-              40.verticalSpace,
-              _buildAutopaySection(context),
             ],
           ),
         ),
@@ -71,7 +78,8 @@ class _RentPaymentDetailsPageState extends State<RentPaymentDetailsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionHeader("Property Name"),
+          _buildSectionHeader(
+              widget.tenants?.selectedUnit?.property?.info?.name ?? ""),
           Padding(
             padding: const EdgeInsets.all(16.0).r,
             child: Column(
@@ -86,6 +94,11 @@ class _RentPaymentDetailsPageState extends State<RentPaymentDetailsPage> {
                 ),
                 20.verticalSpace,
                 _buildLeasingDetails(),
+                20.verticalSpace,
+                Divider(color: Colors.grey.shade400),
+                20.verticalSpace,
+                _buildKeyValueRow("Due on or before",
+                    formatDate(widget.tenants?.agreement?.leaseStartDate)),
                 20.verticalSpace,
                 Divider(color: Colors.grey.shade400),
                 20.verticalSpace,
@@ -108,7 +121,7 @@ class _RentPaymentDetailsPageState extends State<RentPaymentDetailsPage> {
                 _buildPromoCodeSection(),
                 _buildPaymentSection(),
                 PrimaryButton(
-                  text: "Pay Rant",
+                  text: "Submit payment",
                   onPressed: () {
                     showDialog(
                       context: context,
@@ -170,16 +183,50 @@ class _RentPaymentDetailsPageState extends State<RentPaymentDetailsPage> {
               },
             );
           },
-          child: Row(
-            children: [
-              const Text("No card yet!"),
-              const Spacer(),
-              Text('add',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontSize: 14.spMin,
-                      color: appColor.primaryColor,
-                      decoration: TextDecoration.underline)),
-            ],
+          child: Observer(
+            builder: (context) {
+              var isLoading = walletStore.isLoading;
+              var cards = walletStore.cardsResponse;
+              return isLoading
+                  ? Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(20.r),
+                        child: const CircularProgressIndicator(),
+                      ),
+                    )
+                  : cards?.isNotEmpty == true
+                      ? Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10.h),
+                          child: CardListingWidget(
+                            cards: cards!,
+                            onEditClicked: (p0) {
+                              selectedCard = p0;
+                              selectedOption.value = "Edit Card";
+                            },
+                            onDeleteClicked: (p0) {
+                              alertManager.showSystemAlertDialog(
+                                context: context,
+                                onConfirm: () {
+                                  walletStore.deleteCard(p0.id.toString());
+                                },
+                              );
+                            },
+                          ),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            'No card yet!',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14.spMin,
+                                ),
+                          ),
+                        );
+            },
           ),
         ),
         16.verticalSpace
@@ -213,25 +260,34 @@ class _RentPaymentDetailsPageState extends State<RentPaymentDetailsPage> {
   }
 
   Widget _buildLeasingDetails() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    final rentAmount = widget.tenants?.agreement?.rent ?? 0.0;
+    final securityFee = widget.tenants?.agreement?.securityDepositFee ?? 0.0;
+    final totalAmount = rentAmount + securityFee;
+    return // Calculate total dynamically
+
+        Column(
       children: [
-        _buildKeyValueRow("Rent Amount", "\$3000.00"),
+        _buildKeyValueRow("Rent Amount", "\$${rentAmount.toStringAsFixed(2)}"),
         20.verticalSpace,
-        _buildKeyValueRow("Service Fee", "\$5.00"),
+        _buildKeyValueRow(
+            "Security fee", "\$${securityFee.toStringAsFixed(2)}"),
         20.verticalSpace,
-        _buildKeyValueRow("Total", "\$3005.00", isBold: true),
+        _buildKeyValueRow("Total", "\$${totalAmount.toStringAsFixed(2)}",
+            isBold: true),
       ],
     );
+    ;
   }
 
   Widget _buildLeaseDates() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildKeyValueRow("Lease Start Date", "01/01/2025"),
+        _buildKeyValueRow("Lease Start Date",
+            formatDate(widget.tenants?.agreement?.leaseStartDate)),
         20.verticalSpace,
-        _buildKeyValueRow("Lease End Date", "01/01/2026"),
+        _buildKeyValueRow("Lease End Date",
+            formatDate(widget.tenants?.agreement?.leaseEndDate)),
       ],
     );
   }
@@ -240,11 +296,11 @@ class _RentPaymentDetailsPageState extends State<RentPaymentDetailsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildKeyValueRow("Name", "Liam Johnson"),
+        _buildKeyValueRow("Name", session.user.firstName ?? ""),
         20.verticalSpace,
-        _buildKeyValueRow("Email", "liam@acme.com"),
+        _buildKeyValueRow("Email", session.user.email ?? ""),
         20.verticalSpace,
-        _buildKeyValueRow("Phone", "+1 234 567 890"),
+        _buildKeyValueRow("Phone", session.user.phone ?? ""),
       ],
     );
   }
@@ -264,134 +320,14 @@ class _RentPaymentDetailsPageState extends State<RentPaymentDetailsPage> {
     );
   }
 
-  Widget _buildAutopaySection(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8).r,
-        border: Border.all(color: Colors.grey.shade400),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0).r,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Set-up Autopay",
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 23.spMin,
-                  ),
-            ),
-            20.verticalSpace,
-            Text(
-              "You can automatically accept bookings as they come in or manually accept orders.",
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 12.spMin,
-                  ),
-            ),
-            20.verticalSpace,
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(12.r)),
-                  border: Border.all(color: Colors.black.withOpacity(.25))),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildTab("manual pay", 0),
-                  _buildTab("autopay", 1),
-                ],
-              ),
-            ),
-            if (_currentIndex == 1)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  20.verticalSpace,
-                  Text(
-                    "bank account info",
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 20.spMin,
-                        ),
-                  ),
-                  20.verticalSpace,
-                  AppTextField(
-                    controller: routingController,
-                    label: "routing number",
-                    hintText: "0023",
-                  ),
-                  20.verticalSpace,
-                  AppTextField(
-                    controller: accountController,
-                    label: "account number",
-                    hintText: "0023",
-                  ),
-                  20.verticalSpace,
-                  Text(
-                    "- OR -",
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 23.spMin,
-                        ),
-                  ),
-                  20.verticalSpace,
-                  Text(
-                    "wallet (card)",
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 20.spMin,
-                        ),
-                  ),
-                  20.verticalSpace,
-                  Text(
-                    "add from wallet",
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w500,
-                          decoration: TextDecoration.underline,
-                          fontSize: 12.spMin,
-                        ),
-                  ),
-                  20.verticalSpace,
-                  Divider(color: Colors.grey.shade400),
-                  20.verticalSpace,
-                  AgreementCheckboxes(
-                    onAllChecked: () {},
-                  ),
-                  20.verticalSpace,
-                  Center(
-                    child: PrimaryButton(
-                      text: "complete autopay setup",
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return CompleteDialog(
-                              title: "Your all set!",
-                              message:
-                                  "You should receive an email with the booking details. You can also visit the booking detail page as well.",
-                              primaryButtonText: "visit rental manager page",
-                              secondaryButtonText: "Done",
-                              onPrimaryButtonPressed: () {
-                                context.router.canPop();
-                              },
-                              onSecondaryButtonPressed: () {
-                                context.router.canPop();
-                              },
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  )
-                ],
-              )
-          ],
-        ),
-      ),
-    );
+  String formatDate(String? date) {
+    if (date == null || date.isEmpty) return "";
+    try {
+      return DateFormat('MM/dd/yyyy').format(DateTime.parse(date));
+    } catch (e) {
+      print("Error parsing date: $e");
+      return "";
+    }
   }
 
   Widget _buildTab(String text, int index) {

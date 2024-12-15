@@ -5,37 +5,40 @@ import 'package:homework/core/alert/alert_manager.dart';
 import 'package:homework/data/model/response/tenant_details.dart';
 import 'package:homework/generated/assets.dart';
 import 'package:homework/router/app_router.dart';
+import 'package:homework/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:homework/ui/home/ui/tabs/more/ui/support_tickets/widget/section_title.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/property_row_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/review_tenant_application.dart';
 import 'package:homework/widget/app_image.dart';
+import 'package:homework/widget/app_outlined_button.dart';
 
-class TenantManagerWidget extends StatefulWidget {
-  const TenantManagerWidget({Key? key}) : super(key: key);
+class ProspactTenantWidget extends StatefulWidget {
+  const ProspactTenantWidget({Key? key}) : super(key: key);
 
   @override
-  State<TenantManagerWidget> createState() => _TenantManagerWidgetState();
+  State<ProspactTenantWidget> createState() => _ProspactTenantWidgetState();
 }
 
-class _TenantManagerWidgetState extends State<TenantManagerWidget> {
+class _ProspactTenantWidgetState extends State<ProspactTenantWidget> {
   final store = PropertyStore();
 
   @override
   void initState() {
+    store.getProspectTenantsByHostId();
     super.initState();
-    store.getTenantsByHostId();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Observer(builder: (context) {
-      var tenants = store.tenantsByHostResponse;
+      var tenants = store.prospectTenantsByHostResponse;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SectionTitle(title: "Tenant manager", subtitle: ""),
+          const SectionTitle(title: "prospect tenant", subtitle: ""),
           8.h.verticalSpace,
           Container(
             decoration: BoxDecoration(
@@ -55,41 +58,15 @@ class _TenantManagerWidgetState extends State<TenantManagerWidget> {
                   padding: EdgeInsets.symmetric(vertical: 8.r, horizontal: 0.r),
                   child: Row(
                     children: [
-                      Expanded(
-                        flex: 1,
-                        child: Checkbox(
-                          value: false,
-                          onChanged: (value) {},
-                        ),
+                      Checkbox(
+                        value: false,
+                        onChanged: (value) {},
                       ),
                       Expanded(
-                        flex: 3,
                         child: Text(
-                          'property',
+                          'tenant application',
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: Colors.black54,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Center(
-                          child: Text(
-                            'status',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Center(
-                          child: Text(
-                            'update space',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: Colors.black54,
-                            ),
                           ),
                         ),
                       ),
@@ -104,16 +81,13 @@ class _TenantManagerWidgetState extends State<TenantManagerWidget> {
                 )
                     : tenants?.isNotEmpty == true
                     ? ListView.separated(
-                  itemCount: tenants!.length,
+                  itemCount: tenants?.length ?? 0,
                   shrinkWrap: true,
                   padding: EdgeInsets.zero,
                   itemBuilder: (context, index) {
-                    final tenant = tenants[index];
+                    final tenant = tenants?[index];
                     return TenantRowWidget(
-                      onDelete: () {
-                        // workspaceStore
-                        //     .deleteWorkspace(property.id.toString());
-                      }, tenants: tenant,
+                     tenants: tenant,
                     );
                   },
                   separatorBuilder: (context, index) => Divider(
@@ -124,7 +98,7 @@ class _TenantManagerWidgetState extends State<TenantManagerWidget> {
                     : Center(
                   child: Padding(
                     padding: EdgeInsets.all(20.r),
-                    child: const Text('no properties available.'),
+                    child: const Text('no Tenant available.'),
                   ),
                 ),
               ],
@@ -140,12 +114,11 @@ class _TenantManagerWidgetState extends State<TenantManagerWidget> {
 
 
 class TenantRowWidget extends StatefulWidget {
-  final Tenants tenants;
-  final VoidCallback onDelete;
+  final Tenants? tenants;
 
   const TenantRowWidget({
     Key? key,
-    required this.onDelete, required this.tenants,
+    required this.tenants,
   }) : super(key: key);
 
   @override
@@ -153,7 +126,6 @@ class TenantRowWidget extends StatefulWidget {
 }
 
 class _TenantRowWidgetState extends State<TenantRowWidget> {
-
 
 
   @override
@@ -171,61 +143,30 @@ class _TenantRowWidgetState extends State<TenantRowWidget> {
         Expanded(
           flex: 3,
           child: Text(
-            widget.tenants?.selectedUnit?.property?.info?.name ?? "no name",
+            widget.tenants?.info?.firstName ?? "no name",
             style: theme.textTheme.bodyLarge,
           ),
         ),
-/*        Expanded(
+        Expanded(
           flex: 2,
-          child: Observer(builder: (context) {
-            var isLoading = propertyStore.isLoading;
-            return Center(
-              child: SizedBox(
-                width: 24.r,
-                height: 24.r,
-                child: isLoading
-                    ? const CircularProgressIndicator()
-                    : Switch(
-                  value: isActive,
-                  onChanged: (value) {
-                    propertyStore.updatePropertyStatus(
-                        widget.property.id.toString(), value);
-                  },
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-              ),
-            );
-          }),
-        ),*/
-       /* Expanded(
-          flex: 3,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              GestureDetector(
-                  onTap: () {
-                    appRouter.push(CreatePropertyRoute(existingProperty: widget.property));
-                  },
-                  child: Text(
-                    "update",
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        decoration: TextDecoration.underline,
-                        fontSize: 12.spMin),
-                  )),
-              GestureDetector(
-                  onTap: () {
-                    alertManager.showSystemAlertDialog(
-                        context: context, onConfirm: widget.onDelete);
-                  },
-                  child: Text(
-                    "delete",
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        decoration: TextDecoration.underline,
-                        fontSize: 12.spMin),
-                  )),
-            ],
+          child: AppOutlinedButton(
+            padding: EdgeInsets.zero,
+            style: TextStyle(fontSize: 13.spMin),
+            text: "view",
+            onPressed: ()  {
+               showAppBottomSheet(
+                context,
+                ReviewTenantApplication(tenant: widget.tenants),
+              );
+
+              setState(() {
+
+              });
+            },
           ),
-        ),*/
+        ),
+
+        20.horizontalSpace
       ],
     );
   }

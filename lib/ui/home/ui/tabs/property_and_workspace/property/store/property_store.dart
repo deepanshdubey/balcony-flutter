@@ -31,7 +31,16 @@ abstract class _PropertyStoreBase with Store {
   CommonData? applyTenantResponse;
 
   @observable
+  CommonData? approveTenantResponse;
+
+  @observable
+  CommonData? rejectTenantResponse;
+
+  @observable
   List<Tenants>? tenantsByHostResponse;
+
+  @observable
+  List<Tenants>? prospectTenantsByHostResponse;
 
   @observable
   bool isLoading = false;
@@ -160,17 +169,106 @@ abstract class _PropertyStoreBase with Store {
     }
   }
 
-
   @action
-  Future getTenantsByHostId(
+  Future updateTenant(
+    String id,
+    Map<String, dynamic> request,
   ) async {
     try {
       errorMessage = null;
       isLoading = true;
-      var status = ["pending requests","current tenants","awaiting payments"];
-      final response = await tenantRepository.getTenantsByHostId(session.user.id.toString() , status: status);
+      final response = await tenantRepository.updateTenant(id, request);
+      if (response.isSuccess) {
+        applyTenantResponse = response.data;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future approveTenant(
+    String id,
+    Map<String, dynamic> request,
+  ) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await tenantRepository.approveTenant(id, request);
+      if (response.isSuccess) {
+        approveTenantResponse = response.data;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future rejectTenant(
+    String id,
+  ) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await tenantRepository.rejectTenant(id);
+      if (response.isSuccess) {
+        rejectTenantResponse = response.data;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future getTenantsByHostId() async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      var status = ["pending requests", "current tenants", "awaiting payments"];
+      final response = await tenantRepository
+          .getTenantsByHostId(session.user.id.toString(), status: status);
       if (response.isSuccess) {
         tenantsByHostResponse = response.data?.tenants;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future getProspectTenantsByHostId() async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      var status = ["pending requests"];
+      final response = await tenantRepository
+          .getTenantsByHostId(session.user.id.toString(), status: status);
+      if (response.isSuccess) {
+        prospectTenantsByHostResponse = response.data?.tenants;
       } else {
         errorMessage = response.error!.message;
       }
