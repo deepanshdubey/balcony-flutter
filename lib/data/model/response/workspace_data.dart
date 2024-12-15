@@ -73,7 +73,7 @@ class WorkspaceData {
 class Info {
   final String? name;
   final String? address;
-  final String? floor;
+  late String? floor;
   final String? city;
   final String? state;
   final String? country;
@@ -82,7 +82,7 @@ class Info {
   Info({
     this.name,
     this.address,
-    this.floor,
+    this.floor = "",
     this.city,
     this.state,
     this.country,

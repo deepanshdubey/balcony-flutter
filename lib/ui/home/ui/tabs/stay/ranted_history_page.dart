@@ -5,11 +5,9 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:homework/data/model/response/tenant_details.dart';
 import 'package:homework/generated/assets.dart';
 import 'package:homework/ui/home/ui/tabs/stay/rant_payment_details_page.dart';
-import 'package:homework/ui/home/ui/tabs/works/booking_details_page.dart';
 import 'package:homework/ui/home/ui/tabs/works/store/booking_listing_store.dart';
 import 'package:homework/values/colors.dart';
 import 'package:homework/values/extensions/context_ext.dart';
-import 'package:homework/widget/app_text_field.dart';
 import 'package:homework/widget/button_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -43,25 +41,25 @@ class _RantedHistoryPageState extends State<RantedHistoryPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                      flex: 5,
-                      child: AppTextField(
-                          controller: _filterController,
-                          hintText: "Filter search...")),
-                  20.horizontalSpace,
-                  Expanded(
-                      flex: 2,
-                      child: BorderButton(
-                        label: 'filter',
-                        onTap: () {},
-                      ))
-                ],
-              ),
-              20.verticalSpace,
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   crossAxisAlignment: CrossAxisAlignment.center,
+              //   children: [
+              //     Expanded(
+              //         flex: 5,
+              //         child: AppTextField(
+              //             controller: _filterController,
+              //             hintText: "Filter search...")),
+              //     20.horizontalSpace,
+              //     Expanded(
+              //         flex: 2,
+              //         child: BorderButton(
+              //           label: 'filter',
+              //           onTap: () {},
+              //         ))
+              //   ],
+              // ),
+              // 20.verticalSpace,
               const SectionTitle(
                   title: "awaiting review ", subtitle: "(active)"),
               20.verticalSpace,

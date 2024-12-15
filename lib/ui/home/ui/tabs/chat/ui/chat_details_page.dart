@@ -63,9 +63,6 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
 
       }),
       reaction((_) => chatStore.createMsgResponse, (response) {
-
-
-
         final socketMessage = {
           "senderId": session.user.id ?? "",
           "receiverId": widget.receiverId ?? "",
@@ -83,6 +80,8 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
 
 
         socketManager.sendMessage(socketMessage);
+        print("send chat--> $socketMessage");
+
 
         final newMessage = LastMessage(
           senderId: session.user.id ?? "",
@@ -121,6 +120,8 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     socketManager.addUser(session.user.id ?? "");
 
     socketManager.onGetMessage((data) {
+      print("Get chat--> $data");
+
       Media? media; // Initialize as null (optional)
       if (data['media'] != null && data['media'].isNotEmpty) {
         final mediaData = data['media'][0];

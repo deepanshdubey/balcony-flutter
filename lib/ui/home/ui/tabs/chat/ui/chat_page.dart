@@ -27,20 +27,26 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Observer(builder: (context) {
       var chatData = chatStore.allConversationResponse?.conversations;
-      return ListView(
-        padding: EdgeInsets.symmetric(horizontal: 24.w),
-        children: List.generate(
-          chatStore.allConversationResponse?.conversations?.length ?? 0,
-          (index) => ChatWidget(
-            image: chatData?[index].member?.image ?? "",
-            name: chatData?[index].member?.firstName ?? "",
-            lastMessage: chatData?[index].lastMessage?.text ?? "",
-            time: _formatTime(chatData?[index].lastMessage?.updatedAt),
-            conversationId: chatData?[index].Id ?? "",
-            receiverId: chatData?[index].member?.Id ?? "",
-          ),
-        ),
-      );
+      return chatStore.isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).primaryColor, // Adjust loader color
+              ),
+            )
+          : ListView(
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              children: List.generate(
+                chatStore.allConversationResponse?.conversations?.length ?? 0,
+                (index) => ChatWidget(
+                  image: chatData?[index].member?.image ?? "",
+                  name: chatData?[index].member?.firstName ?? "",
+                  lastMessage: chatData?[index].lastMessage?.text ?? "",
+                  time: _formatTime(chatData?[index].lastMessage?.updatedAt),
+                  conversationId: chatData?[index].Id ?? "",
+                  receiverId: chatData?[index].member?.Id ?? "",
+                ),
+              ),
+            );
     });
   }
 }

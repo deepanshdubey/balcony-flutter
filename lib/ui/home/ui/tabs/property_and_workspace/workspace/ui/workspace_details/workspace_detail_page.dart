@@ -44,7 +44,6 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
   int? selectedDays;
   String? startDateIso;
   String? endDateIso;
-
   final workspaceStore = WorkspaceStore();
   final chatStore = ChatStore();
 
@@ -52,7 +51,6 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
   void initState() {
     addDisposer();
     workspaceStore.getWorkspaceDetail(id: widget.workspaceId);
-
     super.initState();
   }
 

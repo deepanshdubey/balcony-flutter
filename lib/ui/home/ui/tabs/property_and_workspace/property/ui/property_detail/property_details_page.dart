@@ -1,12 +1,16 @@
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:homework/core/alert/alert_manager.dart';
+import 'package:homework/core/session/app_session.dart';
+import 'package:homework/data/model/response/workspace_data.dart';
 import 'package:homework/generated/assets.dart';
+import 'package:homework/ui/home/ui/tabs/chat/store/chat_store.dart';
+import 'package:homework/ui/home/ui/tabs/chat/ui/chat_details_page.dart';
 import 'package:homework/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/tenant_application_page.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/workspace_details/custom_dropdown.dart';
-import 'package:homework/ui/home/ui/tabs/works/booking_history_page.dart';
 import 'package:homework/values/colors.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
 import 'package:homework/widget/app_back_button.dart';
@@ -36,6 +40,8 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
   List<ReactionDisposer>? disposers;
   late TextEditingController leaseController = TextEditingController();
   final propertyStore = PropertyStore();
+  final chatStore = ChatStore();
+
 
   @override
   void initState() {
@@ -56,6 +62,17 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
         if (errorMessage != null) {
           alertManager.showError(context, errorMessage);
         }
+      }),
+      reaction((_) => chatStore.startConversationResponse, (response) {
+        var host = propertyStore.propertyDetailsResponse?.host as Host;
+        session.user.id == host.Id ? alertManager.showError(context, "User and host same") :  showAppBottomSheet(
+            context,
+            ChatDetailsPage(
+              image: host.image,
+              name: host.firstName,
+              conversationId: response?.conversation?.Id??"",
+              receiverId: session.user.id,
+            ));
       }),
     ];
   }
@@ -232,12 +249,21 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                   16.verticalSpace,
                   Row(
                     children: [
-                      Text(
-                        "chat",
-                        style: theme.textTheme.titleMedium?.copyWith(
-                            fontSize: 14.spMin,
-                            color: appColor.primaryColor,
-                            decoration: TextDecoration.underline),
+                      GestureDetector(
+                         onTap: () {
+                           var host = data?.host as Host;
+                           var request = {
+                             "userId": host.Id
+                           };
+                           chatStore.startConversations(request);
+                         },
+                        child: Text(
+                          "chat",
+                          style: theme.textTheme.titleMedium?.copyWith(
+                              fontSize: 14.spMin,
+                              color: appColor.primaryColor,
+                              decoration: TextDecoration.underline),
+                        ),
                       ),
                       16.horizontalSpace,
                       Container(

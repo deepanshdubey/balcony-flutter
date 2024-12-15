@@ -247,6 +247,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
     if (validate()) {
       Info info = workspaceInfoKey.currentState!.getApiData();
       info.summary = summaryController.text.trim();
+      info.floor = "";
       if (isEdit) {
         store.updateWorkspace(
           workspaceData.id.toString(),
