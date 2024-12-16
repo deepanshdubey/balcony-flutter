@@ -85,7 +85,7 @@ class PropertyRepositoryImpl extends BaseRepositoryImpl
       list2,
       info,
       currency,
-      unitList,
+      jsonEncode(unitList),
       other,
       amenities.join(','),
       leasingPolicyDoc,
@@ -104,6 +104,7 @@ class PropertyRepositoryImpl extends BaseRepositoryImpl
 
   @override
   Future<ApiResponse<CommonData>> updatePropertyStatus(String id, bool status) {
-    return execute(apiClient.updatePropertyStatus(id, status ? 'active' : 'inactive'));
+    return execute(
+        apiClient.updatePropertyStatus(id, status ? 'active' : 'inactive'));
   }
 }

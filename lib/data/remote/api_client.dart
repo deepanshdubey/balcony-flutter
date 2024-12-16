@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:homework/data/model/response/common_data.dart';
 import 'package:homework/data/model/response/coversation_response.dart';
 import 'package:homework/data/model/response/create_msg_response.dart';
@@ -10,7 +11,6 @@ import 'package:homework/data/model/response/promo_model.dart';
 import 'package:homework/data/model/response/property_data.dart';
 import 'package:homework/data/model/response/subscription_list_model.dart';
 import 'package:homework/data/model/response/user_data.dart';
-import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -159,7 +159,7 @@ abstract class ApiClient {
     List<MultipartFile>? floorPlanImages,
     @Part(name: "info") Info info,
     @Part(name: "currency") String currency,
-    @Part(name: "unitList") List<Map<String, dynamic>> unitList,
+    @Part(name: "unitList") String unitList,
     @Part(name: "other") Map<String, dynamic> other,
     @Part(name: "amenities") String amenities,
     @Part(name: "leasingPolicyDoc") File image,
@@ -207,8 +207,7 @@ abstract class ApiClient {
       @Path("id") String id, @Body() Map<String, dynamic> request);
 
   @GET("/tenant/reject/{id}")
-  Future<CommonData> rejectTenant(
-      @Path("id") String id);
+  Future<CommonData> rejectTenant(@Path("id") String id);
 
   @GET("/tenant/all/host/{id}")
   Future<CommonData> getTenantsByHostId(
