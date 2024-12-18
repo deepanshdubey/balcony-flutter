@@ -9,7 +9,7 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    namespace = "ws.homework.android"
+    namespace = "com.homework.app.homework"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

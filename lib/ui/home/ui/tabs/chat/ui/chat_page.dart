@@ -55,20 +55,24 @@ void showChatBottomSheet(BuildContext context) {
   showAppBottomSheet(context, const ChatPage());
 }
 
-void showAppBottomSheet(BuildContext context, Widget any) {
+void showAppBottomSheet(BuildContext context, Widget any,
+    {VoidCallback? onClose}) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (context) => Container(
-      height: context.height * .8,
+      height: MediaQuery.of(context).size.height * 0.8,
       padding: const EdgeInsets.only(top: 30),
       decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(20.r))),
+        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+      ),
       child: any,
     ),
-  );
+  ).then((_) {
+    onClose!();
+  });
 }
 
 String _formatTime(String? timestamp) {

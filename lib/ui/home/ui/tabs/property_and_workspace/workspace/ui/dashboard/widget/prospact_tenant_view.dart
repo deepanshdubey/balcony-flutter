@@ -13,6 +13,7 @@ import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/das
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/review_tenant_application.dart';
 import 'package:homework/widget/app_image.dart';
 import 'package:homework/widget/app_outlined_button.dart';
+import 'package:mobx/mobx.dart';
 
 class ProspactTenantWidget extends StatefulWidget {
   const ProspactTenantWidget({Key? key}) : super(key: key);
@@ -23,11 +24,36 @@ class ProspactTenantWidget extends StatefulWidget {
 
 class _ProspactTenantWidgetState extends State<ProspactTenantWidget> {
   final store = PropertyStore();
+  List<ReactionDisposer>? disposers;
+
 
   @override
   void initState() {
     store.getProspectTenantsByHostId();
+    addDisposer();
     super.initState();
+  }
+
+  void addDisposer() {
+    disposers ??= [
+      reaction((_) => store.prospectTenantsByHostResponse, (response) {
+setState(() {
+});
+      }),
+    ];
+  }
+
+  void removeDisposer() {
+    if (disposers == null) return;
+    for (final element in disposers!) {
+      element.reaction.dispose();
+    }
+  }
+
+  @override
+  void dispose() {
+    removeDisposer();
+    super.dispose();
   }
 
   @override
@@ -126,6 +152,7 @@ class TenantRowWidget extends StatefulWidget {
 }
 
 class _TenantRowWidgetState extends State<TenantRowWidget> {
+  final store = PropertyStore();
 
 
   @override
@@ -158,10 +185,6 @@ class _TenantRowWidgetState extends State<TenantRowWidget> {
                 context,
                 ReviewTenantApplication(tenant: widget.tenants),
               );
-
-              setState(() {
-
-              });
             },
           ),
         ),

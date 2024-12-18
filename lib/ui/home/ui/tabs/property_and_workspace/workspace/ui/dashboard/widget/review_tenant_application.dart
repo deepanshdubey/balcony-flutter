@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:homework/core/alert/alert_manager.dart';
 import 'package:homework/core/locator/locator.dart';
-import 'package:homework/core/session/app_session.dart';
 import 'package:homework/data/model/response/common_data.dart';
 import 'package:homework/data/model/response/property_data.dart';
 import 'package:homework/data/model/response/tenant_details.dart';
@@ -22,9 +21,10 @@ class ReviewTenantApplication extends StatefulWidget {
   final PropertyData? propertyData;
   final Tenants? tenant;
   final bool? isUpdate;
+  final bool? onlyShowData;
 
   const ReviewTenantApplication(
-      {super.key, this.propertyData, this.tenant, this.isUpdate});
+      {super.key, this.propertyData, this.tenant, this.isUpdate, this.onlyShowData});
 
   @override
   State<ReviewTenantApplication> createState() =>
@@ -34,7 +34,7 @@ class ReviewTenantApplication extends StatefulWidget {
 class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
   List<ReactionDisposer>? disposers;
   late final GlobalKey<FormState> _formKey = GlobalKey();
-  final ValueNotifier<bool> isAgreedNotifier = ValueNotifier(false);
+  final ValueNotifier<bool> isAgreedNotifier = ValueNotifier(true);
   late TextEditingController firstNameController;
   late TextEditingController lastNameController;
   late TextEditingController phoneNumberController;
@@ -127,13 +127,13 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
       reaction((_) => propertyStore.approveTenantResponse,
           (CommonData? response) {
         if (response?.success ?? false) {
-          locator<AppRouter>().canPop();
+          context.router.maybePop();
         }
       }),
       reaction((_) => propertyStore.rejectTenantResponse,
           (CommonData? response) {
         if (response?.success ?? false) {
-       locator<AppRouter>().canPop();
+     context.router.maybePop();
         }
       }),
     ];
@@ -158,7 +158,7 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 4.h),
               child: Text(
-                "hello ${session.user.firstName} we need a few information about you.",
+                "Info*",
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontSize: 28.spMin,
                       fontWeight: FontWeight.w800,
@@ -180,15 +180,6 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   16.verticalSpace,
-                  Text(
-                    "info*",
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontSize: 28.spMin,
-                          fontWeight: FontWeight.w800,
-                          color: appColor.primaryColor,
-                        ),
-                  ),
-                  16.h.verticalSpace,
                   AppTextField(
                     readOnly: true,
                     controller: firstNameController,
@@ -275,7 +266,7 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
               ),
             ),
             24.verticalSpace,
-            Container(
+            if(widget.onlyShowData ??true)   Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
               margin: EdgeInsets.symmetric(horizontal: 20.w),
@@ -311,8 +302,8 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
                 ],
               ),
             ),
-            24.verticalSpace,
-            Container(
+            if(widget.onlyShowData ??true)     24.verticalSpace,
+            if(widget.onlyShowData ??true)      Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               margin: EdgeInsets.symmetric(horizontal: 20.w),
@@ -434,20 +425,20 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
                 ],
               ),
             ),
-            25.verticalSpace,
-            LeaseDurationWidget(onDateChanged: (DateTime? startDate, DateTime? endDate) {
+            if(widget.onlyShowData ??true)      25.verticalSpace,
+       if(widget.onlyShowData ??true)    LeaseDurationWidget(onDateChanged: (DateTime? startDate, DateTime? endDate) {
               leaseStartDate = startDate?.toIso8601String() ;
               leaseEndDate = endDate?.toIso8601String() ;
             },),
-            25.verticalSpace,
-            Padding(
+            if(widget.onlyShowData ??true)   25.verticalSpace,
+            if(widget.onlyShowData ??true)   Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
               child: PrimaryButton(
                 text: "proceed to next phase",
                 onPressed: approveTenant,
               ),
             ),
-            Padding(
+            if(widget.onlyShowData ??true)   Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
               child: Text(
                 "**Note: If application is approved by you, then the tenant would see an approved for signing lease user interface where they can now make the deposit.ß",
@@ -458,15 +449,16 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
                     ),
               ),
             ),
-            16.verticalSpace,
-            Padding(
+            if(widget.onlyShowData ??true)  16.verticalSpace,
+            if(widget.onlyShowData ??true)   Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
               child: AppOutlinedButton(
                   text: "disapprove application", onPressed: () {
                     propertyStore.rejectTenant(widget.tenant?.Id ?? "");
+                context.router.maybePop();
               }),
             ),
-            Padding(
+            if(widget.onlyShowData ??false)   Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
               child: Text(
                 "**Note: Disapproving an application would disqualify this applicant from renting this unit. The prospect would have to reapply if they are ever interested in inquiring about the unit.",
@@ -477,7 +469,7 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
                     ),
               ),
             ),
-            30.verticalSpace
+            if(widget.onlyShowData ??false)   30.verticalSpace
           ],
         ),
       ),

@@ -225,6 +225,7 @@ abstract class _PropertyStoreBase with Store {
       final response = await tenantRepository.rejectTenant(id);
       if (response.isSuccess) {
         rejectTenantResponse = response.data;
+        getProspectTenantsByHostId();
       } else {
         errorMessage = response.error!.message;
       }
@@ -267,8 +268,12 @@ abstract class _PropertyStoreBase with Store {
       var status = ["pending requests"];
       final response = await tenantRepository
           .getTenantsByHostId(session.user.id.toString(), status: status);
+
       if (response.isSuccess) {
-        prospectTenantsByHostResponse = response.data?.tenants;
+        prospectTenantsByHostResponse?.clear();
+        if (response.data?.tenants != null) {
+          prospectTenantsByHostResponse = response.data?.tenants;
+        }
       } else {
         errorMessage = response.error!.message;
       }

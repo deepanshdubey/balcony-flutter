@@ -9,7 +9,10 @@ import 'package:homework/ui/home/ui/tabs/more/ui/support_tickets/widget/section_
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/property_row_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/review_tenant_application.dart';
+import 'package:homework/values/extensions/context_ext.dart';
 import 'package:homework/widget/app_image.dart';
+import 'package:homework/widget/app_outlined_button.dart';
 
 class TenantManagerWidget extends StatefulWidget {
   const TenantManagerWidget({Key? key}) : super(key: key);
@@ -65,20 +68,9 @@ class _TenantManagerWidgetState extends State<TenantManagerWidget> {
                       Expanded(
                         flex: 3,
                         child: Text(
-                          'property',
+                          'Tenant\'s name',
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: Colors.black54,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Center(
-                          child: Text(
-                            'status',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: Colors.black54,
-                            ),
                           ),
                         ),
                       ),
@@ -86,13 +78,14 @@ class _TenantManagerWidgetState extends State<TenantManagerWidget> {
                         flex: 3,
                         child: Center(
                           child: Text(
-                            'update space',
+                            'lease overview',
                             style: theme.textTheme.titleMedium?.copyWith(
                               color: Colors.black54,
                             ),
                           ),
                         ),
                       ),
+                      10.horizontalSpace
                     ],
                   ),
                 ),
@@ -171,61 +164,26 @@ class _TenantRowWidgetState extends State<TenantRowWidget> {
         Expanded(
           flex: 3,
           child: Text(
-            widget.tenants?.selectedUnit?.property?.info?.name ?? "no name",
+            widget.tenants?.info?.firstName ?? "no name",
             style: theme.textTheme.bodyLarge,
           ),
         ),
-/*        Expanded(
-          flex: 2,
-          child: Observer(builder: (context) {
-            var isLoading = propertyStore.isLoading;
-            return Center(
-              child: SizedBox(
-                width: 24.r,
-                height: 24.r,
-                child: isLoading
-                    ? const CircularProgressIndicator()
-                    : Switch(
-                  value: isActive,
-                  onChanged: (value) {
-                    propertyStore.updatePropertyStatus(
-                        widget.property.id.toString(), value);
-                  },
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-              ),
-            );
-          }),
-        ),*/
-       /* Expanded(
-          flex: 3,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              GestureDetector(
-                  onTap: () {
-                    appRouter.push(CreatePropertyRoute(existingProperty: widget.property));
-                  },
-                  child: Text(
-                    "update",
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        decoration: TextDecoration.underline,
-                        fontSize: 12.spMin),
-                  )),
-              GestureDetector(
-                  onTap: () {
-                    alertManager.showSystemAlertDialog(
-                        context: context, onConfirm: widget.onDelete);
-                  },
-                  child: Text(
-                    "delete",
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        decoration: TextDecoration.underline,
-                        fontSize: 12.spMin),
-                  )),
-            ],
+        Expanded(
+          flex: 1,
+          child: AppOutlinedButton(
+            padding: EdgeInsets.zero,
+            style: TextStyle(fontSize: 13.spMin),
+            text: "view",
+            onPressed: ()  {
+              showAppBottomSheet(
+                context,
+                ReviewTenantApplication(tenant: widget.tenants , onlyShowData: false, ),
+              );
+            },
           ),
-        ),*/
+        ),
+        20.horizontalSpace
+
       ],
     );
   }
