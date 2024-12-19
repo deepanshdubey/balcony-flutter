@@ -184,6 +184,20 @@ class BookingTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final filteredTenants = tenants
+        ?.where((tenant) => tenant.acceptance?.toLowerCase() != 'rejected')
+        .toList();
+
+    if (filteredTenants == null || filteredTenants.isEmpty) {
+      return Center(
+        child: Text(
+          "no rented history",
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+      );
+    }
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8).r,
@@ -191,12 +205,13 @@ class BookingTable extends StatelessWidget {
       ),
       child: Column(
         children: [
-          TableHeader(isActive: isActive),
           const Divider(height: 1, color: Colors.grey),
-          ...tenants.map((tenant) => TableRowWidget(
-                isActive: isActive,
-                tenant: tenant,
-              )),
+          ...tenants
+              .where((tenant) => tenant.acceptance?.toLowerCase() != 'rejected')
+              .map((tenant) => TableRowWidget(
+            isActive: isActive,
+            tenant: tenant,
+          )),
         ],
       ),
     );

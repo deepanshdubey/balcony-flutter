@@ -50,8 +50,12 @@ abstract class ApiClient {
   @GET("auth/logout")
   Future<void> logout();
 
+  @GET("/auth/reauthenticate")
+  Future<CommonData> reAuthenticate();
+
   @GET("profile")
   Future<UserData> getProfile();
+
 
   @PUT("user/update")
   Future<CommonData> updateProfile(@Body() Map<String, dynamic> request);
@@ -65,6 +69,8 @@ abstract class ApiClient {
     @Part(name: "phone") String phone,
     @Part(name: "image", contentType: "image/*") File image,
   );
+
+
 
   @GET("workspace/all")
   Future<PaginationData<WorkspaceData>> getWorkSpaces(
@@ -214,6 +220,9 @@ abstract class ApiClient {
     @Path("id") String hostId,
     @Query("status") String? status, // Optional query parameter
   );
+
+  @POST("/tenant/payment")
+  Future<CommonData> tenantPayment(@Body() Map<String, dynamic> request);
 
   /// -- promo --
 

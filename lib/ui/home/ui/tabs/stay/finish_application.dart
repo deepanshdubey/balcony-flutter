@@ -7,6 +7,7 @@ import 'package:homework/data/model/response/tenant_details.dart';
 import 'package:homework/ui/home/ui/tabs/more/ui/wallet/store/wallet_store.dart';
 import 'package:homework/ui/home/ui/tabs/more/ui/wallet/ui/wallet_page.dart';
 import 'package:homework/ui/home/ui/tabs/more/ui/wallet/widget/card_listing_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
 import 'package:homework/values/colors.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
 import 'package:homework/widget/app_back_button.dart';
@@ -33,6 +34,7 @@ class _FinishApplicationPageState extends State<FinishApplicationPage> {
   int _currentIndex = 0;
   CardData? selectedCard;
   final ValueNotifier<String> selectedOption = ValueNotifier<String>("Card");
+  var store = PropertyStore();
 
   void _onTabTapped(int index) {
     setState(() {
@@ -58,6 +60,7 @@ class _FinishApplicationPageState extends State<FinishApplicationPage> {
               20.verticalSpace,
               const AppBackButton(
                 text: "Back",
+
               ),
               20.verticalSpace,
               _buildPropertyDetailsSection(context),
@@ -123,24 +126,12 @@ class _FinishApplicationPageState extends State<FinishApplicationPage> {
                 PrimaryButton(
                   text: "Submit payment",
                   onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return CompleteDialog(
-                          title: "Your all set!",
-                          message:
-                              "You should receive an email with the booking details. You can also visit the booking detail page as well.",
-                          primaryButtonText: "visit rental manager page",
-                          secondaryButtonText: "Done",
-                          onPrimaryButtonPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          onSecondaryButtonPressed: () {
-                            Navigator.of(context).pop(); // Dismiss the dialog
-                          },
-                        );
-                      },
-                    );
+                   var request =  {
+                      "tenantId": widget.tenants?.Id,
+                    "promoCode": promoController.text,
+                    "type": "card"
+                  };
+                    store.tenantPayment(request);
                   },
                 )
               ],

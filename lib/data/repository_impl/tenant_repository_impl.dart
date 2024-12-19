@@ -35,10 +35,15 @@ class TenantRepositoryImpl extends BaseRepositoryImpl
       String id) async {
     return await execute(apiClient.rejectTenant(id));
   }
-
+  @override
   Future<ApiResponse<CommonData>> getTenantsByHostId(String hostId,
       {List<String>? status}) async {
     return await execute(
         apiClient.getTenantsByHostId(hostId, jsonEncode(status)));
+  }
+  @override
+  Future<ApiResponse<CommonData>> tenantPayment( Map<String, dynamic> request) async {
+    return await execute(
+        apiClient.tenantPayment(request));
   }
 }

@@ -31,6 +31,9 @@ abstract class _PropertyStoreBase with Store {
   CommonData? applyTenantResponse;
 
   @observable
+  CommonData? tenantPaymentResponse;
+
+  @observable
   CommonData? approveTenantResponse;
 
   @observable
@@ -157,6 +160,28 @@ abstract class _PropertyStoreBase with Store {
       final response = await tenantRepository.applyTenant(request);
       if (response.isSuccess) {
         applyTenantResponse = response.data;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future tenantPayment(
+    Map<String, dynamic> request,
+  ) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await tenantRepository.tenantPayment(request);
+      if (response.isSuccess) {
+        tenantPaymentResponse = response.data;
       } else {
         errorMessage = response.error!.message;
       }

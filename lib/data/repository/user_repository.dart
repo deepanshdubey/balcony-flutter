@@ -51,6 +51,7 @@ abstract class UserRepository {
   Future<ApiResponse<CommonData>> getEarnings(String hostId, String type);
 
   Future<ApiResponse<CommonData>> uploadFiles(List<File> files);
+  Future<ApiResponse<CommonData>> getReAuthenticate();
 }
 
 final userRepository = locator<UserRepository>();

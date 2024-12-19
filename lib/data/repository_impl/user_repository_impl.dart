@@ -111,6 +111,11 @@ class UserRepositoryImpl extends BaseRepositoryImpl implements UserRepository {
   }
 
   @override
+  Future<ApiResponse<CommonData>> getReAuthenticate() {
+    return execute(apiClient.reAuthenticate());
+  }
+
+  @override
   Future<ApiResponse<CommonData>> uploadFiles(List<File> files) async {
     var list = await prepareImageFiles(files);
     return execute(apiClient.uploadImages(list));

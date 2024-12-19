@@ -20,7 +20,11 @@ abstract class _DashboardStoreBase with Store {
   CommonData? earningsResponse;
 
   @observable
+  CommonData? reAuthenticateResponse;
+
+  @observable
   String? updatePayoutInfoResponse;
+
   @observable
   bool isLoading = false;
 
@@ -88,6 +92,27 @@ abstract class _DashboardStoreBase with Store {
           hostId, isWorkspace ? "workspaces" : "properties");
       if (response.isSuccess) {
         earningsResponse = response.data;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+
+  @action
+  Future getReAuthenticate() async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await userRepository.getReAuthenticate();
+      if (response.isSuccess) {
+        reAuthenticateResponse = response.data;
       } else {
         errorMessage = response.error!.message;
       }
