@@ -161,8 +161,7 @@ abstract class ApiClient {
   @MultiPart()
   Future<CommonData> createProperty(
     @Part(name: "images", contentType: 'image/*') List<MultipartFile> images,
-    @Part(name: "floorPlanImages", contentType: 'image/*')
-    List<MultipartFile>? floorPlanImages,
+    @Part(name: "floorPlanImages", contentType: 'image/*') List<MultipartFile>? floorPlanImages,
     @Part(name: "info") Info info,
     @Part(name: "currency") String currency,
     @Part(name: "unitList") String unitList,

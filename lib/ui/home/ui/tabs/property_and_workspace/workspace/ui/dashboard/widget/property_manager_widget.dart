@@ -112,8 +112,7 @@ class _PropertyManagerWidgetState extends State<PropertyManagerWidget> {
                               return PropertyRowWidget(
                                 property: property,
                                 onDelete: () {
-                                  workspaceStore
-                                      .deleteWorkspace(property.id.toString());
+                                  store.deleteProperty(property.id.toString());
                                 },
                               );
                             },

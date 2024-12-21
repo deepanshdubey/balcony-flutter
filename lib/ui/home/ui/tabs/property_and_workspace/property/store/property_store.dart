@@ -399,7 +399,7 @@ abstract class _PropertyStoreBase with Store {
   }
 
   @action
-  Future deleteWorkspace(String id) async {
+  Future deleteProperty(String id) async {
     try {
       errorMessage = null;
       isLoading = true;

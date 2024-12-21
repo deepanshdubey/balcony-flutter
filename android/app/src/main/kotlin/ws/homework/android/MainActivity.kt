@@ -1,4 +1,4 @@
-package com.homework.app.homework
+package ws.homework.android
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 
