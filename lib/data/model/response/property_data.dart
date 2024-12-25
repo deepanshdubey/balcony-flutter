@@ -77,20 +77,24 @@ class UnitList {
   final int? baths;
   @JsonKey(name: 'floorPlanImg')
   String? floorPlanImg;
+  @JsonKey(name: 'floorPlanImage')
+  String? floorPlanImgRequest;
   @JsonKey(name: 'isAvailable')
   final bool? isAvailable;
   @JsonKey(name: 'status')
   final String? status;
 
-  UnitList(
-      {this.Id,
-      this.unit,
-      this.price,
-      this.beds,
-      this.baths,
-      this.floorPlanImg,
-      this.isAvailable,
-      this.status});
+  UnitList({
+    this.Id,
+    this.unit,
+    this.price,
+    this.beds,
+    this.baths,
+    this.floorPlanImg,
+    this.isAvailable,
+    this.status,
+    this.floorPlanImgRequest,
+  });
 
   factory UnitList.fromJson(Map<String, dynamic> json) =>
       _$UnitListFromJson(json);

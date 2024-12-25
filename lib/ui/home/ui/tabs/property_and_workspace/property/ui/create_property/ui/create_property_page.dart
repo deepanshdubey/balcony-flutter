@@ -18,6 +18,7 @@ import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/crea
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/widget/processing_fee_widget.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/widget/unit_list_widget.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/model/amenities_item.dart';
+import 'package:homework/values/extensions/context_ext.dart';
 import 'package:homework/widget/app_back_button.dart';
 import 'package:homework/widget/primary_button.dart';
 import 'package:mobx/mobx.dart';
@@ -194,10 +195,14 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
                       30.h.verticalSpace,
                       Observer(builder: (context) {
                         var isLoading = store.isLoading;
-                        return PrimaryButton(
-                          text: isEdit ? "update property" : "add new property",
-                          onPressed: submit,
-                          isLoading: isLoading,
+                        return SizedBox(
+                          width: context.width,
+                          child: PrimaryButton(
+                            text:
+                                isEdit ? "update property" : "add new property",
+                            onPressed: submit,
+                            isLoading: isLoading,
+                          ),
                         );
                       }),
                     ],

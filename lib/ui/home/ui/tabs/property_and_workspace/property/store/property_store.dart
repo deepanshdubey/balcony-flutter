@@ -10,6 +10,7 @@ import 'package:homework/data/repository/tenant_repository.dart';
 import 'package:homework/data/repository/user_repository.dart';
 import 'package:http/http.dart' as http;
 import 'package:mobx/mobx.dart';
+
 part 'property_store.g.dart';
 
 class PropertyStore = _PropertyStoreBase with _$PropertyStore;
@@ -170,7 +171,8 @@ abstract class _PropertyStoreBase with Store {
       final List<Future<void>> unitUploadFutures = units.map((unit) async {
         if (unit.floorPlanImg != null &&
             unit.floorPlanImg?.isNotEmpty == true) {
-          unit.floorPlanImg = await _processSingleFilePath(unit.floorPlanImg!);
+          unit.floorPlanImgRequest =
+              await _processSingleFilePath(unit.floorPlanImgRequest!);
         }
       }).toList();
       final leasingPolicyDocFuture = _processSingleFilePath(leasingPolicyDoc);
@@ -183,7 +185,7 @@ abstract class _PropertyStoreBase with Store {
       // Prepare request payload
       var payload = {
         "images": images,
-        "units": units.map((u) => u.toJson()).toList(),
+        "unitList": units.map((u) => u.toJson()).toList(),
         "leasingPolicyDoc": leasingPolicyDoc,
         "info": info,
         "currency": currency,
