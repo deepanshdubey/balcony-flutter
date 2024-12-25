@@ -185,8 +185,7 @@ class _UnitListWidgetState extends BaseState<UnitListWidget> {
               beds: int.tryParse(e.bedController.text.trim()),
               baths: int.tryParse(e.bathController.text.trim()),
               floorPlanImg: e.floorImage,
-              floorPlanImgRequest: e.floorImage,
-              isAvailable: true))
+          isAvailable: true))
           .toList()
     };
   }

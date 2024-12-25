@@ -77,8 +77,6 @@ class UnitList {
   final int? baths;
   @JsonKey(name: 'floorPlanImg')
   String? floorPlanImg;
-  @JsonKey(name: 'floorPlanImage')
-  String? floorPlanImgRequest;
   @JsonKey(name: 'isAvailable')
   final bool? isAvailable;
   @JsonKey(name: 'status')
@@ -93,7 +91,6 @@ class UnitList {
     this.floorPlanImg,
     this.isAvailable,
     this.status,
-    this.floorPlanImgRequest,
   });
 
   factory UnitList.fromJson(Map<String, dynamic> json) =>
