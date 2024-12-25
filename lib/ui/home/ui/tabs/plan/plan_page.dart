@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobx/mobx.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 @RoutePage()
 class PlansPage extends StatefulWidget {
@@ -69,100 +70,137 @@ class _PlansPageState extends State<PlansPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16).r,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              20.verticalSpace,
-              const AppBackButton(
-                text: "back",
-              ),
-              20.verticalSpace,
-              Row(
-                children: [
-                  Text(
-                    "pricing",
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontSize: 28.spMin,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16).r,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                10.verticalSpace,
+                const AppBackButton(
+                  text: "back",
+                ),
+                20.verticalSpace,
+                Row(
+                  children: [
+                    Text(
+                      "pricing",
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontSize: 28.spMin,
+                            color: appColor.primaryColor,
+                            fontWeight: FontWeight.w500,
+                          ),
+                    ),
+                    Spacer(),
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10.w, vertical: 0.h),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Theme.of(context).primaryColor),
+                        borderRadius:
+                            BorderRadius.circular(12), // For rounded corners
+                      ),
+                      child: DropdownButton<String>(
+                        underline: 0.verticalSpace,
+                        value: selectedCurrency,
+                        onChanged: _onCurrencyChanged,
+                        items:
+                            currencies.map<DropdownMenuItem<String>>((currency) {
+                          return DropdownMenuItem<String>(
+                            value: currency['code'],
+                            child: Text('(${currency['code']})'),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
+                ),
+                40.verticalSpace,
+                Observer(
+                  builder: (context) {
+                    if (authStore.isLoading) {
+                      return Center(
+                        child: CircularProgressIndicator(
                           color: appColor.primaryColor,
-                          fontWeight: FontWeight.w500,
-                        ),
-                  ),
-                  Spacer(),
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 0.h),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Theme.of(context).primaryColor),
-                      borderRadius:
-                          BorderRadius.circular(12), // For rounded corners
-                    ),
-                    child: DropdownButton<String>(
-                      underline: 0.verticalSpace,
-                      value: selectedCurrency,
-                      onChanged: _onCurrencyChanged,
-                      items:
-                          currencies.map<DropdownMenuItem<String>>((currency) {
-                        return DropdownMenuItem<String>(
-                          value: currency['code'],
-                          child: Text('(${currency['code']})'),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ],
-              ),
-              40.verticalSpace,
-              Observer(
-                builder: (context) {
-                  if (authStore.isLoading) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        color: appColor.primaryColor,
-                      ),
-                    );
-                  }
-
-                  final subscriptions = authStore.subscriptionListResponse;
-
-                  if (subscriptions == null || subscriptions.isEmpty) {
-                    return Center(
-                      child: Text(
-                        "No plans available",
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: appColor.primaryColor,
-                            ),
-                      ),
-                    );
-                  }
-
-                  return Column(
-                    children: subscriptions.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final plan = entry.value;
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: PlanCard(
-                          symbole: selectedSymbol,
-                          plan: plan,
-                          isSelected: 0 == index,
-                          onTap: () {
-                            selectedPlanNotifier.value = index;
-                            openBottomSheet(context, plan);
-                          },
                         ),
                       );
-                    }).toList(),
-                  );
-                },
-              ),
-            ],
+                    }
+        
+                    final subscriptions = authStore.subscriptionListResponse;
+        
+                    if (subscriptions == null || subscriptions.isEmpty) {
+                      return Center(
+                        child: Text(
+                          "No plans available",
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: appColor.primaryColor,
+                              ),
+                        ),
+                      );
+                    }
+        
+                    return Column(
+                      children: subscriptions.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final plan = entry.value;
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: PlanCard(
+                            symbole: selectedSymbol,
+                            plan: plan,
+                            onTap: () {
+                            if (plan.id == "custom_plan_subscription"){
+                              _sendEmail();
+                            }else{
+                              selectedPlanNotifier.value = index;
+                              openBottomSheet(context, plan);
+                            }
+        
+                            },
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+//   final String email = "info@homework.ws";
+//   final String subject = "Inquiry About Custom Plan for Additional Units";
+//   final String body = """
+// Dear Homework Support Team,
+//
+// I hope this message finds you well. I am writing to express my interest in exploring the options available for purchasing a custom plan to accommodate more units for our operations. Our current plan is proving to be insufficient as our needs continue to grow, and we believe that upgrading to a custom plan would be the best solution to ensure seamless functionality.
+//
+// Could you please provide more details on the available custom plans, including pricing, features, and any potential benefits? Additionally, I would appreciate any insights you may have on how quickly we could implement this upgrade.
+//
+// Thank you for your assistance. I look forward to your prompt response so that we can make an informed decision.
+//
+// Best regards,
+// [Your Name]
+// [Your Email Address]
+// [Your Phone Number]
+// """;
+
+  Future<void> _sendEmail() async {
+    final Uri emailUri = Uri(
+      scheme: 'mailto',
+      path: 'info@homework.ws',
+    );
+
+
+    if (await canLaunchUrl(emailUri)) {
+      await launchUrl(emailUri);
+    } else {
+      throw 'Could not launch $emailUri';
+    }
   }
 
   void openBottomSheet(BuildContext context, Plan plan) {
@@ -190,13 +228,11 @@ class _PlansPageState extends State<PlansPage> {
 class PlanCard extends StatelessWidget {
   final String symbole;
   final Plan plan;
-  final bool isSelected;
   final VoidCallback onTap;
 
   const PlanCard({
     Key? key,
     required this.plan,
-    required this.isSelected,
     required this.onTap,
     required this.symbole,
   }) : super(key: key);
@@ -210,16 +246,13 @@ class PlanCard extends StatelessWidget {
           ClipRRect(
             borderRadius:
                 BorderRadius.circular(16).r, // Rounded corners for the image
-            child: Image.asset(
-              isSelected
-                  ? Assets.imagesContainerEmpty
-                  : Assets
+            child: Image.asset(Assets
                       .imagesContainerFill, // Replace with your image asset path
               width: 1.sw,
               height: plan.id != "free_plan_subscription"
-                  ? plan.id == "custom_plan"
-                      ? 200.h
-                      : 650.h
+                  ? plan.id == "custom_plan_subscription"
+                      ? 180.h
+                      : 660.h
                   : 560.h,
               // Width of the image
               fit: BoxFit.fill, // Make the image cover the entire container
@@ -241,15 +274,27 @@ class PlanCard extends StatelessWidget {
                           fontWeight: FontWeight.w800,
                         ),
                   ),
-                  25.verticalSpace,
+                  if (plan.id == "custom_plan_subscription")  10.verticalSpace,
+                  if (plan.id == "custom_plan_subscription") Text(
+                    "need more units",
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(
+                      fontSize: 13.spMin,
+                      color: appColor.primaryColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  if (plan.id == "custom_plan_subscription") 10.verticalSpace,
+                  if (plan.id != "custom_plan_subscription")   25.verticalSpace,
                   PlanButton(
                     text: "Get Started",
-                    isSelected: isSelected,
                     isLoading: false, // Loader condition can be added
                     onPressed: onTap,
                   ),
                   14.verticalSpace,
-                  if (plan.id != "custom_plan")
+                  if (plan.id != "custom_plan_subscription")
                     RichText(
                       text: TextSpan(
                         children: [
@@ -281,13 +326,13 @@ class PlanCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                  if (plan.id != "custom_plan") 18.verticalSpace,
-                  if (plan.id != "custom_plan")
+                  if (plan.id != "custom_plan_subscription") 18.verticalSpace,
+                  if (plan.id != "custom_plan_subscription")
                     Divider(
                       color: appColor.grayBorder,
                     ),
-                  if (plan.id != "custom_plan") 20.verticalSpace,
-                  if (plan.id != "custom_plan")
+                  if (plan.id != "custom_plan_subscription") 20.verticalSpace,
+                  if (plan.id != "custom_plan_subscription")
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -678,4 +723,7 @@ class PlanCard extends StatelessWidget {
       ),
     );
   }
+
+
+
 }

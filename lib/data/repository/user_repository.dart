@@ -57,6 +57,7 @@ abstract class UserRepository {
   Future<ApiResponse<CommonData>> uploadFiles(List<File> files);
 
   Future<ApiResponse<CommonData>> getReAuthenticate();
+  Future<ApiResponse<CommonData>> subscriptionPurchase( Map<String, dynamic> request,);
 }
 
 final userRepository = locator<UserRepository>();

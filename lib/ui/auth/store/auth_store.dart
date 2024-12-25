@@ -50,6 +50,9 @@ abstract class _AuthStoreBase with Store {
   CommonData? updateProfileResponse;
 
   @observable
+  CommonData? subscriptionPurchaseResponse;
+
+  @observable
   List<Plan>? subscriptionListResponse;
 
   @action
@@ -275,6 +278,26 @@ abstract class _AuthStoreBase with Store {
       final response = await userRepository.subscriptionList(currency);
       if (response.isSuccess) {
         subscriptionListResponse = response.data?.plans;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future subscriptionPurchase(Map<String, dynamic> request) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await userRepository.subscriptionPurchase(request);
+      if (response.isSuccess) {
+        subscriptionPurchaseResponse = response.data;
       } else {
         errorMessage = response.error!.message;
       }

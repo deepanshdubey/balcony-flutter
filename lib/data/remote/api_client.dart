@@ -282,6 +282,9 @@ abstract class ApiClient {
   Future<SubscriptionListModel> getSubscription(
       @Query("currency") String? currency);
 
+  @POST("/subscription/purchase")
+  Future<CommonData> subscriptionPurchase(@Body() Map<String, dynamic> request);
+
   /// == Booking
   @POST("booking/create")
   Future<CommonData> createBooking(@Body() Map<String, dynamic> request);
