@@ -120,8 +120,6 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     socketManager.addUser(session.user.id ?? "");
 
     socketManager.onGetMessage((data) {
-      print("Get chat--> $data");
-
       Media? media; // Initialize as null (optional)
       if (data['media'] != null && data['media'].isNotEmpty) {
         final mediaData = data['media'][0];
@@ -171,8 +169,6 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
 
     if (result != null && result.files.isNotEmpty) {
       final file = File(result.files.single.path ?? '');
-
-      // Upload media or send the image message (depending on your app's requirements)
       await chatStore.createMsg(
         conversationId: widget.conversationId ?? "",
         media: file, // Send the file as media
@@ -181,6 +177,85 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
       _scrollToBottom();
     }
   }
+
+  Future<void> _pickAndSendVideo() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.video, // Restrict to video files
+      allowMultiple: false,
+    );
+
+    if (result != null && result.files.isNotEmpty) {
+      final file = File(result.files.single.path ?? '');
+      await chatStore.createMsg(
+        conversationId: widget.conversationId ?? "",
+        media: file, // Send the file as media
+      );
+
+      _scrollToBottom();
+    }
+  }
+
+
+  Future<void> _pickAndSendDocument() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom, // Restrict to custom types (documents)
+      allowedExtensions: ['pdf', 'doc', 'docx', 'txt'], // Allowed extensions (optional)
+      allowMultiple: false,
+    );
+
+    if (result != null && result.files.isNotEmpty) {
+      final file = File(result.files.single.path ?? '');
+      await chatStore.createMsg(
+        conversationId: widget.conversationId ?? "",
+        media: file, // Send the file as media
+      );
+
+      _scrollToBottom();
+    }
+  }
+
+
+  void _showPickOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ListTile(
+                leading: Icon(Icons.image, color: Theme.of(context).primaryColor),
+                title: Text('Pick an Image'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickAndSendImage();
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.video_collection, color: Theme.of(context).primaryColor),
+                title: Text('Pick a Video'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickAndSendVideo();
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.description, color: Theme.of(context).primaryColor),
+                title: Text('Pick a Document'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickAndSendDocument();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
 
 
   @override
@@ -447,7 +522,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
             contentPadding:
                 EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
             suffixIcon: IconButton(
-              onPressed: _pickAndSendImage,
+              onPressed: _showPickOptions,
               icon: Container(
                 padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
