@@ -22,6 +22,9 @@ class CommonData {
   @JsonKey(name: 'url')
   String? url;
 
+  @JsonKey(name: 'signedUrl')
+  String? signedUrl;
+
   @JsonKey(name: 'token')
   String? token;
 
@@ -72,11 +75,11 @@ class CommonData {
   @JsonKey(name: 'media')
   final Media? media;
 
-
   @JsonKey(name: 'tenants')
   final List<Tenants>? tenants;
 
-  CommonData(this.tenants, {
+  CommonData(
+    this.tenants, {
     this.messageId,
     this.media,
     this.success,
@@ -96,6 +99,7 @@ class CommonData {
     this.booking,
     this.urls,
     this.properties,
+    this.signedUrl,
   });
 
   factory CommonData.fromJson(Map<String, dynamic> json) =>

@@ -46,6 +46,9 @@ class UserData {
   @JsonKey(name: 'image')
   String? image;
 
+  @JsonKey(name: 'password')
+  String? password;
+
   UserData({
     this.id,
     this.firstName,
@@ -57,6 +60,7 @@ class UserData {
     this.isWorkspaceAccountConnected,
     this.isPropertyAccountConnected,
     this.image,
+    this.password,
   });
 
   factory UserData.fromJson(Map<String, dynamic> json) =>

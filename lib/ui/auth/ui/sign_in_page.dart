@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/core/alert/alert_manager.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/ui/auth/store/auth_store.dart';
@@ -9,9 +12,6 @@ import 'package:homework/widget/app_image.dart';
 import 'package:homework/widget/app_text_field.dart';
 import 'package:homework/widget/password_field.dart';
 import 'package:homework/widget/primary_button.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobx/mobx.dart';
 
 class SignInPage extends StatefulWidget {
@@ -181,7 +181,7 @@ class _SignInPageState extends State<SignInPage> {
                 image: theme.assets.google,
                 text: "google",
                 onPressed: () {
-                  alertManager.showError(context, "under development");
+                  authStore.socialAuth();
                 },
               ),
               20.w.horizontalSpace,

@@ -244,8 +244,6 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
       List<File> floorPlanImages = unitData['floor_plan_images'];
       String currency = unitData['currency'];
       var units = unitData['units'];
-      logger.i(units.runtimeType);
-
       Info info = propertyAddressKey.currentState!.getApiData();
       info.summary = summaryController.text.trim();
       bool other = processingFeeKey.currentState!.getApiData();

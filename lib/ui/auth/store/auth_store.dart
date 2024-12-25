@@ -4,6 +4,7 @@ import 'package:homework/core/locator/locator.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/data/model/response/common_data.dart';
 import 'package:homework/data/model/response/subscription_list_model.dart';
+import 'package:homework/data/repository/social_manager.dart';
 import 'package:homework/data/repository/user_repository.dart';
 import 'package:homework/ui/auth/ui/bottomsheet/alert/verification_alert.dart';
 import 'package:mobx/mobx.dart';
@@ -13,6 +14,8 @@ part 'auth_store.g.dart';
 class AuthStore = _AuthStoreBase with _$AuthStore;
 
 abstract class _AuthStoreBase with Store {
+  final socialManager = locator<SocialManager>();
+
   @observable
   CommonData? loginResponse;
 
@@ -55,6 +58,28 @@ abstract class _AuthStoreBase with Store {
       errorMessage = null;
       isLoading = true;
       final response = await userRepository.login(request);
+      if (response.isSuccess) {
+        loginResponse = response.data!;
+        session.user = response.data!.user!;
+        session.token = response.data!.token!;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future socialAuth({SocialPlatform type = SocialPlatform.google}) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      var response = await socialManager.loginWithSocial(type);
       if (response.isSuccess) {
         loginResponse = response.data!;
         session.user = response.data!.user!;
@@ -193,8 +218,6 @@ abstract class _AuthStoreBase with Store {
     }
   }
 
-
-
   @action
   Future updateProfile(Map<String, dynamic> request) async {
     try {
@@ -243,8 +266,6 @@ abstract class _AuthStoreBase with Store {
       isLoading = false;
     }
   }
-
-
 
   @action
   Future getSubscriptionList(String currency) async {

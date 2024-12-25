@@ -5,7 +5,7 @@ import 'workspace_data.dart'; // Import the WorkspaceData model.
 
 part 'pagination_data.g.dart';
 
-@JsonSerializable(genericArgumentFactories: true, explicitToJson: true)
+@JsonSerializable(genericArgumentFactories: true,)
 class PaginationData<T> {
   @JsonKey(name: 'success')
   final bool? success;

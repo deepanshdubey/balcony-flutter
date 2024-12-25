@@ -25,6 +25,9 @@ abstract class ApiClient {
   @POST("auth/register")
   Future<CommonData> register(@Body() Map<String, dynamic> request);
 
+  @POST("auth/social-auth")
+  Future<CommonData> socialAuth(@Body() Map<String, dynamic> request);
+
   @GET("auth/resend-otp")
   Future<CommonData> resentOtp(@Query("reset") bool isReset);
 
@@ -56,7 +59,6 @@ abstract class ApiClient {
   @GET("profile")
   Future<UserData> getProfile();
 
-
   @PUT("user/update")
   Future<CommonData> updateProfile(@Body() Map<String, dynamic> request);
 
@@ -69,8 +71,6 @@ abstract class ApiClient {
     @Part(name: "phone") String phone,
     @Part(name: "image", contentType: "image/*") File image,
   );
-
-
 
   @GET("workspace/all")
   Future<PaginationData<WorkspaceData>> getWorkSpaces(
@@ -161,7 +161,8 @@ abstract class ApiClient {
   @MultiPart()
   Future<CommonData> createProperty(
     @Part(name: "images", contentType: 'image/*') List<MultipartFile> images,
-    @Part(name: "floorPlanImages", contentType: 'image/*') List<MultipartFile>? floorPlanImages,
+    @Part(name: "floorPlanImages", contentType: 'image/*')
+    List<MultipartFile>? floorPlanImages,
     @Part(name: "info") Info info,
     @Part(name: "currency") String currency,
     @Part(name: "unitList") String unitList,
@@ -372,4 +373,8 @@ abstract class ApiClient {
   Future<CommonData> uploadImages(
     @Part(name: "files") List<MultipartFile> images,
   );
+
+  @POST("/upload/generate-signed-url")
+  Future<CommonData> generateSignedUrl(
+      @Field("purpose") String purpose, @Field("extension") String extension);
 }

@@ -184,7 +184,7 @@ class _UnitListWidgetState extends BaseState<UnitListWidget> {
               "price": e.priceController.text.trim(),
               "beds": e.bedController.text.trim(),
               "baths": e.bathController.text.trim(),
-              "floorPlanImg" : "",
+              "floorPlanImg": e.floorImage,
               "isAvailable": true
             },
           )

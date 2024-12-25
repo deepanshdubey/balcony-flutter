@@ -120,4 +120,15 @@ class UserRepositoryImpl extends BaseRepositoryImpl implements UserRepository {
     var list = await prepareImageFiles(files);
     return execute(apiClient.uploadImages(list));
   }
+
+  @override
+  Future<ApiResponse<CommonData>> socialAuth(Map<String, dynamic> request) {
+    return execute(apiClient.socialAuth(request));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> generateS3Url(
+      String extension, String purpose) {
+    return execute(apiClient.generateSignedUrl(purpose, extension));
+  }
 }

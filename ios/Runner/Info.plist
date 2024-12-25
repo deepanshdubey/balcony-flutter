@@ -57,7 +57,18 @@
     <array>
       <string>tel</string>
     </array>
-
-
+<key>GIDClientID</key>
+<string>254534505135-9p71vd203mqq1j512po52f7k0hm9d1hm.apps.googleusercontent.com</string>
+<key>CFBundleURLTypes</key>
+<array>
+    <dict>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+            <string>com.googleusercontent.apps.254534505135-9p71vd203mqq1j512po52f7k0hm9d1hm</string>
+        </array>
+    </dict>
+</array>
 </dict>
 </plist>
