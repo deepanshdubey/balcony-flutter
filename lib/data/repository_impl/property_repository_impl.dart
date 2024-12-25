@@ -107,4 +107,10 @@ class PropertyRepositoryImpl extends BaseRepositoryImpl
     return execute(
         apiClient.updatePropertyStatus(id, status ? 'active' : 'inactive'));
   }
+
+  @override
+  Future<ApiResponse<CommonData>> createPropertyV2(
+      Map<String, dynamic> request) {
+    return execute(apiClient.createPropertyV2(request));
+  }
 }

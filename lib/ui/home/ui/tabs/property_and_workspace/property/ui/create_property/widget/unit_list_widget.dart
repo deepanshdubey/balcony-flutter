@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/core/locator/locator.dart';
+import 'package:homework/data/model/response/property_data.dart';
 import 'package:homework/generated/assets.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/model/unit_item.dart';
@@ -178,16 +179,13 @@ class _UnitListWidgetState extends BaseState<UnitListWidget> {
           .toList(),
       'currency': currencyController.text.trim(),
       'units': unitList
-          .map(
-            (e) => {
-              "unit": e.unitController.text.trim(),
-              "price": e.priceController.text.trim(),
-              "beds": e.bedController.text.trim(),
-              "baths": e.bathController.text.trim(),
-              "floorPlanImg": e.floorImage,
-              "isAvailable": true
-            },
-          )
+          .map((e) => UnitList(
+              unit: int.tryParse(e.unitController.text.trim()),
+              price: double.tryParse(e.priceController.text.trim()),
+              beds: int.tryParse(e.bedController.text.trim()),
+              baths: int.tryParse(e.bathController.text.trim()),
+              floorPlanImg: e.floorImage,
+              isAvailable: true))
           .toList()
     };
   }

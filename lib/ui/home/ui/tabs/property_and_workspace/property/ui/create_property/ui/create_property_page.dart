@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/core/alert/alert_manager.dart';
-import 'package:homework/core/locator/locator.dart';
 import 'package:homework/data/model/response/property_data.dart';
 import 'package:homework/data/model/response/workspace_data.dart';
 import 'package:homework/router/app_router.dart';
@@ -241,16 +238,16 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
   void submit() {
     if (validate()) {
       Map<String, dynamic> unitData = unitListKey.currentState!.getApiData();
-      List<File> floorPlanImages = unitData['floor_plan_images'];
       String currency = unitData['currency'];
       var units = unitData['units'];
       Info info = propertyAddressKey.currentState!.getApiData();
       info.summary = summaryController.text.trim();
       bool other = processingFeeKey.currentState!.getApiData();
 
-      store.createProperty(
+      store.createPropertyV2(
         photosKey.currentState!.getApiData(),
-        floorPlanImages,
+        units,
+        leasingTermsKey.currentState!.getApiData(),
         info,
         currency,
         {
@@ -259,8 +256,6 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
           "leaseDuration": leaseDuration?.toInt()
         },
         amenitiesKey.currentState!.getApiData(),
-        leasingTermsKey.currentState!.getApiData(),
-        [...units],
       );
     }
   }

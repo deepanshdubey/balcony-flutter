@@ -1,11 +1,8 @@
-import 'dart:io';
-
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:homework/values/extensions/context_ext.dart';
 import 'package:homework/widget/file_picker_widget.dart';
-import 'package:homework/widget/image_picker_widget.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LeaseTermsAndPolicyWidget extends StatefulWidget {
   const LeaseTermsAndPolicyWidget({
@@ -97,8 +94,8 @@ class _LeaseTermsAndPolicyWidgetState
   }
 
   @override
-  File getApiData() {
-    return File(selectedFilePath ?? "");
+  getApiData() {
+    return selectedFilePath;
   }
 
   @override

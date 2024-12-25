@@ -50,6 +50,8 @@ abstract class PropertyRepository {
   Future<ApiResponse<CommonData>> deleteProperty(String id);
 
   Future<ApiResponse<CommonData>> updatePropertyStatus(String id, bool status);
+
+  Future<ApiResponse<CommonData>> createPropertyV2(Map<String, dynamic> request);
 }
 
 final propertyRepository = locator<PropertyRepository>();

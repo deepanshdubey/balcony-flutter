@@ -377,4 +377,7 @@ abstract class ApiClient {
   @POST("/upload/generate-signed-url")
   Future<CommonData> generateSignedUrl(
       @Field("purpose") String purpose, @Field("extension") String extension);
+
+  @POST("property/create_v2")
+  Future<CommonData> createPropertyV2(@Body() Map<String, dynamic> request);
 }
