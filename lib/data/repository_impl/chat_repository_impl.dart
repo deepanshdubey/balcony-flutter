@@ -16,10 +16,11 @@ class ChatRepositoryImpl extends BaseRepositoryImpl implements ChatRepository {
   @override
   Future<ApiResponse<CommonData>> getAllConversations() {
     return execute(apiClient.getAllConversations());
-  } 
-  
+  }
+
   @override
-    Future<ApiResponse<CoversationResponse>> startConversation(Map<String, dynamic> request) {
+  Future<ApiResponse<CoversationResponse>> startConversation(
+      Map<String, dynamic> request) {
     return execute(apiClient.startConversation(request));
   }
 
@@ -32,7 +33,10 @@ class ChatRepositoryImpl extends BaseRepositoryImpl implements ChatRepository {
   Future<ApiResponse<CreateMsgResponse>> createMessage(
       String conversationId, String? text, File? media) {
     return execute(media != null
-        ? apiClient.createMessageWithMedia(conversationId, media)
+        ? createMessageWithMedia(
+            conversationId: conversationId,
+            image: media,
+          )
         : apiClient.createMessage(conversationId, text ?? ""));
   }
 }

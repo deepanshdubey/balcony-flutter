@@ -1,10 +1,12 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:homework/core/api/api_response/api_exception.dart';
 import 'package:homework/core/api/api_response/api_response.dart';
 import 'package:homework/core/locator/locator.dart';
-import 'package:dio/dio.dart';
+import 'package:homework/data/model/response/create_msg_response.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
 
 abstract class BaseRepositoryImpl {
   Future<ApiResponse<T>> execute<T>(Future<T> apiCall) async {
@@ -69,8 +71,8 @@ abstract class BaseRepositoryImpl {
       case 403:
         return ApiException(
           statusCode: statusCode,
-          message:
-              message ?? "Forbidden. You don't have permission to access this resource.",
+          message: message ??
+              "Forbidden. You don't have permission to access this resource.",
         );
       case 404:
         return ApiException(
@@ -80,7 +82,8 @@ abstract class BaseRepositoryImpl {
       case 422:
         return ApiException(
           statusCode: statusCode,
-          message: message ?? "Unprocessable Entity. Please check the submitted data.",
+          message: message ??
+              "Unprocessable Entity. Please check the submitted data.",
         );
       default:
         return ApiException(
@@ -100,5 +103,67 @@ abstract class BaseRepositoryImpl {
         );
       }).toList(),
     );
+  }
+
+  Future<MultipartFile> prepareImageFile(File image) async {
+    // Get the MIME type based on the file extension
+    String? mimeType = lookupMimeType(image.path);
+
+    // If mimeType is null, fallback to a default type (image/*)
+    mimeType ??= 'image/*';
+
+    // Create a MultipartFile from the image
+    return await MultipartFile.fromFile(
+      image.path,
+      contentType:
+          MediaType.parse(mimeType), // Use the dynamically determined MIME type
+    );
+  }
+
+  // New method for creating a message with media
+  Future<CreateMsgResponse> createMessageWithMedia({
+    required String conversationId,
+    required File image,
+  }) async {
+    try {
+      // Prepare file
+      MultipartFile mediaFile = await prepareImageFile(image);
+
+      // Create Dio instance
+      Dio dio = Dio();
+
+      // Prepare the form data for the request
+      FormData formData = FormData.fromMap({
+        'conversationId': conversationId,
+        'media': mediaFile,
+      });
+
+      // Make the API request
+      Response response = await dio.post(
+        'https://api.homework.ws/api/v2/message/create',
+        // Replace with the correct API endpoint
+        data: formData,
+        options: Options(
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        ),
+      );
+
+      // Check if the request was successful
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Deserialize the response to a custom object
+        CreateMsgResponse createMsgResponse =
+            CreateMsgResponse.fromJson(response.data);
+        return createMsgResponse;
+      } else {
+        throw ApiException(
+            statusCode: response.statusCode ?? -1,
+            message: response.statusMessage ?? "Something went wrong");
+      }
+    } catch (e, st) {
+      logger.e(st);
+      throw ApiException(statusCode: -1, message: "Something went wrong");
+    }
   }
 }
