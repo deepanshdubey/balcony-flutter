@@ -5,8 +5,13 @@ import 'package:homework/values/extensions/context_ext.dart';
 import 'package:homework/widget/file_picker_widget.dart';
 
 class LeaseTermsAndPolicyWidget extends StatefulWidget {
+  final bool isEdit;
+  final String? existingFilePath;
+
   const LeaseTermsAndPolicyWidget({
     super.key,
+    this.existingFilePath,
+    this.isEdit = false,
   });
 
   @override
@@ -17,6 +22,12 @@ class LeaseTermsAndPolicyWidget extends StatefulWidget {
 class _LeaseTermsAndPolicyWidgetState
     extends BaseState<LeaseTermsAndPolicyWidget> {
   String? selectedFilePath;
+
+  @override
+  void initState() {
+    selectedFilePath = widget.existingFilePath;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,6 +116,6 @@ class _LeaseTermsAndPolicyWidgetState
 
   @override
   bool validate() {
-    return selectedFilePath != null;
+    return widget.isEdit ? true : selectedFilePath != null;
   }
 }

@@ -154,14 +154,14 @@ abstract class _PropertyStoreBase with Store {
 
   @action
   Future createPropertyV2(
-    List<String> images,
-    List<UnitList> units,
-    String leasingPolicyDoc,
-    dynamic info,
-    String currency,
-    Map<String, dynamic> other,
-    List<String> amenities,
-  ) async {
+      List<String> images,
+      List<UnitList> units,
+      String? leasingPolicyDoc,
+      dynamic info,
+      String currency,
+      Map<String, dynamic> other,
+      List<String> amenities,
+      {String? id}) async {
     try {
       errorMessage = null;
       isLoading = true;
@@ -175,15 +175,22 @@ abstract class _PropertyStoreBase with Store {
           unit.floorPlanImg = await _processSingleFilePath(unit.floorPlanImg!);
         }
       }).toList();
-      final leasingPolicyDocFuture = _processSingleFilePath(leasingPolicyDoc);
+
+      Future<String>? leasingPolicyDocFuture;
+
+      if (leasingPolicyDoc != null) {
+        leasingPolicyDocFuture = _processSingleFilePath(leasingPolicyDoc);
+      }
 
       // Wait for all uploads to complete
       images = await Future.wait(imageUploadFutures);
       await Future.wait(unitUploadFutures);
-      leasingPolicyDoc = await leasingPolicyDocFuture;
+      leasingPolicyDoc =
+          leasingPolicyDoc != null ? await leasingPolicyDocFuture : null;
 
       // Prepare request payload
       var payload = {
+        "_id": id,
         "images": images,
         "unitList": units.map((u) => u.toJson().dropNull()).toList(),
         "leasingPolicyDoc": leasingPolicyDoc,
@@ -191,7 +198,7 @@ abstract class _PropertyStoreBase with Store {
         "currency": currency,
         "other": other,
         "amenities": amenities,
-      };
+      }.dropNull();
 
       // Make API call
       var response = await propertyRepository.createPropertyV2(payload);

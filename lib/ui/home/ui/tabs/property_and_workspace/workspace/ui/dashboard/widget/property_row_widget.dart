@@ -1,22 +1,21 @@
-import 'package:homework/core/alert/alert_manager.dart';
-import 'package:homework/data/model/response/property_data.dart';
-
-import 'package:homework/router/app_router.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:homework/core/alert/alert_manager.dart';
+import 'package:homework/data/model/response/property_data.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
 import 'package:mobx/mobx.dart';
 
 class PropertyRowWidget extends StatefulWidget {
   final PropertyData property;
   final VoidCallback onDelete;
+  final VoidCallback onUpdate;
 
   const PropertyRowWidget({
     Key? key,
     required this.property,
     required this.onDelete,
+    required this.onUpdate,
   }) : super(key: key);
 
   @override
@@ -99,9 +98,7 @@ class _PropertyRowWidgetState extends State<PropertyRowWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               GestureDetector(
-                  onTap: () {
-                    appRouter.push(CreatePropertyRoute(existingProperty: widget.property));
-                  },
+                  onTap: widget.onUpdate,
                   child: Text(
                     "update",
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(

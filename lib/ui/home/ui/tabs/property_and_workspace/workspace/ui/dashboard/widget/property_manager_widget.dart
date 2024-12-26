@@ -5,12 +5,11 @@ import 'package:homework/generated/assets.dart';
 import 'package:homework/router/app_router.dart';
 import 'package:homework/ui/home/ui/tabs/more/ui/support_tickets/widget/section_title.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
-import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/property_row_widget.dart';
 import 'package:homework/widget/app_image.dart';
 
 class PropertyManagerWidget extends StatefulWidget {
-  const PropertyManagerWidget({Key? key}) : super(key: key);
+  const PropertyManagerWidget({super.key});
 
   @override
   State<PropertyManagerWidget> createState() => _PropertyManagerWidgetState();
@@ -114,6 +113,14 @@ class _PropertyManagerWidgetState extends State<PropertyManagerWidget> {
                                 onDelete: () {
                                   store.deleteProperty(property.id.toString());
                                 },
+                                onUpdate: () {
+                                  appRouter.push(CreatePropertyRoute(
+                                    existingProperty: property,
+                                    onEdited: () {
+                                      store.getHostProperties();
+                                    },
+                                  ));
+                                },
                               );
                             },
                             separatorBuilder: (context, index) => Divider(
@@ -138,7 +145,11 @@ class _PropertyManagerWidgetState extends State<PropertyManagerWidget> {
   Widget addNewProperty() {
     return GestureDetector(
         onTap: () {
-          appRouter.push(CreatePropertyRoute());
+          appRouter.push(CreatePropertyRoute(
+            onEdited: () {
+              store.getHostProperties();
+            },
+          ));
         },
         child: Row(
           children: [

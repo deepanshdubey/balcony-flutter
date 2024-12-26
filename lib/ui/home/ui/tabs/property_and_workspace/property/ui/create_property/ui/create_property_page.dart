@@ -102,8 +102,11 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
         if (res != null) {
           alertManager.showSuccess(
             context,
-            'property added successfully',
+            'property ${isEdit ? "updated" : "added"} successfully',
             afterAlert: () {
+              if (widget.onEdited != null) {
+                widget.onEdited!();
+              }
               appRouter.back();
             },
           );
@@ -154,10 +157,14 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
                       30.h.verticalSpace,
                       ProcessingFeeWidget(
                         key: processingFeeKey,
+                        feeType: isEdit
+                            ? propertyData.other?.chargeFeeFromRent
+                            : null,
                       ),
                       30.h.verticalSpace,
                       UnitListWidget(
                         key: unitListKey,
+                        existingUnits: isEdit ? propertyData.unitList : null,
                       ),
                       30.h.verticalSpace,
                       ShortSummaryWidget(
@@ -186,6 +193,8 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
                       30.h.verticalSpace,
                       LeaseTermsAndPolicyWidget(
                         key: leasingTermsKey,
+                        isEdit: isEdit,
+                        existingFilePath: isEdit ? null : null,
                       ),
                       divider(),
                       TermsOfServiceWidget(
@@ -250,9 +259,10 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
       bool other = processingFeeKey.currentState!.getApiData();
 
       store.createPropertyV2(
+        id: isEdit ? propertyData.id : null,
         photosKey.currentState!.getApiData(),
         units,
-        leasingTermsKey.currentState!.getApiData(),
+        leasingTermsKey.currentState?.getApiData(),
         info,
         currency,
         {

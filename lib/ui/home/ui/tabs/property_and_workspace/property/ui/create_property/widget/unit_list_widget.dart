@@ -17,8 +17,11 @@ import 'package:homework/widget/app_text_field.dart';
 import 'package:homework/widget/image_picker_widget.dart';
 
 class UnitListWidget extends StatefulWidget {
+  final List<UnitList>? existingUnits;
+
   const UnitListWidget({
     super.key,
+    this.existingUnits,
   });
 
   @override
@@ -38,6 +41,18 @@ class _UnitListWidgetState extends BaseState<UnitListWidget> {
     formKey = GlobalKey<FormState>();
     currencyController = TextEditingController(text: "USD");
     searchController = TextEditingController();
+    if (widget.existingUnits != null) {
+      unitList = widget.existingUnits!.map((e) {
+        return UnitItem(
+          id: e.Id,
+          unit: e.unit,
+          price: e.price?.toDouble(),
+          bed: e.beds,
+          bath: e.baths,
+          floorImage: e.floorPlanImg,
+        );
+      }).toList();
+    }
     super.initState();
   }
 
@@ -180,24 +195,36 @@ class _UnitListWidgetState extends BaseState<UnitListWidget> {
       'currency': currencyController.text.trim(),
       'units': unitList
           .map((e) => UnitList(
+              Id: e.id,
               unit: int.tryParse(e.unitController.text.trim()),
               price: double.tryParse(e.priceController.text.trim()),
               beds: int.tryParse(e.bedController.text.trim()),
               baths: int.tryParse(e.bathController.text.trim()),
               floorPlanImg: e.floorImage,
-          isAvailable: true))
+              isAvailable: true))
           .toList()
     };
   }
 
   @override
   String? getError() {
-    return null;
+    return unitList.any(
+      (element) => element.floorImage == null,
+    )
+        ? "please select floor plan image for ${unitList.where(
+              (element) => element.floorImage == null,
+            ).map(
+              (e) => e.unit,
+            ).join(", ")}"
+        : null;
   }
 
   @override
   bool validate() {
-    return formKey.currentState?.validate() == true;
+    return formKey.currentState?.validate() == true &&
+        unitList.every(
+          (element) => element.floorImage != null,
+        );
   }
 
   Widget unitItem(UnitItem e) {
