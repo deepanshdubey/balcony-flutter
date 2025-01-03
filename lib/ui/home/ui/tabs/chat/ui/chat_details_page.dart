@@ -1,10 +1,12 @@
 import 'dart:io';
 
+import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/core/socket/socket_manager.dart';
 import 'package:homework/data/model/response/conversation_data.dart';
 
 import 'package:dio/dio.dart';
+import 'package:homework/ui/home/ui/tabs/chat/ui/audio_player.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:homework/ui/home/ui/tabs/chat/store/chat_store.dart';
 import 'package:homework/widget/app_back_button.dart';
@@ -31,6 +33,8 @@ class ChatDetailsPage extends StatefulWidget {
 }
 
 class _ChatDetailsPageState extends State<ChatDetailsPage> {
+  final ValueNotifier<bool> _isRecording = ValueNotifier<bool>(false);
+  late RecorderController _recorderController;
   final messageController = TextEditingController();
   final SocketManager socketManager = SocketManager();
   final ValueNotifier<List<LastMessage>> messages = ValueNotifier([]);
@@ -43,14 +47,68 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   void initState() {
     super.initState();
     _initializeChat();
+    initialiseControllers();
     chatStore.getAllMsg(widget.conversationId ?? " ");
     addDisposer();
   }
+
+  Future<void> initialiseControllers() async {
+    _recorderController = RecorderController()
+      ..androidEncoder = AndroidEncoder.aac
+      ..androidOutputFormat = AndroidOutputFormat.amr_nb
+      ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC
+      ..bitRate = 256000  // Increase bitrate to improve quality
+      ..sampleRate = 44100;
+  }
+
+  Future<void> startRecording() async {
+    try {
+      if (await _recorderController.checkPermission()) {
+        await _recorderController.record();  // Start recording
+      }
+    } catch (e) {
+      print('Error recording: $e');
+    }
+  }
+
+
+  Future<void> stopRecording() async {
+    var path = await _recorderController.stop() ?? '';  // Get the file path after stopping the recording
+    if (path.isNotEmpty) {
+      print('Recording saved at: $path');
+      await uploadAudio(path);  // Upload the audio file
+    }
+  }
+
+  void _toggleRecording() {
+    _isRecording.value = !_isRecording.value;
+    if (_isRecording.value) {
+    startRecording();
+    } else {
+    stopRecording();
+    }
+  }
+
+  Future<void> uploadAudio(String filePath) async {
+    final file = File(filePath);
+
+    if (file.existsSync()) {
+      await chatStore.createMsgMedia(
+        conversationId: widget.conversationId ?? "",
+        media: file,
+        type: 'audio',  // Specify the media type as audio
+      );
+      _scrollToBottom();
+    }
+  }
+
+
 
   @override
   void dispose() {
     socketManager.disConnect();
     messageController.dispose();
+    _isRecording.dispose();
     removeDisposer();
     super.dispose();
   }
@@ -68,13 +126,12 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
           "receiverId": widget.receiverId ?? "",
           "text": messageController.text.trim().isNotEmpty
               ? messageController.text.trim()
-              : null, // Only include text if it's not empty
-          "media": response?.media?.isNotEmpty == true
-              ? {
-            "url": response?.media?[0].url,
-            "type": response?.media?[0].type,
-          }
-              : null,  // If no media, set it to null
+              : null, // Only include text if it's not
+          // empty
+      if(response?.media?.url != null)    "media": {
+            "url": response?.media?.url,
+            "type": response?.media?.type,
+          } ,// If no media, set it to null
           "seen": false,
         };
 
@@ -86,7 +143,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
         final newMessage = LastMessage(
           senderId: session.user.id ?? "",
           text: messageController.text.trim(),
-          media: Media(url:response?.media?[0].url, type: response?.media?[0].url), // Use the file URL or upload it if needed
+          media: Media(url:response?.media?.url, type: response?.media?.url), // Use the file URL or upload it if needed
           createdAt: DateTime.now().toIso8601String(),
         );
         messageController.clear();
@@ -120,15 +177,18 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     socketManager.addUser(session.user.id ?? "");
 
     socketManager.onGetMessage((data) {
-      Media? media; // Initialize as null (optional)
-      if (data['media'] != null && data['media'].isNotEmpty) {
-        final mediaData = data['media'][0];
+      print(data);
+
+      Media? media;
+      if (data['media'] != null && data['media'] is List && data['media'].isNotEmpty) {
+        final mediaData = data['media'][0]; // Access the first media object in the list
         media = Media.fromJson({
-          'fieldname': 'media', // Static value
+          'fieldname': 'media',
           'url': mediaData['url'],
           'type': mediaData['type'],
         });
       }
+
       final messageWithTime = LastMessage(
         senderId: data['senderId'],
         text: data['text'] ?? '',
@@ -139,8 +199,10 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
       if (data['senderId'] != session.user.id) {
         messages.value = [...messages.value, messageWithTime];
       }
+
       _scrollToBottom();
     });
+
 
 
 
@@ -161,7 +223,6 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   }
 
   Future<void> _pickAndSendImage() async {
-    // Pick an image file
     final result = await FilePicker.platform.pickFiles(
       type: FileType.image, // Restrict to images
       allowMultiple: false,
@@ -169,34 +230,35 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
 
     if (result != null && result.files.isNotEmpty) {
       final file = File(result.files.single.path ?? '');
-      await chatStore.createMsg(
+      await chatStore.createMsgMedia(
         conversationId: widget.conversationId ?? "",
-        media: file, // Send the file as media
+        media: file,
+        type: "image"// Send the file as media
       );
 
       _scrollToBottom();
     }
   }
 
-  Future<void> _pickAndSendVideo() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.video, // Restrict to video files
-      allowMultiple: false,
-    );
+  // Future<void> _pickAndSendVideo() async {
+  //   final result = await FilePicker.platform.pickFiles(
+  //     type: FileType.video, // Restrict to video files
+  //     allowMultiple: false,
+  //   );
+  //
+  //   if (result != null && result.files.isNotEmpty) {
+  //     final file = File(result.files.single.path ?? '');
+  //     await chatStore.createMsgMedia(
+  //       conversationId: widget.conversationId ?? "",
+  //       media: file, // Send the file as media
+  //     );
+  //
+  //     _scrollToBottom();
+  //   }
+  // }
 
-    if (result != null && result.files.isNotEmpty) {
-      final file = File(result.files.single.path ?? '');
-      await chatStore.createMsg(
-        conversationId: widget.conversationId ?? "",
-        media: file, // Send the file as media
-      );
 
-      _scrollToBottom();
-    }
-  }
-
-
-  Future<void> _pickAndSendDocument() async {
+  /*Future<void> _pickAndSendDocument() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom, // Restrict to custom types (documents)
       allowedExtensions: ['pdf', 'doc', 'docx', 'txt'], // Allowed extensions (optional)
@@ -205,56 +267,57 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
 
     if (result != null && result.files.isNotEmpty) {
       final file = File(result.files.single.path ?? '');
-      await chatStore.createMsg(
+      await chatStore.createMsgMedia(
         conversationId: widget.conversationId ?? "",
-        media: file, // Send the file as media
+        media: file,
+        type: "document"// Send the file as media
       );
 
       _scrollToBottom();
     }
-  }
+  }*/
 
 
-  void _showPickOptions() {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ListTile(
-                leading: Icon(Icons.image, color: Theme.of(context).primaryColor),
-                title: Text('Pick an Image'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickAndSendImage();
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.video_collection, color: Theme.of(context).primaryColor),
-                title: Text('Pick a Video'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickAndSendVideo();
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.description, color: Theme.of(context).primaryColor),
-                title: Text('Pick a Document'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickAndSendDocument();
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  // void _showPickOptions() {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return Padding(
+  //         padding: const EdgeInsets.all(16.0),
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             ListTile(
+  //               leading: Icon(Icons.image, color: Theme.of(context).primaryColor),
+  //               title: Text('Pick an Image'),
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //                 _pickAndSendImage();
+  //               },
+  //             ),
+  //             ListTile(
+  //               leading: Icon(Icons.video_collection, color: Theme.of(context).primaryColor),
+  //               title: Text('Pick a Video'),
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //                 _pickAndSendVideo();
+  //               },
+  //             ),
+  //             ListTile(
+  //               leading: Icon(Icons.description, color: Theme.of(context).primaryColor),
+  //               title: Text('Pick a Document'),
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //                 _pickAndSendDocument();
+  //               },
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
 
 
@@ -387,7 +450,9 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
             )
           // Display image if mediaUrl is available
           else if (mediaUrl != null && mediaUrl.isNotEmpty)
-            AppImage(
+            mediaUrl.endsWith(".mp3") || mediaUrl.endsWith(".wav") || mediaUrl.endsWith(".m4a")
+                ? AudioPlayerWidget(audioUrl: mediaUrl)  // Display audio player
+                : AppImage(
               url: mediaUrl.startsWith('file://')
                   ? null
                   : mediaUrl,  // If it's a local file, pass null for URL
@@ -410,10 +475,11 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     );
   }
 
-
-
-  Widget _buildReceivedMessage(
-      {String? text, required String time, String? mediaUrl}) {
+  Widget _buildReceivedMessage({
+    String? text,
+    required String time,
+    String? mediaUrl,
+  }) {
     return Align(
       alignment: Alignment.centerLeft,
       child: Column(
@@ -422,25 +488,27 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
           // If text is available, display it. Otherwise, show media.
           text != null && text.isNotEmpty
               ? Container(
-                  padding: const EdgeInsets.all(12),
-                  margin: const EdgeInsets.only(top: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    text,
-                    style: const TextStyle(color: Colors.black),
-                  ),
-                )
+            padding: const EdgeInsets.all(12),
+            margin: const EdgeInsets.only(top: 10),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              text,
+              style: const TextStyle(color: Colors.black),
+            ),
+          )
               : mediaUrl != null && mediaUrl.isNotEmpty
-                  ? AppImage(
-                      url: mediaUrl,
-                      height: 200.r,
-                      width: 200.r,
-                      radius: 10.r,
-                    )
-                  : const SizedBox.shrink(),
+              ? mediaUrl.endsWith(".mp3") || mediaUrl.endsWith(".wav") || mediaUrl.endsWith(".m4a") || mediaUrl.endsWith(".webm")
+              ? AudioPlayerWidget(audioUrl: mediaUrl)  // Display audio player
+              : AppImage(
+            url: mediaUrl,
+            height: 200.r,
+            width: 200.r,
+            radius: 10.r,
+          )
+              : const SizedBox.shrink(),
           const SizedBox(height: 5),
           Text(
             time,
@@ -522,7 +590,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
             contentPadding:
                 EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
             suffixIcon: IconButton(
-              onPressed: _showPickOptions,
+              onPressed: _pickAndSendImage,
               icon: Container(
                 padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
@@ -533,14 +601,24 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
               ),
             ),
             prefixIcon: IconButton(
-              onPressed: () {},
-              icon: Container(
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  color: theme.primaryColor,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.mic, color: Colors.white),
+              onPressed: () {
+
+
+
+              },
+
+
+              icon: ValueListenableBuilder<bool>(
+                valueListenable: _isRecording,
+                builder: (context, isRecording, child) {
+                  return IconButton(
+                    icon: Icon (
+                      isRecording ? Icons.stop : Icons.mic,
+                      color: theme.primaryColor,
+                    ),
+                    onPressed: _toggleRecording,
+                  );
+                },
               ),
             ),
           ),

@@ -12,6 +12,7 @@ abstract class ChatRepository {
   Future<ApiResponse<CoversationResponse>> startConversation(Map<String, dynamic> request);
   Future<ApiResponse<CommonData>> getAllMsg(String conversationId);
   Future<ApiResponse<CreateMsgResponse>> createMessage(String conversationId, String? text, File? media);
+  Future<ApiResponse<CreateMsgResponse>> createMessageV2(Map<String, dynamic> request);
 }
 
 final chatRepository = locator<ChatRepository>();

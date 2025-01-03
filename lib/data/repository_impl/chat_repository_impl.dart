@@ -39,4 +39,10 @@ class ChatRepositoryImpl extends BaseRepositoryImpl implements ChatRepository {
           )
         : apiClient.createMessage(conversationId, text ?? ""));
   }
+
+  @override
+  Future<ApiResponse<CreateMsgResponse>> createMessageV2(Map<String, dynamic> request) {
+    return execute(apiClient.createMessageV2(request));
+
+  }
 }

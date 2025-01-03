@@ -8,11 +8,9 @@ import 'package:homework/ui/home/ui/tabs/more/ui/wallet/store/wallet_store.dart'
 import 'package:homework/ui/home/ui/tabs/more/ui/wallet/ui/wallet_page.dart';
 import 'package:homework/ui/home/ui/tabs/more/ui/wallet/widget/card_listing_widget.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
-import 'package:homework/values/colors.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
 import 'package:homework/widget/app_back_button.dart';
 import 'package:homework/widget/app_text_field.dart';
-import 'package:homework/widget/bokking_dialog.dart';
 import 'package:homework/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -251,12 +249,11 @@ class _FinishApplicationPageState extends State<FinishApplicationPage> {
   }
 
   Widget _buildLeasingDetails() {
-    final rentAmount = widget.tenants?.agreement?.rent ?? 0.0;
-    final securityFee = widget.tenants?.agreement?.securityDepositFee ?? 0.0;
+    final rentAmount = (widget.tenants?.agreement?.rent ?? 0.0) / 100;
+    final securityFee = (widget.tenants?.agreement?.securityDepositFee ?? 0.0) / 100;
     final totalAmount = rentAmount + securityFee;
-    return // Calculate total dynamically
 
-        Column(
+    return Column(
       children: [
         _buildKeyValueRow("Rent Amount", "\$${rentAmount.toStringAsFixed(2)}"),
         20.verticalSpace,

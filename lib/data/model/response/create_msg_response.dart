@@ -9,7 +9,7 @@ class CreateMsgResponse {
   @JsonKey(name: 'messageId')
   final  String? messageId;
   @JsonKey(name: 'media')
-  final  List<Media>? media;
+  final  Media? media;
 
   CreateMsgResponse({this.success, this.messageId, this.media});
 

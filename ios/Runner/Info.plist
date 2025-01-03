@@ -53,6 +53,10 @@
     <string>We need permission to save photos to your photo library.</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>To populate workspace and properties on map</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>We need access to your microphone for recording audio.</string>
+    <key>NSAppleMusicUsageDescription</key>
+    <string>We need access to your music library.</string>
     <key>LSApplicationQueriesSchemes</key>
     <array>
       <string>tel</string>

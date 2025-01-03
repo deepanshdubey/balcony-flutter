@@ -1,16 +1,13 @@
 import 'dart:io';
-import 'dart:math';
-
 import 'package:homework/core/locator/locator.dart';
 import 'package:homework/data/model/response/common_data.dart';
 import 'package:homework/data/model/response/coversation_response.dart';
 import 'package:homework/data/model/response/create_msg_response.dart';
-import 'package:homework/data/model/response/property_data.dart';
-import 'package:homework/data/model/response/workspace_data.dart';
 import 'package:homework/data/repository/chat_repository.dart';
-import 'package:homework/data/repository/property_repository.dart';
-import 'package:homework/data/repository/tenant_repository.dart';
+import 'package:homework/data/repository/user_repository.dart';
 import 'package:mobx/mobx.dart';
+import 'package:http/http.dart' as http;
+
 
 part 'chat_store.g.dart';
 
@@ -115,6 +112,80 @@ abstract class _ChatStoreBase with Store {
       errorMessage = e.toString();
     } finally {
       isLoading = false;
+    }
+  }
+
+  @action
+  Future createMsgMedia({File? media, required String conversationId, String? type}) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+
+      final Future<String> imageUploadFuture = _processSingleFilePath(media!.path);
+
+      String url = await imageUploadFuture;
+
+      var payload = {
+        "conversationId": conversationId,
+        "type": type,
+        "url": url,
+      };
+
+      final response = await chatRepository.createMessageV2(payload);
+      if (response.isSuccess) {
+        createMsgResponse = response.data;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+
+
+
+  Future<String> _processSingleFilePath(String filePathOrUrl) async {
+    if (filePathOrUrl.startsWith('http')) {
+      return filePathOrUrl;
+    }
+
+    // Call generateS3url API
+    var fileExtension = filePathOrUrl.split('.').last;
+    var generateS3urlResponse =
+    await userRepository.generateS3Url(fileExtension, "chat");
+
+    if (generateS3urlResponse.isSuccess) {
+      var signedUrl = generateS3urlResponse.data!.signedUrl!;
+      var publicUrl = generateS3urlResponse.data!.publicUrl!;
+      await uploadFileToS3(filePathOrUrl, signedUrl);
+      // Return public URL
+      return publicUrl;
+    } else {
+      throw Exception(
+          "Failed to generate S3 URL: ${generateS3urlResponse.error?.message}");
+    }
+  }
+
+// Helper to upload file to S3
+  Future<void> uploadFileToS3(String filePath, String signedUrl) async {
+    var file = File(filePath);
+    var bytes = await file.readAsBytes();
+
+    var response = await http.put(
+      Uri.parse(signedUrl),
+      headers: {
+        "Content-Type": "application/octet-stream",
+      },
+      body: bytes,
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("File upload failed: ${response.statusCode}");
     }
   }
 }

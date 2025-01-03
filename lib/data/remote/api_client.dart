@@ -383,4 +383,7 @@ abstract class ApiClient {
 
   @POST("property/create_v2")
   Future<CommonData> createPropertyV2(@Body() Map<String, dynamic> request);
+
+  @POST("message/create_v2")
+  Future<CreateMsgResponse> createMessageV2(@Body() Map<String, dynamic> request);
 }
