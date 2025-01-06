@@ -94,6 +94,7 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
       "phone": phoneNumberController.text,
       "selectedUnitId": selectedUnit,
       "moveInRequest": selectedMoveInDate,
+      "currency":"USD"
     };
 
     propertyStore.applyTenant(request);

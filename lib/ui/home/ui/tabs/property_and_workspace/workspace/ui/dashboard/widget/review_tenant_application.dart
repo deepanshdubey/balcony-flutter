@@ -99,7 +99,7 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
       return;
     }
     var request = {
-      "securityDepositFee": depositFeeAmount,
+    if(!isSameAsRent)  "securityDepositFee": depositFeeAmount,
       "isSameAsRent": isSameAsRent,
       "leaseStartDate": leaseStartDate,
       "leaseEndDate": leaseEndDate

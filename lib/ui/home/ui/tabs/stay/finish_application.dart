@@ -58,7 +58,6 @@ class _FinishApplicationPageState extends State<FinishApplicationPage> {
               20.verticalSpace,
               const AppBackButton(
                 text: "Back",
-
               ),
               20.verticalSpace,
               _buildPropertyDetailsSection(context),
@@ -124,11 +123,12 @@ class _FinishApplicationPageState extends State<FinishApplicationPage> {
                 PrimaryButton(
                   text: "Submit payment",
                   onPressed: () {
-                   var request =  {
+                    var request = {
                       "tenantId": widget.tenants?.Id,
-                    "promoCode": promoController.text,
-                    "type": "card"
-                  };
+                      if (promoController.text != null)
+                        "promoCode": promoController.text,
+                      "type": "card"
+                    };
                     store.tenantPayment(request);
                   },
                 )
@@ -249,8 +249,8 @@ class _FinishApplicationPageState extends State<FinishApplicationPage> {
   }
 
   Widget _buildLeasingDetails() {
-    final rentAmount = (widget.tenants?.agreement?.rent ?? 0.0) / 100;
-    final securityFee = (widget.tenants?.agreement?.securityDepositFee ?? 0.0) / 100;
+    final rentAmount = (widget.tenants?.agreement?.rent ?? 0.0);
+    final securityFee = (widget.tenants?.agreement?.securityDepositFee ?? 0.0);
     final totalAmount = rentAmount + securityFee;
 
     return Column(
@@ -264,7 +264,6 @@ class _FinishApplicationPageState extends State<FinishApplicationPage> {
             isBold: true),
       ],
     );
-    ;
   }
 
   Widget _buildLeaseDates() {

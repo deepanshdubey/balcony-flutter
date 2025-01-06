@@ -266,6 +266,11 @@ class _PlanPaymentPageState extends State<PlanPaymentPage> {
         text: widget.plan.name == "free plan" ? "Start" : "Start Subscription and Pay",
         onPressed: () {
           if (widget.plan.name == "free plan") {
+            var request = {
+              "productId": widget.plan.id,
+              "addConcierge": isConciergeSelected
+            };
+            store.subscriptionPurchase(request);
             appRouter.push(CreatePropertyRoute());
           } else {
             var request = {
