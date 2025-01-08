@@ -113,7 +113,7 @@ class _UserHomePageState extends State<UserHomePage> {
               ? const SearchWorkspacesWidget()
               : const SearchPropertiesWidget(),
           20.h.verticalSpace,
-          const PropertyHomeWidget(),
+          if(session.prop)   const PropertyHomeWidget(),
           const WorkspaceHomeWidget(),
           12.h.verticalSpace,
           const HostYourPropertyOrWorkspaceWidget(),
@@ -142,7 +142,7 @@ class _UserHomePageState extends State<UserHomePage> {
           ),
         ),
         10.w.horizontalSpace,
-        Container(
+        if(session.prop)   Container(
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(12.r)),

@@ -13,7 +13,7 @@ abstract class WorkspaceRepository {
     String? select,
     int? page,
     int? limit,
-    bool? includeHost,
+    bool? includeHost = false,
   });
 
   Future<ApiResponse<PaginationData<WorkspaceData>>> getWorkspaceDetail(

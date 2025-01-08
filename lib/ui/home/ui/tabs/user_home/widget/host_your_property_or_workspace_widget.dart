@@ -113,8 +113,8 @@ class HostYourPropertyOrWorkspaceWidget extends StatelessWidget {
                   }
                 },
               )),
-              12.w.horizontalSpace,
-              Expanded(
+              if(session.prop)   12.w.horizontalSpace,
+              if(session.prop) Expanded(
                   child: AppOutlinedButton(
                       text: "sign up property",
                       onPressed: () {

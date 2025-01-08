@@ -1,4 +1,5 @@
 import 'package:auto_route/annotations.dart';
+import 'package:homework/core/session/app_session.dart';
 import 'package:homework/generated/assets.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/widget/workspace_widget.dart';
@@ -117,7 +118,10 @@ class SearchWorkspacePageState extends State<SearchWorkspacePage> {
                 GestureDetector(
                   onTap: () {
                     setState(() {
-                      isMapViewSelected = true;
+                      if(workspaceStore.searchWorkspaceResponse?.length != 0){
+                        isMapViewSelected = true;
+                      }
+
                     });
                   },
                   child: Column(
@@ -141,7 +145,7 @@ class SearchWorkspacePageState extends State<SearchWorkspacePage> {
                   ),
                 ),
                 16.w.horizontalSpace,
-                GestureDetector(
+               if(session.prop) GestureDetector(
                   onTap: () {
                     // Filter action
                   },
@@ -177,7 +181,7 @@ class SearchWorkspacePageState extends State<SearchWorkspacePage> {
               ),
             ),
             10.h.verticalSpace,
-            ListView.builder(
+            workspaceStore.searchWorkspaceResponse?.length == 0 ? Center(child: Text("No data found")) : ListView.builder(
               itemCount: workspaceStore.searchWorkspaceResponse?.length ?? 0,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),

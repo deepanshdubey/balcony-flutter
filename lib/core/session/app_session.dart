@@ -27,6 +27,13 @@ class AppSession implements Session {
   @override
   set isLogin(bool update) => setValue("isLogin", update);
 
+
+  @override
+  bool get prop => getValue("prop", defaultValue: false);
+
+  @override
+  set prop(bool update) => setValue("prop", update);
+
   @override
   String get token => getValue("token", defaultValue: "");
 

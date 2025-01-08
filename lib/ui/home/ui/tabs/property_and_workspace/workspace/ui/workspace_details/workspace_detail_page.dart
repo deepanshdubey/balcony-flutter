@@ -23,7 +23,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
-import 'package:maptiler_flutter/maptiler_flutter.dart';
 import 'package:mobx/mobx.dart';
 
 @RoutePage()
@@ -74,7 +73,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
             ChatDetailsPage(
               image: host.image,
               name: host.firstName,
-              conversationId: response?.conversation?.Id??"",
+              conversationId: response?.conversation?.Id ?? "",
               receiverId: session.user.id,
             ));
       }),
@@ -102,17 +101,17 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Observer(
-          builder: (context) {
-            var data = workspaceStore.workspaceDetailsResponse;
-            return workspaceStore.workspaceResponse?.isNotEmpty == true ||
-                    workspaceStore.isLoading
-                ? Center(
-                    child:
-                        CircularProgressIndicator(color: appColor.primaryColor),
-                  )
-                : Padding(
+      body: Observer(
+        builder: (context) {
+          var data = workspaceStore.workspaceDetailsResponse;
+          return workspaceStore.workspaceResponse?.isNotEmpty == true ||
+                  workspaceStore.isLoading
+              ? Center(
+                  child:
+                      CircularProgressIndicator(color: appColor.primaryColor),
+                )
+              : SingleChildScrollView(
+                  child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24).r,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,9 +255,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                               onTap: () {
                                 var host = data?.host as Host;
 
-                                var request = {
-                                  "userId": host.Id
-                                };
+                                var request = {"userId": host.Id};
                                 chatStore.startConversations(request);
                               },
                               child: Text(
@@ -470,9 +467,9 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                         //   ),
                       ],
                     ),
-                  );
-          },
-        ),
+                  ),
+                );
+        },
       ),
     );
   }

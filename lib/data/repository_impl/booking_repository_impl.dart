@@ -83,7 +83,7 @@ class BookingRepositoryImpl extends BaseRepositoryImpl
 
   @override
   Future<ApiResponse<CommonData>> getAutoStatus() {
-    return execute(apiClient.getAutoStatus());
+    return execute(apiClient.getAutoStatus("booking" , "Anything"));
   }
 
   @override

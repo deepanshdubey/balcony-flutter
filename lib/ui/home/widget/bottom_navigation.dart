@@ -1,3 +1,4 @@
+import 'package:homework/core/session/app_session.dart';
 import 'package:homework/values/extensions/context_ext.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
 import 'package:homework/widget/app_image.dart';
@@ -44,7 +45,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
             bottomTab(theme, "search", theme.assets.bottomNavigationSearch),
             bottomTab(theme, "chat", theme.assets.bottomNavigationChat),
             bottomTab(theme, "works", theme.assets.bottomNavigationWorks),
-            bottomTab(theme, "stays", theme.assets.bottomNavigationStays),
+            if(session.prop)  bottomTab(theme, "stays", theme.assets.bottomNavigationStays),
             bottomTab(theme, "more", theme.assets.bottomNavigationMore),
           ],
         ),

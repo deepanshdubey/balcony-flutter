@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:homework/core/api/api_response/api_response.dart';
@@ -15,15 +16,26 @@ class WorkspaceRepositoryImpl extends BaseRepositoryImpl
   WorkspaceRepositoryImpl(this.apiClient);
 
   @override
-  Future<ApiResponse<PaginationData<WorkspaceData>>> getWorkspace(
-      {String? status,
-      String? sort,
-      String? select,
-      int? page,
-      int? limit,
-      bool? includeHost}) {
-    return execute(apiClient.getWorkSpaces(
-        status ?? 'active', sort, select, page, limit, includeHost));
+  Future<ApiResponse<PaginationData<WorkspaceData>>> getWorkspace({
+    String? status,
+    String? sort,
+    String? select,
+    int? page,
+    int? limit,
+    bool? includeHost = false,
+  }) {
+    final queryJson = {
+      'status': 'active',
+    };
+    return execute(
+      apiClient.getWorkSpaces(
+        jsonEncode(queryJson), // Encoded query parameter
+        page, // Page number
+        limit, // Limit per page
+        sort, // Sort order
+        includeHost, // Include host flag
+      ),
+    );
   }
 
   @override
@@ -36,7 +48,8 @@ class WorkspaceRepositoryImpl extends BaseRepositoryImpl
   Future<ApiResponse<CommonData>> createWorkspace(List<File> images, Info info,
       Pricing pricing, Times times, Other other, List<String> amenities) async {
     var list = await prepareImageFiles(images);
-    return execute(apiClient.createWorkspace(list, info, pricing, times, other, amenities.join(',')));
+    return execute(apiClient.createWorkspace(
+        list, info, pricing, times, other, amenities.join(',')));
   }
 
   @override
@@ -80,6 +93,7 @@ class WorkspaceRepositoryImpl extends BaseRepositoryImpl
       Times times,
       Other other,
       List<String> amenities) {
-    return execute(apiClient.editWorkspace(id, images, info, pricing, times, other, amenities.join(',')));
+    return execute(apiClient.editWorkspace(
+        id, images, info, pricing, times, other, amenities.join(',')));
   }
 }

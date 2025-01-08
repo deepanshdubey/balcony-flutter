@@ -74,13 +74,13 @@ abstract class ApiClient {
 
   @GET("workspace/all")
   Future<PaginationData<WorkspaceData>> getWorkSpaces(
-    @Query("status") String? status,
-    @Query("sort") String? sort,
-    @Query("select") String? select,
-    @Query("page") int? page,
-    @Query("limit") int? limit,
-    @Query("includeHost") bool? includeHost,
-  );
+      @Query("query") String query,
+      @Query("page") int? page,
+      @Query("limit") int? limit,
+      @Query("sort") String? sort,
+      @Query("includeHost") bool? includeHost,
+      );
+
 
   @GET("workspace/all/host/{id}")
   Future<CommonData> getHostWorkspaces(
@@ -354,8 +354,11 @@ abstract class ApiClient {
   Future<CommonData> getAllMessage(@Path("id") String conversationId);
 
   ///auto
-  @GET("auto/status")
-  Future<CommonData> getAutoStatus();
+  @GET("auto/status/{type}/{}")
+  Future<CommonData> getAutoStatus(
+    @Path("type") String type,
+    @Path("tenantId") String? tenantId,
+  );
 
   @GET("auto/accept-booking")
   Future<CommonData> toggleAcceptBooking();
@@ -364,8 +367,12 @@ abstract class ApiClient {
   Future<CommonData> toggleRentPayment();
 
   ///update payout info
-  @GET("user/onboarding-account/{type}")
-  Future<CommonData> updatePayoutInfo(@Path("type") String type);
+  @GET("user/onboarding-account/{workspace}")
+  Future<CommonData> updatePayoutInfo(
+      @Path("workspace") String workspace,
+      @Query("country") String country,
+      );
+
 
   @GET("user/balance/{hostId}")
   Future<CommonData> getEarnings(
@@ -385,5 +392,6 @@ abstract class ApiClient {
   Future<CommonData> createPropertyV2(@Body() Map<String, dynamic> request);
 
   @POST("message/create_v2")
-  Future<CreateMsgResponse> createMessageV2(@Body() Map<String, dynamic> request);
+  Future<CreateMsgResponse> createMessageV2(
+      @Body() Map<String, dynamic> request);
 }

@@ -27,7 +27,7 @@ class _UpdatePayoutWidgetState extends State<UpdatePayoutWidget> {
   @override
   void initState() {
     super.initState();
-    store.autoStatus();
+  //  store.autoStatus();
     addDisposer();
   }
 

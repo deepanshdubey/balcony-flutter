@@ -589,7 +589,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
             // Background color of the text field
             contentPadding:
                 EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
-            suffixIcon: IconButton(
+            /*suffixIcon: IconButton(
               onPressed: _pickAndSendImage,
               icon: Container(
                 padding: const EdgeInsets.all(5),
@@ -599,28 +599,28 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
                 ),
                 child: const Icon(Icons.add, color: Colors.white),
               ),
-            ),
-            prefixIcon: IconButton(
-              onPressed: () {
-
-
-
-              },
-
-
-              icon: ValueListenableBuilder<bool>(
-                valueListenable: _isRecording,
-                builder: (context, isRecording, child) {
-                  return IconButton(
-                    icon: Icon (
-                      isRecording ? Icons.stop : Icons.mic,
-                      color: theme.primaryColor,
-                    ),
-                    onPressed: _toggleRecording,
-                  );
-                },
-              ),
-            ),
+            ),*/
+            // prefixIcon: IconButton(
+            //   onPressed: () {
+            //
+            //
+            //
+            //   },
+            //
+            //
+            //   icon: ValueListenableBuilder<bool>(
+            //     valueListenable: _isRecording,
+            //     builder: (context, isRecording, child) {
+            //       return IconButton(
+            //         icon: Icon (
+            //           isRecording ? Icons.stop : Icons.mic,
+            //           color: theme.primaryColor,
+            //         ),
+            //         onPressed: _toggleRecording,
+            //       );
+            //     },
+            //   ),
+            // ),
           ),
           label: '',
           showLabelAboveField: false,

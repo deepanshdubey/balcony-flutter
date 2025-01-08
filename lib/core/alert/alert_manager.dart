@@ -18,6 +18,11 @@ abstract class AlertManager {
     VoidCallback? onCancel,
     bool isCancelable = true,
   });
+
+/*  Future<void> comingSoonDialog({
+    required BuildContext context,
+    bool isCancelable = true,
+  });*/
 }
 
 AlertManager alertManager = locator<AlertManager>();
