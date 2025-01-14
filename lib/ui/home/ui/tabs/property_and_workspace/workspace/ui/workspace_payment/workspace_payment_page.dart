@@ -387,9 +387,10 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
         onPressed: () {
           var request = {
             "startDate": widget.startDate,
-            "endDate": widget.endDate,
+            "endDate": widget.endDate=="" ? widget.startDate : widget.endDate,
             "workspaceId": widget.workspaceData?.id,
-            "promoCode": promoController.text
+            "promoCode": promoController.text,
+            "currency":"USD"
           };
           workspaceStore.createBooking(request);
         },

@@ -132,7 +132,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget _addProfilePic(ThemeData theme) {
     return ImagePickerWidget(
       onImageSelected: (path) {
-        logger.i(path);
         setState(() {
           imagePath = path;
         });

@@ -66,53 +66,45 @@ class _CustomDropdownState extends State<CustomDropdown> {
           ),
 
           // Item List
-          SizedBox(
-            height: (widget.items.length > maxVisibleItems
-                ? maxVisibleItems * 50.h // Estimated height per item
-                : widget.items.length * 50.h) +
-                8.h, // Add padding for better UX
-            child: SingleChildScrollView(
-              child: Column(
-                children: widget.items.map((item) {
-                  return Column(
-                    children: [
-                      Padding(
-                        padding:
-                        const EdgeInsets.symmetric(horizontal: 8.0, vertical: 20).r,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              widget.iconImage == null
-                                  ? AssetHelper.getAssetForAmenity(item['title'])
-                                  : widget.iconImage ?? "",
-                              height: 16.r,
-                              width: 16.r,
-                              color: appColor.primaryColor,
-                            ),
-                            8.horizontalSpace,
-                            Text(
-                              item['title'],
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                fontWeight: FontWeight.normal,
-                                fontSize: 14.spMin,
-                              ),
-                            ),
-                          ],
+          Column(
+            children: widget.items.map((item) {
+              return Column(
+                children: [
+                  Padding(
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 20).r,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          widget.iconImage == null
+                              ? AssetHelper.getAssetForAmenity(item['title'])
+                              : widget.iconImage ?? "",
+                          height: 16.r,
+                          width: 16.r,
+                          color: appColor.primaryColor,
                         ),
-                      ),
-                      Divider(
-                        color: Color(0xffE2E8F0),
-                        thickness: 0.5,
-                      ),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ),
+                        8.horizontalSpace,
+                        Text(
+                          item['title'],
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(
+                            fontWeight: FontWeight.normal,
+                            fontSize: 14.spMin,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    color: Color(0xffE2E8F0),
+                    thickness: 0.5,
+                  ),
+                ],
+              );
+            }).toList(),
           ),
         ],
       ),

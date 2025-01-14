@@ -1,7 +1,5 @@
-import 'package:homework/generated/assets.dart';
 import 'package:homework/ui/home/ui/tabs/chat/chat_widget.dart';
 import 'package:homework/ui/home/ui/tabs/chat/store/chat_store.dart';
-import 'package:homework/values/extensions/context_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -33,7 +31,10 @@ class _ChatPageState extends State<ChatPage> {
                 color: Theme.of(context).primaryColor, // Adjust loader color
               ),
             )
-          : ListView(
+          :chatStore.allConversationResponse?.conversations?.length==0 ? Center(child: Text("Chat not yet",style: Theme.of(context).textTheme.titleMedium?.copyWith(
+        fontSize: 12.spMin,
+        fontWeight: FontWeight.w500,
+      ),)) : ListView(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
               children: List.generate(
                 chatStore.allConversationResponse?.conversations?.length ?? 0,

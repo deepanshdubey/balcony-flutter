@@ -4,6 +4,7 @@ import 'package:homework/core/alert/alert_manager.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/data/model/response/workspace_data.dart';
 import 'package:homework/generated/assets.dart';
+import 'package:homework/ui/auth/ui/bottomsheet/onboarding_bottomsheet.dart';
 import 'package:homework/ui/home/ui/tabs/chat/store/chat_store.dart';
 import 'package:homework/ui/home/ui/tabs/chat/ui/chat_details_page.dart';
 import 'package:homework/ui/home/ui/tabs/chat/ui/chat_page.dart';
@@ -24,6 +25,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:mobx/mobx.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 @RoutePage()
 class WorkspaceDetailPage extends StatefulWidget {
@@ -76,6 +78,8 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
               conversationId: response?.conversation?.Id ?? "",
               receiverId: session.user.id,
             ));
+        workspaceStore.isLoading = false ;
+
       }),
     ];
   }
@@ -95,6 +99,15 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
     ByteData byteData = await rootBundle.load(Assets.imagesLocationOn);
     final Uint8List imageData = byteData.buffer.asUint8List();
     await _mapController.addImage('custom-marker', imageData);
+  }
+
+  void _makingPhoneCall(String number) async {
+    final Uri url = Uri.parse("tel://1111111111");
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   @override
@@ -210,7 +223,20 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                         PrimaryButton(
                           text: "Book Workspace",
                           onPressed: () {
-                            openBottomSheet(context, data);
+                            if (session.isLogin) {
+                              if (dateSelected.value) {
+                                openBottomSheet(context, data);
+                              }
+                            } else {
+                              showOnboardingBottomSheet(
+                                context,
+                                onSuccess: () {
+                                  if (dateSelected.value) {
+                                    openBottomSheet(context, data);
+                                  }
+                                },
+                              );
+                            }
                           },
                         ),
                         30.verticalSpace,
@@ -253,10 +279,21 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                var host = data?.host as Host;
-
-                                var request = {"userId": host.Id};
-                                chatStore.startConversations(request);
+                                if (session.isLogin) {
+                                  workspaceStore.isLoading = true ;
+                                  var host = data?.host as Host;
+                                  var request = {"userId": host.Id};
+                                  chatStore.startConversations(request);
+                                } else {
+                                  showOnboardingBottomSheet(
+                                    context,
+                                    onSuccess: () {
+                                      var host = data?.host as Host;
+                                      var request = {"userId": host.Id};
+                                      chatStore.startConversations(request);
+                                    },
+                                  );
+                                }
                               },
                               child: Text(
                                 "chat",
@@ -273,12 +310,28 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                               width: 1.w,
                             ),
                             16.horizontalSpace,
-                            Text(
-                              "call",
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontSize: 14.spMin,
-                                decoration: TextDecoration.underline,
-                                color: appColor.primaryColor,
+                            GestureDetector(
+                              onTap: () {
+                                if (session.isLogin) {
+                                  var host = data?.host as Host;
+                                  _makingPhoneCall(host.phone.toString());
+                                } else {
+                                  showOnboardingBottomSheet(
+                                    context,
+                                    onSuccess: () {
+                                      var host = data?.host as Host;
+                                      _makingPhoneCall(host.phone.toString());
+                                    },
+                                  );
+                                }
+                              },
+                              child: Text(
+                                "call",
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontSize: 14.spMin,
+                                  decoration: TextDecoration.underline,
+                                  color: appColor.primaryColor,
+                                ),
                               ),
                             ),
                           ],
@@ -307,7 +360,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                                       })
                                   .toList() ??
                               [],
-                          visibleItem: 9,
+                          visibleItem: data?.amenities?.length ?? 0,
                         ),
                         18.verticalSpace,
                         CustomDropdown(

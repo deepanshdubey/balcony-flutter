@@ -167,14 +167,14 @@ class _SignInPageState extends State<SignInPage> {
           Row(
             children: [
               20.w.horizontalSpace,
-              socialButton(
+            /*  socialButton(
                 theme,
                 image: theme.assets.facebook,
                 text: "facebook",
                 onPressed: () {
                   alertManager.showError(context, "under development");
                 },
-              ),
+              ),*/
               10.w.horizontalSpace,
               socialButton(
                 theme,

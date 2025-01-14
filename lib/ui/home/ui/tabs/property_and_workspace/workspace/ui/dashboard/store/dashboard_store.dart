@@ -114,6 +114,7 @@ abstract class _DashboardStoreBase with Store {
       if (response.isSuccess) {
         reAuthenticateResponse = response.data;
       } else {
+        session.isLogin =false ;
         errorMessage = response.error!.message;
       }
     } catch (e, st) {

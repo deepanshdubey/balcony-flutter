@@ -43,11 +43,16 @@ class ChatWidget extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AppImage(
-                url: image,
-                radius: 30.r,
-                 placeholder: Image.asset(Assets.imagesProfile),
-              ),
+              image == ""
+                  ? AppImage(
+                      assetPath: Assets.imagesProfile,
+                      radius: 30.r,
+                    )
+                  : AppImage(
+                      url: image,
+                      radius: 30.r,
+                      placeholder: Image.asset(Assets.imagesProfile),
+                    ),
               25.w.horizontalSpace,
               Expanded(
                   child: Column(

@@ -4,7 +4,6 @@ import 'package:homework/ui/auth/ui/bottomsheet/onboarding_bottomsheet.dart';
 import 'package:homework/values/extensions/context_ext.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
 import 'package:homework/widget/app_image.dart';
-import 'package:homework/widget/app_outlined_button.dart';
 import 'package:homework/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -95,41 +94,20 @@ class HostYourPropertyOrWorkspaceWidget extends StatelessWidget {
             ],
           ),
           20.h.verticalSpace,
-          Row(
-            children: [
-              Expanded(
-                  child: PrimaryButton(
-                text: "sign up workspace",
-                onPressed: () {
-                  if (session.isLogin) {
+          PrimaryButton(
+            text: "sign up workspace",
+            onPressed: () {
+              if (session.isLogin) {
+                navigateToCreateWorkSpace(context);
+              } else {
+                showOnboardingBottomSheet(
+                  context,
+                  onSuccess: () {
                     navigateToCreateWorkSpace(context);
-                  } else {
-                    showOnboardingBottomSheet(
-                      context,
-                      onSuccess: () {
-                        navigateToCreateWorkSpace(context);
-                      },
-                    );
-                  }
-                },
-              )),
-              if(session.prop)   12.w.horizontalSpace,
-              if(session.prop) Expanded(
-                  child: AppOutlinedButton(
-                      text: "sign up property",
-                      onPressed: () {
-                        if (session.isLogin) {
-                          navigateToCreateProperty(context);
-                        } else {
-                          showOnboardingBottomSheet(
-                            context,
-                            onSuccess: () {
-                              navigateToCreateProperty(context);
-                            },
-                          );
-                        }
-                      })),
-            ],
+                  },
+                );
+              }
+            },
           ),
           100.h.verticalSpace,
         ],

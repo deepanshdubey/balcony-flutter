@@ -1,4 +1,6 @@
 import 'package:homework/core/session/app_session.dart';
+import 'package:homework/ui/auth/ui/bottomsheet/onboarding_bottomsheet.dart';
+import 'package:homework/ui/home/ui/tabs/more/ui/more_page.dart';
 import 'package:homework/values/extensions/context_ext.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
 import 'package:homework/widget/app_image.dart';
@@ -56,13 +58,23 @@ class _BottomNavigationState extends State<BottomNavigation> {
   Widget switchHostUser(ThemeData theme) {
     return GestureDetector(
       onTap: () {
-        if (previousItem == 'user' || previousItem == 'host') {
-          setState(() {
-            isUserSelected = !isUserSelected;
-          });
+
+        if (session.isLogin) {
+          if (previousItem == 'user' || previousItem == 'host') {
+            setState(() {
+              isUserSelected = !isUserSelected;
+            });
+          }
+          previousItem = isUserSelected ? "user" : "host";
+          widget.onItemSelected(isUserSelected ? "user" : "host");
+        } else {
+          showOnboardingBottomSheet(
+            context,
+            onSuccess: () => showAppBottomSheet(context, const MorePage()),
+          );
         }
-        previousItem = isUserSelected ? "user" : "host";
-        widget.onItemSelected(isUserSelected ? "user" : "host");
+
+
       },
       child: Container(
         width: 54.w,

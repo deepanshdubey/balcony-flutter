@@ -1,4 +1,3 @@
-import 'package:homework/core/alert/alert_manager.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/ui/auth/ui/sign_in_page.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/widget/property_home_widget.dart';

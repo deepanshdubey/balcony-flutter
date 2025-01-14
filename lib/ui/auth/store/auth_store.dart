@@ -107,14 +107,10 @@ abstract class _AuthStoreBase with Store {
       final response = await userRepository.register(request);
       if (response.isSuccess) {
         registerResponse = response.data!;
-        session.user = response.data!.user!;
-        session.token = response.data!.token!;
       } else {
         errorMessage = response.error!.message;
       }
     } catch (e, st) {
-      logger.e(e);
-      logger.e(st);
       errorMessage = e.toString();
     } finally {
       isLoading = false;
