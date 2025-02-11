@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/core/alert/alert_manager.dart';
+import 'package:homework/core/session/app_session.dart';
 import 'package:homework/data/model/response/workspace_data.dart';
 import 'package:homework/router/app_router.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
@@ -208,6 +209,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
                           ),
                         );
                       }),
+                      55.verticalSpace
                     ],
                   ),
                 ),
@@ -247,7 +249,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
     if (validate()) {
       Info info = workspaceInfoKey.currentState!.getApiData();
       info.summary = summaryController.text.trim();
-      info.floor = "";
+      info.floor = "5th floor";
       if (isEdit) {
         store.updateWorkspace(
           workspaceData.id.toString(),

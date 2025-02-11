@@ -57,35 +57,35 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
       ..androidEncoder = AndroidEncoder.aac
       ..androidOutputFormat = AndroidOutputFormat.amr_nb
       ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC
-      ..bitRate = 256000  // Increase bitrate to improve quality
+      ..bitRate = 256000 // Increase bitrate to improve quality
       ..sampleRate = 44100;
   }
 
   Future<void> startRecording() async {
     try {
       if (await _recorderController.checkPermission()) {
-        await _recorderController.record();  // Start recording
+        await _recorderController.record(); // Start recording
       }
     } catch (e) {
       print('Error recording: $e');
     }
   }
 
-
   Future<void> stopRecording() async {
-    var path = await _recorderController.stop() ?? '';  // Get the file path after stopping the recording
+    var path = await _recorderController.stop() ??
+        ''; // Get the file path after stopping the recording
     if (path.isNotEmpty) {
       print('Recording saved at: $path');
-      await uploadAudio(path);  // Upload the audio file
+      await uploadAudio(path); // Upload the audio file
     }
   }
 
   void _toggleRecording() {
     _isRecording.value = !_isRecording.value;
     if (_isRecording.value) {
-    startRecording();
+      startRecording();
     } else {
-    stopRecording();
+      stopRecording();
     }
   }
 
@@ -96,13 +96,11 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
       await chatStore.createMsgMedia(
         conversationId: widget.conversationId ?? "",
         media: file,
-        type: 'audio',  // Specify the media type as audio
+        type: 'audio', // Specify the media type as audio
       );
       _scrollToBottom();
     }
   }
-
-
 
   @override
   void dispose() {
@@ -118,7 +116,6 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
       reaction((_) => chatStore.allMsgResponse, (response) {
         messages.value = chatStore.allMsgResponse?.messages ?? [];
         _scrollToBottom();
-
       }),
       reaction((_) => chatStore.createMsgResponse, (response) {
         final socketMessage = {
@@ -128,22 +125,22 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
               ? messageController.text.trim()
               : null, // Only include text if it's not
           // empty
-      if(response?.media?.url != null)    "media": {
-            "url": response?.media?.url,
-            "type": response?.media?.type,
-          } ,// If no media, set it to null
+          if (response?.media?.url != null)
+            "media": {
+              "url": response?.media?.url,
+              "type": response?.media?.type,
+            }, // If no media, set it to null
           "seen": false,
         };
-
 
         socketManager.sendMessage(socketMessage);
         print("send chat--> $socketMessage");
 
-
         final newMessage = LastMessage(
           senderId: session.user.id ?? "",
           text: messageController.text.trim(),
-          media: Media(url:response?.media?.url, type: response?.media?.url), // Use the file URL or upload it if needed
+          media: Media(url: response?.media?.url, type: response?.media?.url),
+          // Use the file URL or upload it if needed
           createdAt: DateTime.now().toIso8601String(),
         );
         messageController.clear();
@@ -174,14 +171,17 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   Future<void> _initializeChat() async {
     socketManager.initializeSocket(
         "https://api.homework.ws/"); // Replace with socket URL
-    socketManager.addUser(session.user.id ?? "");
+   // socketManager.addUser(session.user.id ?? "");
 
     socketManager.onGetMessage((data) {
       print(data);
 
       Media? media;
-      if (data['media'] != null && data['media'] is List && data['media'].isNotEmpty) {
-        final mediaData = data['media'][0]; // Access the first media object in the list
+      if (data['media'] != null &&
+          data['media'] is List &&
+          data['media'].isNotEmpty) {
+        final mediaData =
+            data['media'][0]; // Access the first media object in the list
         media = Media.fromJson({
           'fieldname': 'media',
           'url': mediaData['url'],
@@ -203,12 +203,20 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
       _scrollToBottom();
     });
 
-
-
-
     socketManager.onGetUsers((users) {
+      print(users);
+
       isReceiverOnline.value =
-          users.any((user) => user['userId'] == widget.receiverId);
+          users.any((user) => user['userId'] == session.user.id);
+
+
+      print( session.user.id);
+
+      print( widget.receiverId);
+
+
+      print( isReceiverOnline.value);
+
     });
   }
 
@@ -217,7 +225,6 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     chatStore.createMsg(
         conversationId: widget.conversationId ?? "",
         msg: messageController.text.trim());
-
 
     _scrollToBottom();
   }
@@ -231,10 +238,10 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     if (result != null && result.files.isNotEmpty) {
       final file = File(result.files.single.path ?? '');
       await chatStore.createMsgMedia(
-        conversationId: widget.conversationId ?? "",
-        media: file,
-        type: "image"// Send the file as media
-      );
+          conversationId: widget.conversationId ?? "",
+          media: file,
+          type: "image" // Send the file as media
+          );
 
       _scrollToBottom();
     }
@@ -257,7 +264,6 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   //   }
   // }
 
-
   /*Future<void> _pickAndSendDocument() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom, // Restrict to custom types (documents)
@@ -276,7 +282,6 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
       _scrollToBottom();
     }
   }*/
-
 
   // void _showPickOptions() {
   //   showModalBottomSheet(
@@ -319,8 +324,6 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   //   );
   // }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -338,17 +341,6 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     final theme = Theme.of(context);
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 5,
-            spreadRadius: 1,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
       child: Row(
         children: [
           AppBackButton(
@@ -396,30 +388,37 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     return ValueListenableBuilder<List<LastMessage>>(
       valueListenable: messages,
       builder: (context, messageList, _) {
-        return ListView.builder(
-          controller: scrollController,
-          padding: const EdgeInsets.all(16),
-          itemCount: messageList.length,
-          itemBuilder: (context, index) {
-            final message = messageList[index];
-            if (message.senderId == session.user.id) {
-              return _buildSentMessage(
+        if (messageList.isEmpty) {
+          return chatStore.isLoading
+              ? Center(child: CircularProgressIndicator())
+              : Center(child: Text("No messages yet. Start a conversation!"));
+        } else {
+          return ListView.builder(
+            controller: scrollController,
+            padding: const EdgeInsets.all(16),
+            itemCount: messageList.length,
+            itemBuilder: (context, index) {
+              final message = messageList[index];
+              if (message.senderId == session.user.id) {
+                return _buildSentMessage(
                   context: context,
                   time: _formatTime(message.createdAt),
                   text: message.text,
-                  mediaUrl: message.media?.url);
-            } else {
-              return _buildReceivedMessage(
+                  mediaUrl: message.media?.url,
+                );
+              } else {
+                return _buildReceivedMessage(
                   time: _formatTime(message.createdAt),
                   text: message.text,
-                  mediaUrl: message.media?.url);
-            }
-          },
-        );
+                  mediaUrl: message.media?.url,
+                );
+              }
+            },
+          );
+        }
       },
     );
   }
-
 
 // Widget to build sent message
   Widget _buildSentMessage({
@@ -450,21 +449,23 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
             )
           // Display image if mediaUrl is available
           else if (mediaUrl != null && mediaUrl.isNotEmpty)
-            mediaUrl.endsWith(".mp3") || mediaUrl.endsWith(".wav") || mediaUrl.endsWith(".m4a")
-                ? AudioPlayerWidget(audioUrl: mediaUrl)  // Display audio player
+            mediaUrl.endsWith(".mp3") ||
+                    mediaUrl.endsWith(".wav") ||
+                    mediaUrl.endsWith(".m4a")
+                ? AudioPlayerWidget(audioUrl: mediaUrl) // Display audio player
                 : AppImage(
-              url: mediaUrl.startsWith('file://')
-                  ? null
-                  : mediaUrl,  // If it's a local file, pass null for URL
-              file: mediaUrl.startsWith('file://')
-                  ? mediaUrl.replaceFirst('file://', '')
-                  : null,  // Extract the local file path
-              height: 200.r,
-              width: 200.r,
-              radius: 10.r,
-            )
+                    url: mediaUrl.startsWith('file://') ? null : mediaUrl,
+                    // If it's a local file, pass null for URL
+                    file: mediaUrl.startsWith('file://')
+                        ? mediaUrl.replaceFirst('file://', '')
+                        : null,
+                    // Extract the local file path
+                    height: 200.r,
+                    width: 200.r,
+                    radius: 10.r,
+                  )
           else
-            const SizedBox.shrink(),  // Empty space if no media or text
+            const SizedBox.shrink(), // Empty space if no media or text
           const SizedBox(height: 5),
           Text(
             time,
@@ -488,27 +489,31 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
           // If text is available, display it. Otherwise, show media.
           text != null && text.isNotEmpty
               ? Container(
-            padding: const EdgeInsets.all(12),
-            margin: const EdgeInsets.only(top: 10),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              text,
-              style: const TextStyle(color: Colors.black),
-            ),
-          )
+                  padding: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.only(top: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    text,
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                )
               : mediaUrl != null && mediaUrl.isNotEmpty
-              ? mediaUrl.endsWith(".mp3") || mediaUrl.endsWith(".wav") || mediaUrl.endsWith(".m4a") || mediaUrl.endsWith(".webm")
-              ? AudioPlayerWidget(audioUrl: mediaUrl)  // Display audio player
-              : AppImage(
-            url: mediaUrl,
-            height: 200.r,
-            width: 200.r,
-            radius: 10.r,
-          )
-              : const SizedBox.shrink(),
+                  ? mediaUrl.endsWith(".mp3") ||
+                          mediaUrl.endsWith(".wav") ||
+                          mediaUrl.endsWith(".m4a") ||
+                          mediaUrl.endsWith(".webm")
+                      ? AudioPlayerWidget(
+                          audioUrl: mediaUrl) // Display audio player
+                      : AppImage(
+                          url: mediaUrl,
+                          height: 200.r,
+                          width: 200.r,
+                          radius: 10.r,
+                        )
+                  : const SizedBox.shrink(),
           const SizedBox(height: 5),
           Text(
             time,

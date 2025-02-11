@@ -19,6 +19,10 @@ abstract class _AuthStoreBase with Store {
   @observable
   CommonData? loginResponse;
 
+
+  @observable
+  CommonData? deleteAccountResponse;
+
   @observable
   CommonData? registerResponse;
 
@@ -65,6 +69,26 @@ abstract class _AuthStoreBase with Store {
         loginResponse = response.data!;
         session.user = response.data!.user!;
         session.token = response.data!.token!;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future deleteAccount(Map<String, dynamic> request) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await userRepository.deleteAccount(request);
+      if (response.isSuccess) {
+        deleteAccountResponse = response.data!;
       } else {
         errorMessage = response.error!.message;
       }

@@ -19,6 +19,11 @@ class UserRepositoryImpl extends BaseRepositoryImpl implements UserRepository {
   }
 
   @override
+  Future<ApiResponse<CommonData>> deleteAccount(Map<String, dynamic> request) {
+    return execute(apiClient.deleteAccount(request));
+  }
+
+  @override
   Future<ApiResponse<CommonData>> register(Map<String, dynamic> request) {
     return execute(apiClient.register(request));
   }

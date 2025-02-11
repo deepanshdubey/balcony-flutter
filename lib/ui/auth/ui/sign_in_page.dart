@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/core/alert/alert_manager.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/ui/auth/store/auth_store.dart';
+import 'package:homework/ui/concierge/login/concierge_sign_in_page.dart';
 import 'package:homework/values/extensions/context_ext.dart';
 import 'package:homework/values/extensions/string_ext.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
@@ -112,29 +113,45 @@ class _SignInPageState extends State<SignInPage> {
                   hintText: 'password',
                 ),
                 10.h.verticalSpace,
-                Observer(builder: (context) {
-                  final isLoading = authStore.isLoading;
-                  return PrimaryButton(
-                    text: "login",
-                    onPressed: () {
-                      if (_formKey.currentState!.validate() == true) {
-                        authStore.login({
-                          emailController.text.trim().isValidEmail()
-                              ? "email"
-                              : "phone": emailController.text.trim(),
-                          "password": passwordController.text.trim(),
-                        });
-                      }
-                    },
-                    isLoading: isLoading,
-                  );
-                }),
+                Row(
+                  children: [
+                    Observer(builder: (context) {
+                      final isLoading = authStore.isLoading;
+                      return PrimaryButton(
+                        text: "login",
+                        onPressed: () {
+                          if (_formKey.currentState!.validate() == true) {
+                            authStore.login({
+                              emailController.text.trim().isValidEmail()
+                                  ? "email"
+                                  : "phone": emailController.text.trim(),
+                              "password": passwordController.text.trim(),
+                            });
+                          }
+                        },
+                        isLoading: isLoading,
+                      );
+                    }),
+                    70.horizontalSpace,
+                   /* GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        showAppBottomSheet(context, ConciergeSignInPage());
+                      },
+                      child: Text("Login as Concierge",
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontSize: 14.spMin,
+                            fontWeight: FontWeight.w500,
+                          )),
+                    )*/
+                  ],
+                ),
                 16.h.verticalSpace,
               ],
             ),
           ),
           20.h.verticalSpace,
-          Row(
+        /*  Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -163,11 +180,11 @@ class _SignInPageState extends State<SignInPage> {
               )),
             ],
           ),
-          25.h.verticalSpace,
+          25.h.verticalSpace,*/
           Row(
             children: [
               20.w.horizontalSpace,
-            /*  socialButton(
+              /*  socialButton(
                 theme,
                 image: theme.assets.facebook,
                 text: "facebook",
@@ -176,7 +193,7 @@ class _SignInPageState extends State<SignInPage> {
                 },
               ),*/
               10.w.horizontalSpace,
-              socialButton(
+             /* socialButton(
                 theme,
                 image: theme.assets.google,
                 text: "google",
@@ -184,7 +201,7 @@ class _SignInPageState extends State<SignInPage> {
                   authStore.socialAuth();
                 },
               ),
-              20.w.horizontalSpace,
+              20.w.horizontalSpace,*/
             ],
           )
         ],

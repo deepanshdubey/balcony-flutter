@@ -43,9 +43,9 @@ class _BottomNavigationState extends State<BottomNavigation> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            switchHostUser(theme),
+           // switchHostUser(theme),
             bottomTab(theme, "search", theme.assets.bottomNavigationSearch),
-            bottomTab(theme, "chat", theme.assets.bottomNavigationChat),
+          //  bottomTab(theme, "chat", theme.assets.bottomNavigationChat),
             bottomTab(theme, "works", theme.assets.bottomNavigationWorks),
             if(session.prop)  bottomTab(theme, "stays", theme.assets.bottomNavigationStays),
             bottomTab(theme, "more", theme.assets.bottomNavigationMore),

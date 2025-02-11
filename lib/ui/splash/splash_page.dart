@@ -23,7 +23,9 @@ class _SplashPageState extends State<SplashPage> {
       2.seconds,
       () {
         if (session.isWalkthroughSeen) {
-          if (session.isLogin || session.isLoginSkipped) {
+          if (session.isConcierge) {
+            appRouter.replaceAll([const ConciergeHomeRoute()]);
+          } else if (session.isLogin || session.isLoginSkipped) {
             appRouter.replaceAll([const HomeRoute()]);
           } else {
             appRouter.replaceAll([const StartRoute()]);

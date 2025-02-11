@@ -18,7 +18,7 @@ class AppBackButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap ??
           () {
-            appRouter.back();
+            Navigator.of(context).pop();
           },
       child: Container(
         padding: EdgeInsets.symmetric(

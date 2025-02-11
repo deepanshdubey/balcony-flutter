@@ -66,9 +66,9 @@ class WalkthroughPageState extends State<WalkthroughPage> {
                   imagePath: theme.assets.walkthrough2,
                 ),
                 _buildIntroPage(theme, 2,
-                    title: "property\nrentals",
+                    title: "workspace \nbooking",
                     description:
-                        "Its more than just a simple workspace & a property stay. It's an experience. Need a new place to stay? See whats available and apply for a unit.",
+                        "It's more than just a simple workspace app. It's an experience, Need a place to work? See what's available and book at ease.",
                     imagePath: theme.assets.walkthrough3),
               ],
             ),
@@ -113,7 +113,7 @@ class WalkthroughPageState extends State<WalkthroughPage> {
                       height: context.height * .4,
                       width: context.width * .3,
                       child: Text(
-                        "Its more than just a simple workspace & a property stay.\n\nIt’s an experience.",
+                        "Its more than just a simple workspace app.\n\nIt’s an experience.",
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontSize: 18.spMin,
                           fontWeight: FontWeight.normal,

@@ -78,7 +78,21 @@ void showAppBottomSheet(BuildContext context, Widget any,
 
 String _formatTime(String? timestamp) {
   if (timestamp == null) return '';
+
   final dateTime = DateTime.parse(timestamp);
-  final formattedTime = DateFormat.jm().format(dateTime); // Example: "12:15 PM"
-  return formattedTime;
+  final now = DateTime.now();
+
+  // Check if the date is today
+  final isToday = dateTime.year == now.year &&
+      dateTime.month == now.month &&
+      dateTime.day == now.day;
+
+  if (isToday) {
+    // Format and return only the time if it's today
+    return DateFormat.jm().format(dateTime); // Example: "12:15 PM"
+  } else {
+    // Format and return the date for other days
+    return DateFormat.yMMMd().format(dateTime); // Example: "Jan 27, 2025"
+  }
 }
+

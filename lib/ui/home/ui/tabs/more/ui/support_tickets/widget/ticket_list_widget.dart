@@ -27,34 +27,37 @@ class TicketListWidget extends StatelessWidget {
         children: [
           Container(
             color: Colors.grey[200],
-            child: Row(
-              children: [
-                Expanded(
-                    flex: 1,
-                    child: Checkbox(
-                      value: false,
-                      onChanged: (value) {},
-                    )),
-                Expanded(
-                  flex: 4,
-                  child: Text(
-                    'ticket #',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: Colors.black54,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10 , horizontal: 20).r,
+              child: Row(
+                children: [
+                /*  Expanded(
+                      flex: 1,
+                      child: Checkbox(
+                        value: false,
+                        onChanged: (value) {},
+                      )),*/
+                  Expanded(
+                    flex: 4,
+                    child: Text(
+                      'ticket #',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: Colors.black54,
+                      ),
                     ),
                   ),
-                ),
-                8.w.horizontalSpace,
-                Expanded(
-                  flex: 3,
-                  child: Text(
-                    'view or reply',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: Colors.black54,
+                  8.w.horizontalSpace,
+                  Expanded(
+                    flex: 3,
+                    child: Text(
+                      'view or reply',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: Colors.black54,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           tickets.isNotEmpty

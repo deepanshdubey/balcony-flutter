@@ -1,7 +1,9 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:homework/core/alert/alert_manager.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/data/model/response/promo_list_model.dart';
 import 'package:homework/data/model/response/promo_model.dart';
+import 'package:homework/router/app_router.dart';
 import 'package:homework/ui/home/store/promo_store.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/model/promotion_item.dart';
@@ -49,8 +51,16 @@ class _PromotionWidgetState extends BaseState<PromotionWidget> {
   void addDisposer() {
     disposers ??= [
       reaction((_) => promoStore.errorMessage, (String? errorMessage) {
-        if (errorMessage != null) {
-          alertManager.showError(context, errorMessage);
+        if (errorMessage != null &&
+            errorMessage == "user cannot access this resource") {
+          alertManager.showSystemAlertDialog(
+            context: context,
+            title: "Add Your Workshop",
+            confirmButtonText: "Add",
+            onConfirm: () {
+              context.router.push(CreateWorkspaceRoute());
+            },
+          );
         }
       }),
       reaction((_) => promoStore.createPromoResponse, (PromoModel? promo) {

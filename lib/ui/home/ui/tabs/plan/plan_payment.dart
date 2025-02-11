@@ -65,7 +65,7 @@ class _PlanPaymentPageState extends State<PlanPaymentPage> {
                     padding: const EdgeInsets.symmetric(horizontal: 16.0).r,
                     child: Divider(),
                   ),
-                if (widget.plan.name != "free plan")  _buildPaymentSection(),
+                if (widget.plan.name != "free plan") _buildPaymentSection(),
                 if (widget.plan.name == "free plan") 15.verticalSpace,
                 _buildBookButton(context),
                 32.verticalSpace,
@@ -235,6 +235,9 @@ class _PlanPaymentPageState extends State<PlanPaymentPage> {
                                   },
                                 );
                               },
+                              onCheckboxChanged: (p0) {
+                                walletStore.setDefaultCard(p0.id.toString());
+                              },
                             ),
                           )
                         : Padding(
@@ -263,7 +266,9 @@ class _PlanPaymentPageState extends State<PlanPaymentPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24).r,
       child: PrimaryButton(
-        text: widget.plan.name == "free plan" ? "Start" : "Start Subscription and Pay",
+        text: widget.plan.name == "free plan"
+            ? "Start"
+            : "Start Subscription and Pay",
         onPressed: () {
           if (widget.plan.name == "free plan") {
             var request = {

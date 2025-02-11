@@ -134,7 +134,7 @@ class _WalletPageState extends State<WalletPage> {
             children: [
               _buildPaymentOption("Card", Icons.credit_card),
               const SizedBox(width: 16),
-              _buildPaymentOption("PayPal", Icons.paypal),
+             // _buildPaymentOption("PayPal", Icons.paypal),
               const SizedBox(width: 16),
               _buildPaymentOption("Add Card", Icons.add),
             ],
@@ -218,6 +218,9 @@ class _WalletPageState extends State<WalletPage> {
                             walletStore.deleteCard(p0.id.toString());
                           },
                         );
+                      },
+                      onCheckboxChanged: (p0) {
+                        walletStore.setDefaultCard(p0.id.toString());
                       },
                     ),
                   )

@@ -59,6 +59,7 @@ class AppSession implements Session {
     isLoginSkipped = false;
     isWalkthroughSeen = false;
     sessionCookie = null;
+    isConcierge = false ;
   }
 
   @override
@@ -79,6 +80,12 @@ class AppSession implements Session {
 
   @override
   set user(UserData user) => setValue("user", user);
+
+  @override
+  bool get isConcierge => getValue("isConcierge", defaultValue: false);
+
+  @override
+  set isConcierge(bool update) => setValue("isConcierge", update);
 }
 
 final session = locator<Session>();

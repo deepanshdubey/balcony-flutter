@@ -1,10 +1,7 @@
-import 'package:homework/core/session/app_session.dart';
 import 'package:homework/router/app_router.dart';
-import 'package:homework/ui/auth/ui/bottomsheet/onboarding_bottomsheet.dart';
 import 'package:homework/values/extensions/context_ext.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
 import 'package:homework/widget/app_image.dart';
-import 'package:homework/widget/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -28,7 +25,7 @@ class HostYourPropertyOrWorkspaceWidget extends StatelessWidget {
           ),
           32.h.verticalSpace,
           Text(
-            "host your workspace or property",
+            "book your workspace",
             style: theme.textTheme.titleLarge?.copyWith(
               fontSize: 34.spMin,
               fontWeight: FontWeight.w600,
@@ -93,22 +90,22 @@ class HostYourPropertyOrWorkspaceWidget extends StatelessWidget {
               ),
             ],
           ),
-          20.h.verticalSpace,
-          PrimaryButton(
-            text: "sign up workspace",
-            onPressed: () {
-              if (session.isLogin) {
-                navigateToCreateWorkSpace(context);
-              } else {
-                showOnboardingBottomSheet(
-                  context,
-                  onSuccess: () {
-                    navigateToCreateWorkSpace(context);
-                  },
-                );
-              }
-            },
-          ),
+         // 20.h.verticalSpace,
+          // PrimaryButton(
+          //   text: "sign up workspace",
+          //   onPressed: () {
+          //     if (session.isLogin) {
+          //       navigateToCreateWorkSpace(context);
+          //     } else {
+          //       showOnboardingBottomSheet(
+          //         context,
+          //         onSuccess: () {
+          //           navigateToCreateWorkSpace(context);
+          //         },
+          //       );
+          //     }
+          //   },
+          // ),
           100.h.verticalSpace,
         ],
       ),

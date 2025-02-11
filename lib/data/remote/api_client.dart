@@ -11,6 +11,12 @@ import 'package:homework/data/model/response/promo_model.dart';
 import 'package:homework/data/model/response/property_data.dart';
 import 'package:homework/data/model/response/subscription_list_model.dart';
 import 'package:homework/data/model/response/user_data.dart';
+import 'package:homework/ui/concierge/model/add_tenant_model.dart';
+import 'package:homework/ui/concierge/model/concierge_property_response.dart';
+import 'package:homework/ui/concierge/model/concierge_tanant_response.dart';
+import 'package:homework/ui/concierge/model/maintenace_request_response.dart';
+import 'package:homework/ui/concierge/model/ongoing_response.dart';
+import 'package:homework/ui/concierge/model/parcel_response.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -40,6 +46,9 @@ abstract class ApiClient {
 
   @POST("auth/login")
   Future<CommonData> login(@Body() Map<String, dynamic> request);
+
+  @POST("user/delete-account")
+  Future<CommonData> deleteAccount(@Body() Map<String, dynamic> request);
 
   @POST("auth/send-reset-otp")
   Future<CommonData> sendResetOtp(@Body() Map<String, dynamic> request);
@@ -271,7 +280,7 @@ abstract class ApiClient {
     @Body() Map<String, dynamic> request,
   );
 
-  @PUT("card/set-default")
+  @PUT("card/default-card")
   Future<CommonData> setDefaultCard(@Field("cardId") String id);
 
   @DELETE("card/delete/{id}")
@@ -394,4 +403,77 @@ abstract class ApiClient {
   @POST("message/create_v2")
   Future<CreateMsgResponse> createMessageV2(
       @Body() Map<String, dynamic> request);
+
+
+  //concierge
+
+  @POST("concierge/login")
+  Future<CommonData> conciergeLogin(@Body() Map<String, dynamic> request);
+
+  @POST("/concierge/property/add")
+  Future<ConciergePropertyResponse> conciergePropertyAdd(@Body() Map<String, dynamic> request);
+
+  @GET("concierge/property/all")
+  Future<ConciergePropertyResponse> conciergePropertyAll();
+
+  @GET("concierge/parcel/me")
+  Future<ParcelResponse> conciergeParcelMe();
+
+  @GET("/concierge/parcel/add/{type}/{tenantId}")
+  Future<ParcelResponse> parcelAdd(
+      @Path("type") String type,
+      @Path("tenantId") String tenantId,
+      );
+
+  @GET("/concierge/parcel/delete/{type}/{tenantId}")
+  Future<ParcelResponse> parcelDelete(
+      @Path("type") String type,
+      @Path("tenantId") String tenantId,
+      );
+
+  @DELETE("concierge/tenant/delete/{id}")
+  Future<ParcelResponse> tenantDelete(
+      @Path("id") String tenantId,
+      );
+
+
+  @GET("/concierge/parcel/remind")
+  Future<ParcelResponse> parcelRemind();
+
+
+  @GET("concierge/tenant/all")
+  Future<ConciergeTanantResponse> conciergeTenantAll();
+
+  @POST("concierge/tenant/add")
+  Future<AddTenantModel> conciergeTenantAdd(@Body() Map<String, dynamic> request);
+
+  @GET("concierge/outgoing-parcel/all")
+  Future<OngoingResponse> ongoingAll();
+
+  @POST("/concierge/outgoing-parcel/add")
+  Future<CommonData> ongoingAdd(@Body() Map<String, dynamic> request);
+
+  @GET("concierge/outgoing-parcel/toggle-status/{id}")
+  Future<CommonData> ongoingToggleStatus(
+      @Path("id") String tenantId,
+      );
+
+
+  @GET("concierge/maintenance-request/all")
+  Future<MaintenaceRequestResponse> maintenanceRequestAll();
+
+  @POST("concierge/maintenance-request/add")
+  Future<CommonData> maintenanceRequestsAdd(@Body() Map<String, dynamic> request);
+
+  @GET("/concierge/maintenance-request/toggle-status/{id}")
+  Future<CommonData> maintenanceRequestToggle(
+      @Path("id") String tenantId,
+      );
+
+
+
+
+
+
+
 }

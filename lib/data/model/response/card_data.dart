@@ -17,7 +17,7 @@ class CardData {
   final String? expiry;
 
   @JsonKey(name: 'default')
-  final bool? isDefault;
+   bool? isDefault;
 
   CardData({
     this.id,

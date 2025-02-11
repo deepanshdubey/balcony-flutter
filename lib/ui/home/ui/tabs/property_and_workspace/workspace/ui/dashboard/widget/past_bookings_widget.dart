@@ -46,16 +46,16 @@ class _PastBookingsWidgetState extends State<PastBookingsWidget> {
                         topRight: Radius.circular(12.r)),
                     color: Colors.grey[200],
                   ),
-                  padding: EdgeInsets.symmetric(vertical: 8.r, horizontal: 0.r),
+                  padding: EdgeInsets.symmetric(vertical: 8.r, horizontal: 10.r),
                   child: Row(
                     children: [
-                      Expanded(
+                 /*     Expanded(
                         flex: 1,
                         child: Checkbox(
                           value: false,
                           onChanged: (value) {},
                         ),
-                      ),
+                      ),*/
                       Expanded(
                         flex: 3,
                         child: Text(

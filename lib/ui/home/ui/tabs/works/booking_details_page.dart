@@ -91,9 +91,9 @@ class _BookingsDetailsPageState extends State<BookingsDetailsPage> {
       children: [
         _buildOrderContainer(context, bookingsData),
         20.verticalSpace,
-        _buildSupportSection(context, bookingsData),
+       // _buildSupportSection(context, bookingsData),
         16.verticalSpace,
-        _buildContactOptions(context, bookingsData),
+      //  _buildContactOptions(context, bookingsData),
       ],
     );
   }

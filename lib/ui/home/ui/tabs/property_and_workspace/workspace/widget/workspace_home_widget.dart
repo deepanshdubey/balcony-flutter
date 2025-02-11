@@ -1,6 +1,8 @@
 import 'package:homework/core/alert/alert_manager.dart';
+import 'package:homework/core/session/app_session.dart';
 import 'package:homework/router/app_router.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/store/dashboard_store.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/workspace_page.dart';
 import 'package:homework/ui/home/widget/home_listing_widget.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +26,7 @@ class _WorkspaceHomeWidgetState extends State<WorkspaceHomeWidget> {
   void initState() {
     super.initState();
     addDisposer();
+
     store.getWorkspace();
   }
 

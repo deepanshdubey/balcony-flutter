@@ -9,7 +9,7 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    namespace = "com.homework.ws"
+    namespace = "com.homeworkspaces.ws"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -31,15 +31,17 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.homework.ws"
+        applicationId = "com.homeworkspaces.ws"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 3
+        versionName = "2.0"
     }
 
     buildTypes {
         release {
+            minifyEnabled false
+            shrinkResources false
             signingConfig = signingConfigs.release
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

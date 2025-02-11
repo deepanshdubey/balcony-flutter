@@ -67,6 +67,7 @@ class AppTextField extends StatelessWidget {
 
   Widget field(BuildContext context) {
     return TextFormField(
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       controller: controller,
       focusNode: focusNode,
       readOnly: readOnly,

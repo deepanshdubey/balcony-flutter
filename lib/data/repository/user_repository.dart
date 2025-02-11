@@ -18,6 +18,9 @@ abstract class UserRepository {
 
   Future<ApiResponse<CommonData>> login(Map<String, dynamic> request);
 
+  Future<ApiResponse<CommonData>> deleteAccount(Map<String, dynamic> request);
+
+
   Future<ApiResponse<CommonData>> forgotPassword(Map<String, dynamic> request);
 
   Future<ApiResponse<CommonData>> updatePassword(String newPassword);

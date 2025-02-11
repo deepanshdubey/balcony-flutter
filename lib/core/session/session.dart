@@ -38,6 +38,10 @@ abstract class Session {
 
   set sessionCookie(String? update);
 
+  bool get isConcierge;
+
+  set isConcierge(bool update);
+
 
   void logout();
 }

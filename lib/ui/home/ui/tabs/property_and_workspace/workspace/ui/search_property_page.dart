@@ -115,7 +115,7 @@ class SearchPropertyPageState extends State<SearchPropertyPage> {
                   ),
                 ),
                 16.w.horizontalSpace,
-                GestureDetector(
+      /*          GestureDetector(
                   onTap: () {
                     // Filter action
                   },
@@ -138,7 +138,7 @@ class SearchPropertyPageState extends State<SearchPropertyPage> {
                       ),
                     ],
                   ),
-                ),
+                ),*/
               ],
             ),
             10.h.verticalSpace,

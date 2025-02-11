@@ -58,6 +58,7 @@ class _SearchWorkspacesWidgetState extends State<SearchWorkspacesWidget> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Form(
@@ -78,22 +79,26 @@ class _SearchWorkspacesWidgetState extends State<SearchWorkspacesWidget> {
               controller: placeController,
               focusNode: placeNode,
               validator: (place) {
-                if (place?.isNotEmpty == true) {
-                  return null;
-                } else {
-                  return 'please enter city';
+                if (place == null || place.trim().isEmpty) {
+                  return 'Please enter a city';
                 }
+                return null;
               },
-              label: 'place*',
-              hintText: "city",
+              label: 'Place*',
+              hintText: "City",
               textInputAction: TextInputAction.next,
             ),
             16.h.verticalSpace,
-            // Example of AppTextField for Check-In and Check-Out with DatePicker
             AppTextField(
               controller: checkInController,
               focusNode: checkInNode,
               readOnly: true,
+              validator: (date) {
+                if (date == null || date.trim().isEmpty) {
+                  return 'Please select a check-in date';
+                }
+                return null;
+              },
               onTap: () async {
                 DateTime? selectedDate = await showDatePicker(
                   context: context,
@@ -102,8 +107,7 @@ class _SearchWorkspacesWidgetState extends State<SearchWorkspacesWidget> {
                   lastDate: DateTime(2100),
                 );
                 if (selectedDate != null) {
-                  String formattedDate =
-                      DateFormat('MM/dd').format(selectedDate);
+                  String formattedDate = DateFormat('MM/dd').format(selectedDate);
                   checkInController.text = formattedDate;
                   checkInDate = selectedDate.toIso8601String();
                 }
@@ -116,7 +120,7 @@ class _SearchWorkspacesWidgetState extends State<SearchWorkspacesWidget> {
                   assetPath: theme.assets.calender,
                 ),
               ),
-              label: 'check in',
+              label: 'Check In',
               hintText: 'MM/DD',
             ),
             16.h.verticalSpace,
@@ -124,7 +128,27 @@ class _SearchWorkspacesWidgetState extends State<SearchWorkspacesWidget> {
               controller: checkOutController,
               focusNode: checkOutNode,
               readOnly: true,
-              onTap: () async {
+                validator: (date) {
+                  if (checkInDate.trim().isEmpty || checkInDate == " ") {
+                    return 'Please select a check-in date first';
+                  }
+                  if (date == null || date.trim().isEmpty) {
+                    return 'Please select a check-out date';
+                  }
+                  try {
+                    final checkIn = DateTime.parse(checkInDate);
+                    final checkOut = DateTime.parse(checkOutDate);
+
+                    if (checkOut.isBefore(checkIn)) {
+                      return 'Check-out date cannot be before check-in date';
+                    }
+                  } catch (e) {
+                    return 'Invalid date format';
+                  }
+                  return null;
+                },
+
+                onTap: () async {
                 DateTime? selectedDate = await showDatePicker(
                   context: context,
                   initialDate: DateTime.now(),
@@ -133,8 +157,7 @@ class _SearchWorkspacesWidgetState extends State<SearchWorkspacesWidget> {
                 );
 
                 if (selectedDate != null) {
-                  String formattedDate =
-                      DateFormat('MM/dd').format(selectedDate);
+                  String formattedDate = DateFormat('MM/dd').format(selectedDate);
                   checkOutController.text = formattedDate;
                   checkOutDate = selectedDate.toIso8601String();
                 }
@@ -147,31 +170,40 @@ class _SearchWorkspacesWidgetState extends State<SearchWorkspacesWidget> {
                   assetPath: theme.assets.calender,
                 ),
               ),
-              label: 'check out',
+              label: 'Check Out',
               hintText: 'MM/DD',
             ),
-
             16.h.verticalSpace,
             SizedBox(
               width: context.width / 2,
               child: AppTextField(
                 controller: peopleController,
                 focusNode: peopleNode,
-                label: 'people',
+                validator: (people) {
+                  if (people == null || people.trim().isEmpty) {
+                    return 'Please enter the number of people';
+                  }
+                  if (int.tryParse(people) == null || int.parse(people) <= 0) {
+                    return 'Please enter a valid number of people';
+                  }
+                  return null;
+                },
+                label: 'People',
                 hintText: '##',
                 keyboardType: TextInputType.number,
               ),
             ),
             10.h.verticalSpace,
             PrimaryButton(
-              text: "search",
+              text: "Search",
               onPressed: () {
-                if (_formKey.currentState!.validate() == true) {
+                if (_formKey.currentState!.validate()) {
                   context.router.push(SearchWorkspaceRoute(
-                      place: placeController.text,
-                      checkIn: checkInDate,
-                      checkOut: checkOutDate,
-                      people: int.parse(peopleController.text)));
+                    place: placeController.text,
+                    checkIn: checkInDate,
+                    checkOut: checkOutDate,
+                    people: int.parse(peopleController.text),
+                  ));
                 }
               },
             ),
@@ -181,6 +213,7 @@ class _SearchWorkspacesWidgetState extends State<SearchWorkspacesWidget> {
       ),
     );
   }
+
 
   Widget socialButton(ThemeData theme,
       {required String image,

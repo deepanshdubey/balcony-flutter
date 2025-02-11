@@ -199,7 +199,7 @@ class _FinishApplicationPageState extends State<FinishApplicationPage> {
                                   walletStore.deleteCard(p0.id.toString());
                                 },
                               );
-                            },
+                            }, onCheckboxChanged: (CardData ) {  },
                           ),
                         )
                       : Padding(

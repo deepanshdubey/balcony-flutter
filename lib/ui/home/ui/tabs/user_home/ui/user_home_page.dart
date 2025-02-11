@@ -126,18 +126,18 @@ class _UserHomePageState extends State<UserHomePage> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         24.h.horizontalSpace,
-        AppImage(
+      /*  AppImage(
           assetPath: theme.assets.bottomNavigationSearch,
           height: 30.r,
           width: 30.r,
         ),
-        8.w.horizontalSpace,
+        8.w.horizontalSpace,*/
         Text(
           "search",
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.primaryColor,
-            fontSize: 16.spMin,
-            fontWeight: FontWeight.w500,
+            fontSize: 24.spMin,
+            fontWeight: FontWeight.w600,
           ),
         ),
         10.w.horizontalSpace,

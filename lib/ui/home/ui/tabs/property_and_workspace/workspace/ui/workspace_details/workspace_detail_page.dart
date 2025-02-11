@@ -78,8 +78,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
               conversationId: response?.conversation?.Id ?? "",
               receiverId: session.user.id,
             ));
-        workspaceStore.isLoading = false ;
-
+        workspaceStore.isLoading = false;
       }),
     ];
   }
@@ -175,7 +174,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                             fontSize: 28.spMin,
                           ),
                         ),
-                        20.verticalSpace,
+                        /*   20.verticalSpace,
                         Row(
                           children: [
                             buildRatingStars(
@@ -196,7 +195,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                               fit: BoxFit.cover,
                             )
                           ],
-                        ),
+                        ),*/
                         29.verticalSpace,
                         BookingCalendar(
                           onDateSelected: (String onDateSelected, int days,
@@ -257,7 +256,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                         Container(
                           width: 200.w,
                           child: Text(
-                            "Chat &/or call with the workspace host before booking",
+                            "call with the workspace host before booking",
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: theme.textTheme.titleMedium?.copyWith(
@@ -277,7 +276,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                         16.verticalSpace,
                         Row(
                           children: [
-                            GestureDetector(
+                            /*  GestureDetector(
                               onTap: () {
                                 if (session.isLogin) {
                                   workspaceStore.isLoading = true ;
@@ -302,14 +301,14 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                                     color: appColor.primaryColor,
                                     decoration: TextDecoration.underline),
                               ),
-                            ),
-                            16.horizontalSpace,
-                            Container(
-                              color: const Color(0xff005451),
-                              height: 20.h,
-                              width: 1.w,
-                            ),
-                            16.horizontalSpace,
+                            ),*/
+                            //  16.horizontalSpace,
+                            //   Container(
+                            //     color: const Color(0xff005451),
+                            //     height: 20.h,
+                            //     width: 1.w,
+                            //   ),
+                            //  16.horizontalSpace,
                             GestureDetector(
                               onTap: () {
                                 if (session.isLogin) {
@@ -442,8 +441,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                           ),
                         ),
                         23.verticalSpace,
-
-                        Observer(
+                        /*  Observer(
                           builder: (context) {
                             var data = workspaceStore.workspaceDetailsResponse;
                             return workspaceStore
@@ -458,12 +456,15 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                                     children: [
                                       // Other widgets...
 
-                                      Container(
+                                      SizedBox(
                                         height: 200.h,
                                         child: ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(20).r,
                                           child: MapLibreMap(
+                                            trackCameraPosition: true,
+                                            zoomGesturesEnabled: true,
+                                            dragEnabled: true,
                                             styleString:
                                                 'https://api.maptiler.com/maps/streets-v2/style.json?key=HRmXb4He6yvLBd6RRIcJ',
                                             myLocationEnabled: true,
@@ -474,7 +475,6 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                                                   data?.geocode?.lon ?? 0),
                                               zoom: 13,
                                             ),
-                                            trackCameraPosition: true,
                                             onMapCreated: onMapCreated,
                                             onStyleLoadedCallback: () async {
                                               await Future.delayed(const Duration(
@@ -505,8 +505,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                                     ],
                                   );
                           },
-                        ),
-
+                        ),*/
                         20.verticalSpace
                         // Map Image Placeholder
                         // MapTiler.geocodingAPI.searchByCoordinates(8.55, 47.36667).then((result) {

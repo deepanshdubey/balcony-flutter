@@ -19,7 +19,10 @@ class CustomInterceptors extends Interceptor {
           .putIfAbsent("Cookie", () => "token=${session.token}");
     } else if (session.sessionCookie != null) {
       options.headers
-          .putIfAbsent("Cookie", () => "connect.sid=${session.sessionCookie}");
+          .putIfAbsent("Cookie", () => "homework.sid=${session.sessionCookie}");
+    }else if(session.isConcierge){
+      options.headers
+          .putIfAbsent("Cookie", () => "token=${session.token}");
     }
 
     super.onRequest(options, handler);
@@ -31,7 +34,7 @@ class CustomInterceptors extends Interceptor {
     final cookies = response.headers[HttpHeaders.setCookieHeader];
     if (cookies != null) {
       for (var cookie in cookies) {
-        if (cookie.startsWith('connect.sid=')) {
+        if (cookie.startsWith('homework.sid')) {
           session.sessionCookie = cookie.split(';')[0].split('=')[1];
           break;
         }

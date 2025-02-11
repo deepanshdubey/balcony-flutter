@@ -63,10 +63,11 @@ class AppDropdownField<T> extends StatelessWidget {
           InputDecoration(
             contentPadding: EdgeInsets.symmetric(
               vertical: 5.h,
-              horizontal: 16.w,
+              horizontal: 10.w,
             ),
             labelText: hintText,
             hintText: hintText,
+            suffixIconConstraints: BoxConstraints(minHeight: 30,minWidth: 30),
             suffixIcon: suffixIcon ?? const Icon(Icons.arrow_drop_down),
             prefixIcon: prefixIcon,
             floatingLabelBehavior: FloatingLabelBehavior.never,

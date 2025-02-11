@@ -2,6 +2,18 @@ import 'package:auto_route/auto_route.dart';
 import 'package:homework/core/locator/locator.dart';
 import 'package:homework/data/model/response/property_data.dart';
 import 'package:homework/ui/auth/ui/start_page.dart';
+import 'package:homework/ui/concierge/Home/Concierge_tenant_details_page.dart';
+import 'package:homework/ui/concierge/Home/concierge_home.dart';
+import 'package:homework/ui/concierge/Home/maintenance_details_page.dart';
+import 'package:homework/ui/concierge/Home/maitenance_form_page.dart';
+import 'package:homework/ui/concierge/Home/ongoing_form_page.dart';
+import 'package:homework/ui/concierge/Home/outgoing_parcel_details_page.dart';
+import 'package:homework/ui/concierge/Home/tanant_form_page.dart';
+import 'package:homework/ui/concierge/Home/webview.dart';
+import 'package:homework/ui/concierge/model/concierge_tanant_response.dart';
+import 'package:homework/ui/concierge/model/maintenace_request_response.dart';
+import 'package:homework/ui/concierge/model/ongoing_response.dart';
+import 'package:homework/ui/concierge/model/parcel_response.dart';
 import 'package:homework/ui/home/ui/home_page.dart';
 import 'package:homework/ui/home/ui/tabs/host_home/ui/host_home_page.dart';
 import 'package:homework/ui/home/ui/tabs/plan/plan_page.dart';
@@ -46,6 +58,14 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: PropertyRoute.page),
         AutoRoute(page: SearchWorkspaceRoute.page),
         AutoRoute(page: SearchPropertyRoute.page),
+        AutoRoute(page: ConciergeHomeRoute.page),
+        AutoRoute(page: TenantFormRoute.page),
+        AutoRoute(page: ConciergeTenantDetailsRoute.page),
+        AutoRoute(page: OngoingFormRoute.page),
+        AutoRoute(page: OutgoingParcelDetailsRoute.page),
+        AutoRoute(page: MaintenanceDetailsRoute.page),
+        AutoRoute(page: MaintenanceFormRoute.page),
+        AutoRoute(page: WebViewRoute.page),
       ];
 }
 

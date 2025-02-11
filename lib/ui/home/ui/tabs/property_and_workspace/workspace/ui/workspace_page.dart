@@ -237,8 +237,8 @@ class WorkspacePageState extends State<WorkspacePage> {
                             ],
                           ),
                         ),
-                        16.w.horizontalSpace,
-                        GestureDetector(
+                       // 16.w.horizontalSpace,
+         /*               GestureDetector(
                           onTap: () {
                             // Map filter action
                           },
@@ -261,7 +261,7 @@ class WorkspacePageState extends State<WorkspacePage> {
                               ),
                             ],
                           ),
-                        ),
+                        ),*/
                       ],
                     ),
                   ),
@@ -278,7 +278,6 @@ class WorkspacePageState extends State<WorkspacePage> {
                     physics: BouncingScrollPhysics(),
                     scrollDirection: Axis.horizontal,
                     itemCount: workspaceStore.workspaceResponse?.length ?? 0,
-                    shrinkWrap: true,
                     itemBuilder: (context, index) {
                       final workspace = workspaceStore.workspaceResponse![index];
                       return MapWorkspaceWidget(

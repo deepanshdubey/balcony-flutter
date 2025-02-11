@@ -161,7 +161,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       AppTextField(
                         controller: phoneController,
                         focusNode: phoneNode,
-                        keyboardType: TextInputType.number,
+                        keyboardType: TextInputType.phone,
                         validator: phoneValidator.call,
                         label: 'phone',
                         hintText: '###-###-####',

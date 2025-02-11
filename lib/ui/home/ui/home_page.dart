@@ -5,6 +5,7 @@ import 'package:homework/ui/auth/ui/sign_in_page.dart';
 import 'package:homework/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:homework/ui/home/ui/tabs/host_home/ui/host_home_page.dart';
 import 'package:homework/ui/home/ui/tabs/more/ui/more_page.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/ui/create_workspace_page.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/store/dashboard_store.dart';
 import 'package:homework/ui/home/ui/tabs/search/search_page.dart';
 import 'package:homework/ui/home/ui/tabs/stay/ranted_history_page.dart';
@@ -31,7 +32,7 @@ class _HomePageState extends State<HomePage> {
   String selectedTab = 'user';
   var store = DashboardStore();
   List<ReactionDisposer>? disposers;
-
+  final dashboardStore = DashboardStore();
 
   @override
   void initState() {
@@ -47,7 +48,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
-
   void addDisposer() {
     disposers ??= [
       reaction((_) => store.reAuthenticateResponse, (response) {
@@ -59,14 +59,12 @@ class _HomePageState extends State<HomePage> {
     ];
   }
 
-
   void showLogoutAlert(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return LogoutAlertWidget(
           onLoginPressed: () {
-            // Close the dialog first
             Navigator.of(dialogContext).pop();
             showAppBottomSheet(
               context,
@@ -89,20 +87,21 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            Container(
-              child: bottomPages.containsKey(selectedTab)
-                  ? bottomPages[selectedTab]
-                  : selectedTab == 'user'
+      alignment: Alignment.bottomCenter,
+      children: [
+        Container(
+          child: bottomPages.containsKey(selectedTab)
+              ? bottomPages[selectedTab]
+              : selectedTab == 'user'
                   ? const UserHomePage()
-                  : const HostHomePage(),
-            ),
-            BottomNavigation(
-              onItemSelected: handleNavigation,
-            ),
-          ],
-        ));
+                  : HostHomePage()
+
+        ),
+        BottomNavigation(
+          onItemSelected: handleNavigation,
+        ),
+      ],
+    ));
   }
 
   void handleNavigation(String s) {
@@ -130,7 +129,7 @@ class _HomePageState extends State<HomePage> {
       } else {
         showOnboardingBottomSheet(
           context,
-          onSuccess: () => showAppBottomSheet(context,  BookingHistoryPage()),
+          onSuccess: () => showAppBottomSheet(context, BookingHistoryPage()),
         );
       }
     } else if (s == "stays") {

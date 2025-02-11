@@ -11,6 +11,7 @@ import 'package:homework/core/session/session.dart';
 import 'package:homework/data/model/response/user_data.dart';
 import 'package:homework/data/repository/booking_repository.dart';
 import 'package:homework/data/repository/chat_repository.dart';
+import 'package:homework/data/repository/concierge_repo.dart';
 import 'package:homework/data/repository/promo_repository.dart';
 import 'package:homework/data/repository/property_repository.dart';
 import 'package:homework/data/repository/social_manager.dart';
@@ -20,6 +21,7 @@ import 'package:homework/data/repository/wallet_repository.dart';
 import 'package:homework/data/repository/workspace_repository.dart';
 import 'package:homework/data/repository_impl/booking_repository_impl.dart';
 import 'package:homework/data/repository_impl/chat_repository_impl.dart';
+import 'package:homework/data/repository_impl/concierge_repository_impl.dart';
 import 'package:homework/data/repository_impl/promo_repository_impl.dart';
 import 'package:homework/data/repository_impl/property_repository_impl.dart';
 import 'package:homework/data/repository_impl/social_manager_impl.dart';
@@ -71,6 +73,8 @@ Future<void> setupLocator() async {
       () => TenantRepositoryImpl(locator()));
   locator.registerLazySingleton<ChatRepository>(
       () => ChatRepositoryImpl(locator()));
+  locator.registerLazySingleton<ConciergeRepository>(
+      () => ConciergeRepositoryImpl(locator()));
   locator.registerLazySingleton<Logger>(() => Logger(level: Level.all));
   locator.registerLazySingleton<AddressStore>(() => AddressStore());
   locator.registerLazySingleton<SupportTicketStore>(() => SupportTicketStore());
