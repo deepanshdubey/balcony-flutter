@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/core/alert/alert_manager.dart';
-import 'package:homework/core/session/app_session.dart';
 import 'package:homework/ui/auth/store/auth_store.dart';
 import 'package:homework/ui/auth/ui/bottomsheet/alert/verification_alert.dart';
 import 'package:homework/values/extensions/context_ext.dart';
@@ -7,13 +9,11 @@ import 'package:homework/values/validators.dart';
 import 'package:homework/widget/app_text_field.dart';
 import 'package:homework/widget/password_field.dart';
 import 'package:homework/widget/primary_button.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobx/mobx.dart';
 
 class SignUpPage extends StatefulWidget {
   final VoidCallback onSuccess;
+
   const SignUpPage({super.key, required this.onSuccess});
 
   @override
@@ -112,7 +112,8 @@ class _SignUpPageState extends State<SignUpPage> {
               children: [
                 Container(
                   width: context.width,
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
                   margin: EdgeInsets.symmetric(horizontal: 20.w),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(12.r)),
@@ -162,7 +163,17 @@ class _SignUpPageState extends State<SignUpPage> {
                         controller: phoneController,
                         focusNode: phoneNode,
                         keyboardType: TextInputType.phone,
-                        validator: phoneValidator.call,
+                        validator: (value) {
+                          if (value != null && value.isNotEmpty) {
+                            if (value.length < 8) {
+                              return "please enter valid phone number";
+                            }
+                            if (value.length > 15) {
+                              return "please enter valid phone number";
+                            }
+                          }
+                          return null;
+                        },
                         label: 'phone',
                         hintText: '###-###-####',
                         textInputAction: TextInputAction.next,
