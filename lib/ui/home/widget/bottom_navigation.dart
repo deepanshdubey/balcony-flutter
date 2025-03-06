@@ -1,11 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/ui/auth/ui/bottomsheet/onboarding_bottomsheet.dart';
 import 'package:homework/ui/home/ui/tabs/more/ui/more_page.dart';
 import 'package:homework/values/extensions/context_ext.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
 import 'package:homework/widget/app_image.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class BottomNavigation extends StatefulWidget {
   final Function(String) onItemSelected;
@@ -43,11 +43,12 @@ class _BottomNavigationState extends State<BottomNavigation> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-           // switchHostUser(theme),
+            switchHostUser(theme),
             bottomTab(theme, "search", theme.assets.bottomNavigationSearch),
-          //  bottomTab(theme, "chat", theme.assets.bottomNavigationChat),
+            //  bottomTab(theme, "chat", theme.assets.bottomNavigationChat),
             bottomTab(theme, "works", theme.assets.bottomNavigationWorks),
-            if(session.prop)  bottomTab(theme, "stays", theme.assets.bottomNavigationStays),
+            if (session.prop)
+              bottomTab(theme, "stays", theme.assets.bottomNavigationStays),
             bottomTab(theme, "more", theme.assets.bottomNavigationMore),
           ],
         ),
@@ -58,7 +59,6 @@ class _BottomNavigationState extends State<BottomNavigation> {
   Widget switchHostUser(ThemeData theme) {
     return GestureDetector(
       onTap: () {
-
         if (session.isLogin) {
           if (previousItem == 'user' || previousItem == 'host') {
             setState(() {
@@ -73,8 +73,6 @@ class _BottomNavigationState extends State<BottomNavigation> {
             onSuccess: () => showAppBottomSheet(context, const MorePage()),
           );
         }
-
-
       },
       child: Container(
         width: 54.w,
