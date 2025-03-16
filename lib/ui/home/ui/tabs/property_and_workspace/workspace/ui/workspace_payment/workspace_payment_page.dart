@@ -1,7 +1,7 @@
-import 'dart:ffi';
-
-import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/core/alert/alert_manager.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/data/model/response/card_data.dart';
@@ -12,16 +12,12 @@ import 'package:homework/ui/home/store/promo_store.dart';
 import 'package:homework/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:homework/ui/home/ui/tabs/more/ui/wallet/store/wallet_store.dart';
 import 'package:homework/ui/home/ui/tabs/more/ui/wallet/ui/wallet_page.dart';
-import 'package:homework/ui/home/ui/tabs/more/ui/wallet/widget/card_listing_widget.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:homework/values/colors.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
 import 'package:homework/widget/app_image.dart';
 import 'package:homework/widget/app_text_field.dart';
 import 'package:homework/widget/primary_button.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobx/mobx.dart';
 
 @RoutePage()
@@ -71,7 +67,6 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
     disposers ??= [
       reaction((_) => promoStore.errorMessage, (String? errorMessage) {
         if (errorMessage != null) {
-
           //    alertManager.showError(context,"ass");
           promoDiscount.value = 0;
         }
@@ -137,7 +132,7 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
                 _buildOrderDetails(),
                 _buildTimeFrameSection(),
                 _buildUserInfoSection(),
-              //  _buildPromoCodeSection(),
+                //  _buildPromoCodeSection(),
                 _buildPaymentSection(),
                 _buildBookButton(context),
                 32.verticalSpace
@@ -208,7 +203,8 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
                 ?.copyWith(fontWeight: FontWeight.w600, fontSize: 13.spMin),
           ),
           12.verticalSpace,
-          _buildKeyValueRow('9 Bushwick Lofts x ${widget.selectedDays} days',
+          _buildKeyValueRow(
+              '${widget.workspaceData?.info?.name ?? "-"} x ${widget.selectedDays} days',
               "\$${(widget.workspaceData?.pricing?.totalPerDay ?? 0) * (widget.selectedDays ?? 0)}"),
           30.verticalSpace,
           Divider(),
@@ -359,12 +355,12 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
                     )
                   : cards?.isNotEmpty == true
                       ? Column(
-                children: cards
-                    !.map(
-                      (e) => cardItem(context, e),
-                )
-                    .toList(),
-              )
+                          children: cards!
+                              .map(
+                                (e) => cardItem(context, e),
+                              )
+                              .toList(),
+                        )
                       : Row(
                           children: [
                             Text("No card yet!"),
@@ -388,26 +384,30 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
   }
 
   Widget _buildBookButton(BuildContext context) {
-    return ValueListenableBuilder(valueListenable: bookLoading, builder: (context, value, child) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24).r,
-        child: PrimaryButton(
-          isLoading: value,
-          text: "Book Workspace",
-          onPressed: () {
-            bookLoading.value = true;
-            var request = {
-              "startDate": widget.startDate,
-              "endDate": widget.endDate=="" ? widget.startDate : widget.endDate,
-              "workspaceId": widget.workspaceData?.id,
-              "promoCode": promoController.text,
-              "currency":"USD"
-            };
-            workspaceStore.createBooking(request);
-          },
-        ),
-      );
-    },);
+    return ValueListenableBuilder(
+      valueListenable: bookLoading,
+      builder: (context, value, child) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24).r,
+          child: PrimaryButton(
+            isLoading: value,
+            text: "Book Workspace",
+            onPressed: () {
+              bookLoading.value = true;
+              var request = {
+                "startDate": widget.startDate,
+                "endDate":
+                    widget.endDate == "" ? widget.startDate : widget.endDate,
+                "workspaceId": widget.workspaceData?.id,
+                "promoCode": promoController.text,
+                "currency": "USD"
+              };
+              workspaceStore.createBooking(request);
+            },
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildKeyValueRow(String key, String value) {
@@ -495,45 +495,53 @@ class _WorkspacePaymentPageState extends State<WorkspacePaymentPage> {
   }
 
   Widget cardItem(BuildContext context, CardData e) {
-    return e.isDefault??false ? Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 12).r,
-            child: Text(
-              "${e.name}",
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(),
-            ),
-          ),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(12.r)),
-                  border: Border.all(color: Colors.black.withOpacity(.25))),
-              child: Text(
-                "**** **** **** ${e.cardNumber ?? ""}",
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(),
+    return e.isDefault ?? false
+        ? Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 12).r,
+                  child: Text(
+                    "${e.name}",
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(),
+                  ),
+                ),
               ),
-            ),
-            4.verticalSpace,
-            GestureDetector(
-               onTap: () {
-                 showAppBottomSheet(context, WalletPage());
-               },
-              child: Text(
-                "change payment method",
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(decoration: TextDecoration.underline),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(12.r)),
+                        border:
+                            Border.all(color: Colors.black.withOpacity(.25))),
+                    child: Text(
+                      "**** **** **** ${e.cardNumber ?? ""}",
+                      style:
+                          Theme.of(context).textTheme.titleMedium?.copyWith(),
+                    ),
+                  ),
+                  4.verticalSpace,
+                  GestureDetector(
+                    onTap: () {
+                      showAppBottomSheet(context, WalletPage());
+                    },
+                    child: Text(
+                      "change payment method",
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium
+                          ?.copyWith(decoration: TextDecoration.underline),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-      ],
-    ) : 0.verticalSpace;
+            ],
+          )
+        : 0.verticalSpace;
   }
 }

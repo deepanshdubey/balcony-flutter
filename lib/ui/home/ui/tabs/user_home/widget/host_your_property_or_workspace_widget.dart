@@ -28,7 +28,7 @@ class HostYourPropertyOrWorkspaceWidget extends StatelessWidget {
           ),
           32.h.verticalSpace,
           Text(
-            "book your workspace",
+            "host your workspace",
             style: theme.textTheme.titleLarge?.copyWith(
               fontSize: 34.spMin,
               fontWeight: FontWeight.w600,

@@ -133,8 +133,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
             Expanded(
               child: SingleChildScrollView(
                 child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
+                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
                   child: Column(
                     children: [
                       title(),
@@ -146,6 +145,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
                       30.h.verticalSpace,
                       AddressWidget(
                         key: workspaceInfoKey,
+                        isWorkSpace: true,
                         existingAddress: isEdit ? workspaceData.info : null,
                       ),
                       30.h.verticalSpace,
@@ -223,7 +223,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
 
   Widget title() {
     return Text(
-      "we need a few information about your property.",
+      "we need a few information about your workspace.",
       style: theme.textTheme.titleLarge?.copyWith(
         fontWeight: FontWeight.w600,
         fontSize: 28.spMin,

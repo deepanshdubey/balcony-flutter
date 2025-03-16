@@ -1,8 +1,9 @@
-import 'package:homework/generated/assets.dart';
-import 'package:homework/values/colors.dart';
-import 'package:homework/values/extensions/assets_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:homework/generated/assets.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/model/amenities_item.dart';
+import 'package:homework/values/colors.dart';
+import 'package:homework/values/extensions/map_ext.dart';
 
 class CustomDropdown extends StatefulWidget {
   final String title;
@@ -28,7 +29,8 @@ class _CustomDropdownState extends State<CustomDropdown> {
       return SizedBox.shrink(); // Return an empty widget if there are no items
     }
 
-    int maxVisibleItems = widget.visibleItem; // Maximum items visible before scrolling
+    int maxVisibleItems =
+        widget.visibleItem; // Maximum items visible before scrolling
 
     return Container(
       decoration: BoxDecoration(
@@ -51,9 +53,9 @@ class _CustomDropdownState extends State<CustomDropdown> {
                 Text(
                   widget.title,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.normal,
-                    fontSize: 12.spMin,
-                  ),
+                        fontWeight: FontWeight.normal,
+                        fontSize: 12.spMin,
+                      ),
                 ),
                 8.horizontalSpace,
                 Image.asset(
@@ -71,14 +73,20 @@ class _CustomDropdownState extends State<CustomDropdown> {
               return Column(
                 children: [
                   Padding(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 20).r,
+                    padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 20)
+                        .r,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Image.asset(
                           widget.iconImage == null
-                              ? AssetHelper.getAssetForAmenity(item['title'])
+                              ? AmenitiesItem.preset()
+                                      .firstWhereOrNull((element) =>
+                                          element.name == item['title'])
+                                      ?.image ??
+                                  widget.iconImage ??
+                                  Assets.amenitiesCommercial
                               : widget.iconImage ?? "",
                           height: 16.r,
                           width: 16.r,
@@ -87,13 +95,11 @@ class _CustomDropdownState extends State<CustomDropdown> {
                         8.horizontalSpace,
                         Text(
                           item['title'],
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(
-                            fontWeight: FontWeight.normal,
-                            fontSize: 14.spMin,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 14.spMin,
+                                  ),
                         ),
                       ],
                     ),

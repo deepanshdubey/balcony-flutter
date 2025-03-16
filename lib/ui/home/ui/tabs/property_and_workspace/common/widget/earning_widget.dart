@@ -1,7 +1,6 @@
-import 'package:homework/values/colors.dart';
-import 'package:homework/values/extensions/context_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:homework/values/extensions/context_ext.dart';
 
 class EarningWidget extends StatelessWidget {
   final int progress;
@@ -59,7 +58,8 @@ class EarningWidget extends StatelessWidget {
               ? const Center(
                   child: CircularProgressIndicator(),
                 )
-              : ClipRRect(
+              : const SizedBox
+                  .shrink() /*ClipRRect(
                   borderRadius: BorderRadius.circular(16.r),
                   child: SizedBox(
                     height: 16.r,
@@ -78,7 +78,8 @@ class EarningWidget extends StatelessWidget {
                       ],
                     ),
                   ),
-                ),
+                )*/
+          ,
         ],
       ),
     );
