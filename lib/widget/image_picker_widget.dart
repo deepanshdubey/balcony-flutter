@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:photo_manager/photo_manager.dart';
+import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class ImagePickerWidget extends StatelessWidget {
   final Widget child;
@@ -18,20 +18,19 @@ class ImagePickerWidget extends StatelessWidget {
   Future<void> _pickImage(BuildContext context) async {
     try {
       if (Platform.isIOS) {
-        // Request permission for iOS
-        final PermissionState permission = await PhotoManager.requestPermissionExtend();
-        if (!permission.hasAccess) {
-          return;
-        }
+        // Open WeChat-style image picker
+        final List<AssetEntity>? result = await AssetPicker.pickAssets(
+          context,
+          pickerConfig: AssetPickerConfig(
+            maxAssets: 1, // Allow only one image selection
+            requestType: RequestType.image, // Only pick images
+          ),
+        );
 
-        final List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(type: RequestType.image);
-        if (albums.isNotEmpty) {
-          final List<AssetEntity> images = await albums.first.getAssetListRange(start: 0, end: 1);
-          if (images.isNotEmpty) {
-            final File? file = await images.first.file;
-            if (file != null) {
-              onImageSelected(file.path);
-            }
+        if (result != null && result.isNotEmpty) {
+          final File? file = await result.first.file;
+          if (file != null) {
+            onImageSelected(file.path);
           }
         }
       } else {
