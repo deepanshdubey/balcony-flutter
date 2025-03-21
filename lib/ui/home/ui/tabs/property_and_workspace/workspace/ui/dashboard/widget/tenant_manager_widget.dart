@@ -38,7 +38,7 @@ class _TenantManagerWidgetState extends State<TenantManagerWidget> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SectionTitle(title: "Tenant manager", subtitle: ""),
+          const SectionTitle(title: "tenant manager", subtitle: ""),
           8.h.verticalSpace,
           Container(
             decoration: BoxDecoration(
