@@ -118,7 +118,7 @@ class _OngoingParcelTableState extends State<OngoingParcelTable> {
                           Expanded(
                             flex: 3,
                             child: Text(
-                              'Tenant\'s name',
+                              'tenant\'s name',
                               style: theme.textTheme.titleMedium?.copyWith(
                                 color: Colors.black54,
                               ),
@@ -128,7 +128,7 @@ class _OngoingParcelTableState extends State<OngoingParcelTable> {
                             flex: 3,
                             child: Center(
                               child: PrimaryButton(
-                                text: "Add",
+                                text: "add",
                                 onPressed: () {
                                   context.router.push(OngoingFormRoute()).then((value) {
                                     conciergeStore.ongoingAll();
@@ -169,7 +169,7 @@ class _OngoingParcelTableState extends State<OngoingParcelTable> {
                         : Center(
                       child: Padding(
                         padding: EdgeInsets.all(20.r),
-                        child: const Text('no Tenant available.'),
+                        child: const Text('no tenant available.'),
                       ),
                     )
                   ],

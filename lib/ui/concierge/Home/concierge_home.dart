@@ -54,21 +54,21 @@ class _ConciergeHomePageState extends State<ConciergeHomePage> {
                 thickness: 1,
               ),
               24.verticalSpace,
-              ParcelInfo(),
+              const ParcelInfo(),
               24.verticalSpace,
               Divider(
                 color: Theme.of(context).colors.primaryColor,
                 thickness: 1,
               ),
               24.verticalSpace,
-              LeaseTenantTable(),
+              const LeaseTenantTable(),
               24.verticalSpace,
               Divider(
                 color: Theme.of(context).colors.primaryColor,
                 thickness: 1,
               ),
               24.verticalSpace,
-              ConciergeTenantTable(),
+              const ConciergeTenantTable(),
               24.verticalSpace,
               Divider(
                 color: Theme.of(context).colors.primaryColor,
@@ -110,7 +110,7 @@ class _ConciergeHomePageState extends State<ConciergeHomePage> {
             children: [
               20.horizontalSpace,
               Text(
-                "Homework",
+                "homework",
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontSize: 20.spMin,
                   fontWeight: FontWeight.w700,

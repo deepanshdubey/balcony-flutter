@@ -112,7 +112,7 @@ class _MaintenanceFormPageState extends State<MaintenanceFormPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Tenant's name",
+                          "tenant's name",
                           style: Theme.of(context)
                               .textTheme
                               .titleLarge

@@ -83,7 +83,7 @@ class _MaintenanceDetailsPageState
               16.verticalSpace,
               _buildKeyValueRow(
                 context,
-                "Tenant's name",
+                "tenant's name",
                 "${widget.request?.tenant?.info?.firstName} ${widget.request?.tenant?.info?.lastName}",
               ),
               _buildKeyValueRow(

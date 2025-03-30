@@ -87,7 +87,7 @@ class _OutgoingParcelDetailsPageState
               16.verticalSpace,
               _buildKeyValueRow(
                 context,
-                "Tenant's name",
+                "tenant's name",
                 "${widget.parcel?.tenant?.info?.firstName} ${widget.parcel?.tenant?.info?.lastName}",
               ),
               _buildKeyValueRow(

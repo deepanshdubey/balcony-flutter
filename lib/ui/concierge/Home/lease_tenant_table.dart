@@ -142,7 +142,7 @@ class _LeaseTenantTableState extends State<LeaseTenantTable> {
                           Expanded(
                             flex: 3,
                             child: Text(
-                              'Tenant\'s name',
+                              'tenant\'s name',
                               style: theme.textTheme.titleMedium?.copyWith(
                                 color: Colors.black54,
                               ),
@@ -190,7 +190,7 @@ class _LeaseTenantTableState extends State<LeaseTenantTable> {
                         : Center(
                       child: Padding(
                         padding: EdgeInsets.all(20.r),
-                        child: const Text('no Tenant available.'),
+                        child: const Text('no tenant available.'),
                       ),
                     )
                   ],

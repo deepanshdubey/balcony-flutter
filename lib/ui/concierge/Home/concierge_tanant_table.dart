@@ -194,7 +194,7 @@ class _ConciergeTenantTableState extends State<ConciergeTenantTable> {
                           Expanded(
                             flex: 3,
                             child: Text(
-                              'Tenant\'s name',
+                              'tenant\'s name',
                               style: theme.textTheme.titleMedium?.copyWith(
                                 color: Colors.black54,
                               ),
@@ -204,7 +204,7 @@ class _ConciergeTenantTableState extends State<ConciergeTenantTable> {
                             flex: 3,
                             child: Center(
                               child: PrimaryButton(
-                                text: "Add",
+                                text: "add",
                                 onPressed: () {
                                   context.router.push(TenantFormRoute()).then((value) {
                                     conciergeStore.conciergeTenantAll();
@@ -245,7 +245,7 @@ class _ConciergeTenantTableState extends State<ConciergeTenantTable> {
                         : Center(
                       child: Padding(
                         padding: EdgeInsets.all(20.r),
-                        child: const Text('no Tenant available.'),
+                        child: const Text('no tenant available.'),
                       ),
                     )
                   ],

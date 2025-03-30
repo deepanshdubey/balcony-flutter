@@ -177,7 +177,7 @@ class _ConciergeTenantDetailsPageState
               16.verticalSpace,
               _buildKeyValueRow(
                 context,
-                "Tenant's name",
+                "tenant's name",
                 "${widget.conciergeTenant?.info?.firstName} ${widget.conciergeTenant?.info?.lastName}",
               ),
               _buildKeyValueRow(

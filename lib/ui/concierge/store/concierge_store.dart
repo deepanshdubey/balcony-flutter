@@ -79,7 +79,6 @@ abstract class _ConciergeStoreBase with Store {
         loginResponse = response.data!;
         session.user = response.data!.user!;
         session.token = response.data!.token!;
-        debugPrint("token--> ${response.data!.token!}");
       } else {
         errorMessage = response.error!.message;
       }
