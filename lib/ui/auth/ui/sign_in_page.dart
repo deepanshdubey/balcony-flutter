@@ -132,18 +132,20 @@ class _SignInPageState extends State<SignInPage> {
                         isLoading: isLoading,
                       );
                     }),
-                    70.horizontalSpace,
-                   /* GestureDetector(
+                    Spacer(),
+                    GestureDetector(
                       onTap: () {
                         Navigator.of(context).pop();
-                        showAppBottomSheet(context, ConciergeSignInPage());
+                        showAppBottomSheet(
+                            context, const ConciergeSignInPage());
                       },
-                      child: Text("Login as Concierge",
-                          style: theme.textTheme.titleMedium?.copyWith(
+                      child: Text("teams access login",
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             fontSize: 14.spMin,
-                            fontWeight: FontWeight.w500,
+                            decoration: TextDecoration.underline,
+                            fontWeight: FontWeight.w400,
                           )),
-                    )*/
+                    )
                   ],
                 ),
                 16.h.verticalSpace,
@@ -151,7 +153,7 @@ class _SignInPageState extends State<SignInPage> {
             ),
           ),
           20.h.verticalSpace,
-        /*  Row(
+          /*  Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -193,7 +195,7 @@ class _SignInPageState extends State<SignInPage> {
                 },
               ),*/
               10.w.horizontalSpace,
-             /* socialButton(
+              /* socialButton(
                 theme,
                 image: theme.assets.google,
                 text: "google",

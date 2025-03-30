@@ -8,6 +8,7 @@ import 'package:homework/router/app_router.dart';
 import 'package:homework/ui/concierge/store/concierge_store.dart';
 import 'package:homework/values/extensions/context_ext.dart';
 import 'package:homework/values/extensions/string_ext.dart';
+import 'package:homework/values/extensions/theme_ext.dart';
 import 'package:homework/values/validators.dart';
 import 'package:homework/widget/app_back_button.dart';
 import 'package:homework/widget/app_text_field.dart';
@@ -16,7 +17,6 @@ import 'package:homework/widget/primary_button.dart';
 import 'package:mobx/mobx.dart';
 
 class ConciergeSignInPage extends StatefulWidget {
-
   const ConciergeSignInPage({super.key});
 
   @override
@@ -24,13 +24,14 @@ class ConciergeSignInPage extends StatefulWidget {
 }
 
 class _ConciergeSignInPageState extends State<ConciergeSignInPage> {
-  late GlobalKey<FormState> _formKey = GlobalKey();
+  final GlobalKey<FormState> _formKey = GlobalKey();
   late TextEditingController emailController;
   late TextEditingController passwordController;
   late FocusNode emailNode;
   late FocusNode passwordNode;
   List<ReactionDisposer>? disposers;
   final conciergeStore = ConciergeStore();
+  int _currentIndex = 0;
 
   @override
   void initState() {
@@ -87,11 +88,29 @@ class _ConciergeSignInPageState extends State<ConciergeSignInPage> {
             children: [
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-                child: AppBackButton(
-                  text: 'back to simple login',
+                child: const AppBackButton(
+                  text: 'back to user login',
                 ),
               ),
               10.verticalSpace,
+              Center(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  margin: EdgeInsets.only(left: 12.w, right: 12.w),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(12.r)),
+                      border: Border.all(color: Colors.black.withOpacity(.25))),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildTab(theme, "concierge access", 0),
+                      _buildTab(theme, "maintenance access", 1),
+                    ],
+                  ),
+                ),
+              ),
+              10.h.verticalSpace,
               Container(
                 width: context.width,
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
@@ -140,6 +159,23 @@ class _ConciergeSignInPageState extends State<ConciergeSignInPage> {
                       );
                     }),
                     16.h.verticalSpace,
+                    RichText(
+                      text: TextSpan(
+                        style: theme.textTheme.bodyMedium,
+                        children: const [
+                          TextSpan(
+                            text: 'side note: ',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          // Bold text), // Normal text
+                          TextSpan(
+                              text:
+                                  'if you forgot your password, please reach out to the admin for password reset.'),
+                          // Normal text
+                        ],
+                      ),
+                    ),
+                    16.h.verticalSpace,
                   ],
                 ),
               ),
@@ -149,5 +185,37 @@ class _ConciergeSignInPageState extends State<ConciergeSignInPage> {
         ],
       ),
     );
+  }
+
+  Widget _buildTab(ThemeData theme, String text, int index) {
+    bool isActive = _currentIndex == index;
+    return GestureDetector(
+      onTap: () => _onTabTapped(index),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+        decoration: BoxDecoration(
+            color: isActive ? theme.colors.primaryColor : Colors.transparent,
+            borderRadius: BorderRadius.all(Radius.circular(12.r))),
+        child: Expanded(
+          child: Text(
+            text,
+            maxLines: 1,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: 14.spMin,
+              fontWeight: FontWeight.w500,
+              color: _currentIndex == index
+                  ? theme.colors.backgroundColor
+                  : theme.colors.primaryColor,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
   }
 }
