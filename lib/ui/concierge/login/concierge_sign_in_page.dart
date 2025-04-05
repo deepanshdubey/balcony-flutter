@@ -196,17 +196,15 @@ class _ConciergeSignInPageState extends State<ConciergeSignInPage> {
         decoration: BoxDecoration(
             color: isActive ? theme.colors.primaryColor : Colors.transparent,
             borderRadius: BorderRadius.all(Radius.circular(12.r))),
-        child: Expanded(
-          child: Text(
-            text,
-            maxLines: 1,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontSize: 14.spMin,
-              fontWeight: FontWeight.w500,
-              color: _currentIndex == index
-                  ? theme.colors.backgroundColor
-                  : theme.colors.primaryColor,
-            ),
+        child: Text(
+          text,
+          maxLines: 1,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontSize: 14.spMin,
+            fontWeight: FontWeight.w500,
+            color: _currentIndex == index
+                ? theme.colors.backgroundColor
+                : theme.colors.primaryColor,
           ),
         ),
       ),
