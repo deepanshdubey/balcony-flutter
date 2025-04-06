@@ -52,8 +52,8 @@ class _HostHomePageState extends State<HostHomePage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildTab(theme, "workspace", 0),
-            _buildTab(theme, "properties", 1),
+            _buildTab(theme, "commercial", 0),
+            _buildTab(theme, "residential", 1),
           ],
         ),
       ),

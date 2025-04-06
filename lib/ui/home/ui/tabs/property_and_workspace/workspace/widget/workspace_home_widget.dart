@@ -60,7 +60,7 @@ class _WorkspaceHomeWidgetState extends State<WorkspaceHomeWidget> {
         builder: (context) =>
             store.workspaceResponse?.isNotEmpty == true || store.isLoading
                 ? HomeListingWidget(
-                    title: "workspace",
+                    title: "commercial",
                     onMoreClick: () {
                       appRouter.push( WorkspaceRoute());
                     },

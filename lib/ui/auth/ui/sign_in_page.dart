@@ -133,18 +133,21 @@ class _SignInPageState extends State<SignInPage> {
                       );
                     }),
                     Spacer(),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        showAppBottomSheet(
-                            context, const ConciergeSignInPage());
-                      },
-                      child: Text("teams access login",
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontSize: 14.spMin,
-                            decoration: TextDecoration.underline,
-                            fontWeight: FontWeight.w400,
-                          )),
+                    Visibility(
+                      visible: false,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          showAppBottomSheet(
+                              context, const ConciergeSignInPage());
+                        },
+                        child: Text("teams access login",
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontSize: 14.spMin,
+                              decoration: TextDecoration.underline,
+                              fontWeight: FontWeight.w400,
+                            )),
+                      ),
                     )
                   ],
                 ),
