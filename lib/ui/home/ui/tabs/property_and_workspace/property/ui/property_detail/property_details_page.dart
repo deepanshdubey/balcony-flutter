@@ -1,5 +1,9 @@
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/core/alert/alert_manager.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/data/model/response/workspace_data.dart';
@@ -8,7 +12,6 @@ import 'package:homework/ui/home/ui/tabs/chat/store/chat_store.dart';
 import 'package:homework/ui/home/ui/tabs/chat/ui/chat_details_page.dart';
 import 'package:homework/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
-import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/tenant_application_page.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/workspace_details/custom_dropdown.dart';
 import 'package:homework/values/colors.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
@@ -16,11 +19,6 @@ import 'package:homework/widget/app_back_button.dart';
 import 'package:homework/widget/app_image.dart';
 import 'package:homework/widget/app_text_field.dart';
 import 'package:homework/widget/primary_button.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -41,7 +39,6 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
   late TextEditingController leaseController = TextEditingController();
   final propertyStore = PropertyStore();
   final chatStore = ChatStore();
-
 
   @override
   void initState() {
@@ -65,14 +62,16 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
       }),
       reaction((_) => chatStore.startConversationResponse, (response) {
         var host = propertyStore.propertyDetailsResponse?.host as Host;
-        session.user.id == host.Id ? alertManager.showError(context, "User and host same") :  showAppBottomSheet(
-            context,
-            ChatDetailsPage(
-              image: host.image,
-              name: host.firstName,
-              conversationId: response?.conversation?.Id??"",
-              receiverId: session.user.id,
-            ));
+        session.user.id == host.Id
+            ? alertManager.showError(context, "User and host same")
+            : showAppBottomSheet(
+                context,
+                ChatDetailsPage(
+                  image: host.image,
+                  name: host.firstName,
+                  conversationId: response?.conversation?.Id ?? "",
+                  receiverId: session.user.id,
+                ));
       }),
     ];
   }
@@ -94,7 +93,6 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
     await _mapController.addImage('custom-marker', imageData);
   }
 
-
   void _makingPhoneCall(String number) async {
     final Uri url = Uri.parse("tel://1111111111");
     if (await canLaunchUrl(url)) {
@@ -104,338 +102,351 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Observer(
-          builder: (context) {
-            var data = propertyStore.propertyDetailsResponse;
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24).r,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  45.verticalSpace,
-                  const AppBackButton(
-                    text: "back",
-                  ),
-                  20.verticalSpace,
-                  AppImage(
-                    url: data?.images?.first ??
-                        Assets.fontsHostYourWorkspaceOrProperty,
-                    height: 173.h,
-                    width: double.infinity,
-                    boxFit: BoxFit.cover,
-                    radius: 10,
-                  ),
-                  12.verticalSpace,
-                  Row(
-                    children: data?.images != null && data!.images!.length > 1
-                        ? List.generate(
-                            2,
-                            (index) => Expanded(
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  right: index == 0 ? 12.w : 0,
-                                ),
-                                child: AppImage(
-                                  url: data.images?[index + 1] ??
-                                      Assets.fontsHostYourWorkspaceOrProperty,
-                                  height: 173.h,
-                                  boxFit: BoxFit.cover,
-                                  radius: 10,
-                                  color: appColor.primaryColor,
-                                ),
-                              ),
-                            ),
-                          )
-                        : [Container()],
-                  ),
-                  30.verticalSpace,
-                  Text(
-                    data?.info?.name ?? "",
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.normal,
-                      fontSize: 28.spMin,
-                    ),
-                  ),
-                  20.verticalSpace,
-                  Row(
+    return Observer(builder: (context) {
+      var isLoading = propertyStore.isLoading;
+      var data = propertyStore.propertyDetailsResponse;
+      return isLoading
+          ? Container(
+            color: Colors.white,
+            child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+          )
+          : Scaffold(
+              body: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24).r,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      buildRatingStars(theme, data?.ratings?.toDouble() ?? 0),
-                      6.horizontalSpace,
+                      45.verticalSpace,
+                      const AppBackButton(
+                        text: "back",
+                      ),
+                      20.verticalSpace,
+                      AppImage(
+                        url: data?.images?.first ??
+                            Assets.fontsHostYourWorkspaceOrProperty,
+                        height: 173.h,
+                        width: double.infinity,
+                        boxFit: BoxFit.cover,
+                        radius: 10,
+                      ),
+                      12.verticalSpace,
+                      Row(
+                        children:
+                            data?.images != null && data!.images!.length > 1
+                                ? List.generate(
+                                    2,
+                                    (index) => Expanded(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          right: index == 0 ? 12.w : 0,
+                                        ),
+                                        child: AppImage(
+                                          url: data.images?[index + 1] ??
+                                              Assets
+                                                  .fontsHostYourWorkspaceOrProperty,
+                                          height: 173.h,
+                                          boxFit: BoxFit.cover,
+                                          radius: 10,
+                                          color: appColor.primaryColor,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : [Container()],
+                      ),
+                      30.verticalSpace,
                       Text(
-                        "(${data?.ratings ?? 0})",
-                        style: theme.textTheme.titleMedium?.copyWith(
+                        data?.info?.name ?? "",
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.normal,
-                          fontSize: 11.spMax,
+                          fontSize: 28.spMin,
                         ),
                       ),
-                      40.horizontalSpace,
-                      Image.asset(
-                        Assets.imagesShare,
-                        height: 16.h,
-                        width: 16.w,
-                        fit: BoxFit.cover,
-                      )
-                    ],
-                  ),
-                  30.verticalSpace,
-                  PrimaryButton(
-                    text: "apply for tenancy",
-                    onPressed: () {
-                      showAppBottomSheet(
+                      20.verticalSpace,
+                      Row(
+                        children: [
+                          buildRatingStars(
+                              theme, data?.ratings?.toDouble() ?? 0),
+                          6.horizontalSpace,
+                          Text(
+                            "(${data?.ratings ?? 0})",
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.normal,
+                              fontSize: 11.spMax,
+                            ),
+                          ),
+                          40.horizontalSpace,
+                          Image.asset(
+                            Assets.imagesShare,
+                            height: 16.h,
+                            width: 16.w,
+                            fit: BoxFit.cover,
+                          )
+                        ],
+                      ),
+                      30.verticalSpace,
+                      PrimaryButton(
+                        text: "apply for tenancy",
+                        onPressed: () {
+                          launchUrl(
+                              Uri.parse(
+                                  "https://hw.co/property/${widget.propertyId}"),
+                              mode: LaunchMode.externalApplication);
+                          /*showAppBottomSheet(
                           context,
                           TenantApplicationPage(
                             propertyData: propertyStore.propertyDetailsResponse,
-                          ));
-                    },
-                  ),
-                  32.verticalSpace,
-                  const Divider(
-                    color: Color(0xff005451),
-                    thickness: 0.5,
-                  ),
-                  24.verticalSpace,
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8).r,
-                      border: Border.all(color: appColor.grayBorder),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(24).r,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                          ));*/
+                        },
+                      ),
+                      32.verticalSpace,
+                      const Divider(
+                        color: Color(0xff005451),
+                        thickness: 0.5,
+                      ),
+                      24.verticalSpace,
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8).r,
+                          border: Border.all(color: appColor.grayBorder),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(24).r,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("lease duration",
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    fontSize: 23.spMin,
+                                    color: appColor.primaryColor,
+                                    fontWeight: FontWeight.w600,
+                                  )),
+                              12.verticalSpace,
+                              Container(
+                                width: 50.w,
+                                child: AppTextField(
+                                  readOnly: true,
+                                  hintText:
+                                      data?.other?.leaseDuration.toString() ??
+                                          "0",
+                                  keyboardType: TextInputType.number,
+                                  label: 'months to years',
+                                  controller: leaseController,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      30.verticalSpace,
+                      Text(
+                        "Contact Host for Support",
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontSize: 14.spMin,
+                          color: appColor.primaryColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        "Chat &/or call with the workspace host before booking",
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontSize: 14.spMin,
+                          color: appColor.primaryColor,
+                        ),
+                      ),
+                      16.verticalSpace,
+                      const Divider(
+                        color: Color(0xff005451),
+                        thickness: 0.5,
+                      ),
+                      16.verticalSpace,
+                      Row(
                         children: [
-                          Text("lease duration",
+                          GestureDetector(
+                            onTap: () {
+                              var host = data?.host as Host;
+                              var request = {"userId": host.Id};
+                              chatStore.startConversations(request);
+                            },
+                            child: Text(
+                              "chat",
                               style: theme.textTheme.titleMedium?.copyWith(
-                                fontSize: 23.spMin,
-                                color: appColor.primaryColor,
-                                fontWeight: FontWeight.w600,
-                              )),
-                          12.verticalSpace,
+                                  fontSize: 14.spMin,
+                                  color: appColor.primaryColor,
+                                  decoration: TextDecoration.underline),
+                            ),
+                          ),
+                          16.horizontalSpace,
                           Container(
-                            width: 50.w,
-                            child: AppTextField(
-                              readOnly: true,
-                              hintText:
-                                  data?.other?.leaseDuration.toString() ?? "0",
-                              keyboardType: TextInputType.number,
-                              label: 'months to years',
-                              controller: leaseController,
+                            color: const Color(0xff005451),
+                            height: 20.h,
+                            width: 1.w,
+                          ),
+                          16.horizontalSpace,
+                          GestureDetector(
+                            onTap: () {
+                              var host = data?.host as Host;
+                              _makingPhoneCall(host.phone.toString());
+                            },
+                            child: Text(
+                              "call",
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontSize: 14.spMin,
+                                decoration: TextDecoration.underline,
+                                color: appColor.primaryColor,
+                              ),
                             ),
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                  30.verticalSpace,
-                  Text(
-                    "Contact Host for Support",
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontSize: 14.spMin,
-                      color: appColor.primaryColor,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  Text(
-                    "Chat &/or call with the workspace host before booking",
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontSize: 14.spMin,
-                      color: appColor.primaryColor,
-                    ),
-                  ),
-                  16.verticalSpace,
-                  const Divider(
-                    color: Color(0xff005451),
-                    thickness: 0.5,
-                  ),
-                  16.verticalSpace,
-                  Row(
-                    children: [
-                      GestureDetector(
-                         onTap: () {
-                           var host = data?.host as Host;
-                           var request = {
-                             "userId": host.Id
-                           };
-                           chatStore.startConversations(request);
-                         },
-                        child: Text(
-                          "chat",
-                          style: theme.textTheme.titleMedium?.copyWith(
-                              fontSize: 14.spMin,
-                              color: appColor.primaryColor,
-                              decoration: TextDecoration.underline),
-                        ),
+                      25.verticalSpace,
+                      UnitTable(
+                        units: data?.unitList
+                                ?.map((unit) => unit.toJson())
+                                .toList() ??
+                            [],
                       ),
-                      16.horizontalSpace,
+                      25.verticalSpace,
+                      CustomDropdown(
+                        title: 'Locations',
+                        items: data?.info?.address != null
+                            ? [
+                                {
+                                  'icon': Icons.location_pin,
+                                  'title': data?.info?.address
+                                }
+                              ]
+                            : [],
+                        visibleItem: 1,
+                        iconImage: Assets.imagesLocationOn,
+                      ),
+                      18.verticalSpace,
+                      CustomDropdown(
+                        title: 'Amenities',
+                        items: data?.amenities
+                                ?.map((amenity) => {
+                                      'icon': Icons.check,
+                                      'title': amenity,
+                                    })
+                                .toList() ??
+                            [],
+                        visibleItem: 9,
+                      ),
+                      18.verticalSpace,
+
+                      23.verticalSpace,
+                      // Workspace Overview
                       Container(
-                        color: const Color(0xff005451),
-                        height: 20.h,
-                        width: 1.w,
-                      ),
-                      16.horizontalSpace,
-                      GestureDetector(
-                        onTap:  () {
-                          var host = data?.host as Host;
-                          _makingPhoneCall(host.phone.toString());
-                        },
-                        child: Text(
-                          "call",
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontSize: 14.spMin,
-                            decoration: TextDecoration.underline,
-                            color: appColor.primaryColor,
+                        width: 1.sw,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8).r,
+                          border: Border.all(color: appColor.primaryColor),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12).r,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              24.verticalSpace,
+                              Text(
+                                "Workspace Overview",
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontSize: 28.spMin,
+                                  color: appColor.primaryColor,
+                                ),
+                              ),
+                              30.verticalSpace,
+                              Text(
+                                data?.info?.summary ?? "",
+                                maxLines: 70,
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontSize: 15.spMin,
+                                  color: appColor.primaryColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              30.verticalSpace
+                            ],
                           ),
                         ),
+                      ),
+                      23.verticalSpace,
+                      // Map Image Placeholder
+                      Observer(
+                        builder: (context) {
+                          var data = propertyStore.propertyDetailsResponse;
+                          return propertyStore.isLoading
+                              ? Center(
+                                  child: CircularProgressIndicator(
+                                      color: appColor.primaryColor),
+                                )
+                              : Column(
+                                  children: [
+                                    // Other widgets...
+
+                                    Container(
+                                      height: 200.h,
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(20).r,
+                                        child: MapLibreMap(
+                                          styleString:
+                                              'https://api.maptiler.com/maps/streets-v2/style.json?key=HRmXb4He6yvLBd6RRIcJ',
+                                          myLocationEnabled: true,
+                                          initialCameraPosition: CameraPosition(
+                                            target: LatLng(
+                                                data?.geocode?.lat ?? 0,
+                                                data?.geocode?.lon ?? 0),
+                                            zoom: 13,
+                                          ),
+                                          trackCameraPosition: true,
+                                          onMapCreated: onMapCreated,
+                                          onStyleLoadedCallback: () async {
+                                            await Future.delayed(const Duration(
+                                                milliseconds:
+                                                    500)); // Optional delay
+                                            addCustomMarker();
+                                            try {
+                                              _mapController.addSymbol(
+                                                SymbolOptions(
+                                                  geometry: LatLng(
+                                                      data?.geocode?.lat ?? 0,
+                                                      data?.geocode?.lon ?? 0),
+                                                  iconImage: 'custom-marker',
+                                                  iconSize: 3.0,
+                                                ),
+                                              );
+                                            } catch (e) {
+                                              print(
+                                                  "Error while adding symbol: $e");
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                        },
                       ),
                     ],
                   ),
-                  25.verticalSpace,
-                  UnitTable(
-                    units:
-                        data?.unitList?.map((unit) => unit.toJson()).toList() ??
-                            [],
-                  ),
-                  25.verticalSpace,
-                  CustomDropdown(
-                    title: 'Locations',
-                    items: data?.info?.address != null
-                        ? [
-                            {
-                              'icon': Icons.location_pin,
-                              'title': data?.info?.address
-                            }
-                          ]
-                        : [],
-                    visibleItem: 1,
-                    iconImage: Assets.imagesLocationOn,
-                  ),
-                  18.verticalSpace,
-                  CustomDropdown(
-                    title: 'Amenities',
-                    items: data?.amenities
-                            ?.map((amenity) => {
-                                  'icon': Icons.check,
-                                  'title': amenity,
-                                })
-                            .toList() ??
-                        [],
-                    visibleItem: 9,
-                  ),
-                  18.verticalSpace,
-
-                  23.verticalSpace,
-                  // Workspace Overview
-                  Container(
-                    width: 1.sw,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8).r,
-                      border: Border.all(color: appColor.primaryColor),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12).r,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          24.verticalSpace,
-                          Text(
-                            "Workspace Overview",
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontSize: 28.spMin,
-                              color: appColor.primaryColor,
-                            ),
-                          ),
-                          30.verticalSpace,
-                          Text(
-                            data?.info?.summary ?? "",
-                            maxLines: 70,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontSize: 15.spMin,
-                              color: appColor.primaryColor,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          30.verticalSpace
-                        ],
-                      ),
-                    ),
-                  ),
-                  23.verticalSpace,
-                  // Map Image Placeholder
-                  Observer(
-                    builder: (context) {
-                      var data = propertyStore.propertyDetailsResponse;
-                      return propertyStore.isLoading
-                          ? Center(
-                              child: CircularProgressIndicator(
-                                  color: appColor.primaryColor),
-                            )
-                          : Column(
-                              children: [
-                                // Other widgets...
-
-                                Container(
-                                  height: 200.h,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(20).r,
-                                    child: MapLibreMap(
-                                      styleString:
-                                          'https://api.maptiler.com/maps/streets-v2/style.json?key=HRmXb4He6yvLBd6RRIcJ',
-                                      myLocationEnabled: true,
-                                      initialCameraPosition: CameraPosition(
-                                        target: LatLng(data?.geocode?.lat ?? 0,
-                                            data?.geocode?.lon ?? 0),
-                                        zoom: 13,
-                                      ),
-                                      trackCameraPosition: true,
-                                      onMapCreated: onMapCreated,
-                                      onStyleLoadedCallback: () async {
-                                        await Future.delayed(const Duration(
-                                            milliseconds:
-                                                500)); // Optional delay
-                                        addCustomMarker();
-                                        try {
-                                          _mapController.addSymbol(
-                                            SymbolOptions(
-                                              geometry: LatLng(
-                                                  data?.geocode?.lat ?? 0,
-                                                  data?.geocode?.lon ?? 0),
-                                              iconImage: 'custom-marker',
-                                              iconSize: 3.0,
-                                            ),
-                                          );
-                                        } catch (e) {
-                                          print(
-                                              "Error while adding symbol: $e");
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            );
-                    },
-                  ),
-                ],
+                ),
               ),
             );
-          },
-        ),
-      ),
-    );
+    });
   }
 
   Widget buildRatingStars(ThemeData theme, double rating) {
@@ -550,19 +561,19 @@ class _UnitTableState extends State<UnitTable> {
             ),
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
                   child: Row(
                     children: [
-                      const SizedBox(width: 40),
-                      const Expanded(
+                      SizedBox(width: 40),
+                      Expanded(
                         child: Text(
                           "Unit",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
-                      const Icon(Icons.more_horiz),
-                      const SizedBox(width: 40),
+                      Icon(Icons.more_horiz),
+                      SizedBox(width: 40),
                     ],
                   ),
                 ),
