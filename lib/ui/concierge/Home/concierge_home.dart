@@ -3,19 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/generated/assets.dart';
 import 'package:homework/ui/concierge/Home/explore_link.dart';
-import 'package:homework/ui/concierge/Home/lease_tenant_table.dart';
 import 'package:homework/ui/concierge/Home/maintenance_table.dart';
 import 'package:homework/ui/concierge/Home/ongoing_parcel_table.dart';
 import 'package:homework/ui/concierge/Home/parcel_info.dart';
 import 'package:homework/ui/concierge/Home/property_tab.dart';
+import 'package:homework/ui/concierge/Home/widget/leased_tenant_manager_widget.dart';
+import 'package:homework/ui/concierge/Home/widget/manually_added_tenant_manager_widget.dart';
 import 'package:homework/ui/concierge/login/concierge_more_page.dart';
-import 'package:homework/ui/concierge/login/concierge_sign_in_page.dart';
-import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/tenant_manager_widget.dart';
 import 'package:homework/values/extensions/context_ext.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
-import 'package:homework/widget/primary_button.dart';
 
-import 'concierge_tanant_table.dart';
+import 'bulk_email_widget.dart';
 
 @RoutePage()
 class ConciergeHomePage extends StatefulWidget {
@@ -61,28 +59,35 @@ class _ConciergeHomePageState extends State<ConciergeHomePage> {
                 thickness: 1,
               ),
               24.verticalSpace,
-              const LeaseTenantTable(),
+              const LeasedTenantManagerWidget(),
               24.verticalSpace,
               Divider(
                 color: Theme.of(context).colors.primaryColor,
                 thickness: 1,
               ),
               24.verticalSpace,
-              const ConciergeTenantTable(),
+              const ManuallyAddedTenantManagerWidget(),
               24.verticalSpace,
               Divider(
                 color: Theme.of(context).colors.primaryColor,
                 thickness: 1,
               ),
               24.verticalSpace,
-              OngoingParcelTable(),
+              const OngoingParcelTable(),
               24.verticalSpace,
               Divider(
                 color: Theme.of(context).colors.primaryColor,
                 thickness: 1,
               ),
               24.verticalSpace,
-              MaintenanceTable(),
+              //const BulkEmailWidget(totalTenant: 2,),
+              24.verticalSpace,
+              Divider(
+                color: Theme.of(context).colors.primaryColor,
+                thickness: 1,
+              ),
+              24.verticalSpace,
+              const MaintenanceTable(),
               24.verticalSpace,
               ExploreLinksWidget(),
               30.verticalSpace
@@ -117,13 +122,13 @@ class _ConciergeHomePageState extends State<ConciergeHomePage> {
                 ),
               ),
               10.horizontalSpace,
-           //   tabBar(theme),
-              Spacer(),
+              //   tabBar(theme),
+              const Spacer(),
               GestureDetector(
                 onTap: () {
                   showAppBottomSheet(
                     context,
-                    ConciergeMorePage(),
+                    const ConciergeMorePage(),
                   );
                 },
                 child: Container(

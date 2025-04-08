@@ -33,8 +33,6 @@ class _ConciergeTenantDetailsPageState
     super.initState();
   }
 
-
-
   void addDisposer() {
     disposers ??= [
       reaction((_) => conciergeStore.parcelAddResponse, (response) {
@@ -46,7 +44,8 @@ class _ConciergeTenantDetailsPageState
         if (response?.success ?? false) {
           parcelCount.value = (parcelCount.value ?? 0) - 1;
         }
-      }),   reaction((_) => conciergeStore.tenantDeleteResponse, (response) {
+      }),
+      reaction((_) => conciergeStore.tenantDeleteResponse, (response) {
         if (response?.success ?? false) {
           context.router.maybePop();
         }
@@ -58,7 +57,6 @@ class _ConciergeTenantDetailsPageState
       }),
     ];
   }
-
 
   void removeDisposer() {
     if (disposers == null) return;
@@ -148,12 +146,12 @@ class _ConciergeTenantDetailsPageState
 
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.only(left: 24 , right: 24 , top: 60 ).r,
+        padding: const EdgeInsets.only(left: 24, right: 24, top: 60).r,
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(12.r)),
             color: Colors.grey[200],
-            border: Border.all(color: Colors.black.withOpacity(.25)),
+            border: Border.all(color: Colors.black.withAlpha(70)),
           ),
           padding: const EdgeInsets.all(24).r,
           child: Column(
@@ -162,7 +160,7 @@ class _ConciergeTenantDetailsPageState
             children: [
               20.verticalSpace,
               Text(
-                "Tenant Details",
+                "tenant details",
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontSize: 23.spMin,
                   fontWeight: FontWeight.w500,
@@ -182,18 +180,20 @@ class _ConciergeTenantDetailsPageState
               ),
               _buildKeyValueRow(
                 context,
-                "Property",
+                "property",
                 widget.conciergeTenant?.selectedUnit?.property?.name ?? "N/A",
               ),
               _buildKeyValueButtonRow(
                 context,
                 "awaiting pickup",
-                onIncrease:() => conciergeStore.parcelAdd( "concierge-tenant" , widget.conciergeTenant?.Id ?? ""),
-                onDecrease: () => conciergeStore.parcelDelete( "concierge-tenant" , widget.conciergeTenant?.Id ?? ""),
+                onIncrease: () => conciergeStore.parcelAdd(
+                    "concierge-tenant", widget.conciergeTenant?.Id ?? ""),
+                onDecrease: () => conciergeStore.parcelDelete(
+                    "concierge-tenant", widget.conciergeTenant?.Id ?? ""),
               ),
               _buildKeyValueRow(
                 context,
-                "Phone",
+                "phone",
                 widget.conciergeTenant?.info?.phone ?? "N/A",
               ),
               _buildKeyValueRow(
@@ -206,16 +206,17 @@ class _ConciergeTenantDetailsPageState
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   PrimaryButton(
-                    text: "Close",
+                    text: "close",
                     onPressed: () {
                       context.router.maybePop();
                     },
                   ),
                   10.horizontalSpace,
                   PrimaryButton(
-                    text: "Delete",
+                    text: "delete",
                     onPressed: () {
-                      conciergeStore.tenantDelete(widget.conciergeTenant?.Id ?? "");
+                      conciergeStore
+                          .tenantDelete(widget.conciergeTenant?.Id ?? "");
                     },
                   )
                 ],

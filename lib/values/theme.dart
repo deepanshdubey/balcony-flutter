@@ -1,6 +1,6 @@
-import 'package:homework/values/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:homework/values/colors.dart';
 
 ThemeData createTheme(ColorScheme colors, TextTheme textTheme) {
   return ThemeData(
@@ -18,6 +18,10 @@ ThemeData createTheme(ColorScheme colors, TextTheme textTheme) {
     buttonTheme: ButtonThemeData(
       buttonColor: colors.primary,
       disabledColor: colors.onPrimary,
+    ),
+    radioTheme: RadioThemeData(
+      fillColor: WidgetStateProperty.all(colors.primary),
+      overlayColor: WidgetStateProperty.all(colors.onPrimary),
     ),
     textTheme: textTheme,
     inputDecorationTheme: InputDecorationTheme(
@@ -52,7 +56,7 @@ ThemeData createTheme(ColorScheme colors, TextTheme textTheme) {
     ),
     switchTheme: SwitchThemeData(
       thumbColor: MaterialStateProperty.resolveWith<Color>(
-            (states) {
+        (states) {
           if (states.contains(MaterialState.selected)) {
             return appColor.primaryColor; // Color when the switch is ON
           }
@@ -60,17 +64,19 @@ ThemeData createTheme(ColorScheme colors, TextTheme textTheme) {
         },
       ),
       trackColor: MaterialStateProperty.resolveWith<Color>(
-            (states) {
+        (states) {
           if (states.contains(MaterialState.selected)) {
-            return appColor.primaryColor.withOpacity(0.5); // Track color when ON
+            return appColor.primaryColor
+                .withOpacity(0.5); // Track color when ON
           }
           return appColor.strokeColor.withOpacity(0.3); // Track color when OFF
         },
       ),
       overlayColor: MaterialStateProperty.resolveWith<Color?>(
-            (states) {
+        (states) {
           if (states.contains(MaterialState.pressed)) {
-            return appColor.primaryColor.withOpacity(0.2); // Ripple color when pressed
+            return appColor.primaryColor
+                .withOpacity(0.2); // Ripple color when pressed
           }
           if (states.contains(MaterialState.hovered)) {
             return appColor.primaryColor.withOpacity(0.1); // Hover effect
