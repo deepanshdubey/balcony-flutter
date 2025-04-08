@@ -134,7 +134,7 @@ class _SignInPageState extends State<SignInPage> {
                     }),
                     Spacer(),
                     Visibility(
-                      visible: false,
+                      visible: true,
                       child: GestureDetector(
                         onTap: () {
                           Navigator.of(context).pop();
