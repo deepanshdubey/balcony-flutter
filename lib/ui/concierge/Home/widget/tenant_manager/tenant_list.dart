@@ -10,8 +10,13 @@ import 'package:homework/widget/primary_button.dart';
 class TenantList extends StatelessWidget {
   final List<ConciergeTenant> tenants;
   final ConciergeStore store;
+  final String type;
 
-  const TenantList({super.key, required this.tenants, required this.store});
+  const TenantList(
+      {super.key,
+      required this.tenants,
+      required this.store,
+      required this.type});
 
   @override
   Widget build(BuildContext context) {
@@ -66,8 +71,7 @@ class TenantList extends StatelessWidget {
               itemBuilder: (_, i) => TenantRow(
                 conciergeTenant: tenants[i],
                 onInfo: () => context.router
-                    .push(ConciergeTenantDetailsRoute(
-                        conciergeTenant: tenants[i]))
+                    .push(ConciergeTenantDetailsRoute(conciergeTenant: tenants[i], type: type))
                     .then((_) => store.conciergeTenantAll()),
               ),
               separatorBuilder: (_, __) =>

@@ -96,7 +96,10 @@ class _ManuallyAddedTenantManagerWidgetState
                   onAdd: _handleAddProperty,
                 ),
                 24.verticalSpace,
-                TenantList(tenants: tenants ?? [], store: conciergeStore),
+                TenantList(
+                    type: "concierge-tenant",
+                    tenants: tenants ?? [],
+                    store: conciergeStore),
               ],
             ),
           ),
@@ -122,7 +125,8 @@ class _ManuallyAddedTenantManagerWidgetState
           );
           return;
         }
-        final scanner = TenantScanner(allTenants: tenants!);
+        final scanner =
+            TenantScanner(type: "concierge-tenant", allTenants: tenants!);
         await scanner.scanAndMatch(
           context: context,
           imagePath: path,

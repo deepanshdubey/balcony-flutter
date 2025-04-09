@@ -9,9 +9,13 @@ import 'package:homework/ui/concierge/Home/widget/select_tenant_widget.dart';
 import 'package:homework/ui/concierge/model/concierge_tanant_response.dart';
 
 class TenantScanner {
+  final String type;
   final List<ConciergeTenant> allTenants;
 
-  TenantScanner({required this.allTenants});
+  TenantScanner({
+    required this.allTenants,
+    required this.type,
+  });
 
   Future<void> scanAndMatch({
     required BuildContext context,
@@ -40,8 +44,7 @@ class TenantScanner {
         matchedTenants: matchedTenants,
         onTenantSelected: onTenantSelected,
         onTenantInfoTapped: (tenant) {
-          context.router
-              .push(ConciergeTenantDetailsRoute(conciergeTenant: tenant));
+          context.router.push(ConciergeTenantDetailsRoute(conciergeTenant: tenant, type: type));
         },
       );
     } else {

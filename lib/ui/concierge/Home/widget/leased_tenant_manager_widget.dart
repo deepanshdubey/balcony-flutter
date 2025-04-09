@@ -86,7 +86,10 @@ class _LeasedTenantManagerWidgetState extends State<LeasedTenantManagerWidget> {
             24.verticalSpace,
             ScanSection(onScan: _handleScan),
             24.verticalSpace,
-            TenantList(tenants: tenants ?? [], store: conciergeStore),
+            TenantList(
+                type: "leasing-tenant",
+                tenants: tenants ?? [],
+                store: conciergeStore),
           ],
         ),
       ),
@@ -103,7 +106,8 @@ class _LeasedTenantManagerWidgetState extends State<LeasedTenantManagerWidget> {
           );
           return;
         }
-        final scanner = TenantScanner(allTenants: tenants!);
+        final scanner =
+            TenantScanner(type: "leasing-tenant", allTenants: tenants!);
         await scanner.scanAndMatch(
           context: context,
           imagePath: path,
