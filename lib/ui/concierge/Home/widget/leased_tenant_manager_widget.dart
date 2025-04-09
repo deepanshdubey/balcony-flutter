@@ -12,7 +12,9 @@ import 'package:homework/widget/image_picker_widget.dart';
 import 'package:mobx/mobx.dart';
 
 class LeasedTenantManagerWidget extends StatefulWidget {
-  const LeasedTenantManagerWidget({super.key});
+  final List<ConciergeTenant> tenants;
+
+  const LeasedTenantManagerWidget({super.key, required this.tenants});
 
   @override
   State<LeasedTenantManagerWidget> createState() =>
@@ -23,12 +25,12 @@ class _LeasedTenantManagerWidgetState extends State<LeasedTenantManagerWidget> {
   final _addPropertyController = TextEditingController();
   final conciergeStore = ConciergeStore();
   List<ReactionDisposer>? _disposers;
-  List<ConciergeTenant>? tenants;
+  List<ConciergeTenant> tenants = [];
 
   @override
   void initState() {
     super.initState();
-    conciergeStore.conciergeTenantAll();
+    tenants = widget.tenants;
     _addReactions();
   }
 
@@ -39,10 +41,6 @@ class _LeasedTenantManagerWidgetState extends State<LeasedTenantManagerWidget> {
           alertManager.showSuccess(context, "Property Added to dropdown");
           _addPropertyController.clear();
         }
-      }),
-      reaction((_) => conciergeStore.conciergeTenantAllResponse, (response) {
-        tenants = response?.tenants?.leasingTenants;
-        setState(() {});
       }),
       reaction((_) => conciergeStore.errorMessage, (msg) {
         if (msg != null) {
@@ -100,7 +98,7 @@ class _LeasedTenantManagerWidgetState extends State<LeasedTenantManagerWidget> {
     ImagePickerWidget.showSourceSheet(
       context: context,
       onImageSelected: (path) async {
-        if (tenants == null || tenants!.isEmpty) {
+        if (tenants.isEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("No tenants available to match.")),
           );

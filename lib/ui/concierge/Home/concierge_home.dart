@@ -11,6 +11,7 @@ import 'package:homework/ui/concierge/Home/property_tab.dart';
 import 'package:homework/ui/concierge/Home/widget/concierge_header.dart';
 import 'package:homework/ui/concierge/Home/widget/leased_tenant_manager_widget.dart';
 import 'package:homework/ui/concierge/Home/widget/manually_added_tenant_manager_widget.dart';
+import 'package:homework/ui/concierge/model/concierge_tanant_response.dart';
 import 'package:homework/ui/concierge/store/concierge_store.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
 import 'package:mobx/mobx.dart';
@@ -33,6 +34,7 @@ class _ConciergeHomePageState extends State<ConciergeHomePage> {
   void initState() {
     super.initState();
     conciergeStore.conciergePropertyAll();
+    conciergeStore.conciergeTenantAll();
     _addReactions();
   }
 
@@ -41,6 +43,11 @@ class _ConciergeHomePageState extends State<ConciergeHomePage> {
       reaction((_) => conciergeStore.bulkEmailResponse, (resp) {
         if (resp?.success ?? false) {
           alertManager.showSuccess(context, 'Email sent successfully');
+        }
+      }),
+      reaction((_) => conciergeStore.pendingParcelRemindResponse, (resp) {
+        if (resp?.success ?? false) {
+          alertManager.showSuccess(context, 'Remind email sent successfully');
         }
       }),
       reaction((_) => conciergeStore.errorMessage, (String? err) {
@@ -72,13 +79,13 @@ class _ConciergeHomePageState extends State<ConciergeHomePage> {
               _buildPropertyTab(),
               SizedBox(height: 24.h),
               _buildDivider(),
-              const ParcelInfo(),
+              _buildParcelInfo(),
               SizedBox(height: 24.h),
               _buildDivider(),
-              const LeasedTenantManagerWidget(),
+              _buildLeasingTenants(),
               SizedBox(height: 24.h),
               _buildDivider(),
-              const ManuallyAddedTenantManagerWidget(),
+              _buildConciergeTenants(),
               SizedBox(height: 24.h),
               _buildDivider(),
               const OngoingParcelTable(),
@@ -114,6 +121,65 @@ class _ConciergeHomePageState extends State<ConciergeHomePage> {
             resp.properties?.leasingProperties?.map((p) => p.name).toList() ??
                 [];
         return PropertyTab(propertyNames: names);
+      },
+    );
+  }
+
+  Widget _buildParcelInfo() {
+    return Observer(
+      builder: (_) {
+        final resp = conciergeStore.conciergeTenantAllResponse?.tenants;
+
+        // Safely extract tenant lists or default to empty lists
+        final leasingList = resp?.leasingTenants ?? <ConciergeTenant>[];
+        final conciergeList = resp?.conciergeTenants ?? <ConciergeTenant>[];
+
+        // Correctly sum total parcels, not just counting tenants
+        final count =
+            leasingList.fold<int>(0, (sum, t) => sum + (t.parcels ?? 0)) +
+                conciergeList.fold<int>(0, (sum, t) => sum + (t.parcels ?? 0));
+
+        final isRemindingForPendingParcel =
+            conciergeStore.isRemindingForPendingParcel;
+
+        return ParcelInfo(
+          isLoading: conciergeStore.isLoading,
+          pendingParcelCount: count,
+          isRemindingForPendingParcel: isRemindingForPendingParcel,
+          onEmailPressed: () {
+            conciergeStore.remindForPendingParcel();
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildLeasingTenants() {
+    return Observer(
+      builder: (_) {
+        final resp = conciergeStore.conciergeTenantAllResponse?.tenants;
+
+        // Safely extract tenant lists or default to empty lists
+        final leasingList = resp?.leasingTenants ?? <ConciergeTenant>[];
+        return LeasedTenantManagerWidget(
+          key: UniqueKey(),
+          tenants: leasingList,
+        );
+      },
+    );
+  }
+
+  Widget _buildConciergeTenants() {
+    return Observer(
+      builder: (_) {
+        final resp = conciergeStore.conciergeTenantAllResponse?.tenants;
+
+        // Safely extract tenant lists or default to empty lists
+        final conciergeTenants = resp?.conciergeTenants ?? <ConciergeTenant>[];
+        return ManuallyAddedTenantManagerWidget(
+          key: UniqueKey(),
+          tenants: conciergeTenants,
+        );
       },
     );
   }

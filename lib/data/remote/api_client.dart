@@ -435,7 +435,7 @@ abstract class ApiClient {
   );
 
   @GET("/concierge/parcel/remind")
-  Future<ParcelResponse> parcelRemind();
+  Future<CommonData> parcelRemind();
 
   @GET("concierge/tenant/all")
   Future<ConciergeTanantResponse> conciergeTenantAll();

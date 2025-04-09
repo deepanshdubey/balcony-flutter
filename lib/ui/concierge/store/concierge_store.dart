@@ -64,6 +64,11 @@ abstract class _ConciergeStoreBase with Store {
   bool isSendingBulkEmail = false;
 
   @observable
+  CommonData? pendingParcelRemindResponse;
+  @observable
+  bool isRemindingForPendingParcel = false;
+
+  @observable
   bool isLoading = false;
 
   @observable
@@ -394,6 +399,28 @@ abstract class _ConciergeStoreBase with Store {
       errorMessage = e.toString();
     } finally {
       isSendingBulkEmail = false;
+    }
+  }
+
+
+  @action
+  Future remindForPendingParcel() async {
+    try {
+      errorMessage = null;
+      isRemindingForPendingParcel = true;
+      pendingParcelRemindResponse = null;
+      final response = await conciergeRepository.remindForPendingParcel();
+      if (response.isSuccess) {
+        pendingParcelRemindResponse = response.data!;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isRemindingForPendingParcel = false;
     }
   }
 }

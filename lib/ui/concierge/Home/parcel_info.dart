@@ -1,104 +1,85 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/generated/assets.dart';
-import 'package:homework/ui/concierge/store/concierge_store.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
 import 'package:homework/widget/primary_button.dart';
-import 'package:mobx/mobx.dart';
 
-class ParcelInfo extends StatefulWidget {
-  const ParcelInfo({super.key});
+/// A stateless parcel info card showing pending parcel count and an email button.
+class ParcelInfo extends StatelessWidget {
+  /// Whether the data is currently loading.
+  final bool isLoading;
+  final bool isRemindingForPendingParcel;
 
-  @override
-  State<ParcelInfo> createState() => _ParcelInfoState();
-}
+  /// The number of parcels pending pickup.
+  final int pendingParcelCount;
 
-class _ParcelInfoState extends State<ParcelInfo> {
-  final conciergeStore = ConciergeStore();
-  List<ReactionDisposer>? disposers;
+  /// Callback when the email button is pressed.
+  final VoidCallback onEmailPressed;
 
-
-
-  @override
-  void initState() {
-    addDisposer();
-    conciergeStore.conciergeParcelMe();
-    super.initState();
-  }
-
-  void addDisposer() {
-    disposers ??= [
-      reaction((_) => conciergeStore.conciergeParcelMeResponse, (response) {
-
-      }),
-    ];
-  }
-
-  void removeDisposer() {
-    if (disposers == null) return;
-    for (final element in disposers!) {
-      element.reaction.dispose();
-    }
-  }
-
-
+  const ParcelInfo({
+    super.key,
+    this.isLoading = false,
+    this.isRemindingForPendingParcel = false,
+    required this.pendingParcelCount,
+    required this.onEmailPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Observer(
-      builder: (context) {
-        return conciergeStore.isLoading
-            ? Center(
-          child: CircularProgressIndicator(
-            color: Theme.of(context).primaryColor, // Adjust loader color
-          ),
-        )
-            : Container(
-          width: 235.w,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(12.r)),
-            border: Border.all(color: Colors.black.withOpacity(.25)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24).r,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    if (isLoading) {
+      return Center(
+        child: CircularProgressIndicator(
+          color: theme.colors.primaryColor,
+        ),
+      );
+    }
+
+    return Container(
+      width: 235.w,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: Colors.black.withOpacity(.25)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24).r,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 22.h),
+            Row(
               children: [
-                22.verticalSpace,
-                Row(
-                  children: [
-                    Image.asset(
-                      Assets.imagesAlertCircle,
-                      height: 22.r,
-                      width: 22.r,
-                    ),
-                    5.horizontalSpace,
-                    Text(
-                      conciergeStore.conciergeParcelMeResponse?.parcels?[0].toString() ?? "0" ,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontSize: 43.spMin,
-                        color: Theme.of(context).colors.primaryColor,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )
-                  ],
+                Image.asset(
+                  Assets.imagesAlertCircle,
+                  height: 22.r,
+                  width: 22.r,
                 ),
-                9.verticalSpace,
+                SizedBox(width: 5.w),
                 Text(
-                    "This is the total amount of tenants that has yet to pick-up their parcel. You may mass email tenants to remind them to pick-up."),
-                20.verticalSpace,
-                PrimaryButton(
-                  text: "email",
-                  onPressed: () {},
+                  pendingParcelCount.toString(),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontSize: 43.spMin,
+                    color: theme.colors.primaryColor,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-                20.verticalSpace
               ],
             ),
-          ),
-        );
-      }
+            SizedBox(height: 9.h),
+            const Text(
+              'This is the total amount of tenants that have yet to pick-up their parcel. '
+              'You may mass email tenants to remind them to pick-up.',
+            ),
+            SizedBox(height: 20.h),
+            PrimaryButton(
+              text: 'email',
+              isLoading: isRemindingForPendingParcel,
+              onPressed: onEmailPressed,
+            ),
+            SizedBox(height: 20.h),
+          ],
+        ),
+      ),
     );
   }
 }

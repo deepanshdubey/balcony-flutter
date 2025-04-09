@@ -14,7 +14,9 @@ import 'tenant_manager/property_input.dart';
 import 'tenant_manager/scan_section.dart';
 
 class ManuallyAddedTenantManagerWidget extends StatefulWidget {
-  const ManuallyAddedTenantManagerWidget({super.key});
+  final List<ConciergeTenant> tenants;
+
+  const ManuallyAddedTenantManagerWidget({super.key, required this.tenants});
 
   @override
   State<ManuallyAddedTenantManagerWidget> createState() =>
@@ -26,12 +28,12 @@ class _ManuallyAddedTenantManagerWidgetState
   final conciergeStore = ConciergeStore();
   final TextEditingController _addPropertyController = TextEditingController();
   List<ReactionDisposer>? disposers;
-  List<ConciergeTenant>? tenants;
+  List<ConciergeTenant> tenants = [];
 
   @override
   void initState() {
     super.initState();
-    conciergeStore.conciergeTenantAll();
+    tenants = widget.tenants;
     _addReactions();
   }
 
@@ -42,10 +44,6 @@ class _ManuallyAddedTenantManagerWidgetState
           alertManager.showSuccess(context, "Property Added to dropdown");
           _addPropertyController.clear();
         }
-      }),
-      reaction((_) => conciergeStore.conciergeTenantAllResponse, (response) {
-        tenants = response?.tenants?.conciergeTenants;
-        setState(() {});
       }),
       reaction((_) => conciergeStore.errorMessage, (msg) {
         if (msg != null) alertManager.showError(context, msg);
@@ -73,7 +71,7 @@ class _ManuallyAddedTenantManagerWidgetState
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12).r,
-              border: Border.all(color: Colors.black.withOpacity(.25)),
+              border: Border.all(color: Colors.black.withAlpha(65)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,7 +96,7 @@ class _ManuallyAddedTenantManagerWidgetState
                 24.verticalSpace,
                 TenantList(
                     type: "concierge-tenant",
-                    tenants: tenants ?? [],
+                    tenants: tenants,
                     store: conciergeStore),
               ],
             ),
@@ -119,14 +117,14 @@ class _ManuallyAddedTenantManagerWidgetState
     ImagePickerWidget.showSourceSheet(
       context: context,
       onImageSelected: (path) async {
-        if (tenants == null || tenants!.isEmpty) {
+        if (tenants.isEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("No tenants available to match.")),
           );
           return;
         }
         final scanner =
-            TenantScanner(type: "concierge-tenant", allTenants: tenants!);
+            TenantScanner(type: "concierge-tenant", allTenants: tenants);
         await scanner.scanAndMatch(
           context: context,
           imagePath: path,

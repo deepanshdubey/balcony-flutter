@@ -92,4 +92,9 @@ class ConciergeRepositoryImpl extends BaseRepositoryImpl
   Future<ApiResponse<CommonData>> maintenanceAdd(request) {
     return execute(apiClient.maintenanceRequestsAdd(request));
   }
+
+  @override
+  Future<ApiResponse<CommonData>> remindForPendingParcel() {
+    return execute(apiClient.parcelRemind());
+  }
 }

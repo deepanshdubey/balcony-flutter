@@ -19,7 +19,8 @@ class ConciergeTanantResponse {
 @JsonSerializable(ignoreUnannotated: true)
 class Tenants {
   @JsonKey(name: 'conciergeTenants')
-  final  List<ConciergeTenant>? conciergeTenants;  @JsonKey(name: 'leasingTenants')
+  final  List<ConciergeTenant>? conciergeTenants;
+  @JsonKey(name: 'leasingTenants')
   final  List<ConciergeTenant>? leasingTenants;
 
   Tenants({this.leasingTenants, this.conciergeTenants});

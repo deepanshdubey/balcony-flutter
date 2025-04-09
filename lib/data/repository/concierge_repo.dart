@@ -39,6 +39,8 @@ abstract class ConciergeRepository {
   Future<ApiResponse<CommonData>> maintenanceToggle(String tenantId);
 
   Future<ApiResponse<CommonData>> maintenanceAdd(request);
+
+  Future<ApiResponse<CommonData>> remindForPendingParcel();
 }
 
 final conciergeRepository = locator<ConciergeRepository>();
