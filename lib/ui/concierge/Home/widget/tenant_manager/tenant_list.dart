@@ -11,12 +11,15 @@ class TenantList extends StatelessWidget {
   final List<ConciergeTenant> tenants;
   final ConciergeStore store;
   final String type;
+  final VoidCallback onParcelCountChanged;
 
-  const TenantList(
-      {super.key,
-      required this.tenants,
-      required this.store,
-      required this.type});
+  const TenantList({
+    super.key,
+    required this.tenants,
+    required this.store,
+    required this.type,
+    required this.onParcelCountChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +74,12 @@ class TenantList extends StatelessWidget {
               itemBuilder: (_, i) => TenantRow(
                 conciergeTenant: tenants[i],
                 onInfo: () => context.router
-                    .push(ConciergeTenantDetailsRoute(conciergeTenant: tenants[i], type: type))
+                    .push(
+                      ConciergeTenantDetailsRoute(
+                          conciergeTenant: tenants[i],
+                          type: type,
+                          onCountUpdated: onParcelCountChanged),
+                    )
                     .then((_) => store.conciergeTenantAll()),
               ),
               separatorBuilder: (_, __) =>

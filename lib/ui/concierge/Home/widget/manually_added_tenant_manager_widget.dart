@@ -15,8 +15,9 @@ import 'tenant_manager/scan_section.dart';
 
 class ManuallyAddedTenantManagerWidget extends StatefulWidget {
   final List<ConciergeTenant> tenants;
+  final VoidCallback onParcelCountChanged;
 
-  const ManuallyAddedTenantManagerWidget({super.key, required this.tenants});
+  const ManuallyAddedTenantManagerWidget({super.key, required this.tenants, required this.onParcelCountChanged});
 
   @override
   State<ManuallyAddedTenantManagerWidget> createState() =>
@@ -97,6 +98,7 @@ class _ManuallyAddedTenantManagerWidgetState
                 TenantList(
                     type: "concierge-tenant",
                     tenants: tenants,
+                    onParcelCountChanged: widget.onParcelCountChanged,
                     store: conciergeStore),
               ],
             ),
@@ -124,7 +126,7 @@ class _ManuallyAddedTenantManagerWidgetState
           return;
         }
         final scanner =
-            TenantScanner(type: "concierge-tenant", allTenants: tenants);
+            TenantScanner(type: "concierge-tenant", allTenants: tenants,onParcelCountChanged: widget.onParcelCountChanged);
         await scanner.scanAndMatch(
           context: context,
           imagePath: path,

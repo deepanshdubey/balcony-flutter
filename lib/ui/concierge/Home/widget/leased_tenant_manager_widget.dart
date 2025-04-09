@@ -13,8 +13,9 @@ import 'package:mobx/mobx.dart';
 
 class LeasedTenantManagerWidget extends StatefulWidget {
   final List<ConciergeTenant> tenants;
+  final VoidCallback onParcelCountChanged;
 
-  const LeasedTenantManagerWidget({super.key, required this.tenants});
+  const LeasedTenantManagerWidget({super.key, required this.tenants, required this.onParcelCountChanged});
 
   @override
   State<LeasedTenantManagerWidget> createState() =>
@@ -68,7 +69,7 @@ class _LeasedTenantManagerWidgetState extends State<LeasedTenantManagerWidget> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12).r,
-          border: Border.all(color: Colors.black.withOpacity(.25)),
+          border: Border.all(color: Colors.black.withAlpha(60)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,8 +87,8 @@ class _LeasedTenantManagerWidgetState extends State<LeasedTenantManagerWidget> {
             24.verticalSpace,
             TenantList(
                 type: "leasing-tenant",
-                tenants: tenants ?? [],
-                store: conciergeStore),
+                tenants: tenants,
+                store: conciergeStore, onParcelCountChanged: widget.onParcelCountChanged,),
           ],
         ),
       ),
@@ -105,7 +106,7 @@ class _LeasedTenantManagerWidgetState extends State<LeasedTenantManagerWidget> {
           return;
         }
         final scanner =
-            TenantScanner(type: "leasing-tenant", allTenants: tenants!);
+            TenantScanner(type: "leasing-tenant", allTenants: tenants, onParcelCountChanged:  widget.onParcelCountChanged);
         await scanner.scanAndMatch(
           context: context,
           imagePath: path,

@@ -164,6 +164,9 @@ class _ConciergeHomePageState extends State<ConciergeHomePage> {
         return LeasedTenantManagerWidget(
           key: UniqueKey(),
           tenants: leasingList,
+          onParcelCountChanged: () {
+            conciergeStore.conciergeTenantAll();
+          },
         );
       },
     );
@@ -179,6 +182,9 @@ class _ConciergeHomePageState extends State<ConciergeHomePage> {
         return ManuallyAddedTenantManagerWidget(
           key: UniqueKey(),
           tenants: conciergeTenants,
+          onParcelCountChanged: () {
+            conciergeStore.conciergeTenantAll();
+          },
         );
       },
     );

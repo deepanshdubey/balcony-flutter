@@ -66,7 +66,7 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: MaintenanceDetailsRoute.page),
         AutoRoute(page: MaintenanceFormRoute.page),
         AutoRoute(page: WebViewRoute.page),
-      ];
+  ];
 }
 
 final appRouter = locator<AppRouter>();

@@ -11,10 +11,12 @@ import 'package:homework/ui/concierge/model/concierge_tanant_response.dart';
 class TenantScanner {
   final String type;
   final List<ConciergeTenant> allTenants;
+  final VoidCallback onParcelCountChanged;
 
   TenantScanner({
     required this.allTenants,
     required this.type,
+    required this.onParcelCountChanged,
   });
 
   Future<void> scanAndMatch({
@@ -44,7 +46,8 @@ class TenantScanner {
         matchedTenants: matchedTenants,
         onTenantSelected: onTenantSelected,
         onTenantInfoTapped: (tenant) {
-          context.router.push(ConciergeTenantDetailsRoute(conciergeTenant: tenant, type: type));
+          context.router.push(
+              ConciergeTenantDetailsRoute(conciergeTenant: tenant, type: type, onCountUpdated: onParcelCountChanged));
         },
       );
     } else {

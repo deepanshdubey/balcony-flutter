@@ -13,8 +13,14 @@ import 'package:mobx/mobx.dart';
 class ConciergeTenantDetailsPage extends StatefulWidget {
   final ConciergeTenant? conciergeTenant;
   final String type;
+  final VoidCallback onCountUpdated;
 
-  const ConciergeTenantDetailsPage({super.key, this.conciergeTenant, required this.type});
+  const ConciergeTenantDetailsPage({
+    super.key,
+    this.conciergeTenant,
+    required this.type,
+    required this.onCountUpdated,
+  });
 
   @override
   State<ConciergeTenantDetailsPage> createState() =>
@@ -39,15 +45,18 @@ class _ConciergeTenantDetailsPageState
       reaction((_) => conciergeStore.parcelAddResponse, (response) {
         if (response?.success ?? false) {
           parcelCount.value = (parcelCount.value ?? 0) + 1;
+          widget.onCountUpdated();
         }
       }),
       reaction((_) => conciergeStore.parcelDeleteResponse, (response) {
         if (response?.success ?? false) {
           parcelCount.value = (parcelCount.value ?? 0) - 1;
+          widget.onCountUpdated();
         }
       }),
       reaction((_) => conciergeStore.tenantDeleteResponse, (response) {
         if (response?.success ?? false) {
+          widget.onCountUpdated();
           context.router.maybePop();
         }
       }),
