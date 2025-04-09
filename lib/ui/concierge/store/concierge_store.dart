@@ -1,14 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:homework/core/locator/locator.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/data/model/response/common_data.dart';
-import 'package:homework/data/model/response/subscription_list_model.dart';
 import 'package:homework/data/repository/concierge_repo.dart';
-import 'package:homework/data/repository/social_manager.dart';
-import 'package:homework/data/repository/user_repository.dart';
-import 'package:homework/ui/auth/ui/bottomsheet/alert/verification_alert.dart';
+import 'package:homework/data/repository/property_repository.dart';
 import 'package:homework/ui/concierge/model/add_tenant_model.dart';
 import 'package:homework/ui/concierge/model/concierge_property_response.dart';
 import 'package:homework/ui/concierge/model/concierge_tanant_response.dart';
@@ -62,6 +57,11 @@ abstract class _ConciergeStoreBase with Store {
   CommonData? maintenanceToggleResponse;
   @observable
   CommonData? maintenanceAddResponse;
+
+  @observable
+  CommonData? bulkEmailResponse;
+  @observable
+  bool isSendingBulkEmail = false;
 
   @observable
   bool isLoading = false;
@@ -369,6 +369,31 @@ abstract class _ConciergeStoreBase with Store {
       errorMessage = e.toString();
     } finally {
       isLoading = false;
+    }
+  }
+
+  @action
+  Future sendBulkEmail({required List<String> ids, required String message}) async {
+    try {
+      errorMessage = null;
+      isSendingBulkEmail = true;
+      bulkEmailResponse = null;
+      final response = await propertyRepository.sendBulkEmails({
+        "type": "leasing-property",
+        "properties": ids,
+        "message": message,
+      });
+      if (response.isSuccess) {
+        bulkEmailResponse = response.data!;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isSendingBulkEmail = false;
     }
   }
 }

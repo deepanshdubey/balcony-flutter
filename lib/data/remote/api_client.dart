@@ -83,13 +83,12 @@ abstract class ApiClient {
 
   @GET("workspace/all")
   Future<PaginationData<WorkspaceData>> getWorkSpaces(
-      @Query("query") String query,
-      @Query("page") int? page,
-      @Query("limit") int? limit,
-      @Query("sort") String? sort,
-      @Query("includeHost") bool? includeHost,
-      );
-
+    @Query("query") String query,
+    @Query("page") int? page,
+    @Query("limit") int? limit,
+    @Query("sort") String? sort,
+    @Query("includeHost") bool? includeHost,
+  );
 
   @GET("workspace/all/host/{id}")
   Future<CommonData> getHostWorkspaces(
@@ -378,10 +377,9 @@ abstract class ApiClient {
   ///update payout info
   @GET("user/onboarding-account/{workspace}")
   Future<CommonData> updatePayoutInfo(
-      @Path("workspace") String workspace,
-      @Query("country") String country,
-      );
-
+    @Path("workspace") String workspace,
+    @Query("country") String country,
+  );
 
   @GET("user/balance/{hostId}")
   Future<CommonData> getEarnings(
@@ -404,14 +402,14 @@ abstract class ApiClient {
   Future<CreateMsgResponse> createMessageV2(
       @Body() Map<String, dynamic> request);
 
-
   //concierge
 
   @POST("concierge/login")
   Future<CommonData> conciergeLogin(@Body() Map<String, dynamic> request);
 
   @POST("/concierge/property/add")
-  Future<ConciergePropertyResponse> conciergePropertyAdd(@Body() Map<String, dynamic> request);
+  Future<ConciergePropertyResponse> conciergePropertyAdd(
+      @Body() Map<String, dynamic> request);
 
   @GET("concierge/property/all")
   Future<ConciergePropertyResponse> conciergePropertyAll();
@@ -421,31 +419,30 @@ abstract class ApiClient {
 
   @GET("/concierge/parcel/add/{type}/{tenantId}")
   Future<ParcelResponse> parcelAdd(
-      @Path("type") String type,
-      @Path("tenantId") String tenantId,
-      );
+    @Path("type") String type,
+    @Path("tenantId") String tenantId,
+  );
 
   @GET("/concierge/parcel/delete/{type}/{tenantId}")
   Future<ParcelResponse> parcelDelete(
-      @Path("type") String type,
-      @Path("tenantId") String tenantId,
-      );
+    @Path("type") String type,
+    @Path("tenantId") String tenantId,
+  );
 
   @DELETE("concierge/tenant/delete/{id}")
   Future<ParcelResponse> tenantDelete(
-      @Path("id") String tenantId,
-      );
-
+    @Path("id") String tenantId,
+  );
 
   @GET("/concierge/parcel/remind")
   Future<ParcelResponse> parcelRemind();
-
 
   @GET("concierge/tenant/all")
   Future<ConciergeTanantResponse> conciergeTenantAll();
 
   @POST("concierge/tenant/add")
-  Future<AddTenantModel> conciergeTenantAdd(@Body() Map<String, dynamic> request);
+  Future<AddTenantModel> conciergeTenantAdd(
+      @Body() Map<String, dynamic> request);
 
   @GET("concierge/outgoing-parcel/all")
   Future<OngoingResponse> ongoingAll();
@@ -455,25 +452,21 @@ abstract class ApiClient {
 
   @GET("concierge/outgoing-parcel/toggle-status/{id}")
   Future<CommonData> ongoingToggleStatus(
-      @Path("id") String tenantId,
-      );
-
+    @Path("id") String tenantId,
+  );
 
   @GET("concierge/maintenance-request/all")
   Future<MaintenaceRequestResponse> maintenanceRequestAll();
 
   @POST("concierge/maintenance-request/add")
-  Future<CommonData> maintenanceRequestsAdd(@Body() Map<String, dynamic> request);
+  Future<CommonData> maintenanceRequestsAdd(
+      @Body() Map<String, dynamic> request);
 
   @GET("/concierge/maintenance-request/toggle-status/{id}")
   Future<CommonData> maintenanceRequestToggle(
-      @Path("id") String tenantId,
-      );
+    @Path("id") String tenantId,
+  );
 
-
-
-
-
-
-
+  @POST("/property/bulk-email")
+  Future<CommonData> propertyBulkEmail(@Body() Map<String, dynamic> request);
 }

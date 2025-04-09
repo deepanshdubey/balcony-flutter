@@ -1,5 +1,6 @@
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/generated/assets.dart';
 import 'package:homework/ui/concierge/Home/explore_link.dart';
@@ -10,9 +11,12 @@ import 'package:homework/ui/concierge/Home/property_tab.dart';
 import 'package:homework/ui/concierge/Home/widget/leased_tenant_manager_widget.dart';
 import 'package:homework/ui/concierge/Home/widget/manually_added_tenant_manager_widget.dart';
 import 'package:homework/ui/concierge/login/concierge_more_page.dart';
+import 'package:homework/ui/concierge/store/concierge_store.dart';
 import 'package:homework/values/extensions/context_ext.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
+import 'package:mobx/mobx.dart';
 
+import '../../../core/alert/alert_manager.dart';
 import 'bulk_email_widget.dart';
 
 @RoutePage()
@@ -24,11 +28,42 @@ class ConciergeHomePage extends StatefulWidget {
 }
 
 class _ConciergeHomePageState extends State<ConciergeHomePage> {
-  int _currentIndex = 0;
+  final conciergeStore = ConciergeStore();
+  List<ReactionDisposer>? disposers;
 
   @override
   void initState() {
     super.initState();
+    conciergeStore.conciergePropertyAll();
+    addDisposer();
+  }
+
+  void addDisposer() {
+    disposers ??= [
+      reaction((_) => conciergeStore.bulkEmailResponse, (response) {
+        if (response?.success ?? false) {
+          alertManager.showSuccess(context, "Email sent successfully");
+        }
+      }),
+      reaction((_) => conciergeStore.errorMessage, (String? errorMessage) {
+        if (errorMessage != null) {
+          alertManager.showError(context, errorMessage);
+        }
+      }),
+    ];
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    removeDisposer();
+  }
+
+  void removeDisposer() {
+    if (disposers == null) return;
+    for (final element in disposers!) {
+      element.reaction.dispose();
+    }
   }
 
   @override
@@ -45,7 +80,22 @@ class _ConciergeHomePageState extends State<ConciergeHomePage> {
               50.verticalSpace,
               HeaderSection(theme),
               35.verticalSpace,
-              const PropertyTab(),
+              // Property tab with store data
+              Observer(
+                builder: (_) {
+                  final response = conciergeStore.conciergePropertyResponse;
+                  if (response == null) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  final names = response.properties?.leasingProperties
+                          ?.map((p) => p.name)
+                          .toList() ??
+                      [];
+                  return PropertyTab(
+                    propertyNames: names,
+                  );
+                },
+              ),
               24.verticalSpace,
               Divider(
                 color: Theme.of(context).colors.primaryColor,
@@ -80,7 +130,34 @@ class _ConciergeHomePageState extends State<ConciergeHomePage> {
                 thickness: 1,
               ),
               24.verticalSpace,
-              //const BulkEmailWidget(totalTenant: 2,),
+              Observer(
+                builder: (_) {
+                  final isLoading = conciergeStore.isSendingBulkEmail;
+                  final response = conciergeStore.conciergePropertyResponse;
+                  final Map<String, String?> propertiesMap = {};
+                  if (response != null) {
+                    response.properties?.leasingProperties?.forEach((p) {
+                      if (p.Id != null && p.name != null) {
+                        propertiesMap[p.Id!] = p.name!;
+                      }
+                    });
+                    response.properties?.conciergeProperties?.forEach((p) {
+                      if (p.Id != null && p.name != null) {
+                        //  propertiesMap[p.Id!] = p.name!;
+                      }
+                    });
+                  }
+                  final totalTenants = propertiesMap.length;
+                  return BulkEmailWidget(
+                    totalTenant: totalTenants,
+                    isEmailSending: isLoading,
+                    propertyMap: propertiesMap,
+                    onSendEmailTapped: (List<String> ids, String message) {
+                      conciergeStore.sendBulkEmail(ids: ids, message: message);
+                    },
+                  );
+                },
+              ),
               24.verticalSpace,
               Divider(
                 color: Theme.of(context).colors.primaryColor,
@@ -148,62 +225,5 @@ class _ConciergeHomePageState extends State<ConciergeHomePage> {
             ],
           ),
         ));
-  }
-
-  Widget tabBar(ThemeData theme) {
-    final theme = Theme.of(context);
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(12.r)),
-              border: Border.all(color: Colors.black.withOpacity(.25))),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTab(theme, "user", 0),
-              _buildTab(theme, "host", 1),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTab(ThemeData theme, String text, int index) {
-    final theme = Theme.of(context);
-
-    bool isActive = _currentIndex == index;
-    return GestureDetector(
-      onTap: () => _onTabTapped(index),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
-        decoration: BoxDecoration(
-            color: isActive ? theme.colors.primaryColor : Colors.transparent,
-            borderRadius: BorderRadius.all(Radius.circular(12.r))),
-        child: Text(
-          text,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            fontSize: 16.spMin,
-            fontWeight: FontWeight.w500,
-            color: _currentIndex == index
-                ? theme.colors.backgroundColor
-                : theme.colors.primaryColor,
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
   }
 }

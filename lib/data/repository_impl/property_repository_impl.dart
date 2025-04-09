@@ -113,4 +113,9 @@ class PropertyRepositoryImpl extends BaseRepositoryImpl
       Map<String, dynamic> request) {
     return execute(apiClient.createPropertyV2(request));
   }
+
+  @override
+  Future<ApiResponse<CommonData>> sendBulkEmails(Map<String, dynamic> request) {
+    return execute(apiClient.propertyBulkEmail(request));
+  }
 }

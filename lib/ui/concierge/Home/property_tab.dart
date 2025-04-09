@@ -1,164 +1,118 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:homework/ui/concierge/store/concierge_store.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
-import 'package:mobx/mobx.dart';
 
+/// A tab widget that displays two property names at a time and allows navigation.
+///
+/// Takes the full list of [propertyNames] from outside and manages its own index state.
+/// Optionally notifies [onIndexChanged] whenever the visible index changes.
 class PropertyTab extends StatefulWidget {
-  const PropertyTab({Key? key}) : super(key: key);
+  /// The list of property names to display (should contain at least one entry).
+  final List<String?> propertyNames;
+
+  const PropertyTab({
+    super.key,
+    required this.propertyNames,
+  });
 
   @override
   _PropertyTabState createState() => _PropertyTabState();
 }
 
 class _PropertyTabState extends State<PropertyTab> {
-  int currentIndex = 0;
-  final conciergeStore = ConciergeStore();
-  List<ReactionDisposer>? disposers;
-  List<String?>? propertyNames;
+  int _currentIndex = 0;
 
   void _incrementIndex() {
-    if (currentIndex < propertyNames!.length - 2) {
-      setState(() {
-        currentIndex++;
-      });
+    if (_currentIndex < widget.propertyNames.length - 2) {
+      setState(() => _currentIndex++);
     }
   }
 
   void _decrementIndex() {
-    if (currentIndex > 0) {
-      setState(() {
-        currentIndex--;
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    addDisposer();
-    conciergeStore.conciergePropertyAll();
-    super.initState();
-  }
-
-  void addDisposer() {
-    disposers ??= [
-      reaction((_) => conciergeStore.conciergePropertyResponse, (response) {
-        propertyNames = response?.properties?.leasingProperties
-            ?.map((property) => property.name)
-            .toList();
-        setState(() {});
-      }),
-    ];
-  }
-
-  void removeDisposer() {
-    if (disposers == null) return;
-    for (final element in disposers!) {
-      element.reaction.dispose();
+    if (_currentIndex > 0) {
+      setState(() => _currentIndex--);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (propertyNames == null) {
-      // Loading state: show CircularProgressIndicator
+    final names = widget.propertyNames;
+    final theme = Theme.of(context);
+
+    if (names.isEmpty) {
       return Center(
-        child: CircularProgressIndicator(),
-      );
-    } else if (propertyNames!.isEmpty) {
-      // Empty state: show a placeholder Container
-      return Center(
-        child: Container(
-          width: 1.sw,
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12).r,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 10.0,
-              ),
-            ],
+        child: Text(
+          'no properties available',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontSize: 14.spMin,
+            fontWeight: FontWeight.w500,
           ),
-          child: Text(
-            "No properties available",
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+        ),
+      );
+    }
+
+    final first = names[_currentIndex] ?? '';
+    final second =
+        (_currentIndex + 1 < names.length) ? names[_currentIndex + 1] : null;
+
+    return Container(
+      width: 1.sw,
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12).r,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(.1),
+            blurRadius: 10,
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            onPressed: _currentIndex > 0 ? _decrementIndex : null,
+            icon: const Icon(Icons.arrow_back),
+            color: _currentIndex > 0 ? theme.colors.primaryColor : Colors.grey,
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+          ),
+
+          // First property
+          Text(
+            first,
+            style: theme.textTheme.titleMedium?.copyWith(
               fontSize: 14.spMin,
               fontWeight: FontWeight.w500,
             ),
-            textAlign: TextAlign.center,
           ),
-        ),
-      );
-    } else {
-      // Data loaded: show the main UI
-      return Container(
-        width: 1.sw,
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12).r,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10.0,
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              onPressed: currentIndex > 0 ? _decrementIndex : null,
-              icon: Icon(Icons.arrow_back),
-              color: currentIndex > 0
-                  ? Theme.of(context).colors.primaryColor
-                  : Colors.grey,
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-            ),
-            Spacer(),
+
+          if (second != null) ...[
+            10.horizontalSpace,
+            Container(height: 15.h, width: 1.5.w, color: Colors.black),
+            10.horizontalSpace,
             Text(
-              propertyNames?[currentIndex] ?? "Null",
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              second,
+              style: theme.textTheme.titleMedium?.copyWith(
                 fontSize: 14.spMin,
                 fontWeight: FontWeight.w500,
               ),
             ),
-            10.horizontalSpace,
-            if (propertyNames!.length > 1)
-              Container(
-                height: 15.h,
-                width: 1.5.w,
-                color: Colors.black,
-              ),
-            if (propertyNames!.length > 1) 10.horizontalSpace,
-            if (propertyNames!.length > 1)
-              Text(
-                propertyNames?[currentIndex + 1] ?? "",
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontSize: 14.spMin,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            Spacer(),
-            IconButton(
-              onPressed: currentIndex < propertyNames!.length - 2
-                  ? _incrementIndex
-                  : null,
-              icon: Icon(Icons.arrow_forward),
-              color: currentIndex < propertyNames!.length - 2
-                  ? Theme.of(context).colors.primaryColor
-                  : Colors.grey,
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-            ),
           ],
-        ),
-      );
-    }
-  }
 
+          IconButton(
+            onPressed:
+                (_currentIndex < names.length - 2) ? _incrementIndex : null,
+            icon: const Icon(Icons.arrow_forward),
+            color: (_currentIndex < names.length - 2)
+                ? theme.colors.primaryColor
+                : Colors.grey,
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+          ),
+        ],
+      ),
+    );
+  }
 }
