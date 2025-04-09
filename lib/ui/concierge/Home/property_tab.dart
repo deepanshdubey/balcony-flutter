@@ -80,11 +80,15 @@ class _PropertyTabState extends State<PropertyTab> {
           ),
 
           // First property
-          Text(
-            first,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontSize: 14.spMin,
-              fontWeight: FontWeight.w500,
+          Expanded(
+            child: Center(
+              child: Text(
+                first,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontSize: 14.spMin,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
           ),
 
@@ -92,11 +96,15 @@ class _PropertyTabState extends State<PropertyTab> {
             10.horizontalSpace,
             Container(height: 15.h, width: 1.5.w, color: Colors.black),
             10.horizontalSpace,
-            Text(
-              second,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontSize: 14.spMin,
-                fontWeight: FontWeight.w500,
+            Expanded(
+              child: Center(
+                child: Text(
+                  second,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontSize: 14.spMin,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             ),
           ],
