@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/core/alert/alert_manager.dart';
+import 'package:homework/ui/concierge/Home/widget/select_properties_widget.dart';
 import 'package:homework/ui/concierge/Home/widget/tenant_manager/header_text.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
+import 'package:homework/widget/app_outlined_button.dart';
 import 'package:homework/widget/primary_button.dart';
 
 import '../../../widget/app_text_field.dart' show AppTextField;
@@ -30,6 +32,7 @@ class BulkEmailWidget extends StatefulWidget {
 class _BulkEmailWidgetState extends State<BulkEmailWidget> {
   final ValueNotifier<bool> _isAllSelected = ValueNotifier<bool>(true);
   final TextEditingController _messageController = TextEditingController();
+  List<String> selectedProperties = [];
 
   @override
   void dispose() {
@@ -46,7 +49,9 @@ class _BulkEmailWidgetState extends State<BulkEmailWidget> {
         padding: const EdgeInsets.all(24).r,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12).r,
+          borderRadius: BorderRadius
+              .circular(12)
+              .r,
           border: Border.all(color: Colors.black.withOpacity(.25)),
         ),
         child: Column(
@@ -57,8 +62,9 @@ class _BulkEmailWidgetState extends State<BulkEmailWidget> {
               theme: theme,
               title: "Send Bulk Email\n(Announcements)".toLowerCase(),
               subtitle:
-                  "Total tenants from all properties: ${widget.totalTenant}\nYou can email all tenants from all properties, or select a specific property."
-                      .toLowerCase(),
+              "Total tenants from all properties: ${widget
+                  .totalTenant}\nYou can email all tenants from all properties, or select a specific property."
+                  .toLowerCase(),
             ),
             12.verticalSpace,
             _buildTabSelector(theme),
@@ -96,13 +102,51 @@ class _BulkEmailWidgetState extends State<BulkEmailWidget> {
     return ValueListenableBuilder<bool>(
       valueListenable: _isAllSelected,
       builder: (context, isAll, _) {
-        return isAll
-            ? Text(widget.propertyMap.values.join(", "))
-            : const SizedBox.shrink();
+        if (isAll) {
+          // show all property names
+          final allNames = widget.propertyMap.values.where((n) => n != null).join(", ");
+          return Text(allNames, style: theme.textTheme.bodyMedium);
+        }
+
+        // specific-properties mode
+        if (selectedProperties.isEmpty) {
+          // prompt to select
+          return AppOutlinedButton(
+            text: "select properties",
+            onPressed: () {
+              SelectPropertyWidget.showAsBottomSheet(
+                context: context,
+                propertyMap: widget.propertyMap,
+                onPropertiesSelected: (ids) {
+                  setState(() => selectedProperties = ids);
+                },
+              );
+            },
+          );
+        }
+
+        // show chosen list + clear button
+        final selectedNames = selectedProperties
+            .map((id) => widget.propertyMap[id])
+            .where((n) => n != null)
+            .join(", ");
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Selected Properties", style: theme.textTheme.bodyLarge),
+            4.verticalSpace,
+            Text(selectedNames, style: theme.textTheme.bodyMedium),
+            4.verticalSpace,
+            PrimaryButton(
+              text: "clear",
+              onPressed: () => setState(() => selectedProperties.clear()),
+            ),
+          ],
+        );
       },
     );
   }
-
   Widget _buildTab(ThemeData theme, String text, bool isAllTab) {
     return ValueListenableBuilder<bool>(
       valueListenable: _isAllSelected,
@@ -158,7 +202,15 @@ class _BulkEmailWidgetState extends State<BulkEmailWidget> {
           onPressed: () {
             var content = _messageController.text;
             if (content.isNotEmpty) {
-              widget.onSendEmailTapped(widget.propertyMap.keys.toList(), _messageController.text);
+              if (_isAllSelected.value) {
+                widget.onSendEmailTapped(_isAllSelected.value
+                    ? widget.propertyMap.keys.toList()
+                    : selectedProperties, _messageController.text);
+              } else if (selectedProperties.isNotEmpty) {
+                widget.onSendEmailTapped(selectedProperties, _messageController.text);
+              } else {
+                alertManager.showError(context, "please select properties");
+              }
             } else {
               alertManager.showError(context, "please enter email content");
             }
