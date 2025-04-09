@@ -85,10 +85,10 @@ class ImagePickerWidget extends StatefulWidget {
 class _ImagePickerWidgetState extends State<ImagePickerWidget> {
   Future<void> pickImage() async {
     try {
-      if (Platform.isIOS) {
+      if (Platform.isIOS && widget.source == ImageSource.gallery) {
         final List<AssetEntity>? result = await AssetPicker.pickAssets(
           context,
-          pickerConfig: AssetPickerConfig(
+          pickerConfig: const AssetPickerConfig(
             maxAssets: 1,
             requestType: RequestType.image,
           ),
