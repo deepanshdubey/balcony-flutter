@@ -2,6 +2,7 @@ import 'package:homework/core/locator/locator.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/data/model/response/common_data.dart';
 import 'package:homework/data/repository/booking_repository.dart';
+import 'package:homework/data/repository/property_repository.dart';
 import 'package:homework/data/repository/user_repository.dart';
 import 'package:mobx/mobx.dart';
 
@@ -30,6 +31,11 @@ abstract class _DashboardStoreBase with Store {
 
   @observable
   String? errorMessage;
+
+  @observable
+  CommonData? bulkEmailResponse;
+  @observable
+  bool isSendingBulkEmail = false;
 
   @action
   Future autoStatus({
@@ -145,6 +151,32 @@ abstract class _DashboardStoreBase with Store {
       errorMessage = e.toString();
     } finally {
       isLoading = false;
+    }
+  }
+
+
+  @action
+  Future sendBulkEmail({required String type,required List<String> ids, required String message}) async {
+    try {
+      errorMessage = null;
+      isSendingBulkEmail = true;
+      bulkEmailResponse = null;
+      final response = await propertyRepository.sendBulkEmails({
+        "type": type,
+        "properties": ids,
+        "message": message,
+      });
+      if (response.isSuccess) {
+        bulkEmailResponse = response.data!;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isSendingBulkEmail = false;
     }
   }
 }
