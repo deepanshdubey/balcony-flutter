@@ -1,168 +1,139 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:homework/data/model/response/property_data.dart';
 import 'package:homework/generated/assets.dart';
-import 'package:homework/router/app_router.dart';
 import 'package:homework/ui/home/ui/tabs/more/ui/support_tickets/widget/section_title.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/widget/property_row_widget.dart';
 import 'package:homework/widget/app_image.dart';
 
-class PropertyManagerWidget extends StatefulWidget {
-  const PropertyManagerWidget({super.key});
+/// Stateless widget: all data & callbacks come from the parent.
+class PropertyManagerWidget extends StatelessWidget {
+  /// The list of properties to show (can be null or empty).
+  final List<PropertyData>? properties;
 
-  @override
-  State<PropertyManagerWidget> createState() => _PropertyManagerWidgetState();
-}
+  /// Whether we're currently loading.
+  final bool isLoading;
 
-class _PropertyManagerWidgetState extends State<PropertyManagerWidget> {
-  final store = PropertyStore();
+  /// Called when the user taps "add new property".
+  final VoidCallback onAddNew;
 
-  @override
-  void initState() {
-    super.initState();
-    store.getHostProperties();
-  }
+  /// Called when the user taps delete on a row.
+  final ValueChanged<String> onDelete;
+
+  /// Called when the user taps update on a row.
+  final ValueChanged<PropertyData> onUpdate;
+
+  const PropertyManagerWidget({
+    super.key,
+    required this.properties,
+    required this.isLoading,
+    required this.onAddNew,
+    required this.onDelete,
+    required this.onUpdate,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Observer(builder: (context) {
-      var properties = store.propertyResponse;
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SectionTitle(title: "property manager", subtitle: ""),
+        SizedBox(height: 8.h),
+        _buildAddNewRow(context),
+        SizedBox(height: 8.h),
+        _buildTable(context),
+      ],
+    );
+  }
+
+  Widget _buildAddNewRow(BuildContext context) {
+    return InkWell(
+      onTap: onAddNew,
+      child: Row(
         children: [
-          const SectionTitle(title: "property manager", subtitle: ""),
-          8.h.verticalSpace,
-          addNewProperty(),
-          8.h.verticalSpace,
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(12.r)),
-              border: Border.all(color: Colors.black.withOpacity(.25)),
-            ),
-            child: Column(
-              children: [
-                // Header Row
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(12.r),
-                        topRight: Radius.circular(12.r)),
-                    color: Colors.grey[200],
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 8.r, horizontal: 0.r),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Checkbox(
-                          value: false,
-                          onChanged: (value) {},
-                        ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Text(
-                          'property',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: Colors.black54,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Center(
-                          child: Text(
-                            'status',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Center(
-                          child: Text(
-                            'update space',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Data Rows
-                store.isLoading
-                    ? Padding(
-                        padding: EdgeInsets.all(20.r),
-                        child: const CircularProgressIndicator(),
-                      )
-                    : properties?.isNotEmpty == true
-                        ? ListView.separated(
-                            itemCount: properties!.length,
-                            shrinkWrap: true,
-                            padding: EdgeInsets.zero,
-                            itemBuilder: (context, index) {
-                              final property = properties[index];
-                              return PropertyRowWidget(
-                                property: property,
-                                onDelete: () {
-                                  store.deleteProperty(property.id.toString());
-                                },
-                                onUpdate: () {
-                                  appRouter.push(CreatePropertyRoute(
-                                    existingProperty: property,
-                                    onEdited: () {
-                                      store.getHostProperties();
-                                    },
-                                  ));
-                                },
-                              );
-                            },
-                            separatorBuilder: (context, index) => Divider(
-                              height: 1.h,
-                              color: Colors.black26,
-                            ),
-                          )
-                        : Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(20.r),
-                              child: const Text('no properties available.'),
-                            ),
-                          ),
-              ],
+          AppImage(
+            height: 30.r,
+            width: 30.r,
+            assetPath: Assets.imagesLargePlus,
+          ),
+          SizedBox(width: 16.w),
+          Expanded(
+            child: Text(
+              "add new property",
+              style: Theme.of(context).textTheme.titleMedium,
             ),
           ),
         ],
-      );
-    });
+      ),
+    );
   }
 
-  Widget addNewProperty() {
-    return GestureDetector(
-        onTap: () {
-          appRouter.push(CreatePropertyRoute(
-            onEdited: () {
-              store.getHostProperties();
-            },
-          ));
-        },
-        child: Row(
-          children: [
-            AppImage(
-                height: 30.r, width: 30.r, assetPath: Assets.imagesLargePlus),
-            16.w.horizontalSpace,
-            Expanded(
-              child: Text(
-                "add new property",
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
+  Widget _buildTable(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: Colors.black.withOpacity(.25)),
+      ),
+      child: Column(
+        children: [
+          _buildHeader(context),
+          if (isLoading)
+            Padding(
+              padding: EdgeInsets.all(20.r),
+              child: const CircularProgressIndicator(),
             )
-          ],
-        ));
+          else if (properties != null && properties!.isNotEmpty)
+            _buildList()
+          else
+            Padding(
+              padding: EdgeInsets.all(20.r),
+              child: Center(child: const Text('no properties available.')),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    final style = Theme.of(context)
+        .textTheme
+        .titleMedium
+        ?.copyWith(color: Colors.black54);
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
+      ),
+      padding: EdgeInsets.symmetric(vertical: 8.r),
+      child: Row(
+        children: [
+          Expanded(flex: 1, child: Checkbox(value: false, onChanged: (_) {})),
+          Expanded(flex: 3, child: Text('property', style: style)),
+          Expanded(flex: 2, child: Center(child: Text('status', style: style))),
+          Expanded(
+              flex: 3,
+              child: Center(child: Text('update space', style: style))),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildList() {
+    return ListView.separated(
+      itemCount: properties!.length,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
+      separatorBuilder: (_, __) => Divider(height: 1.h, color: Colors.black26),
+      itemBuilder: (context, index) {
+        final property = properties![index];
+        return PropertyRowWidget(
+          property: property,
+          onDelete: () => onDelete(property.id.toString()),
+          onUpdate: () => onUpdate(property),
+        );
+      },
+    );
   }
 }
