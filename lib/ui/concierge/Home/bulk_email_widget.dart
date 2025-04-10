@@ -13,7 +13,6 @@ class BulkEmailWidget extends StatefulWidget {
   final int totalTenant;
   final bool isEmailSending;
 
-
   /// Map of property IDs to property names for selecting a specific property.
   final Map<String, String?> propertyMap;
   final Function(List<String>, String) onSendEmailTapped;
@@ -50,9 +49,7 @@ class _BulkEmailWidgetState extends State<BulkEmailWidget> {
         padding: const EdgeInsets.all(24).r,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius
-              .circular(12)
-              .r,
+          borderRadius: BorderRadius.circular(12).r,
           border: Border.all(color: Colors.black.withOpacity(.25)),
         ),
         child: Column(
@@ -63,9 +60,8 @@ class _BulkEmailWidgetState extends State<BulkEmailWidget> {
               theme: theme,
               title: "Send Bulk Email\n(Announcements)".toLowerCase(),
               subtitle:
-              "Total tenants from all properties: ${widget
-                  .totalTenant}\nYou can email all tenants from all properties, or select a specific property."
-                  .toLowerCase(),
+                  "Total tenants from all properties: ${widget.totalTenant}\nYou can email all tenants from all properties, or select a specific property."
+                      .toLowerCase(),
             ),
             12.verticalSpace,
             _buildTabSelector(theme),
@@ -105,7 +101,8 @@ class _BulkEmailWidgetState extends State<BulkEmailWidget> {
       builder: (context, isAll, _) {
         if (isAll) {
           // show all property names
-          final allNames = widget.propertyMap.values.where((n) => n != null).join(", ");
+          final allNames =
+              widget.propertyMap.values.where((n) => n != null).join(", ");
           return Text(allNames, style: theme.textTheme.bodyMedium);
         }
 
@@ -148,6 +145,7 @@ class _BulkEmailWidgetState extends State<BulkEmailWidget> {
       },
     );
   }
+
   Widget _buildTab(ThemeData theme, String text, bool isAllTab) {
     return ValueListenableBuilder<bool>(
       valueListenable: _isAllSelected,
@@ -204,10 +202,14 @@ class _BulkEmailWidgetState extends State<BulkEmailWidget> {
             var content = _messageController.text;
             if (content.isNotEmpty) {
               if (_isAllSelected.value) {
-                widget.onSendEmailTapped(_isAllSelected.value
-                    ? widget.propertyMap.keys.toList()
-                    : selectedProperties, _messageController.text);
+                _messageController.clear();
+                widget.onSendEmailTapped(
+                    _isAllSelected.value
+                        ? widget.propertyMap.keys.toList()
+                        : selectedProperties,
+                    _messageController.text);
               } else if (selectedProperties.isNotEmpty) {
+                _messageController.clear();
                 widget.onSendEmailTapped(selectedProperties, _messageController.text);
               } else {
                 alertManager.showError(context, "please select properties");
