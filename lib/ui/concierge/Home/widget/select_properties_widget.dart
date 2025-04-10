@@ -40,8 +40,19 @@ class SelectPropertyWidget extends StatefulWidget {
 }
 
 class _SelectPropertyWidgetState extends State<SelectPropertyWidget> {
-  /// Set of currently selected property IDs.
   final Set<String> _selectedIds = {};
+  bool _selectAll = false;
+
+  void _onSelectAllChanged(bool? checked) {
+    setState(() {
+      _selectAll = checked ?? false;
+      if (_selectAll) {
+        _selectedIds.addAll(widget.propertyMap.keys);
+      } else {
+        _selectedIds.clear();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +73,16 @@ class _SelectPropertyWidgetState extends State<SelectPropertyWidget> {
             style: theme.textTheme.titleLarge,
           ),
           const SizedBox(height: 16),
-          // List of checkboxes
+
+          // Select All Checkbox
+          CheckboxListTile(
+            value: _selectAll,
+            title: Text('Select All', style: theme.textTheme.bodyLarge),
+            controlAffinity: ListTileControlAffinity.leading,
+            onChanged: _onSelectAllChanged,
+          ),
+
+          // Individual checkboxes
           ...widget.propertyMap.entries.map((entry) {
             final id = entry.key;
             final name = entry.value ?? '';
@@ -78,10 +98,12 @@ class _SelectPropertyWidgetState extends State<SelectPropertyWidget> {
                   } else {
                     _selectedIds.remove(id);
                   }
+                  _selectAll = _selectedIds.length == widget.propertyMap.length;
                 });
               },
             );
           }).toList(),
+
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
@@ -99,3 +121,4 @@ class _SelectPropertyWidgetState extends State<SelectPropertyWidget> {
     );
   }
 }
+

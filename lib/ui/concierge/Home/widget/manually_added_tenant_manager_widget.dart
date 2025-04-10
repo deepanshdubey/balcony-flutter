@@ -46,6 +46,12 @@ class _ManuallyAddedTenantManagerWidgetState
           _addPropertyController.clear();
         }
       }),
+      reaction((_) => conciergeStore.parcelAddResponse, (msg) {
+        if (msg?.success == true) {
+          widget.onParcelCountChanged();
+          alertManager.showSuccess(context, "Parcel added successfully");
+        }
+      }),
       reaction((_) => conciergeStore.errorMessage, (msg) {
         if (msg != null) alertManager.showError(context, msg);
       }),
@@ -86,7 +92,12 @@ class _ManuallyAddedTenantManagerWidgetState
                 24.verticalSpace,
                 const Divider(),
                 24.verticalSpace,
-                ScanSection(onScan: _handleScan),
+                Observer(
+                  builder: (context) {
+                    var isLoading = conciergeStore.isLoading;
+                    return ScanSection(isAddingParcel : isLoading,onScan: _handleScan);
+                  }
+                ),
                 24.verticalSpace,
                 const Divider(),
                 18.verticalSpace,

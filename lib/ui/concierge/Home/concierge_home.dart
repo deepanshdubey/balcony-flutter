@@ -211,7 +211,7 @@ class _ConciergeHomePageState extends State<ConciergeHomePage> {
           isEmailSending: isLoading,
           propertyMap: map,
           onSendEmailTapped: (ids, msg) =>
-              conciergeStore.sendBulkEmail(ids: ids, message: msg),
+              conciergeStore.sendBulkEmail(type : "leasing-property",ids: ids, message: msg),
         );
       },
     );

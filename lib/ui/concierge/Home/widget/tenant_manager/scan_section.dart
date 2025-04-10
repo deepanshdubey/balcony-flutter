@@ -5,8 +5,10 @@ import 'package:homework/widget/primary_button.dart';
 
 class ScanSection extends StatelessWidget {
   final VoidCallback onScan;
+  final bool isAddingParcel;
 
-  const ScanSection({super.key, required this.onScan});
+  const ScanSection(
+      {super.key, required this.onScan, this.isAddingParcel = false});
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +34,7 @@ class ScanSection extends StatelessWidget {
         ),
         20.verticalSpace,
         PrimaryButton(
+          isLoading: isAddingParcel,
           text: "scan entire parcel label",
           onPressed: onScan,
         )

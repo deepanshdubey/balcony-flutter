@@ -13,6 +13,7 @@ class BulkEmailWidget extends StatefulWidget {
   final int totalTenant;
   final bool isEmailSending;
 
+
   /// Map of property IDs to property names for selecting a specific property.
   final Map<String, String?> propertyMap;
   final Function(List<String>, String) onSendEmailTapped;

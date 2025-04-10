@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/core/alert/alert_manager.dart';
 import 'package:homework/ui/concierge/Home/utils/tenant_scanner.dart'
@@ -15,7 +16,8 @@ class LeasedTenantManagerWidget extends StatefulWidget {
   final List<ConciergeTenant> tenants;
   final VoidCallback onParcelCountChanged;
 
-  const LeasedTenantManagerWidget({super.key, required this.tenants, required this.onParcelCountChanged});
+  const LeasedTenantManagerWidget(
+      {super.key, required this.tenants, required this.onParcelCountChanged});
 
   @override
   State<LeasedTenantManagerWidget> createState() =>
@@ -41,6 +43,12 @@ class _LeasedTenantManagerWidgetState extends State<LeasedTenantManagerWidget> {
         if (response?.success ?? false) {
           alertManager.showSuccess(context, "Property Added to dropdown");
           _addPropertyController.clear();
+        }
+      }),
+      reaction((_) => conciergeStore.parcelAddResponse, (msg) {
+        if (msg?.success == true) {
+          widget.onParcelCountChanged();
+          alertManager.showSuccess(context, "Parcel added successfully");
         }
       }),
       reaction((_) => conciergeStore.errorMessage, (msg) {
@@ -83,12 +91,18 @@ class _LeasedTenantManagerWidgetState extends State<LeasedTenantManagerWidget> {
             24.verticalSpace,
             const Divider(),
             24.verticalSpace,
-            ScanSection(onScan: _handleScan),
+            Observer(builder: (context) {
+              var isLoading = conciergeStore.isLoading;
+              return ScanSection(
+                  isAddingParcel: isLoading, onScan: _handleScan);
+            }),
             24.verticalSpace,
             TenantList(
-                type: "leasing-tenant",
-                tenants: tenants,
-                store: conciergeStore, onParcelCountChanged: widget.onParcelCountChanged,),
+              type: "leasing-tenant",
+              tenants: tenants,
+              store: conciergeStore,
+              onParcelCountChanged: widget.onParcelCountChanged,
+            ),
           ],
         ),
       ),
@@ -105,8 +119,10 @@ class _LeasedTenantManagerWidgetState extends State<LeasedTenantManagerWidget> {
           );
           return;
         }
-        final scanner =
-            TenantScanner(type: "leasing-tenant", allTenants: tenants, onParcelCountChanged:  widget.onParcelCountChanged);
+        final scanner = TenantScanner(
+            type: "leasing-tenant",
+            allTenants: tenants,
+            onParcelCountChanged: widget.onParcelCountChanged);
         await scanner.scanAndMatch(
           context: context,
           imagePath: path,

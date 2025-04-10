@@ -378,13 +378,13 @@ abstract class _ConciergeStoreBase with Store {
   }
 
   @action
-  Future sendBulkEmail({required List<String> ids, required String message}) async {
+  Future sendBulkEmail({required String type,required List<String> ids, required String message}) async {
     try {
       errorMessage = null;
       isSendingBulkEmail = true;
       bulkEmailResponse = null;
       final response = await propertyRepository.sendBulkEmails({
-        "type": "leasing-property",
+        "type": type,
         "properties": ids,
         "message": message,
       });
