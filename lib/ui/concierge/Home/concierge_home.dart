@@ -191,29 +191,41 @@ class _ConciergeHomePageState extends State<ConciergeHomePage> {
   }
 
   Widget _buildBulkEmailSection() {
-    return Observer(
-      builder: (_) {
-        final resp = conciergeStore.conciergePropertyResponse;
-        final isLoading = conciergeStore.isSendingBulkEmail;
+    return Observer(builder: (_) {
+      final resp = conciergeStore.conciergePropertyResponse;
+      final isLoading = conciergeStore.isSendingBulkEmail;
 
-        final map = <String, String?>{};
-        if (resp != null) {
-          resp.properties?.leasingProperties?.forEach((p) {
-            if (p.Id != null && p.name != null) map[p.Id!] = p.name!;
-          });
-          resp.properties?.conciergeProperties?.forEach((p) {
-            if (p.Id != null && p.name != null) map[p.Id!] = p.name!;
-          });
-        }
+      // Extract tenant lists (fall back to empty if null)
+      final tenantsData = conciergeStore.conciergeTenantAllResponse?.tenants;
+      final conciergeTenants = tenantsData?.conciergeTenants ?? <ConciergeTenant>[];
+      final leasingTenants   = tenantsData?.leasingTenants   ?? <ConciergeTenant>[];
 
-        return BulkEmailWidget(
-          totalTenant: map.length,
-          isEmailSending: isLoading,
-          propertyMap: map,
-          onSendEmailTapped: (ids, msg) =>
-              conciergeStore.sendBulkEmail(type : "leasing-property",ids: ids, message: msg),
-        );
-      },
-    );
+      // Sum total tenants
+      final totalTenants = conciergeTenants.length + leasingTenants.length;
+
+      // Build a flat id→name map from both leasing and concierge properties
+      final propertyMap = <String, String?>{
+        if (resp?.properties?.leasingProperties != null)
+          for (var p in resp!.properties!.leasingProperties!)
+            if (p.Id != null && p.name != null) p.Id!: p.name!,
+        if (resp?.properties?.conciergeProperties != null)
+          for (var p in resp!.properties!.conciergeProperties!)
+            if (p.Id != null && p.name != null) p.Id!: p.name!,
+      };
+
+      return BulkEmailWidget(
+        totalTenant: totalTenants,
+        isEmailSending: isLoading,
+        propertyMap: propertyMap,
+        onSendEmailTapped: (ids, msg) {
+          conciergeStore.sendBulkEmail(
+            type: 'concierge-property',
+            ids: ids,
+            message: msg,
+          );
+        },
+      );
+    });
   }
+
 }
