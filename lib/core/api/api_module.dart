@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:homework/data/remote/chat_api_client.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:homework/core/api/interceptor/custom_interceptors.dart';
 import 'package:homework/core/locator/locator.dart';
@@ -13,6 +14,8 @@ class ApiModule {
     locator.registerSingleton<Dio>(dio);
     final apiClient = ApiClient(dio);
     locator.registerSingleton<ApiClient>(apiClient);
+    final chatApiClient = ChatApiClient(dio);
+    locator.registerSingleton<ChatApiClient>(chatApiClient);
   }
 
   static FutureOr<Dio> setup() async {

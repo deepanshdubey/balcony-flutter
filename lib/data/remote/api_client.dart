@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:homework/data/constants.dart';
 import 'package:homework/data/model/response/common_data.dart';
 import 'package:homework/data/model/response/coversation_response.dart';
 import 'package:homework/data/model/response/create_msg_response.dart';
@@ -24,7 +25,7 @@ import '../model/response/workspace_data.dart';
 
 part 'api_client.g.dart';
 
-@RestApi(baseUrl: "https://api.hw.co/api/v2/")
+@RestApi(baseUrl: Constants.baseUrl)
 abstract class ApiClient {
   factory ApiClient(Dio dio, {String baseUrl}) = _ApiClient;
 
@@ -469,4 +470,8 @@ abstract class ApiClient {
 
   @POST("/property/bulk-email")
   Future<CommonData> propertyBulkEmail(@Body() Map<String, dynamic> request);
+
+  @POST("/upload")
+  @MultiPart()
+  Future<CommonData> uploadMedia(@Part() File file);
 }
