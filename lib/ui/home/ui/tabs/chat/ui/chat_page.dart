@@ -39,12 +39,12 @@ class _ChatPageState extends State<ChatPage> {
               children: List.generate(
                 chatStore.allConversationResponse?.conversations?.length ?? 0,
                 (index) => ChatWidget(
-                  image: chatData?[index].member?.image ?? "",
-                  name: chatData?[index].member?.firstName ?? "",
+                  image: chatData?[index].user?.image ?? "",
+                  name: chatData?[index].user?.firstName ?? "",
                   lastMessage: chatData?[index].lastMessage?.text ?? "",
                   time: _formatTime(chatData?[index].lastMessage?.updatedAt),
                   conversationId: chatData?[index].Id ?? "",
-                  receiverId: chatData?[index].member?.Id ?? "",
+                  receiverId: chatData?[index].user?.id ?? "",
                 ),
               ),
             );

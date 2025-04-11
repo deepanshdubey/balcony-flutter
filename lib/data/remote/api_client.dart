@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:homework/data/constants.dart';
 import 'package:homework/data/model/response/common_data.dart';
-import 'package:homework/data/model/response/coversation_response.dart';
 import 'package:homework/data/model/response/create_msg_response.dart';
 import 'package:homework/data/model/response/pagination_data.dart';
 import 'package:homework/data/model/response/promo_list_model.dart';
@@ -342,7 +341,7 @@ abstract class ApiClient {
   Future<CommonData> getAllConversations();
 
   @POST("/conversation/start")
-  Future<CoversationResponse> startConversation(
+  Future<CommonData> startConversation(
       @Body() Map<String, dynamic> request);
 
   @POST("/message/create")

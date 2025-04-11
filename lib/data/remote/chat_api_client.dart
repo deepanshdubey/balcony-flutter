@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:homework/data/constants.dart';
 import 'package:homework/data/model/response/common_data.dart';
 import 'package:retrofit/retrofit.dart';
+
 part 'chat_api_client.g.dart';
 
 @RestApi(baseUrl: "${Constants.baseUrl}conversation/")
@@ -24,7 +25,7 @@ abstract class ChatApiClient {
   Future<CommonData> startSupportConversation();
 
   @POST("start/anonymous")
-  Future<CommonData> startAnonymousConversation();
+  Future<CommonData> startAnonymousConversation( @Body() Map<String, dynamic> request);
 
   @DELETE("{conversationId}")
   Future<void> deleteConversation(

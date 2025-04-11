@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:homework/core/locator/locator.dart';
 import 'package:homework/data/model/response/common_data.dart';
-import 'package:homework/data/model/response/coversation_response.dart';
 import 'package:homework/data/model/response/create_msg_response.dart';
 import 'package:homework/data/repository/chat_repository.dart';
 import 'package:homework/data/repository/user_repository.dart';
@@ -19,7 +18,7 @@ abstract class _ChatStoreBase with Store {
 
 
   @observable
-  CoversationResponse? startConversationResponse;
+  CommonData? startConversationResponse;
 
   @observable
   CommonData? allMsgResponse;

@@ -35,8 +35,13 @@ class ChatRepositoryV2Impl extends BaseRepositoryImpl
     }
 
     if (isAnonymous) {
-      return execute<CommonData>(
-          api.startAnonymousConversation() as Future<CommonData>);
+      return execute<CommonData>(api.startAnonymousConversation({
+        "hostId": id,
+        "firstName": "John",
+        "lastName": "Doe",
+        "email": "john.doe@example.com",
+        "phone": "+919404509403"
+      }) as Future<CommonData>);
     }
 
     if (type == "host" && id != null) {

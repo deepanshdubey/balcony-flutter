@@ -1,11 +1,15 @@
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/core/alert/alert_manager.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/data/model/response/workspace_data.dart';
 import 'package:homework/generated/assets.dart';
 import 'package:homework/ui/auth/ui/bottomsheet/onboarding_bottomsheet.dart';
-import 'package:homework/ui/home/ui/tabs/chat/store/chat_store.dart';
 import 'package:homework/ui/home/ui/tabs/chat/ui/chat_details_page.dart';
 import 'package:homework/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
@@ -18,11 +22,6 @@ import 'package:homework/values/extensions/theme_ext.dart';
 import 'package:homework/widget/app_back_button.dart';
 import 'package:homework/widget/app_image.dart';
 import 'package:homework/widget/primary_button.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -46,7 +45,6 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
   String? startDateIso;
   String? endDateIso;
   final workspaceStore = WorkspaceStore();
-  final chatStore = ChatStore();
 
   @override
   void initState() {
@@ -68,17 +66,16 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
           alertManager.showError(context, errorMessage);
         }
       }),
-      reaction((_) => chatStore.startConversationResponse, (response) {
+      reaction((_) => workspaceStore.startConversationResponse, (conversation) {
         var host = workspaceStore.workspaceDetailsResponse?.host as Host;
         showAppBottomSheet(
             context,
             ChatDetailsPage(
               image: host.image,
               name: host.firstName,
-              conversationId: response?.conversation?.Id ?? "",
-              receiverId: session.user.id,
+              conversationId: conversation?.Id ?? "",
+              receiverId: conversation?.user?.id ?? "",
             ));
-        workspaceStore.isLoading = false;
       }),
     ];
   }
@@ -101,7 +98,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
   }
 
   void _makingPhoneCall(String number) async {
-    final Uri url = Uri.parse("tel://1111111111");
+    final Uri url = Uri.parse("tel://$number");
     if (await canLaunchUrl(url)) {
       await launchUrl(url);
     } else {
@@ -216,7 +213,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                                     "Please select a date",
                                     style: TextStyle(color: Colors.red),
                                   )
-                                : SizedBox.shrink();
+                                : const SizedBox.shrink();
                           },
                         ),
                         PrimaryButton(
@@ -253,7 +250,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                           ),
                         ),
                         4.verticalSpace,
-                        Container(
+                        SizedBox(
                           width: 200.w,
                           child: Text(
                             "call with the workspace host before booking",
@@ -266,7 +263,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                           ),
                         ),
                         16.verticalSpace,
-                        Container(
+                        SizedBox(
                           width: 200.w,
                           child: const Divider(
                             color: Color(0xff005451),
@@ -276,39 +273,42 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                         16.verticalSpace,
                         Row(
                           children: [
-                            /*  GestureDetector(
-                              onTap: () {
-                                if (session.isLogin) {
-                                  workspaceStore.isLoading = true ;
-                                  var host = data?.host as Host;
-                                  var request = {"userId": host.Id};
-                                  chatStore.startConversations(request);
-                                } else {
-                                  showOnboardingBottomSheet(
-                                    context,
-                                    onSuccess: () {
-                                      var host = data?.host as Host;
-                                      var request = {"userId": host.Id};
-                                      chatStore.startConversations(request);
-                                    },
-                                  );
-                                }
-                              },
-                              child: Text(
-                                "chat",
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                    fontSize: 14.spMin,
-                                    color: appColor.primaryColor,
-                                    decoration: TextDecoration.underline),
-                              ),
-                            ),*/
-                            //  16.horizontalSpace,
-                            //   Container(
-                            //     color: const Color(0xff005451),
-                            //     height: 20.h,
-                            //     width: 1.w,
-                            //   ),
-                            //  16.horizontalSpace,
+                            Observer(builder: (context) {
+                              var isStartingConversation =
+                                  workspaceStore.isStartingConversation;
+                              return isStartingConversation
+                                  ? Container(
+                                      height: 20.r,
+                                      width: 20.r,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 20.w),
+                                      child: const CircularProgressIndicator(),
+                                    )
+                                  : GestureDetector(
+                                      onTap: () {
+                                        workspaceStore.startConversation(
+                                            isLogin: session.isLogin,
+                                            hostId: data?.host?.Id ??
+                                                "67accf469d7fbe4e42233dee");
+                                      },
+                                      child: Text(
+                                        "chat",
+                                        style: theme.textTheme.titleMedium
+                                            ?.copyWith(
+                                                fontSize: 14.spMin,
+                                                color: appColor.primaryColor,
+                                                decoration:
+                                                    TextDecoration.underline),
+                                      ),
+                                    );
+                            }),
+                            16.horizontalSpace,
+                            Container(
+                              color: const Color(0xff005451),
+                              height: 20.h,
+                              width: 1.w,
+                            ),
+                            16.horizontalSpace,
                             GestureDetector(
                               onTap: () {
                                 if (session.isLogin) {

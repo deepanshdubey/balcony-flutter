@@ -1,14 +1,16 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:homework/core/locator/locator.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/data/model/response/bookings_data.dart';
 import 'package:homework/data/model/response/common_data.dart';
+import 'package:homework/data/model/response/conversation_data.dart';
 import 'package:homework/data/model/response/workspace_data.dart';
 import 'package:homework/data/repository/booking_repository.dart';
+import 'package:homework/data/repository/chat_repository_v2.dart';
 import 'package:homework/data/repository/user_repository.dart';
 import 'package:homework/data/repository/workspace_repository.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:mobx/mobx.dart';
 
 part 'workspace_store.g.dart';
@@ -22,6 +24,39 @@ abstract class _WorkspaceStoreBase with Store {
   @observable
   bool?
       isBookingAccepted; // null initially, true for accepted, false for rejected
+
+  @observable
+  List<WorkspaceData>? workspaceResponse;
+
+  @observable
+  List<BookingsData>? bookingsResponse;
+
+  @observable
+  List<WorkspaceData>? searchWorkspaceResponse;
+
+  @observable
+  WorkspaceData? workspaceDetailsResponse;
+
+  @observable
+  CommonData? createWorkSpaceDetailsResponse;
+
+  @observable
+  CommonData? workspaceStatusResponse;
+
+  @observable
+  CommonData? createBookingResponse;
+
+  @observable
+  ConversationData? startConversationResponse;
+
+  @observable
+  bool isLoading = false;
+
+  @observable
+  bool isStartingConversation = false;
+
+  @observable
+  String? errorMessage;
 
   @action
   Future<void> handleBooking(String id, bool accept) async {
@@ -48,33 +83,6 @@ abstract class _WorkspaceStoreBase with Store {
       isLoading = false;
     }
   }
-
-  @observable
-  List<WorkspaceData>? workspaceResponse;
-
-  @observable
-  List<BookingsData>? bookingsResponse;
-
-  @observable
-  List<WorkspaceData>? searchWorkspaceResponse;
-
-  @observable
-  WorkspaceData? workspaceDetailsResponse;
-
-  @observable
-  CommonData? createWorkSpaceDetailsResponse;
-
-  @observable
-  CommonData? workspaceStatusResponse;
-
-  @observable
-  CommonData? createBookingResponse;
-
-  @observable
-  bool isLoading = false;
-
-  @observable
-  String? errorMessage;
 
   @action
   Future getWorkspace(
@@ -404,6 +412,28 @@ abstract class _WorkspaceStoreBase with Store {
       errorMessage = e.toString();
     } finally {
       isLoading = false;
+    }
+  }
+
+  @action
+  Future startConversation(
+      {required bool isLogin, required String hostId}) async {
+    try {
+      errorMessage = null;
+      isStartingConversation = true;
+      final response = await chatRepositoryV2.startConversation(
+          type: "user", isAnonymous: !isLogin, id: hostId);
+      if (response.isSuccess) {
+        startConversationResponse = response.data.conversation;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isStartingConversation = false;
     }
   }
 }

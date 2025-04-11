@@ -69,7 +69,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                 ChatDetailsPage(
                   image: host.image,
                   name: host.firstName,
-                  conversationId: response?.conversation?.Id ?? "",
+                  /*conversationId: response?.data.conversation?.Id ?? "",*/
                   receiverId: session.user.id,
                 ));
       }),

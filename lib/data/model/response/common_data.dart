@@ -1,13 +1,15 @@
 import 'package:homework/data/model/response/card_data.dart';
 import 'package:homework/data/model/response/conversation_data.dart';
+import 'package:homework/data/model/response/media_data.dart';
+import 'package:homework/data/model/response/message_data.dart';
 import 'package:homework/data/model/response/property_data.dart';
-import 'package:homework/data/model/response/support_ticket_data.dart';
+import 'package:homework/data/model/response/support_ticket_data.dart' show SupportTicketData;
 import 'package:homework/data/model/response/tenant_details.dart';
 import 'package:homework/data/model/response/user_data.dart';
 import 'package:homework/data/model/response/workspace_data.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import 'bookings_data.dart';
+import 'package:homework/data/model/response/bookings_data.dart';
 
 part 'common_data.g.dart';
 
@@ -70,16 +72,19 @@ class CommonData {
   num? deposits;
 
   @JsonKey(name: 'messages')
-  List<LastMessage>? messages;
+  List<MessageData>? messages;
 
   @JsonKey(name: 'messageId')
   final String? messageId;
 
   @JsonKey(name: 'media')
-  final Media? media;
+  final MediaData? media;
 
   @JsonKey(name: 'tenants')
   final List<Tenants>? tenants;
+
+  @JsonKey(name: 'conversation')
+  final ConversationData? conversation;
 
   CommonData(
     this.tenants, {
@@ -104,6 +109,7 @@ class CommonData {
     this.properties,
     this.signedUrl,
     this.publicUrl,
+    this.conversation,
   });
 
   factory CommonData.fromJson(Map<String, dynamic> json) =>
