@@ -280,8 +280,6 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                                   ? Container(
                                       height: 20.r,
                                       width: 20.r,
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 20.w),
                                       child: const CircularProgressIndicator(),
                                     )
                                   : GestureDetector(

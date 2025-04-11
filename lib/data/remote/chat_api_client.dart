@@ -15,10 +15,10 @@ abstract class ChatApiClient {
   @GET("host/all")
   Future<CommonData> getHostContactList();
 
-  @POST("start/user/{userId}")
+  @GET("start/user/{userId}")
   Future<CommonData> startUserConversation(@Path("userId") String userId);
 
-  @POST("start/host/{hostId}")
+  @GET("start/host/{hostId}")
   Future<CommonData> startHostConversation(@Path("hostId") String hostId);
 
   @POST("start/support")
