@@ -3,7 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:homework/core/session/app_session.dart';
 import 'package:homework/cubit/internet_cubit.dart';
+import 'package:homework/data/repository_impl/socket_chat_manager.dart';
 import 'package:homework/generated/l10n.dart';
 import 'package:homework/values/theme.dart';
 import 'package:homework/router/app_router.dart';
@@ -21,6 +23,7 @@ Future<void> main() async {
         WidgetsFlutterBinding.ensureInitialized();
         await setupLocator();
         await locator.isReady<Session>();
+        socketManager.connect(token: session.token, isAnonymous: session.isLogin);
       } catch (error, st) {
         logger.e(error);
         logger.e(st);

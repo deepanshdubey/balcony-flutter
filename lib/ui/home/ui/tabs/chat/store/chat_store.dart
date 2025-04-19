@@ -25,9 +25,6 @@ abstract class _ChatStoreBase with Store {
 
 
   @observable
-  CreateMsgResponse? createMsgResponse;
-
-  @observable
   bool isLoading = false;
 
   @observable
@@ -92,28 +89,7 @@ abstract class _ChatStoreBase with Store {
       isLoading = false;
     }
   }
-
-
-  @action
-  Future createMsg({File? media, required String conversationId, String? msg}) async {
-    try {
-      errorMessage = null;
-      isLoading = true;
-      final response = await chatRepository.createMessage( conversationId,  msg, media);
-      if (response.isSuccess) {
-        createMsgResponse = response.data;
-      } else {
-        errorMessage = response.error!.message;
-      }
-    } catch (e, st) {
-      logger.e(e);
-      logger.e(st);
-      errorMessage = e.toString();
-    } finally {
-      isLoading = false;
-    }
-  }
-
+/*
   @action
   Future createMsgMedia({File? media, required String conversationId, String? type}) async {
     try {
@@ -143,7 +119,7 @@ abstract class _ChatStoreBase with Store {
     } finally {
       isLoading = false;
     }
-  }
+  }*/
 
 
 

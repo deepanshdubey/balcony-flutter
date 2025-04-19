@@ -4,10 +4,10 @@ import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:homework/core/locator/locator.dart';
 import 'package:homework/core/session/app_session.dart';
-import 'package:homework/core/socket/socket_manager.dart';
-import 'package:homework/data/model/response/media_data.dart';
 import 'package:homework/data/model/response/message_data.dart';
+import 'package:homework/data/repository_impl/socket_chat_manager.dart';
 import 'package:homework/ui/home/ui/tabs/chat/store/chat_store.dart';
 import 'package:homework/ui/home/ui/tabs/chat/ui/audio_player.dart';
 import 'package:homework/widget/app_back_button.dart';
@@ -21,9 +21,16 @@ class ChatDetailsPage extends StatefulWidget {
   final String? conversationId;
   final String? image;
   final String? name;
+  final bool fetchChatHistory;
 
-  const ChatDetailsPage(
-      {super.key, this.receiverId, this.conversationId, this.image, this.name});
+  const ChatDetailsPage({
+    super.key,
+    this.receiverId,
+    this.conversationId,
+    this.image,
+    this.name,
+    this.fetchChatHistory = false,
+  });
 
   @override
   State<ChatDetailsPage> createState() => _ChatDetailsPageState();
@@ -33,7 +40,6 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   final ValueNotifier<bool> _isRecording = ValueNotifier<bool>(false);
   late RecorderController _recorderController;
   final messageController = TextEditingController();
-  final SocketManager socketManager = SocketManager();
   final ValueNotifier<List<MessageData>> messages = ValueNotifier([]);
   ValueNotifier<bool> isReceiverOnline = ValueNotifier(false);
   final chatStore = ChatStore();
@@ -45,7 +51,8 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     super.initState();
     _initializeChat();
     initialiseControllers();
-    chatStore.getAllMsg(widget.conversationId ?? " ");
+    if (widget.fetchChatHistory)
+      chatStore.getAllMsg(widget.conversationId ?? " ");
     addDisposer();
   }
 
@@ -90,18 +97,18 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     final file = File(filePath);
 
     if (file.existsSync()) {
-      await chatStore.createMsgMedia(
+      /*await chatStore.createMsgMedia(
         conversationId: widget.conversationId ?? "",
         media: file,
         type: 'audio', // Specify the media type as audio
       );
-      _scrollToBottom();
+      _scrollToBottom();*/
     }
   }
 
   @override
   void dispose() {
-    socketManager.disConnect();
+    socketManager.disconnect();
     messageController.dispose();
     _isRecording.dispose();
     removeDisposer();
@@ -114,7 +121,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
         messages.value = chatStore.allMsgResponse?.messages ?? [];
         _scrollToBottom();
       }),
-      reaction((_) => chatStore.createMsgResponse, (response) {
+      /* reaction((_) => chatStore.createMsgResponse, (response) {
         final socketMessage = {
           "senderId": session.user.id ?? "",
           "receiverId": widget.receiverId ?? "",
@@ -143,7 +150,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
         );
         messageController.clear();
         messages.value = [...messages.value, newMessage];
-      }),
+      }),*/
     ];
   }
 
@@ -167,11 +174,15 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   }
 
   Future<void> _initializeChat() async {
-    socketManager.initializeSocket(
-        "https://api.homework.ws/"); // Replace with socket URL
-    // socketManager.addUser(session.user.id ?? "");
+    socketManager.connect(token: session.token, isAnonymous: session.isLogin);
 
-    socketManager.onGetMessage((data) {
+    socketManager.registerChatHandler(
+      (message) {
+        logger.e(message.toJson());
+      },
+    );
+
+    /* socketManager.registerChatHandler((data) {
       print(data);
 
       MediaData? media;
@@ -212,14 +223,14 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
       print(widget.receiverId);
 
       print(isReceiverOnline.value);
-    });
+    });*/
   }
 
   void _sendMessage() {
     if (messageController.text.trim().isEmpty) return;
-    chatStore.createMsg(
+    /*chatStore.createMsg(
         conversationId: widget.conversationId ?? "",
-        msg: messageController.text.trim());
+        msg: messageController.text.trim());*/
 
     _scrollToBottom();
   }
@@ -232,12 +243,12 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
 
     if (result != null && result.files.isNotEmpty) {
       final file = File(result.files.single.path ?? '');
-      await chatStore.createMsgMedia(
+      /*await chatStore.createMsgMedia(
           conversationId: widget.conversationId ?? "",
           media: file,
           type: "image" // Send the file as media
           );
-
+*/
       _scrollToBottom();
     }
   }

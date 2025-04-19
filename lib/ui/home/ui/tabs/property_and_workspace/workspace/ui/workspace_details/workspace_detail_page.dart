@@ -75,6 +75,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
               name: host.firstName,
               conversationId: conversation?.Id ?? "",
               receiverId: conversation?.user?.id ?? "",
+              fetchChatHistory: conversation?.lastMessage != null,
             ));
       }),
     ];
@@ -277,7 +278,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                               var isStartingConversation =
                                   workspaceStore.isStartingConversation;
                               return isStartingConversation
-                                  ? Container(
+                                  ? SizedBox(
                                       height: 20.r,
                                       width: 20.r,
                                       child: const CircularProgressIndicator(),
