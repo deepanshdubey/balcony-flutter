@@ -88,9 +88,9 @@ class _ConciergeHomePageState extends State<ConciergeHomePage> {
               _buildConciergeTenants(),
               SizedBox(height: 24.h),
               _buildDivider(),
-              /*const OngoingParcelTable(),
+              const OngoingParcelTable(),
               SizedBox(height: 24.h),
-              _buildDivider(),*/
+              _buildDivider(),
               _buildBulkEmailSection(),
               SizedBox(height: 24.h),
               _buildDivider(),
