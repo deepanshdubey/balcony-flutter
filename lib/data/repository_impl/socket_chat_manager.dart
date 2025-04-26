@@ -25,18 +25,29 @@ class SocketChatManager implements ChatManager {
     final uri = isAnonymous
         ? Constants.webSocketUnAuthenticatedUrl
         : Constants.webSocketUrl;
+
     logger.i("Connecting to socket at: $uri");
-    _socket = socket_io.io(uri, <String, dynamic>{
+
+    _socket = socket_io.io(uri, {
       'transports': ['websocket'],
-      'sid': token,
-      'EIO': '4',  // Add the EIO=4 query parameter
       'autoConnect': true,
-      'extraHeaders': isAnonymous ? {} : {'Authorization': 'Bearer $token'},
+      'extraHeaders': isAnonymous ? {
+
+      } : {'Authorization': 'Bearer $token'},
+      'query': {
+        if (!isAnonymous) 'sid': token,
+        'EIO': '4',
+      },
     });
 
+    _registerCoreEvents();
+    _registerMessageEvents();
+  }
+
+  void _registerCoreEvents() {
     _socket.onConnect((_) {
       _isConnected = true;
-      logger.i("Socket connected successfully.");
+      logger.i("Socket connected.");
     });
 
     _socket.onConnectError((error) {
@@ -44,26 +55,7 @@ class SocketChatManager implements ChatManager {
     });
 
     _socket.onError((error) {
-      logger.e("Socket general error: $error");
-    });
-
-    _socket.on('getMessage', (data) {
-      logger.d("Received message: $data");
-      try {
-        final message = CommonData.fromJson(data['message']);
-        if (_activeChatHandler != null) {
-          logger.d("Dispatching message to active handler.");
-          _activeChatHandler!(message);
-        } else {
-          _handleMessageWhenInactive(message);
-        }
-      } catch (e, stack) {
-        logger.e("Error parsing incoming message: $data", stackTrace: stack);
-      }
-    });
-
-    _socket.on('eventError', (data) {
-      logger.e("Socket eventError: ${data['message']}");
+      logger.e("Socket error: $error");
     });
 
     _socket.onDisconnect((_) {
@@ -72,44 +64,73 @@ class SocketChatManager implements ChatManager {
     });
   }
 
+  void _registerMessageEvents() {
+    _socket.on('getMessage', (data) {
+      logger.d("Received message: $data");
+      try {
+        final message = CommonData.fromJson(data['message']);
+        if (_activeChatHandler != null) {
+          logger.d("Dispatching to active handler.");
+          _activeChatHandler!(message);
+        } else {
+          _handleMessageWhenInactive(message);
+        }
+      } catch (e, stack) {
+        logger.e("Error parsing message", error: e, stackTrace: stack);
+      }
+    });
+
+    _socket.on('eventError', (data) {
+      logger.e("Socket event error: ${data['message']}");
+    });
+  }
+
   @override
   void disconnect() {
     if (_isConnected) {
       _socket.disconnect();
       _isConnected = false;
-      logger.i("Socket disconnected manually.");
+      logger.i("Socket manually disconnected.");
     } else {
-      logger.i("Socket is already disconnected.");
+      logger.i("Socket already disconnected.");
     }
   }
 
   @override
   void addUser(String conversationId) {
+    if (!_isConnected) {
+      logger.w("Cannot add user. Socket is not connected.");
+      return;
+    }
     logger.d("Emitting 'addUser' with conversationId: $conversationId");
     _socket.emit('addUser', {'conversationId': conversationId});
   }
 
   @override
   void sendMessage(CommonData message) {
-    logger.d("Sending message: ${message.toJson()}");
+    if (!_isConnected) {
+      logger.w("Cannot send message. Socket is not connected.");
+      return;
+    }
+    logger.d("Emitting 'sendMessage': ${message.toJson()}");
     _socket.emit('sendMessage', message.toJson());
   }
 
   @override
   void registerChatHandler(void Function(CommonData message) handler) {
     _activeChatHandler = handler;
-    logger.i("Registered active chat handler.");
+    logger.i("Chat handler registered.");
   }
 
   @override
   void unregisterChatHandler() {
     _activeChatHandler = null;
-    logger.i("Unregistered chat handler.");
+    logger.i("Chat handler unregistered.");
   }
 
   void _handleMessageWhenInactive(CommonData message) {
-    logger.w('Message received when no handler is active: $message');
-    // Optionally, store the message for later.
+    logger.w("Received message with no active handler: $message");
+    // Store it in local cache or DB if needed.
   }
 }
 
