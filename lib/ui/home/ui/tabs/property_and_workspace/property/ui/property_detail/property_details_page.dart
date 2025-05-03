@@ -12,6 +12,7 @@ import 'package:homework/ui/home/ui/tabs/chat/store/chat_store.dart';
 import 'package:homework/ui/home/ui/tabs/chat/ui/chat_details_page.dart';
 import 'package:homework/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/tenant_application_page.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/workspace_details/custom_dropdown.dart';
 import 'package:homework/values/colors.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
@@ -110,11 +111,11 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
       var data = propertyStore.propertyDetailsResponse;
       return isLoading
           ? Container(
-            color: Colors.white,
-            child: const Center(
+              color: Colors.white,
+              child: const Center(
                 child: CircularProgressIndicator(),
               ),
-          )
+            )
           : Scaffold(
               body: SingleChildScrollView(
                 child: Padding(
@@ -196,15 +197,16 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                       PrimaryButton(
                         text: "apply for tenancy",
                         onPressed: () {
-                          launchUrl(
+                          /*launchUrl(
                               Uri.parse(
                                   "https://hw.co/property/${widget.propertyId}"),
-                              mode: LaunchMode.externalApplication);
-                          /*showAppBottomSheet(
-                          context,
-                          TenantApplicationPage(
-                            propertyData: propertyStore.propertyDetailsResponse,
-                          ));*/
+                              mode: LaunchMode.externalApplication);*/
+                          showAppBottomSheet(
+                              context,
+                              TenantApplicationPage(
+                                propertyData:
+                                    propertyStore.propertyDetailsResponse,
+                              ));
                         },
                       ),
                       32.verticalSpace,
