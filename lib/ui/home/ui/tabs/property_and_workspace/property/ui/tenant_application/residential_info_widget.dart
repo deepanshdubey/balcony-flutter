@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:homework/data/model/response/workspace_data.dart';
 import 'package:homework/generated/assets.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:homework/widget/app_image.dart';
@@ -16,19 +15,19 @@ class ResidentialInfoWidget extends StatefulWidget {
 
 class _ResidentialInfoWidgetState extends BaseState<ResidentialInfoWidget> {
   final List<AddressForm> addressForms = [];
+  final List<GlobalKey<BaseState>> addressFormsKeys = [GlobalKey<BaseState>()];
 
   @override
   void initState() {
     super.initState();
-    addressForms.add(AddressForm());
+    addressForms.add(AddressForm(key: addressFormsKeys.first));
   }
 
   void _addNewForm() {
     if (addressForms.length < 4) {
       setState(() {
-        addressForms.add(AddressForm(
-          key: Key(addressForms.length.toString()),
-        ));
+        var key = GlobalKey<BaseState>();
+        addressForms.add(AddressForm(key: key,));
       });
     }
   }
@@ -37,6 +36,7 @@ class _ResidentialInfoWidgetState extends BaseState<ResidentialInfoWidget> {
     if (addressForms.length > 1) {
       setState(() {
         addressForms.removeAt(index);
+        addressFormsKeys.removeAt(index);
       });
     }
   }
@@ -123,21 +123,21 @@ class _ResidentialInfoWidgetState extends BaseState<ResidentialInfoWidget> {
   }
 
   @override
-  Info getApiData() {
-    return Info();
-  }
-
-  List<Info> getAllAddresses() {
-    return [];
+  List getApiData() {
+    return addressFormsKeys
+        .map(
+          (e) => e.currentState?.getApiData(),
+        )
+        .toList();
   }
 
   @override
   bool validate() {
     bool isValid = true;
-    for (final form in addressForms) {
-      /*if (!form.validate()) {
+    for (final key in addressFormsKeys) {
+      if (key.currentState?.validate() == false) {
         isValid = false;
-      }*/
+      }
     }
     return isValid;
   }

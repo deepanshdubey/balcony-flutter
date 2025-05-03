@@ -1,6 +1,7 @@
 import 'package:homework/core/locator/locator.dart';
 import 'package:homework/data/model/response/common_data.dart';
 import 'package:homework/data/repository/property_repository.dart';
+import 'package:homework/data/repository/tenant_repository.dart';
 import 'package:mobx/mobx.dart';
 
 part 'tenant_application_store.g.dart';
@@ -15,10 +16,16 @@ abstract class _TenantApplicationStoreBase with Store {
   bool isLoadingApplicationFee = false;
 
   @observable
+  bool isApplyingForTenancy = false;
+
+  @observable
   String? errorMessage;
 
   @observable
   num applicationFeeResponse = 0;
+
+  @observable
+  CommonData? applyTenantResponse;
 
   _TenantApplicationStoreBase({required this.propertyId}) {
     getPropertyApplicationFee(id: propertyId);
@@ -41,6 +48,28 @@ abstract class _TenantApplicationStoreBase with Store {
       errorMessage = e.toString();
     } finally {
       isLoadingApplicationFee = false;
+    }
+  }
+
+  @action
+  Future applyForTenancy(
+    Map<String, dynamic> request,
+  ) async {
+    try {
+      errorMessage = null;
+      isApplyingForTenancy = true;
+      final response = await tenantRepository.applyTenant(request);
+      if (response.isSuccess) {
+        applyTenantResponse = response.data;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isApplyingForTenancy = false;
     }
   }
 }

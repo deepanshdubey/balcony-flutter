@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/data/model/response/workspace_data.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/store/address_store.dart';
 import 'package:homework/values/colors.dart';
 import 'package:homework/values/validators.dart';
@@ -19,7 +20,7 @@ class AddressForm extends StatefulWidget {
   State<AddressForm> createState() => _AddressFormState();
 }
 
-class _AddressFormState extends State<AddressForm> {
+class _AddressFormState extends BaseState<AddressForm> {
   final formKey = GlobalKey<FormState>();
 
   late TextEditingController unitController;
@@ -51,17 +52,18 @@ class _AddressFormState extends State<AddressForm> {
     super.dispose();
   }
 
-  Info getApiData() {
-    return Info(
-      floor: unitController.text.trim(),
-      address: streetController.text.trim(),
-      city: cityController.text.trim(),
-      state: stateController.text.trim(),
-      country: countryController.text.trim(),
-      summary: 'a',
-    );
+  @override
+  Map<String, dynamic> getApiData() {
+    return {
+      "floor": unitController.text.trim(),
+      "address": streetController.text.trim(),
+      "city": cityController.text.trim(),
+      "state": stateController.text.trim(),
+      "country": countryController.text.trim(),
+    };
   }
 
+  @override
   bool validate() {
     return formKey.currentState?.validate() ?? false;
   }
@@ -77,7 +79,7 @@ class _AddressFormState extends State<AddressForm> {
             controller: streetController,
             label: 'street',
             hintText: '..',
-            validator: addressValidator.call,
+            validator: requiredValidator.call,
           ),
           12.h.verticalSpace,
           LayoutBuilder(
@@ -99,6 +101,7 @@ class _AddressFormState extends State<AddressForm> {
                         label: 'country',
                         hintText: 'pick a country',
                         items: countries,
+                        validator: requiredValidator.call,
                         itemLabel: (c) => c.name.toLowerCase(),
                         onItemSelected: (c) =>
                             addressStore.fetchStates(c.isoCode),
@@ -116,6 +119,7 @@ class _AddressFormState extends State<AddressForm> {
                         label: 'state',
                         hintText: '..',
                         items: states,
+                        validator: requiredValidator.call,
                         itemLabel: (s) => s.name.toLowerCase(),
                         onItemSelected: (s) =>
                             addressStore.fetchCities(s.isoCode),
@@ -133,6 +137,7 @@ class _AddressFormState extends State<AddressForm> {
                         label: 'city',
                         hintText: '..',
                         items: cities,
+                        validator: requiredValidator.call,
                         itemLabel: (c) => c.name.toLowerCase(),
                         onItemSelected: (c) {},
                       );
@@ -146,7 +151,7 @@ class _AddressFormState extends State<AddressForm> {
                       controller: unitController,
                       label: 'unit',
                       hintText: '..',
-                      validator: addressValidator.call,
+                      validator: requiredValidator.call,
                     ),
                   ),
                 ],
@@ -162,5 +167,10 @@ class _AddressFormState extends State<AddressForm> {
         ],
       ),
     );
+  }
+
+  @override
+  String? getError() {
+    return null;
   }
 }

@@ -2,10 +2,11 @@ import 'package:country_state_city/country_state_city.dart' as csc;
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:homework/data/model/response/workspace_data.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/store/address_store.dart';
 import 'package:homework/values/colors.dart';
 import 'package:homework/values/extensions/context_ext.dart';
+import 'package:homework/values/validators.dart';
 import 'package:homework/widget/app_dropdown_field.dart';
 import 'package:homework/widget/app_text_field.dart';
 
@@ -17,7 +18,7 @@ class CreditReportCheckWidget extends StatefulWidget {
       _CreditReportCheckWidgetState();
 }
 
-class _CreditReportCheckWidgetState extends State<CreditReportCheckWidget> {
+class _CreditReportCheckWidgetState extends BaseState<CreditReportCheckWidget> {
   final formKey = GlobalKey<FormState>();
 
   late TextEditingController countryIdController;
@@ -37,14 +38,15 @@ class _CreditReportCheckWidgetState extends State<CreditReportCheckWidget> {
     super.dispose();
   }
 
-  Info getApiData() {
-    return Info(
-      state: countryIdController.text.trim(),
-      country: countryController.text.trim(),
-      summary: 'a',
-    );
+  @override
+  Map<String, dynamic> getApiData() {
+    return {
+      "country_id": countryIdController.text,
+      "country": countryController.text,
+    };
   }
 
+  @override
   bool validate() {
     return formKey.currentState?.validate() ?? false;
   }
@@ -79,6 +81,7 @@ class _CreditReportCheckWidgetState extends State<CreditReportCheckWidget> {
                 label: 'country of residence*',
                 hintText: 'pick a country',
                 items: countries,
+                validator: requiredValidator.call,
                 itemLabel: (c) => c.name.toLowerCase(),
                 onItemSelected: (c) => addressStore.fetchStates(c.isoCode),
               );
@@ -99,5 +102,10 @@ class _CreditReportCheckWidgetState extends State<CreditReportCheckWidget> {
         ),
       ),
     );
+  }
+
+  @override
+  String? getError() {
+    return null;
   }
 }

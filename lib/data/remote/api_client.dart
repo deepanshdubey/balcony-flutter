@@ -474,4 +474,26 @@ abstract class ApiClient {
 
   @POST("/property/bulk-email")
   Future<CommonData> propertyBulkEmail(@Body() Map<String, dynamic> request);
+
+  @MultiPart()
+  @POST("/tenant/apply")
+  Future<CommonData> applyForTenancy({
+    @Part(name: "firstName") required String firstName,
+    @Part(name: "lastName") required String lastName,
+    @Part(name: "email") required String email,
+    @Part(name: "socialSecurityNo") required String socialSecurityNo,
+    @Part(name: "phone") required String phone,
+    @Part(name: "address") required String address,
+    @Part(name: "city") required String city,
+    @Part(name: "state") required String state,
+    @Part(name: "zipCode") required String zipCode,
+    @Part(name: "country") required String country,
+    @Part(name: "currency") required String currency,
+    @Part(name: "moveInRequest") required String moveInRequest,
+    @Part(name: "selectedUnitId") required String selectedUnitId,
+    @Part(name: "note") required String note,
+    @Part(name: "docs") required String docs,
+    // If docs should be a file, use:
+    // @Part(name: "docs") required MultipartFile docsFile,
+  });
 }
