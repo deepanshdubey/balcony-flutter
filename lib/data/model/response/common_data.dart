@@ -81,6 +81,9 @@ class CommonData {
   @JsonKey(name: 'tenants')
   final List<Tenants>? tenants;
 
+  @JsonKey(name: 'applicationFee')
+  num? applicationFee;
+
   CommonData(
     this.tenants, {
     this.messageId,
@@ -104,6 +107,7 @@ class CommonData {
     this.properties,
     this.signedUrl,
     this.publicUrl,
+    this.applicationFee,
   });
 
   factory CommonData.fromJson(Map<String, dynamic> json) =>

@@ -55,6 +55,8 @@ abstract class PropertyRepository {
       Map<String, dynamic> request);
 
   Future<ApiResponse<CommonData>> sendBulkEmails(Map<String, dynamic> request);
+
+  Future<ApiResponse<CommonData>> getPropertyApplicationFee(String id);
 }
 
 final propertyRepository = locator<PropertyRepository>();

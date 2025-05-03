@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/data/model/response/property_data.dart';
@@ -12,6 +13,7 @@ import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tena
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/personal_document_widget.dart'
     show PersonalDocumentWidget;
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/residential_info_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/store/tenant_application_store.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/tenant_application_controller.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/tenant_application_form.dart';
 import 'package:homework/values/colors.dart';
@@ -36,12 +38,14 @@ class TenantApplicationPage extends StatefulWidget {
 
 class _TenantApplicationPageState extends State<TenantApplicationPage> {
   late final TenantApplicationController controller;
+  late TenantApplicationStore _store;
 
   @override
   void initState() {
     super.initState();
     controller = TenantApplicationController(widget.propertyData!);
     controller.addDisposers(context);
+    _store = TenantApplicationStore(propertyId: widget.propertyData!.id!);
   }
 
   @override
@@ -125,24 +129,30 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
   }
 
   Widget _applicationFeeTotal() {
-    return Row(
-      children: [
-        Expanded(
-          flex: 2,
-          child: Text(
-            "application fee total",
-            style: Theme.of(context).textTheme.titleMedium,
+    return Observer(builder: (context) {
+      var isLoading = _store.isLoadingApplicationFee;
+      var applicationFee = _store.applicationFeeResponse;
+      return Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              "application fee total",
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
           ),
-        ),
-        Expanded(
-          child: Text(
-            "\$0",
-            textAlign: TextAlign.end,
-            style: Theme.of(context).textTheme.titleMedium,
+          Expanded(
+            child: isLoading
+                ? Center(child: CircularProgressIndicator())
+                : Text(
+                    "\$$applicationFee",
+                    textAlign: TextAlign.end,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 
   Widget _submitApplication() {

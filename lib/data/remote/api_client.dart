@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:homework/data/constants.dart';
 import 'package:homework/data/model/response/common_data.dart';
 import 'package:homework/data/model/response/coversation_response.dart';
 import 'package:homework/data/model/response/create_msg_response.dart';
@@ -24,7 +25,7 @@ import '../model/response/workspace_data.dart';
 
 part 'api_client.g.dart';
 
-@RestApi(baseUrl: "https://api.hw.co/api/v2/")
+@RestApi(baseUrl: Constants.baseUrl)
 abstract class ApiClient {
   factory ApiClient(Dio dio, {String baseUrl}) = _ApiClient;
 
@@ -99,6 +100,10 @@ abstract class ApiClient {
   Future<CommonData> getHostProperties(
     @Path("id") String id,
   );
+
+  /*https://api.hw.co/api/v2/property/application-fee/{propertyID}*/
+  @GET("property/application-fee/{propertyID}")
+  Future<CommonData> getPropertyApplicationFee(@Path("propertyID") String id);
 
   @DELETE("/workspace/delete/{id}")
   Future<CommonData> deleteWorkspace(
