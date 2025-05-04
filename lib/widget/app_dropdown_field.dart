@@ -59,6 +59,7 @@ class AppDropdownField<T> extends StatelessWidget {
       readOnly: readOnly,
       onTap: () => _showBottomSheet(context),
       validator: validator,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: inputDecoration ??
           InputDecoration(
             contentPadding: EdgeInsets.symmetric(
@@ -93,6 +94,7 @@ class AppDropdownField<T> extends StatelessWidget {
             items: items,
             itemLabel: itemLabel,
             onItemSelected: (item) {
+
               controller.text = itemLabel(item);
               onItemSelected(item);
               Navigator.of(context).pop();

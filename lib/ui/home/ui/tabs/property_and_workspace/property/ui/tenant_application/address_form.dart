@@ -55,8 +55,8 @@ class _AddressFormState extends BaseState<AddressForm> {
   @override
   Map<String, dynamic> getApiData() {
     return {
-      "floor": unitController.text.trim(),
-      "address": streetController.text.trim(),
+      "unit": unitController.text.trim(),
+      "street": streetController.text.trim(),
       "city": cityController.text.trim(),
       "state": stateController.text.trim(),
       "country": countryController.text.trim(),

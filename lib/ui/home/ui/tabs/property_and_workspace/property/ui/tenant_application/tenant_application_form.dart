@@ -5,6 +5,7 @@ import 'package:homework/data/model/response/property_data.dart';
 import 'package:homework/data/model/response/tenant_details.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:homework/values/colors.dart';
+import 'package:homework/values/extensions/map_ext.dart';
 import 'package:homework/values/validators.dart';
 import 'package:homework/widget/app_dropdown_field.dart';
 import 'package:homework/widget/app_text_field.dart';
@@ -182,13 +183,17 @@ class _TenantApplicationFormState extends BaseState<TenantApplicationForm> {
 
   @override
   Map<String, dynamic> getApiData() {
+    List<UnitList>? units = widget.isUpdate
+        ? widget.tenant?.selectedUnit?.property?.unitList
+        : widget.propertyData?.unitList;
+
     return {
       "firstName": firstNameController.text,
       "lastName": lastNameController.text,
       "email": emailController.text,
       "phone": phoneNumberController.text,
       "moveInRequest": selectedMoveInDate,
-      "selectedUnitId": selectedUnit,
+      "selectedUnitId": units?.firstWhereOrNull((element) => element.unit?.toString() == selectedUnit,)?.Id,
     };
   }
 

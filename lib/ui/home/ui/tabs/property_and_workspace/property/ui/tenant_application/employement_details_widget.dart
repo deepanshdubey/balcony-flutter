@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:homework/data/model/response/workspace_data.dart';
-import 'package:homework/values/colors.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:homework/values/extensions/context_ext.dart';
 import 'package:homework/widget/app_text_field.dart';
 
@@ -13,7 +12,7 @@ class EmploymentDetailsWidget extends StatefulWidget {
       _EmploymentDetailsWidgetState();
 }
 
-class _EmploymentDetailsWidgetState extends State<EmploymentDetailsWidget> {
+class _EmploymentDetailsWidgetState extends BaseState<EmploymentDetailsWidget> {
   final formKey = GlobalKey<FormState>();
 
   late TextEditingController employerNameController;
@@ -39,14 +38,19 @@ class _EmploymentDetailsWidgetState extends State<EmploymentDetailsWidget> {
     super.dispose();
   }
 
-  Info getApiData() {
-    return Info(
-      state: employerNameController.text.trim(),
-      country: companyAddressController.text.trim(),
-      summary: 'a',
-    );
+  @override
+  Map<String, dynamic> getApiData() {
+    return {
+      "employment": {
+        "company": employerNameController.text,
+        "address": companyAddressController.text,
+        "phone": companyPhoneController.text,
+        "job": jobTitleController.text
+      },
+    };
   }
 
+  @override
   bool validate() {
     return formKey.currentState?.validate() ?? false;
   }
@@ -109,5 +113,10 @@ class _EmploymentDetailsWidgetState extends State<EmploymentDetailsWidget> {
         ),
       ),
     );
+  }
+
+  @override
+  String? getError() {
+    return null;
   }
 }

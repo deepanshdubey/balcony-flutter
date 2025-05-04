@@ -19,18 +19,23 @@ class EmergencyContactWidget extends StatefulWidget {
 
 class _EmergencyContactWidgetState extends BaseState<EmergencyContactWidget> {
   final List<EmergencyForm> emergencyContacts = [];
+  final List<GlobalKey<BaseState>> emergencyContactsKeys = [
+    GlobalKey<BaseState>()
+  ];
 
   @override
   void initState() {
     super.initState();
-    emergencyContacts.add(EmergencyForm());
+    emergencyContacts.add(EmergencyForm(key: emergencyContactsKeys.first));
   }
 
   void _addNewForm() {
     if (emergencyContacts.length < 4) {
       setState(() {
+        var key = GlobalKey<BaseState>();
+        emergencyContactsKeys.add(key);
         emergencyContacts.add(EmergencyForm(
-          key: Key(emergencyContacts.length.toString()),
+          key: key,
         ));
       });
     }
@@ -39,6 +44,7 @@ class _EmergencyContactWidgetState extends BaseState<EmergencyContactWidget> {
   void _removeForm(int index) {
     if (emergencyContacts.length > 1) {
       setState(() {
+        emergencyContactsKeys.removeAt(index);
         emergencyContacts.removeAt(index);
       });
     }
@@ -52,7 +58,10 @@ class _EmergencyContactWidgetState extends BaseState<EmergencyContactWidget> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12.r),
         border:
-            Border.all(color: Theme.of(context).primaryColor.withOpacity(.25)),
+        Border.all(color: Theme
+            .of(context)
+            .primaryColor
+            .withOpacity(.25)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,13 +69,20 @@ class _EmergencyContactWidgetState extends BaseState<EmergencyContactWidget> {
           16.h.verticalSpace,
           Text(
             "emergency contact",
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 24.spMin,
-                ),
+            style: Theme
+                .of(context)
+                .textTheme
+                .titleLarge
+                ?.copyWith(
+              fontWeight: FontWeight.w600,
+              fontSize: 24.spMin,
+            ),
           ),
           16.h.verticalSpace,
-          ...emergencyContacts.asMap().entries.map((entry) {
+          ...emergencyContacts
+              .asMap()
+              .entries
+              .map((entry) {
             final index = entry.key;
             final form = entry.value;
             return Stack(
@@ -101,7 +117,8 @@ class _EmergencyContactWidgetState extends BaseState<EmergencyContactWidget> {
                       children: [
                         Text(
                           "add more",
-                          style: Theme.of(context)
+                          style: Theme
+                              .of(context)
                               .textTheme
                               .titleMedium
                               ?.copyWith(decoration: TextDecoration.underline),
@@ -109,7 +126,8 @@ class _EmergencyContactWidgetState extends BaseState<EmergencyContactWidget> {
                         2.h.verticalSpace,
                         Text(
                           "(up to 3 prior contacts if applicable)",
-                          style: Theme.of(context)
+                          style: Theme
+                              .of(context)
                               .textTheme
                               .bodyMedium
                               ?.copyWith(fontSize: 9.spMin),
@@ -126,21 +144,21 @@ class _EmergencyContactWidgetState extends BaseState<EmergencyContactWidget> {
   }
 
   @override
-  Info getApiData() {
-    return Info();
-  }
-
-  List<Info> getAllAddresses() {
-    return [];
+  List getApiData() {
+    return emergencyContactsKeys
+        .map(
+          (e) => e.currentState?.getApiData(),
+    )
+        .toList();
   }
 
   @override
   bool validate() {
     bool isValid = true;
-    for (final form in emergencyContacts) {
-      /*if (!form.validate()) {
+    for (final key in emergencyContactsKeys) {
+      if (key.currentState?.validate() == false) {
         isValid = false;
-      }*/
+      }
     }
     return isValid;
   }

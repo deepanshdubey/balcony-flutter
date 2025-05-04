@@ -27,7 +27,10 @@ class _ResidentialInfoWidgetState extends BaseState<ResidentialInfoWidget> {
     if (addressForms.length < 4) {
       setState(() {
         var key = GlobalKey<BaseState>();
-        addressForms.add(AddressForm(key: key,));
+        addressFormsKeys.add(key);
+        addressForms.add(AddressForm(
+          key: key,
+        ));
       });
     }
   }

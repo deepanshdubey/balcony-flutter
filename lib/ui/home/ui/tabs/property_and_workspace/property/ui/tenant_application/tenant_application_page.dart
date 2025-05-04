@@ -17,6 +17,7 @@ import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tena
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/store/tenant_application_store.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/tenant_application_form.dart';
 import 'package:homework/values/colors.dart';
+import 'package:homework/values/extensions/map_ext.dart';
 import 'package:homework/widget/app_back_button.dart';
 import 'package:homework/widget/primary_button.dart';
 import 'package:mobx/mobx.dart';
@@ -44,6 +45,8 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
   late GlobalKey<BaseState> _additionalNoteKey;
   late GlobalKey<BaseState> _creditReportCheckKey;
   late GlobalKey<BaseState> _residentialHistoryKey;
+  late GlobalKey<BaseState> _employmentDetailsKey;
+  late GlobalKey<BaseState> _emergencyContactKey;
   late GlobalKey<BaseState> _termsKey;
 
   @override
@@ -54,6 +57,8 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
     _additionalNoteKey = GlobalKey<BaseState>();
     _creditReportCheckKey = GlobalKey<BaseState>();
     _residentialHistoryKey = GlobalKey<BaseState>();
+    _employmentDetailsKey = GlobalKey<BaseState>();
+    _emergencyContactKey = GlobalKey<BaseState>();
     _termsKey = GlobalKey<BaseState>();
     _addDisposers();
   }
@@ -87,6 +92,8 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
     _additionalNoteKey.currentState?.dispose();
     _creditReportCheckKey.currentState?.dispose();
     _residentialHistoryKey.currentState?.dispose();
+    _employmentDetailsKey.currentState?.dispose();
+    _emergencyContactKey.currentState?.dispose();
     _termsKey.currentState?.dispose();
 
     super.dispose();
@@ -94,13 +101,30 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
 
   void onSubmit() {
     if (validate()) {
-      _store.applyForTenancy({
+      var request = {
         ..._tenantApplicationFormKey.currentState!.getApiData(),
         "note": _additionalNoteKey.currentState!.getApiData(),
         "currency": "USD",
         ...(_creditReportCheckKey.currentState?.getApiData() ?? {}),
-        "info": (_residentialHistoryKey.currentState?.getApiData() ?? {}),
-      });
+        ...(_employmentDetailsKey.currentState?.getApiData() ?? {}),
+        "residentialHistories":
+            (_residentialHistoryKey.currentState?.getApiData() ?? {}),
+        "emergencyContacts":
+            (_emergencyContactKey.currentState?.getApiData() ?? {}),
+        "additionalPeople": [
+          {
+            "firstName": "John",
+            "lastName": "Smith",
+            "email": "john.smith@example.com"
+          }
+        ],
+        "isCompleted": true,
+        "docs": [
+          "https://example.com/doc1.pdf",
+          "https://example.com/doc2.pdf"
+        ],
+      }.dropNull();
+      _store.applyForTenancy(request);
     }
   }
 
@@ -110,6 +134,8 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
       _additionalNoteKey,
       _creditReportCheckKey,
       _residentialHistoryKey,
+      _employmentDetailsKey,
+      _emergencyContactKey,
       _termsKey,
     ]) {
       if (!validateAndScrollTo(element)) {
@@ -176,13 +202,15 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
                   key: _residentialHistoryKey,
                 ),
                 16.verticalSpace,
-                const EmploymentDetailsWidget(),
+                EmploymentDetailsWidget(key: _employmentDetailsKey),
                 16.verticalSpace,
-                const EmergencyContactWidget(),
+                EmergencyContactWidget(
+                  key: _emergencyContactKey,
+                ),
                 16.verticalSpace,
                 const PersonalDocumentWidget(),
                 16.verticalSpace,
-                 TermsOfServiceWidget(
+                TermsOfServiceWidget(
                   isEdit: false,
                   showLeasingPolicy: true,
                   key: _termsKey,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/data/model/response/workspace_data.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:homework/values/colors.dart';
 import 'package:homework/widget/app_text_field.dart';
 
@@ -11,7 +12,7 @@ class EmergencyForm extends StatefulWidget {
   State<EmergencyForm> createState() => _EmergencyFormState();
 }
 
-class _EmergencyFormState extends State<EmergencyForm> {
+class _EmergencyFormState extends BaseState<EmergencyForm> {
   final formKey = GlobalKey<FormState>();
 
   late TextEditingController nameController;
@@ -31,14 +32,15 @@ class _EmergencyFormState extends State<EmergencyForm> {
     super.dispose();
   }
 
-  Info getApiData() {
-    return Info(
-      address: nameController.text.trim(),
-      country: phoneController.text.trim(),
-      summary: 'a',
-    );
+  @override
+  Map<String, dynamic> getApiData() {
+    return {
+      "name": nameController.text,
+      "phone": phoneController.text
+    };
   }
 
+  @override
   bool validate() {
     return formKey.currentState?.validate() ?? false;
   }
@@ -70,5 +72,10 @@ class _EmergencyFormState extends State<EmergencyForm> {
         ],
       ),
     );
+  }
+
+  @override
+  String? getError() {
+    return null;
   }
 }
