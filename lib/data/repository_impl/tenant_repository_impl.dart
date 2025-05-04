@@ -25,25 +25,31 @@ class TenantRepositoryImpl extends BaseRepositoryImpl
   }
 
   @override
-  Future<ApiResponse<CommonData>> approveTenant(
-      String id, Map<String, dynamic> request) async {
+  Future<ApiResponse<CommonData>> approveTenant(String id, Map<String, dynamic> request) async {
     return await execute(apiClient.approveTenant(id, request));
   }
 
   @override
-  Future<ApiResponse<CommonData>> rejectTenant(
-      String id) async {
+  Future<ApiResponse<CommonData>> rejectTenant(String id) async {
     return await execute(apiClient.rejectTenant(id));
   }
   @override
   Future<ApiResponse<CommonData>> getTenantsByHostId(String hostId,
       {List<String>? status}) async {
-    return await execute(
-        apiClient.getTenantsByHostId(hostId, jsonEncode(status)));
+    return await execute(apiClient.getTenantsByHostId(hostId, jsonEncode(status)));
   }
   @override
   Future<ApiResponse<CommonData>> tenantPayment( Map<String, dynamic> request) async {
-    return await execute(
-        apiClient.tenantPayment(request));
+    return await execute(apiClient.tenantPayment(request));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> getTenantVerificationToken(String type, String tenantId) async {
+    return await execute(apiClient.getTenantVerificationToken(type, tenantId));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> updateTenantVerification(String type, String tenantId, String token) async {
+   return await execute(apiClient.updateTenantVerification(type, tenantId, token));
   }
 }

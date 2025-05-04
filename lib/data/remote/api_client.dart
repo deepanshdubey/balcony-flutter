@@ -237,6 +237,14 @@ abstract class ApiClient {
   @POST("/tenant/payment")
   Future<CommonData> tenantPayment(@Body() Map<String, dynamic> request);
 
+  ///https://api.hw.co/api/v2/tenant/verification/get-token/identity-verification/{tenantID}
+
+  @GET("/tenant/verify/{type}/{id}/{token}")
+  Future<CommonData> updateTenantVerification(@Path("type") String type, @Path("id") String tenantId, @Path("token") String token );
+
+  @GET("/tenant/verification/get-token/{type}/{id}")
+  Future<CommonData> getTenantVerificationToken(@Path("type") String type, @Path("id") String tenantId);
+
   /// -- promo --
 
   @POST("/promo/create")

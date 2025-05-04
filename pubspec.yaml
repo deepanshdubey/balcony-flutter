@@ -57,6 +57,7 @@ dependencies:
   webview_flutter: ^4.10.0
   google_mlkit_text_recognition: ^0.14.0
   wechat_assets_picker: ^9.5.0
+  plaid_flutter: ^4.2.0
 
 
 

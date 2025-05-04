@@ -4,6 +4,7 @@ import 'package:homework/data/model/response/property_data.dart';
 import 'package:homework/data/model/response/support_ticket_data.dart';
 import 'package:homework/data/model/response/tenant_details.dart';
 import 'package:homework/data/model/response/user_data.dart';
+import 'package:homework/data/model/response/verification_data.dart';
 import 'package:homework/data/model/response/workspace_data.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -80,9 +81,14 @@ class CommonData {
 
   @JsonKey(name: 'tenants')
   final List<Tenants>? tenants;
+  @JsonKey(name: 'tenant')
+  final Tenants? tenant;
 
   @JsonKey(name: 'applicationFee')
   num? applicationFee;
+
+  @JsonKey(name: 'verification')
+  Verification? verification;
 
   CommonData(
     this.tenants, {
@@ -108,6 +114,8 @@ class CommonData {
     this.signedUrl,
     this.publicUrl,
     this.applicationFee,
+    this.tenant,
+    this.verification,
   });
 
   factory CommonData.fromJson(Map<String, dynamic> json) =>

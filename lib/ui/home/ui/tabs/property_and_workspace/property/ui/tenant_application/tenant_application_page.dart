@@ -19,6 +19,7 @@ import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tena
 import 'package:homework/values/colors.dart';
 import 'package:homework/values/extensions/map_ext.dart';
 import 'package:homework/widget/app_back_button.dart';
+import 'package:homework/widget/loading_widget.dart';
 import 'package:homework/widget/primary_button.dart';
 import 'package:mobx/mobx.dart';
 
@@ -60,6 +61,7 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
     _employmentDetailsKey = GlobalKey<BaseState>();
     _emergencyContactKey = GlobalKey<BaseState>();
     _termsKey = GlobalKey<BaseState>();
+
     _addDisposers();
   }
 
@@ -72,7 +74,13 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
       }),
       reaction((_) => _store.applyTenantResponse, (response) {
         if (response?.success ?? false) {
-          alertManager.showSuccess(context, response?.message ?? "");
+          alertManager.showSuccess(
+            context,
+            response?.message ?? "Tenant application submitted successfully",
+            afterAlert: () {
+              Navigator.of(context).pop();
+            },
+          );
         }
       }),
     ];
@@ -99,31 +107,24 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
     super.dispose();
   }
 
+  Map<String, dynamic> _getTenancyRequest() {
+    return {
+      ..._tenantApplicationFormKey.currentState!.getApiData(),
+      "note": _additionalNoteKey.currentState!.getApiData(),
+      "currency": "USD",
+      ...(_creditReportCheckKey.currentState?.getApiData() ?? {}),
+      ...(_employmentDetailsKey.currentState?.getApiData() ?? {}),
+      "residentialHistories":
+          (_residentialHistoryKey.currentState?.getApiData() ?? {}),
+      "emergencyContacts":
+          (_emergencyContactKey.currentState?.getApiData() ?? {}),
+      "docs": [""],
+    }.dropNull();
+  }
+
   void onSubmit() {
     if (validate()) {
-      var request = {
-        ..._tenantApplicationFormKey.currentState!.getApiData(),
-        "note": _additionalNoteKey.currentState!.getApiData(),
-        "currency": "USD",
-        ...(_creditReportCheckKey.currentState?.getApiData() ?? {}),
-        ...(_employmentDetailsKey.currentState?.getApiData() ?? {}),
-        "residentialHistories":
-            (_residentialHistoryKey.currentState?.getApiData() ?? {}),
-        "emergencyContacts":
-            (_emergencyContactKey.currentState?.getApiData() ?? {}),
-        "additionalPeople": [
-          {
-            "firstName": "John",
-            "lastName": "Smith",
-            "email": "john.smith@example.com"
-          }
-        ],
-        "isCompleted": true,
-        "docs": [
-          "https://example.com/doc1.pdf",
-          "https://example.com/doc2.pdf"
-        ],
-      }.dropNull();
+      var request = _getTenancyRequest();
       _store.applyForTenancy(request);
     }
   }
@@ -165,73 +166,78 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.topLeft,
-      children: [
-        Scaffold(
-          body: SingleChildScrollView(
-            padding: EdgeInsets.all(20.w),
-            child: Column(
-              children: [
-                20.h.verticalSpace,
-                Text(
-                  "hello ${session.user.firstName} we need a few information about you.",
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontSize: 28.spMin,
-                        fontWeight: FontWeight.w600,
-                        color: appColor.primaryColor,
+    return Observer(
+        builder: (context) => LoadingWidget(
+              status: _store.isApplyingForTenancy,
+              child: Stack(
+                alignment: Alignment.topLeft,
+                children: [
+                  Scaffold(
+                    body: SingleChildScrollView(
+                      padding: EdgeInsets.all(20.w),
+                      child: Column(
+                        children: [
+                          20.h.verticalSpace,
+                          Text(
+                            "hello ${session.user.firstName} we need a few information about you.",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  fontSize: 28.spMin,
+                                  fontWeight: FontWeight.w600,
+                                  color: appColor.primaryColor,
+                                ),
+                          ),
+                          16.h.verticalSpace,
+                          TenantApplicationForm(
+                            key: _tenantApplicationFormKey,
+                            propertyData: widget.propertyData,
+                            tenant: widget.tenant,
+                            isUpdate: widget.isUpdate,
+                          ),
+                          16.verticalSpace,
+                          AdditionalNoteForHostWidget(
+                            key: _additionalNoteKey,
+                          ),
+                          16.verticalSpace,
+                          _creditReport(),
+                          16.verticalSpace,
+                          ResidentialInfoWidget(
+                            key: _residentialHistoryKey,
+                          ),
+                          16.verticalSpace,
+                          EmploymentDetailsWidget(key: _employmentDetailsKey),
+                          16.verticalSpace,
+                          EmergencyContactWidget(
+                            key: _emergencyContactKey,
+                          ),
+                          16.verticalSpace,
+                          const PersonalDocumentWidget(),
+                          16.verticalSpace,
+                          TermsOfServiceWidget(
+                            isEdit: false,
+                            showLeasingPolicy: true,
+                            key: _termsKey,
+                          ),
+                          16.verticalSpace,
+                          const DefaultCardWidget(),
+                          16.verticalSpace,
+                          _applicationFeeTotal(),
+                          16.verticalSpace,
+                          _submitApplication(),
+                        ],
                       ),
-                ),
-                16.h.verticalSpace,
-                TenantApplicationForm(
-                  key: _tenantApplicationFormKey,
-                  propertyData: widget.propertyData,
-                  tenant: widget.tenant,
-                  isUpdate: widget.isUpdate,
-                ),
-                16.verticalSpace,
-                AdditionalNoteForHostWidget(
-                  key: _additionalNoteKey,
-                ),
-                16.verticalSpace,
-                CreditReportCheckWidget(
-                  key: _creditReportCheckKey,
-                ),
-                16.verticalSpace,
-                ResidentialInfoWidget(
-                  key: _residentialHistoryKey,
-                ),
-                16.verticalSpace,
-                EmploymentDetailsWidget(key: _employmentDetailsKey),
-                16.verticalSpace,
-                EmergencyContactWidget(
-                  key: _emergencyContactKey,
-                ),
-                16.verticalSpace,
-                const PersonalDocumentWidget(),
-                16.verticalSpace,
-                TermsOfServiceWidget(
-                  isEdit: false,
-                  showLeasingPolicy: true,
-                  key: _termsKey,
-                ),
-                16.verticalSpace,
-                const DefaultCardWidget(),
-                16.verticalSpace,
-                _applicationFeeTotal(),
-                16.verticalSpace,
-                _submitApplication(),
-              ],
-            ),
-          ),
-        ),
-        Container(
-          padding: EdgeInsets.only(left: 20.w),
-          color: Colors.white,
-          child: const AppBackButton(),
-        ),
-      ],
-    );
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(left: 20.w),
+                    color: Colors.white,
+                    child: const AppBackButton(),
+                  ),
+                ],
+              ),
+            ));
   }
 
   Widget _applicationFeeTotal() {
@@ -263,15 +269,18 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
 
   Widget _submitApplication() {
     return Observer(builder: (context) {
-      var isLoading = _store.isApplyingForTenancy;
+      var isBankVerified =
+          _store.shouldVerifyBank ? _store.isBankVerified == true : true;
+      var isIdVerified =
+          _store.shouldVerifyId ? _store.isIdVerified == true : true;
+      var isEnabled = isIdVerified && isBankVerified;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           PrimaryButton(
-            isLoading: isLoading,
-            enabled: !_store.isLoadingApplicationFee,
+            enabled: isEnabled,
             text: "pay & submit application",
-            onPressed: onSubmit,
+            onPressed: isEnabled ? onSubmit : () {},
           ),
           2.h.verticalSpace,
           Text(
@@ -282,6 +291,29 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
                 ?.copyWith(fontSize: 8.spMin),
           )
         ],
+      );
+    });
+  }
+
+  Widget _creditReport() {
+    return Observer(builder: (context) {
+      var shouldVerifyId = _store.shouldVerifyId;
+      var shouldVerifyBank = _store.shouldVerifyBank;
+      return CreditReportCheckWidget(
+        key: _creditReportCheckKey,
+        onCountryChanged: (country) {
+          _store.onCountrySelected(country);
+        },
+        shouldVerifyId: shouldVerifyId,
+        shouldVerifyBank: shouldVerifyBank,
+        onVerifyClicked: (type) {
+          if (validate()) {
+            _store.applyForTenancy(
+              _getTenancyRequest(),
+              verificationType: type,
+            );
+          }
+        },
       );
     });
   }

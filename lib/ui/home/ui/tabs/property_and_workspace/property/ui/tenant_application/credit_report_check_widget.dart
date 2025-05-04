@@ -8,10 +8,23 @@ import 'package:homework/values/colors.dart';
 import 'package:homework/values/extensions/context_ext.dart';
 import 'package:homework/values/validators.dart';
 import 'package:homework/widget/app_dropdown_field.dart';
+import 'package:homework/widget/app_outlined_button.dart';
 import 'package:homework/widget/app_text_field.dart';
+import 'package:homework/widget/primary_button.dart';
 
 class CreditReportCheckWidget extends StatefulWidget {
-  const CreditReportCheckWidget({super.key});
+  final bool shouldVerifyId;
+  final bool shouldVerifyBank;
+  final Function(String) onCountryChanged;
+  final Function(String) onVerifyClicked;
+
+  const CreditReportCheckWidget({
+    super.key,
+    required this.onCountryChanged,
+    required this.shouldVerifyId,
+    required this.shouldVerifyBank,
+    required this.onVerifyClicked,
+  });
 
   @override
   State<CreditReportCheckWidget> createState() =>
@@ -63,7 +76,7 @@ class _CreditReportCheckWidgetState extends BaseState<CreditReportCheckWidget> {
       child: Form(
         key: formKey,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             16.h.verticalSpace,
             Text(
@@ -83,10 +96,33 @@ class _CreditReportCheckWidgetState extends BaseState<CreditReportCheckWidget> {
                 items: countries,
                 validator: requiredValidator.call,
                 itemLabel: (c) => c.name.toLowerCase(),
-                onItemSelected: (c) => addressStore.fetchStates(c.isoCode),
+                onItemSelected: (c) {
+                  addressStore.fetchStates(c.isoCode);
+                  widget.onCountryChanged(c.name.toLowerCase());
+                },
               );
             }),
             16.h.verticalSpace,
+            Visibility(
+              visible: widget.shouldVerifyId,
+              child: PrimaryButton(
+                text: "id verification",
+                onPressed: () {
+                  widget.onVerifyClicked("identity-verification");
+                },
+              ),
+            ),
+            if (widget.shouldVerifyId) 5.h.verticalSpace,
+            Visibility(
+              visible: widget.shouldVerifyId,
+              child: AppOutlinedButton(
+                text: "bank statement",
+                onPressed: () {
+                  widget.onVerifyClicked("bank-statement");
+                },
+              ),
+            ),
+            if (widget.shouldVerifyBank) 10.h.verticalSpace,
             AppTextField(
               controller: countryIdController,
               label: 'country id # (SSN,NIN,etc.)',
@@ -96,6 +132,7 @@ class _CreditReportCheckWidgetState extends BaseState<CreditReportCheckWidget> {
             Divider(
               color: appColor.primaryColor,
               thickness: 1.h,
+              height: 10.h,
             ),
             12.h.verticalSpace,
           ],
