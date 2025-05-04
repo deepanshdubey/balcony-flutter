@@ -1,11 +1,16 @@
 import 'dart:async';
 
 import 'package:homework/core/locator/locator.dart';
+import 'package:homework/data/model/response/card_data.dart';
 import 'package:homework/data/model/response/common_data.dart';
 import 'package:homework/data/repository/property_repository.dart';
 import 'package:homework/data/repository/tenant_repository.dart';
+import 'package:homework/values/extensions/map_ext.dart';
 import 'package:mobx/mobx.dart';
 import 'package:plaid_flutter/plaid_flutter.dart';
+
+import '../../../../../../../../../data/repository/wallet_repository.dart'
+    show walletRepository;
 
 part 'tenant_application_store.g.dart';
 
@@ -46,10 +51,16 @@ abstract class _TenantApplicationStoreBase with Store {
   CommonData? applyTenantResponse;
   CommonData? storedApplyTenantResponse;
 
+  @observable
+  bool isLoadingCard = false;
+  @observable
+  CardData? defaultCard;
+
   String? verificationType;
 
   _TenantApplicationStoreBase({required this.propertyId}) {
     getPropertyApplicationFee(id: propertyId);
+    getCards();
     PlaidLink.onEvent.listen(_onEvent);
     PlaidLink.onExit.listen(_onExit);
     PlaidLink.onSuccess.listen(_onSuccess);
@@ -76,10 +87,13 @@ abstract class _TenantApplicationStoreBase with Store {
         isApplyingForTenancy = false;
         if (response.isSuccess) {
           if (shouldVerifyId) {
-            isIdVerified = response.data?.verification?.identity?.status == "completed";
+            isIdVerified =
+                response.data?.verification?.identity?.status == "completed";
           }
           if (shouldVerifyBank) {
-            isBankVerified = response.data?.verification?.bankStatement?.status == "completed";
+            isBankVerified =
+                response.data?.verification?.bankStatement?.status ==
+                    "completed";
           }
         } else {
           errorMessage = response.error!.message;
@@ -166,9 +180,35 @@ abstract class _TenantApplicationStoreBase with Store {
   Future onCountrySelected(String country) async {
     shouldVerifyId = idVerificationCountries.contains(country);
     shouldVerifyBank = bankVerificationCountries.contains(country);
-    if(!shouldVerifyId) {isIdVerified = null;}
-    if(!shouldVerifyBank) {isBankVerified = null;}
+    if (!shouldVerifyId) {
+      isIdVerified = null;
+    }
+    if (!shouldVerifyBank) {
+      isBankVerified = null;
+    }
     isIdVerified ??= false;
     isBankVerified ??= false;
+  }
+
+  @action
+  Future getCards() async {
+    try {
+      errorMessage = null;
+      isLoadingCard = true;
+      final response = await walletRepository.getAllCards();
+      if (response.isSuccess) {
+        defaultCard = response.data?.cards?.firstWhereOrNull(
+          (element) => element.isDefault == true,
+        );
+      } else {
+        errorMessage = response.error?.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoadingCard = false;
+    }
   }
 }

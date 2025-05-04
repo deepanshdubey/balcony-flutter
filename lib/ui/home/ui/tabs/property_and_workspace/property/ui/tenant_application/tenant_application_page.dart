@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/core/alert/alert_manager.dart';
+import 'package:homework/core/locator/locator.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/data/model/response/property_data.dart';
 import 'package:homework/data/model/response/tenant_details.dart';
@@ -221,7 +222,17 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
                             key: _termsKey,
                           ),
                           16.verticalSpace,
-                          const DefaultCardWidget(),
+                          Observer(
+                            builder: (context) => _store.isLoadingCard
+                                ? const CircularProgressIndicator()
+                                : DefaultCardWidget(
+                                    card: _store.defaultCard,
+                                    onDefaultCardChanged: () {
+                                      logger.d("default card changed");
+                                      _store.getCards();
+                                    },
+                                  ),
+                          ),
                           16.verticalSpace,
                           _applicationFeeTotal(),
                           16.verticalSpace,
