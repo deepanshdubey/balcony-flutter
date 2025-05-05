@@ -9,6 +9,7 @@ import 'package:homework/data/model/response/tenant_details.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/widget/terms_of_service_widget.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/additional_note_for_host_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/addtional_people_widget.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/credit_report_check_widget.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/default_card_widget.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/emergency_contact_widget.dart';
@@ -44,6 +45,7 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
   late TenantApplicationStore _store;
   List<ReactionDisposer>? _disposers;
   late GlobalKey<BaseState> _tenantApplicationFormKey;
+  late GlobalKey<BaseState> _additionalPeopleKey;
   late GlobalKey<BaseState> _additionalNoteKey;
   late GlobalKey<BaseState> _creditReportCheckKey;
   late GlobalKey<BaseState> _residentialHistoryKey;
@@ -56,6 +58,7 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
     super.initState();
     _store = TenantApplicationStore(propertyId: widget.propertyData!.id!);
     _tenantApplicationFormKey = GlobalKey<BaseState>();
+    _additionalPeopleKey = GlobalKey<BaseState>();
     _additionalNoteKey = GlobalKey<BaseState>();
     _creditReportCheckKey = GlobalKey<BaseState>();
     _residentialHistoryKey = GlobalKey<BaseState>();
@@ -98,6 +101,7 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
   void dispose() {
     _removeDisposers();
     _tenantApplicationFormKey.currentState?.dispose();
+    _additionalPeopleKey.currentState?.dispose();
     _additionalNoteKey.currentState?.dispose();
     _creditReportCheckKey.currentState?.dispose();
     _residentialHistoryKey.currentState?.dispose();
@@ -111,6 +115,8 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
   Map<String, dynamic> _getTenancyRequest() {
     return {
       ..._tenantApplicationFormKey.currentState!.getApiData(),
+      "additionalPeople":
+          (_additionalPeopleKey.currentState?.getApiData() ?? {}),
       "note": _additionalNoteKey.currentState!.getApiData(),
       "currency": "USD",
       ...(_creditReportCheckKey.currentState?.getApiData() ?? {}),
@@ -133,6 +139,7 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
   bool validate() {
     for (var element in [
       _tenantApplicationFormKey,
+      _additionalPeopleKey,
       _additionalNoteKey,
       _creditReportCheckKey,
       _residentialHistoryKey,
@@ -196,6 +203,10 @@ class _TenantApplicationPageState extends State<TenantApplicationPage> {
                             propertyData: widget.propertyData,
                             tenant: widget.tenant,
                             isUpdate: widget.isUpdate,
+                          ),
+                          16.verticalSpace,
+                          AdditionalPeopleWidget(
+                            key: _additionalPeopleKey,
                           ),
                           16.verticalSpace,
                           AdditionalNoteForHostWidget(
