@@ -8,6 +8,8 @@ import 'package:homework/router/app_router.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
 import 'package:homework/ui/home/ui/tabs/stay/rant_payment_details_page.dart';
 import 'package:homework/values/colors.dart';
+import 'package:homework/values/extensions/theme_ext.dart';
+import 'package:homework/widget/app_image.dart';
 import 'package:homework/widget/app_text_field.dart';
 import 'package:homework/widget/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -18,17 +20,21 @@ import 'package:mobx/mobx.dart';
 import '../../../../../../../../../widget/app_outlined_button.dart';
 
 class ReviewTenantApplication extends StatefulWidget {
+
+  
   final PropertyData? propertyData;
   final Tenants? tenant;
   final bool? isUpdate;
   final bool? onlyShowData;
 
-  const ReviewTenantApplication(
+   ReviewTenantApplication(
       {super.key, this.propertyData, this.tenant, this.isUpdate, this.onlyShowData});
 
   @override
   State<ReviewTenantApplication> createState() =>
       _ReviewTenantApplicationState();
+      
+      
 }
 
 class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
@@ -41,10 +47,17 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
   late TextEditingController emailController;
   late TextEditingController anticipateController;
   late TextEditingController socialSecurityController;
+  late TextEditingController countryResidenceController;
+  late TextEditingController countryIdController;
+  late TextEditingController adnFristNameController;
+  late TextEditingController adnLastNameController;
+  late TextEditingController adnEmailController;
   late FocusNode firstNameNode;
   late FocusNode lastNameNode;
   late FocusNode phoneNumberNode;
   late FocusNode emailNode;
+  late FocusNode countryResidenceNode;
+  late FocusNode countryIdNode;
   late FocusNode socialSecurityNode;
   String? selectedTitle;
   String? leaseStartDate;
@@ -56,6 +69,7 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
   int depositFeeAmount = 0;
 
   var propertyStore = PropertyStore();
+ 
 
   @override
   void initState() {
@@ -67,15 +81,27 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
     emailController = TextEditingController();
     anticipateController = TextEditingController();
     socialSecurityController = TextEditingController();
+    countryResidenceController=TextEditingController();
+    countryIdController=TextEditingController();
+    adnFristNameController=TextEditingController();
+    adnLastNameController=TextEditingController();
+    adnEmailController=TextEditingController();
     firstNameNode = FocusNode();
     lastNameNode = FocusNode();
     phoneNumberNode = FocusNode();
     emailNode = FocusNode();
     socialSecurityNode = FocusNode();
+    countryResidenceNode=FocusNode();
+    countryIdNode=FocusNode();
     firstNameController.text = widget.tenant?.info?.firstName ?? "";
     lastNameController.text = widget.tenant?.info?.lastName ?? "";
     phoneNumberController.text = widget.tenant?.info?.phone ?? "";
     emailController.text = widget.tenant?.info?.email ?? "";
+    countryResidenceController.text = widget.tenant?.info?.country ?? "";
+    countryIdController.text =  "-- left blank by applicant --";
+    adnFristNameController.text = widget.tenant?.info?.firstName ?? "";
+    adnLastNameController.text = widget.tenant?.info?.lastName ?? "";
+    adnEmailController.text = widget.tenant?.info?.email ?? "";
   }
 
   @override
@@ -84,10 +110,14 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
     lastNameController.dispose();
     phoneNumberController.dispose();
     emailController.dispose();
+    countryResidenceController.dispose();
+    countryIdController.dispose();
     firstNameNode.dispose();
     lastNameNode.dispose();
     phoneNumberNode.dispose();
     emailNode.dispose();
+    countryResidenceNode.dispose();
+    countryIdNode.dispose();
     removeDisposer();
     super.dispose();
   }
@@ -148,6 +178,8 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
 
   @override
   Widget build(BuildContext context) {
+     final theme = Theme.of(context);
+
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
@@ -266,6 +298,242 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
               ),
             ),
             24.verticalSpace,
+           
+            if(widget.onlyShowData ??true) Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+              margin: EdgeInsets.symmetric(horizontal: 20.w),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(12.r)),
+                border: Border.all(color: Colors.black.withOpacity(.25)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  16.verticalSpace,
+                  Text(
+                    "credit report check",
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontSize: 24.spMin,
+                          fontWeight: FontWeight.w500,
+                          color: appColor.primaryColor,
+                        ),
+                  ),
+                  16.verticalSpace,
+                  AppTextField(
+                    readOnly: true,
+                    keyboardType: TextInputType.none,
+                    controller: countryResidenceController,
+                    focusNode: countryResidenceNode,
+                    label: 'country of residence*',
+                    hintText: "select country of residence",
+                    //textInputAction: TextInputAction.next,
+                  ),
+                  16.h.verticalSpace,
+                  AppTextField(
+                    readOnly: true,
+                    controller: countryIdController,
+                    focusNode: countryIdNode,
+                    label: 'country id # (SSN, NIN, etc.)',
+                    hintText: "",
+                    textInputAction: TextInputAction.next,
+                  ),
+                  16.h.verticalSpace,
+                  Container(
+                   margin: EdgeInsets.only(top: 12.h),
+                   width: double.infinity,
+                   height: 1.h,
+                   color: appColor.primaryColor,
+                  ),
+                  16.h.verticalSpace,
+                  Text(
+                    "credit report chart analysis",
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontSize: 18.spMin,
+                          fontWeight: FontWeight.w500,
+                          color: appColor.primaryColor,
+                        ),
+                  ),
+                  16.h.verticalSpace,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                     children: [
+              Expanded(
+                
+                child: Text(
+                    "300",
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontSize: 7.spMin,
+                          fontWeight: FontWeight.w600,
+                          color: appColor.primaryColor,
+                        ),
+                  ),
+              ),
+              
+              Expanded(
+                flex: 1,
+                child: Text(
+                    "620",
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontSize: 14.32.spMin,
+                          fontWeight: FontWeight.w600,
+                          color: appColor.primaryColor,
+                        ),
+                  ),
+              ),
+              16.w.horizontalSpace,
+              Expanded(
+                flex: 1,
+                child: Text(
+                    "700",
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontSize: 14.32.spMin,
+                          fontWeight: FontWeight.w600,
+                          color: appColor.primaryColor,
+                        ),
+                  ),
+              ),
+              Expanded(
+                flex: 0,
+                child: Text(
+                    "850",
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontSize: 7.spMin,
+                          fontWeight: FontWeight.w600,
+                          color: appColor.primaryColor,
+                        ),
+                  ),
+              ),
+            ],
+                    ),
+                  AppImage(
+                    assetPath: theme.assets.chart,
+                    height: 30.r,
+                    width: double.infinity,
+                  ),
+                  2.h.verticalSpace,
+                  
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+        
+                    _buildTextWithSuffix("failed", Icons.close, Colors.white, Colors.red),
+        
+                    _buildTextWithSuffix("passed(w/ conditions)", Icons.check, Colors.black, Colors.yellow),
+        
+                   _buildTextWithSuffix("passed (excellent)", Icons.close, Colors.white, appColor.greenColor),
+                ],
+              ),
+              16.h.verticalSpace,
+              AppImage(
+                    assetPath: theme.assets.equifax,
+                    height: 30.r,
+                    width: 126.r,
+                  ),
+              8.h.verticalSpace,
+              _buildTextWithPrefix('credit status : ',Icons.check, Colors.white, Colors.yellow,'passed (excellent)'),
+              8.h.verticalSpace,
+              
+             _buildTextWithPrefix('background check / record : ',Icons.check, Colors.white, appColor.greenColor,'passed'),
+             8.h.verticalSpace,
+              _buildTextWithPrefix('collections : ',Icons.check, Colors.white, appColor.greenColor,'passed'),
+              
+              16.h.verticalSpace,
+              AppImage(
+                    assetPath: theme.assets.experian,
+                    height: 30.r,
+                    width: 126.r,
+                  ),
+              8.h.verticalSpace,
+              _buildTextWithPrefix('credit status : ',Icons.check, Colors.white, Colors.yellow,'passed (w/conditions)'),
+              8.h.verticalSpace,
+              
+             _buildTextWithPrefix('background check / record : ',Icons.close, Colors.white, Colors.red,'failed'),
+             8.h.verticalSpace,
+              _buildTextWithPrefix('collections : ',Icons.check, Colors.white, appColor.greenColor,'passed'),
+               
+               16.h.verticalSpace,
+              AppImage(
+                    assetPath: theme.assets.transuniun,
+                    height: 30.r,
+                    width: 126.r,
+                  ),
+              8.h.verticalSpace,
+              _buildTextWithPrefix('credit status : ',Icons.check, Colors.white, Colors.yellow,'passed (w/conditions)'),
+              8.h.verticalSpace,
+              
+             _buildTextWithPrefix('background check / record : ',Icons.check, Colors.white, appColor.greenColor,'passed'),
+             8.h.verticalSpace,
+              _buildTextWithPrefix('collections : ',Icons.check, Colors.white, Colors.yellow,'passed (w/conditions)'),
+               
+               16.h.verticalSpace,
+                  Container(
+                   margin: EdgeInsets.only(top: 12.h),
+                   width: double.infinity,
+                   height: 1.h,
+                   color: appColor.primaryColor,
+                  ),
+                  16.h.verticalSpace,
+                  
+             AppImage(
+                    assetPath: theme.assets.plaid,
+                    height: 30.r,
+                    width: 63.53.r,
+                  ),
+                  16.h.verticalSpace,
+                  _buildTextWithPrefix('id verification : ',Icons.check, Colors.white, appColor.greenColor,'passed'),
+                 16.h.verticalSpace,
+                 Text(
+                    "statements : doc.pdf",
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontSize: 14.spMin,
+                          fontWeight: FontWeight.w500,
+                          color: appColor.primaryColor,
+                        ),
+                  ),
+                  16.h.verticalSpace,
+                
+                ],
+              ),
+            ),
+            16.h.verticalSpace,
+            
+            if(widget.onlyShowData ??true) Container(
+  width: double.infinity,
+  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+  margin: EdgeInsets.symmetric(horizontal: 20.w),
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.all(Radius.circular(12.r)),
+    border: Border.all(color: Colors.black.withOpacity(.25)),
+  ),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text(
+        'add additional people',
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w500,
+              fontSize: 24.spMin,
+            ),
+      ),
+      4.h.verticalSpace,
+      Text(
+        "Please note: Most U.S. property teams require a background check for all additional occupants aged 18 or older. If the property team requests that you add them, kindly provide their information below. They are expected to receive an email with a link to complete their application. After adding & send, please request them to check their email inbox, spam, etc.. Application fee applies.",
+        style: theme.textTheme.titleSmall?.copyWith(
+          fontWeight: FontWeight.w700,
+          color: theme.primaryColor,
+          fontSize: 8.spMin,
+        ),
+      ),
+      10.h.verticalSpace, 
+
+    ],
+  ),
+),
+
+    16.h.verticalSpace,
             if(widget.onlyShowData ??true)   Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
@@ -426,7 +694,7 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
               ),
             ),
             if(widget.onlyShowData ??true)      25.verticalSpace,
-       if(widget.onlyShowData ??true)    LeaseDurationWidget(onDateChanged: (DateTime? startDate, DateTime? endDate) {
+            if(widget.onlyShowData ??true)    LeaseDurationWidget(onDateChanged: (DateTime? startDate, DateTime? endDate) {
               leaseStartDate = startDate?.toIso8601String() ;
               leaseEndDate = endDate?.toIso8601String() ;
             },),
@@ -485,7 +753,83 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
       return "";
     }
   }
+ Widget _buildTextWithSuffix(String text, IconData icon, Color iconColor, Color backgroundColor) {
+  return Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Container(
+        width: 16,
+        height: 16,
+        
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          icon,
+          size: 14,
+          color: iconColor,
+        ),
+      ),
+       SizedBox(width: 4),
+      Text(
+        text,
+        style: TextStyle(
+          fontSize: 8.spMin,
+          fontWeight: FontWeight.w500,
+          color: appColor.primaryColor,
+        ),
+      ),
+     
+      
+    ],
+  );
 }
+Widget _buildTextWithPrefix(String title,IconData icon, Color iconColor, Color backgroundColor,String text) {
+  return Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text(
+        title ,
+        style: TextStyle(
+          fontSize: 12.spMin,
+          fontWeight: FontWeight.w500,
+          color: appColor.primaryColor,
+        ),
+      ),
+      SizedBox(width: 4),
+      Container(
+        width: 16,
+        height: 16,
+        
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          icon,
+          size: 14,
+          color: iconColor,
+        ),
+      ),
+       SizedBox(width: 4),
+      Text(
+        text,
+        style: TextStyle(
+          fontSize: 8.spMin,
+          fontWeight: FontWeight.w500,
+          color: appColor.primaryColor,
+        ),
+      ),
+     
+      
+    ],
+  );
+}
+}
+
+
+
 
 class LeaseDurationWidget extends StatefulWidget {
   final Function(DateTime? startDate, DateTime? endDate) onDateChanged;
@@ -637,5 +981,7 @@ class _LeaseDurationWidgetState extends State<LeaseDurationWidget> {
       ),
     );
   }
+  
+
 }
 

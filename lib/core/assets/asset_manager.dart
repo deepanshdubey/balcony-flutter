@@ -37,6 +37,11 @@ class AssetManager {
   String get ratingStar => Assets.imagesRatingStar;
 
   String get hostYourPropertyOrWorkspace => Assets.imagesHostYourPropertyOrWorkspace;
+  String get chart => Assets.imageChart;
+  String get equifax => Assets.imageEquifax;
+  String get experian => Assets.imageExperian;
+  String get transuniun => Assets.imageTransunion;
+  String get plaid => Assets.imageplaid;
 }
 
 final assetManager = locator<AssetManager>();
