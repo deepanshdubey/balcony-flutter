@@ -12,6 +12,7 @@ import 'package:homework/ui/home/ui/tabs/chat/store/chat_store.dart';
 import 'package:homework/ui/home/ui/tabs/chat/ui/chat_details_page.dart';
 import 'package:homework/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/widget/schedule_widget.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/workspace_details/custom_dropdown.dart';
 import 'package:homework/ui/home/widget/floating_expandable_action.dart';
 import 'package:homework/values/colors.dart';
@@ -167,6 +168,30 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
         );
       }
     }
+  }
+
+  void showScheduleBottomSheet(BuildContext context) {
+    showAppBottomSheet(context, const ScheduleWidget());
+  }
+
+  void showAppBottomSheet(BuildContext context, Widget any,
+      {VoidCallback? onClose}) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.8,
+        padding: const EdgeInsets.only(top: 30),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+        ),
+        child: any,
+      ),
+    ).then((_) {
+      onClose!();
+    });
   }
 
   @override
@@ -519,7 +544,9 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                 onEmail: () {
                   sendEmail();
                 },
-                onSchedule: () {/* handle schedule */},
+                onSchedule: () {
+                  showScheduleBottomSheet(context);
+                },
                 onCall: () {
                   _handlePhoneCall(context, "tel://2312231323");
                 },
