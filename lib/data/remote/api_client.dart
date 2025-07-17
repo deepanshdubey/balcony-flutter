@@ -337,12 +337,11 @@ abstract class ApiClient {
   Future<CommonData> getTenant(@Query("status") String status);
 
   /// chat
-  @GET("/conversation/all")
-  Future<CommonData> getAllConversations();
+  @GET("/conversation/{type}/all")
+  Future<CommonData> getAllConversations(@Path("type") String type);
 
   @POST("/conversation/start")
-  Future<CommonData> startConversation(
-      @Body() Map<String, dynamic> request);
+  Future<CommonData> startConversation(@Body() Map<String, dynamic> request);
 
   @POST("/message/create")
   @MultiPart()

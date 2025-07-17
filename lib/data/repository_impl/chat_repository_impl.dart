@@ -13,8 +13,8 @@ class ChatRepositoryImpl extends BaseRepositoryImpl implements ChatRepository {
   ChatRepositoryImpl(this.apiClient);
 
   @override
-  Future<ApiResponse<CommonData>> getAllConversations() {
-    return execute(apiClient.getAllConversations());
+  Future<ApiResponse<CommonData>> getAllConversations(String type) {
+    return execute(apiClient.getAllConversations(type));
   }
 
   @override
@@ -40,8 +40,8 @@ class ChatRepositoryImpl extends BaseRepositoryImpl implements ChatRepository {
   }
 
   @override
-  Future<ApiResponse<CreateMsgResponse>> createMessageV2(Map<String, dynamic> request) {
+  Future<ApiResponse<CreateMsgResponse>> createMessageV2(
+      Map<String, dynamic> request) {
     return execute(apiClient.createMessageV2(request));
-
   }
 }

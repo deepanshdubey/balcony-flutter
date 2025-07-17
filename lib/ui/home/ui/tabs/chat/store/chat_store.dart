@@ -7,7 +7,6 @@ import 'package:homework/data/repository/user_repository.dart';
 import 'package:mobx/mobx.dart';
 import 'package:http/http.dart' as http;
 
-
 part 'chat_store.g.dart';
 
 class ChatStore = _ChatStoreBase with _$ChatStore;
@@ -16,13 +15,11 @@ abstract class _ChatStoreBase with Store {
   @observable
   CommonData? allConversationResponse;
 
-
   @observable
   CommonData? startConversationResponse;
 
   @observable
   CommonData? allMsgResponse;
-
 
   @observable
   bool isLoading = false;
@@ -31,11 +28,11 @@ abstract class _ChatStoreBase with Store {
   String? errorMessage;
 
   @action
-  Future getAllConversations() async {
+  Future getAllConversations(String type) async {
     try {
       errorMessage = null;
       isLoading = true;
-      final response = await chatRepository.getAllConversations();
+      final response = await chatRepository.getAllConversations(type);
       if (response.isSuccess) {
         allConversationResponse = response.data;
       } else {
@@ -51,7 +48,7 @@ abstract class _ChatStoreBase with Store {
   }
 
   @action
-  Future startConversations(Map<String , dynamic> request) async {
+  Future startConversations(Map<String, dynamic> request) async {
     try {
       errorMessage = null;
       isLoading = true;
@@ -121,9 +118,6 @@ abstract class _ChatStoreBase with Store {
     }
   }*/
 
-
-
-
   Future<String> _processSingleFilePath(String filePathOrUrl) async {
     if (filePathOrUrl.startsWith('http')) {
       return filePathOrUrl;
@@ -132,7 +126,7 @@ abstract class _ChatStoreBase with Store {
     // Call generateS3url API
     var fileExtension = filePathOrUrl.split('.').last;
     var generateS3urlResponse =
-    await userRepository.generateS3Url(fileExtension, "chat");
+        await userRepository.generateS3Url(fileExtension, "chat");
 
     if (generateS3urlResponse.isSuccess) {
       var signedUrl = generateS3urlResponse.data!.signedUrl!;

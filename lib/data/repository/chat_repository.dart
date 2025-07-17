@@ -4,14 +4,15 @@ import 'package:homework/core/locator/locator.dart';
 import 'package:homework/data/model/response/common_data.dart';
 import 'package:homework/data/model/response/create_msg_response.dart';
 
-
-
 abstract class ChatRepository {
-  Future<ApiResponse<CommonData>> getAllConversations();
-  Future<ApiResponse<CommonData>> startConversation(Map<String, dynamic> request);
+  Future<ApiResponse<CommonData>> getAllConversations(String type);
+  Future<ApiResponse<CommonData>> startConversation(
+      Map<String, dynamic> request);
   Future<ApiResponse<CommonData>> getAllMsg(String conversationId);
-  Future<ApiResponse<CreateMsgResponse>> createMessage(String conversationId, String? text, File? media);
-  Future<ApiResponse<CreateMsgResponse>> createMessageV2(Map<String, dynamic> request);
+  Future<ApiResponse<CreateMsgResponse>> createMessage(
+      String conversationId, String? text, File? media);
+  Future<ApiResponse<CreateMsgResponse>> createMessageV2(
+      Map<String, dynamic> request);
 }
 
 final chatRepository = locator<ChatRepository>();
