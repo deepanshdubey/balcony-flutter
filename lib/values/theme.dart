@@ -51,34 +51,34 @@ ThemeData createTheme(ColorScheme colors, TextTheme textTheme) {
       ),
     ),
     dividerColor: colors.outlineVariant,
-    dialogTheme: DialogTheme(
+    dialogTheme: DialogThemeData(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6.r)),
     ),
     switchTheme: SwitchThemeData(
-      thumbColor: MaterialStateProperty.resolveWith<Color>(
+      thumbColor: WidgetStateProperty.resolveWith<Color>(
         (states) {
-          if (states.contains(MaterialState.selected)) {
+          if (states.contains(WidgetState.selected)) {
             return appColor.primaryColor; // Color when the switch is ON
           }
           return appColor.strokeColor; // Color when the switch is OFF
         },
       ),
-      trackColor: MaterialStateProperty.resolveWith<Color>(
+      trackColor: WidgetStateProperty.resolveWith<Color>(
         (states) {
-          if (states.contains(MaterialState.selected)) {
+          if (states.contains(WidgetState.selected)) {
             return appColor.primaryColor
                 .withOpacity(0.5); // Track color when ON
           }
           return appColor.strokeColor.withOpacity(0.3); // Track color when OFF
         },
       ),
-      overlayColor: MaterialStateProperty.resolveWith<Color?>(
+      overlayColor: WidgetStateProperty.resolveWith<Color?>(
         (states) {
-          if (states.contains(MaterialState.pressed)) {
+          if (states.contains(WidgetState.pressed)) {
             return appColor.primaryColor
                 .withOpacity(0.2); // Ripple color when pressed
           }
-          if (states.contains(MaterialState.hovered)) {
+          if (states.contains(WidgetState.hovered)) {
             return appColor.primaryColor.withOpacity(0.1); // Hover effect
           }
           return null; // Default: no overlay
