@@ -52,6 +52,13 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
   late TextEditingController adnFristNameController;
   late TextEditingController adnLastNameController;
   late TextEditingController adnEmailController;
+  late TextEditingController emNameController;
+  late TextEditingController emContactController;
+  late TextEditingController rsStreetController;
+  late TextEditingController rsUnitController;
+  late TextEditingController rsCityController;
+  late TextEditingController rsStateController;
+  late TextEditingController rscontryController;
   late FocusNode firstNameNode;
   late FocusNode lastNameNode;
   late FocusNode phoneNumberNode;
@@ -59,6 +66,14 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
   late FocusNode countryResidenceNode;
   late FocusNode countryIdNode;
   late FocusNode socialSecurityNode;
+  late FocusNode emNameNode;
+  late FocusNode emcontactNode;
+  late FocusNode rsStateNode;
+  late FocusNode rsContryNode;
+  late FocusNode rsCityNode;
+  late FocusNode rsUnitNode;
+  late FocusNode rsStreetNode;
+
   String? selectedTitle;
   String? leaseStartDate;
   String? leaseEndDate;
@@ -67,10 +82,65 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
   bool isSecurityDepositChecked = false;
   bool isSameAsRent = false;
   int depositFeeAmount = 0;
+  bool leaseAgreement=false;
 
   var propertyStore = PropertyStore();
- 
 
+  List<Map<String, String>> additionalPeople = [
+    {
+      "p_first_name": "Alice",
+      "p_last_name": "Johnson",
+      "p_email": "alice.johnson@example.com",
+      "view_application": "https://example.com/files/application_alice.pdf"
+    },
+    {
+      "p_first_name": "Bob",
+      "p_last_name": "Smith",
+      "p_email": "bob.smith@example.com",
+      "view_application": "" // Incomplete
+    },
+    {
+      "p_first_name": "Carol",
+      "p_last_name": "Williams",
+      "p_email": "carol.williams@example.com",
+      "view_application": "https://example.com/files/application_carol.pdf"
+    },
+  ];
+
+  //todo residential history list....
+   List<Map<String, dynamic>> prospectList = [];
+  int editableIndex = -1;
+  //todo list emergency contact list....
+  List<EmergencyContact> emegencyContactList=[];
+  List<ResidentialHistory> residentialHistorytList=[];
+  List<AdditionalPerson> additionalPeopleList=[];
+
+  final List<String> countries = ['USA', 'Canada', 'India', 'Germany', 'UK'];
+  // This is your pre-filled data
+  final List<Map<String, String>> initialData = [
+    {
+      'street': '124 Main St',
+      'unit': 'Apt 101',
+      'city': 'New York',
+      'state': 'NY',
+      'country': 'USA',
+    },
+  ];
+  void _loadInitialProspects() {
+    for (var data in initialData) {
+      prospectList.add({
+        'street': TextEditingController(text: data['street']),
+        'unit': TextEditingController(text: data['unit']),
+        'city': TextEditingController(text: data['city']),
+        'state': TextEditingController(text: data['state']),
+        'country': data['country'] ?? 'USA',
+      });
+      
+    }
+    editableIndex = 0; // First one is editable
+  }
+   
+ 
   @override
   void initState() {
     addDisposer();
@@ -86,6 +156,15 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
     adnFristNameController=TextEditingController();
     adnLastNameController=TextEditingController();
     adnEmailController=TextEditingController();
+    emNameController=TextEditingController();
+    emContactController=TextEditingController();
+    rsStreetController=TextEditingController();
+    rsStateController=TextEditingController();
+    rsCityController=TextEditingController();
+    rsUnitController=TextEditingController();
+    rscontryController=TextEditingController();
+  
+    
     firstNameNode = FocusNode();
     lastNameNode = FocusNode();
     phoneNumberNode = FocusNode();
@@ -93,6 +172,13 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
     socialSecurityNode = FocusNode();
     countryResidenceNode=FocusNode();
     countryIdNode=FocusNode();
+    emNameNode=FocusNode();
+    emcontactNode=FocusNode();
+    rsCityNode=FocusNode();
+    rsStateNode=FocusNode();
+    rsContryNode=FocusNode();
+    rsUnitNode=FocusNode();
+    rsStreetNode=FocusNode();
     firstNameController.text = widget.tenant?.info?.firstName ?? "";
     lastNameController.text = widget.tenant?.info?.lastName ?? "";
     phoneNumberController.text = widget.tenant?.info?.phone ?? "";
@@ -102,6 +188,14 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
     adnFristNameController.text = widget.tenant?.info?.firstName ?? "";
     adnLastNameController.text = widget.tenant?.info?.lastName ?? "";
     adnEmailController.text = widget.tenant?.info?.email ?? "";
+    emegencyContactList=widget.tenant?.emergencyContacts ?? [];
+    residentialHistorytList=widget.tenant?.residentialHistories ?? [];
+    //additionalPeopleList=widget.tenant?.additionalPeople ?? [];
+    additionalPeopleList = (widget.tenant?.additionalPeople ?? []).cast<AdditionalPerson>();
+    print('addition people list lentgh:${additionalPeopleList.length}');
+
+    //_loadInitialProspects();
+    
   }
 
   @override
@@ -529,11 +623,489 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
       ),
       10.h.verticalSpace, 
 
+      ListView.builder(
+        padding: EdgeInsets.all(0),
+        itemCount: additionalPeopleList.length,
+        shrinkWrap: true, 
+        physics: NeverScrollableScrollPhysics(), 
+        itemBuilder: (context, index) {
+          
+          final person = additionalPeopleList[index];
+
+          final pfirstNameController = TextEditingController(text: person.firstName!);
+         final plastNameController = TextEditingController(text: person.lastName!);
+         final pemailController = TextEditingController(text: person.email!);
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+               Row(
+             children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                     AppTextField(
+                    readOnly: true,
+                    controller: pfirstNameController,
+                    //focusNode: phoneNumberNode,
+                    label: 'First Name',
+                    hintText: "Enter your First Name",
+                    keyboardType: TextInputType.phone,
+                    textInputAction: TextInputAction.next,
+                   ),
+                    
+                  ],
+                ),
+              ),
+              10.horizontalSpace,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    
+                    AppTextField(
+                    readOnly: true,
+                    controller: plastNameController,
+                    //focusNode: phoneNumberNode,
+                    label: 'Last Name',
+                    hintText: "Enter your First Name",
+                    keyboardType: TextInputType.phone,
+                    textInputAction: TextInputAction.next,
+                  ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
+
+          
+          // Row(
+          //   crossAxisAlignment: CrossAxisAlignment.start,
+          //   children: [
+          //     // Email Field
+          //     Expanded(
+          //       child: Column(
+          //         crossAxisAlignment: CrossAxisAlignment.start,
+          //         children: [
+          //           AppTextField(
+          //           readOnly: true,
+          //           controller: pemailController,
+          //           //focusNode: phoneNumberNode,
+          //           label: 'eMail',
+          //           hintText: "Enter your First Name",
+          //           keyboardType: TextInputType.phone,
+          //           textInputAction: TextInputAction.next,
+          //         ),
+          //         ],
+          //       ),
+          //     ),
+          //     10.horizontalSpace,
+
+          //     // View Application Section
+          //     // Expanded(
+          //     //   child: Padding(
+          //     //     padding: const EdgeInsets.only(top: 24.0), // align with TextField
+          //     //     child: Row(
+          //     //       children: [
+          //     //         if (person.status!= null &&
+          //     //             person.status!.isNotEmpty) ...[
+          //     //           Icon(Icons.link, size: 16, color:appColor.primaryColor),
+          //     //           SizedBox(width: 4),
+          //     //           GestureDetector(
+          //     //             onTap: () async {
+          //     //               // final url = person['view_application']!;
+          //     //               // if (await canLaunchUrl(Uri.parse(url))) {
+          //     //               //   await launchUrl(Uri.parse(url));
+          //     //               // }
+          //     //             },
+          //     //             child: Text(
+          //     //               'View Application',
+          //     //               style: TextStyle(
+          //     //                 color: appColor.primaryColor,
+          //     //                 decoration: TextDecoration.underline,
+          //     //               ),
+          //     //             ),
+          //     //           )
+          //     //         ] else ...[
+          //     //           Icon(Icons.hourglass_empty, size: 16, color: Colors.grey),
+          //     //           SizedBox(width: 4),
+          //     //           Text(
+          //     //             'Not Complete Yet',
+          //     //             style: TextStyle(color: Colors.grey),
+          //     //           )
+          //     //         ]
+          //     //       ],
+          //     //     ),
+          //     //   ),
+          //     // ),
+          //   ],
+          // ),
+
+          Divider(thickness: 1, height: 32),
+              ],
+            ),
+          );
+        },
+      ),
+
     ],
   ),
 ),
 
     16.h.verticalSpace,
+
+            
+  if(widget.onlyShowData ??true) Container(
+  width: double.infinity,
+  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+  margin: EdgeInsets.symmetric(horizontal: 20.w),
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.all(Radius.circular(12.r)),
+    border: Border.all(color: Colors.black.withOpacity(.25)),
+  ),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text(
+        'additional notes by applicant',
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w500,
+              fontSize: 24.spMin,
+            ),
+      ),
+      4.h.verticalSpace,
+      Text(
+        "This section was left blank by the prospect applicant.",
+        style: theme.textTheme.titleSmall?.copyWith(
+          fontWeight: FontWeight.w700,
+          color: theme.primaryColor,
+          fontSize: 8.spMin,
+        ),
+      ),
+      10.h.verticalSpace, 
+
+     
+
+    ],
+  ),
+),
+
+    16.h.verticalSpace,
+
+    if(widget.onlyShowData ??true) Container(
+  width: double.infinity,
+  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+  margin: EdgeInsets.symmetric(horizontal: 20.w),
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.all(Radius.circular(12.r)),
+    border: Border.all(color: Colors.black.withOpacity(.25)),
+  ),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text(
+        'personal documents*',
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w500,
+              fontSize: 24.spMin,
+            ),
+      ),
+      4.h.verticalSpace,
+      _buildFileLink('john_id.pdf'),
+      _buildFileLink('janessc.pdf'),
+      _buildFileLink('paystub.doc'),
+      
+      10.h.verticalSpace, 
+
+     
+
+    ],
+  ),
+),
+
+    16.h.verticalSpace,
+
+    
+
+   //todo for residential history container....          
+  if (widget.onlyShowData ?? true)
+   Container(
+  width: double.infinity,
+  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+  margin: EdgeInsets.symmetric(horizontal: 20.w),
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.all(Radius.circular(12.r)),
+    border: Border.all(color: Colors.black.withOpacity(.25)),
+  ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+           Text(
+        'residential history*',
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w500,
+              fontSize: 24.spMin,
+            ),
+      ),
+          4.h.verticalSpace,
+          ListView.builder(
+              itemCount: residentialHistorytList.length, // +2 for Divider and Add button/text
+              padding: const EdgeInsets.only(bottom: 16),
+               shrinkWrap: true, 
+               physics: NeverScrollableScrollPhysics(), 
+              itemBuilder: (context, index) {
+              return _buildResidenceForm(index);
+           
+              },
+            ),
+
+        ],
+      ),
+    ),
+
+
+
+    16.h.verticalSpace,
+
+     //todo for employment container....          
+  if (widget.onlyShowData ?? true)
+   Container(
+  width: double.infinity,
+  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+  margin: EdgeInsets.symmetric(horizontal: 20.w),
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.all(Radius.circular(12.r)),
+    border: Border.all(color: Colors.black.withOpacity(.25)),
+  ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+           Text(
+        'employment details',
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w500,
+              fontSize: 24.spMin,
+            ),
+      ),
+         16.verticalSpace,
+                  AppTextField(
+                    readOnly: true,
+                    controller: countryIdController,
+                    focusNode: countryIdNode,
+                    label: 'employer name (company name)',
+                    hintText: "",
+                    textInputAction: TextInputAction.next,
+                  ),
+                  10.h.verticalSpace,
+                  AppTextField(
+                    readOnly: true,
+                    controller: countryIdController,
+                    focusNode: countryIdNode,
+                    label: 'company address',
+                    hintText: "",
+                    textInputAction: TextInputAction.next,
+                  ),
+                  10.h.verticalSpace,
+                  
+                  AppTextField(
+                    readOnly: true,
+                    keyboardType: TextInputType.none,
+                    controller: countryResidenceController,
+                    focusNode: countryResidenceNode,
+                    label: 'company phone #',
+                    hintText: "select country of residence",
+                    //textInputAction: TextInputAction.next,
+                  ),
+                  10.h.verticalSpace,
+                  AppTextField(
+                    readOnly: true,
+                    controller: countryIdController,
+                    focusNode: countryIdNode,
+                    label: 'your job title',
+                    hintText: "",
+                    textInputAction: TextInputAction.next,
+                  ),
+                  10.verticalSpace
+
+        ],
+      ),
+    ),
+
+    
+ 16.h.verticalSpace,
+      //todo for emergency contact container....          
+  if (widget.onlyShowData ?? true)
+   Container(
+  width: double.infinity,
+  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+  margin: EdgeInsets.symmetric(horizontal: 20.w),
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.all(Radius.circular(12.r)),
+    border: Border.all(color: Colors.black.withOpacity(.25)),
+  ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+           Text(
+        'emergency contact',
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w500,
+              fontSize: 24.spMin,
+            ),
+      ),
+          4.h.verticalSpace,
+          ListView.builder(
+              itemCount: emegencyContactList.length+2, // +2 for Divider and Add button/text
+              padding: const EdgeInsets.only(bottom: 16),
+               shrinkWrap: true, 
+               physics: NeverScrollableScrollPhysics(), 
+              itemBuilder: (context, index) {
+          if (index < emegencyContactList.length) {
+            return _buildProspectForm(index);
+          } else if (index == emegencyContactList.length) {
+            return const Divider();
+          } else {
+            // index == prospectList.length + 1
+            return Column(
+              children: [
+                if (emegencyContactList.length < 4)
+  Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      GestureDetector(
+        onTap: _addProspect,
+        child: Row(
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: appColor.primaryColor, width: 2),
+              ),
+              child:  Icon(Icons.add, color:appColor.primaryColor, size: 20),
+            ),
+            const SizedBox(width: 8),
+            
+               Text(
+        'add more',
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w500,
+              fontSize: 16.spMin,
+            ),
+      ),
+          ],
+        ),
+      ),
+      const SizedBox(height: 4),
+      const Text(
+        "(up to 3 prior addresses if applicable)",
+        style: TextStyle(
+          fontSize: 12,
+          color: Colors.grey,
+        ),
+      ),
+    ],
+  ),
+
+              ],
+            );
+          }
+              },
+            ),
+
+        ],
+      ),
+    ),
+
+
+
+    16.h.verticalSpace,
+   
+   if (widget.onlyShowData ?? true)
+   Container(
+  width: double.infinity,
+  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+  margin: EdgeInsets.symmetric(horizontal: 20.w),
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.all(Radius.circular(12.r)),
+    border: Border.all(color: Colors.black.withOpacity(.25)),
+  ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+           Text(
+        'security deposit already paid',
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w500,
+              fontSize: 24.spMin,
+            ),
+      ),
+      8.verticalSpace,
+        Text(
+        'This just an acknowledgement.Tenant does not repay another deposit fee.',
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w400,
+              fontSize: 14.spMin,
+            ),
+      ),
+      
+         16.verticalSpace,
+                  AppTextField(
+                    readOnly: true,
+                    controller: countryIdController,
+                    focusNode: countryIdNode,
+                    label: 'deposit fee amount paid',
+                    hintText: "",
+                    textInputAction: TextInputAction.next,
+                  ),
+                  10.h.verticalSpace,
+        ],
+      ),
+    ),
+
+    16.h.verticalSpace,
+
+    if (widget.onlyShowData ?? true)
+   Container(
+  width: double.infinity,
+  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+  margin: EdgeInsets.symmetric(horizontal: 20.w),
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.all(Radius.circular(12.r)),
+    border: Border.all(color: Colors.black.withOpacity(.25)),
+  ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+           Text(
+        'lease agreement*',
+        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w500,
+              fontSize: 24.spMin,
+            ),
+      ),
+             _buildLeaseBlock(),
+              const Divider(height: 40),
+              _buildLeaseBlock(),
+      
+      10.h.verticalSpace,
+        ],
+      ),
+    ),
+
+    16.h.verticalSpace,
+
             if(widget.onlyShowData ??true)   Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
@@ -744,7 +1316,7 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
     );
   }
 
-  String formatDate(String? date) {
+ String formatDate(String? date) {
     if (date == null || date.isEmpty) return "";
     try {
       return DateFormat('MM/dd/yyyy').format(DateTime.parse(date));
@@ -785,7 +1357,7 @@ class _ReviewTenantApplicationState extends State<ReviewTenantApplication> {
     ],
   );
 }
-Widget _buildTextWithPrefix(String title,IconData icon, Color iconColor, Color backgroundColor,String text) {
+ Widget _buildTextWithPrefix(String title,IconData icon, Color iconColor, Color backgroundColor,String text) {
   return Row(
     mainAxisSize: MainAxisSize.min,
     children: [
@@ -826,9 +1398,235 @@ Widget _buildTextWithPrefix(String title,IconData icon, Color iconColor, Color b
     ],
   );
 }
+
+ Widget _buildFileLink(String fileName) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: InkWell(
+        onTap: () {
+          // Handle file open or download
+        },
+        child:Text(
+        fileName ,
+        style: TextStyle(
+          fontSize: 12.spMin,
+          fontWeight: FontWeight.w500,
+          color: appColor.primaryColor,
+          decoration: TextDecoration.underline,
+        ),
+      ),
+      ),
+    );
+  }
+
+//todo for residential history.....
+void _addProspect() {
+    setState(() {
+      prospectList.add({
+        'street': TextEditingController(),
+        'unit': TextEditingController(),
+        'city': TextEditingController(),
+        'state': TextEditingController(),
+        'country': 'USA', // default selected
+      });
+      editableIndex = prospectList.length - 1;
+    });
+  }
+
+Widget _buildTextField(String label, TextEditingController controller, bool readOnly) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: AppTextField(
+        controller: controller,
+        label: label,
+        hintText: 'Enter $label',
+        readOnly: readOnly,
+        keyboardType: TextInputType.text,
+        textInputAction: TextInputAction.next,
+      ),
+    );
+  }
+
+Widget _buildCountryDropdown(int index, bool readOnly) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4.0),
+    child: DropdownButtonFormField<String>(
+      value: residentialHistorytList[index].country?.isNotEmpty == true
+          ? residentialHistorytList[index].country
+          : null,
+      onChanged: readOnly
+          ? null
+          : (val) {
+              setState(() {
+                residentialHistorytList[index].country = val!;
+              });
+            },
+      decoration: InputDecoration(
+        labelText: 'Country',
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        labelStyle: const TextStyle(fontSize: 16, color: Colors.grey),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        border: const OutlineInputBorder(),
+        filled: true,
+        fillColor: readOnly ? Colors.grey.shade200 : Colors.white,
+        isDense: true,
+      ),
+      icon: const Icon(Icons.arrow_drop_down),
+      iconSize: 24,
+      isExpanded: true,
+      style: const TextStyle(fontSize: 16, color: Colors.black),
+      dropdownColor: Colors.white,
+      hint: const Text('Select Country', style: TextStyle(fontSize: 16)),
+      items: residentialHistorytList
+          .map((country) => DropdownMenuItem<String>(
+                value: residentialHistorytList[index].country,
+                child: Text(residentialHistorytList[index].country.toString()),
+              ))
+          .toList(),
+    ),
+  );
 }
 
+Widget _buildProspectForm(int index) {
+    final readOnly = editableIndex != index;
+    emNameController.text=emegencyContactList[index].name!;
+    emContactController.text=emegencyContactList[index].phone!;
 
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          editableIndex = index;
+        });
+      },
+      child: Column(
+        children: [
+          _buildTextField("name", emNameController, readOnly),
+           
+          10.verticalSpace,
+           _buildTextField("contact", emContactController, readOnly),
+          
+         
+         
+        ],
+      ),
+    );
+  }
+
+Widget _buildResidenceForm(int index) {
+    final readOnly = editableIndex != index;
+    rsStreetController.text=residentialHistorytList[index].street!;
+    rsUnitController.text=residentialHistorytList[index].unit!;
+    rsStateController.text=residentialHistorytList[index].state!;
+    rsCityController.text=residentialHistorytList[index].city!;
+    rscontryController.text=residentialHistorytList[index].country!;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          editableIndex = index;
+        });
+      },
+      child: Column(
+        children: [
+          _buildTextField("street", rsStreetController, readOnly),
+          10.h.verticalSpace,
+           Row(
+            children: [
+             
+           Expanded(child: _buildTextField("apt/unit", rsUnitController, readOnly)),
+           8.w.horizontalSpace,
+           Expanded(child: _buildTextField("city", rsCityController, readOnly)),
+           
+            ],
+           ),
+            10.h.verticalSpace,
+           Row(
+            children: [
+              Expanded(child: _buildTextField("state", rsStateController, readOnly)),
+              8.w.horizontalSpace,
+              Expanded(child: _buildTextField("country", rscontryController, readOnly)),
+            ],
+           ),
+        ],
+      ),
+    );
+  }
+
+Widget _buildLeaseBlock() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+       
+        const SizedBox(height: 8),
+        GestureDetector(
+          onTap: () {
+            // Handle PDF open/download
+          },
+          child: Text(
+        'full lease agreement.pdf' ,
+        style: TextStyle(
+          fontSize: 12.spMin,
+          fontWeight: FontWeight.w500,
+          color: appColor.primaryColor,
+          decoration: TextDecoration.underline,
+        ),
+      ),
+        ),
+        16.verticalSpace,
+        Text(
+        'signed:' ,
+        style: TextStyle(
+          fontSize: 12.spMin,
+          fontWeight: FontWeight.w500,
+          color: appColor.primaryColor,
+          //decoration: TextDecoration.underline,
+        ),
+      ),
+        8.verticalSpace,
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            border: Border.all(color: appColor.primaryColor),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child:  Text(
+            "John Doe",
+            style: TextStyle(
+              fontFamily: 'Cursive',
+              fontSize: 24.spMin,
+             fontWeight: FontWeight.w500,
+             color: appColor.primaryColor,
+            ),
+          ),
+        ),
+        12.verticalSpace,
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Checkbox(value: leaseAgreement, onChanged: (val) {
+                               setState(() {
+                                leaseAgreement = val ?? false;
+                                
+                              });
+            }),
+             Expanded(
+              child: Text(
+                "I confirm that I have read and accept the terms of the lease agreement.",
+                style: TextStyle(
+                  fontSize: 14.spMin,
+                  fontWeight: FontWeight.w500,
+                  color: appColor.primaryColor,),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }  
+}
 
 
 class LeaseDurationWidget extends StatefulWidget {

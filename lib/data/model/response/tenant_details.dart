@@ -41,6 +41,13 @@ class Tenants {
   final String? createdAt;
   @JsonKey(name: 'updatedAt')
   final String? updatedAt;
+  @JsonKey(name: 'emergencyContacts')
+  final List<EmergencyContact>? emergencyContacts;
+  @JsonKey(name: 'residentialHistories')
+  final List<ResidentialHistory>? residentialHistories;
+  @JsonKey(name: 'additionalPeople')
+  final List<AdditionalPerson>? additionalPeople;
+
 
   Tenants(
       {this.Id,
@@ -53,7 +60,10 @@ class Tenants {
       this.paymentSource,
       this.lastPaymentDate,
       this.createdAt,
-      this.updatedAt});
+      this.updatedAt,
+      this.emergencyContacts,
+      this.residentialHistories,
+      this.additionalPeople});
 
   factory Tenants.fromJson(Map<String, dynamic> json) =>
       _$TenantsFromJson(json);
@@ -218,4 +228,83 @@ class Agreement {
       _$AgreementFromJson(json);
 
   Map<String, dynamic> toJson() => _$AgreementToJson(this);
+
+  
+}
+
+@JsonSerializable(ignoreUnannotated: true)
+class EmergencyContact {
+  @JsonKey(name: 'name')
+  final String? name;
+  @JsonKey(name: 'phone')
+  final String? phone;
+
+  EmergencyContact({this.name, this.phone});
+
+  factory EmergencyContact.fromJson(Map<String, dynamic> json) =>
+      _$EmergencyContactFromJson(json);
+
+  Map<String, dynamic> toJson() => _$EmergencyContactToJson(this);
+}
+
+@JsonSerializable(ignoreUnannotated: true)
+class ResidentialHistory {
+  @JsonKey(name: 'street')
+  final String? street;
+
+  @JsonKey(name: 'unit')
+  final String? unit;
+
+  @JsonKey(name: 'city')
+  final String? city;
+
+  @JsonKey(name: 'state')
+  final String? state;
+
+  @JsonKey(name: 'country')
+   String? country;
+
+  ResidentialHistory({
+    this.street,
+    this.unit,
+    this.city,
+    this.state,
+    this.country,
+  });
+
+  factory ResidentialHistory.fromJson(Map<String, dynamic> json) =>
+      _$ResidentialHistoryFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ResidentialHistoryToJson(this);
+}
+
+@JsonSerializable(ignoreUnannotated: true)
+class AdditionalPerson {
+  @JsonKey(name: 'occupantId')
+  final String? occupantId;
+
+  @JsonKey(name: 'firstName')
+  final String? firstName;
+
+  @JsonKey(name: 'lastName')
+  final String? lastName;
+
+  @JsonKey(name: 'email')
+  final String? email;
+
+  @JsonKey(name: 'status')
+  final String? status;
+
+  AdditionalPerson({
+    this.occupantId,
+    this.firstName,
+    this.lastName,
+    this.email,
+    this.status,
+  });
+
+  factory AdditionalPerson.fromJson(Map<String, dynamic> json) =>
+      _$AdditionalPersonFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AdditionalPersonToJson(this);
 }

@@ -51,7 +51,7 @@ ThemeData createTheme(ColorScheme colors, TextTheme textTheme) {
       ),
     ),
     dividerColor: colors.outlineVariant,
-    dialogTheme: DialogTheme(
+    dialogTheme: DialogThemeData(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6.r)),
     ),
     switchTheme: SwitchThemeData(
