@@ -1,15 +1,19 @@
-import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
-import 'package:homework/values/extensions/context_ext.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:homework/data/constants.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
+import 'package:homework/values/extensions/context_ext.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TermsOfServiceWidget extends StatefulWidget {
   final bool isEdit;
+  final bool showLeasingPolicy;
 
   const TermsOfServiceWidget({
     super.key,
     required this.isEdit,
+    this.showLeasingPolicy = false,
   });
 
   @override
@@ -71,8 +75,7 @@ class _TermsOfServiceWidgetState extends BaseState<TermsOfServiceWidget> {
                         ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
-                            // Handle terms of service tap
-                            print("Terms of Service clicked");
+                            openUrl(Constants.terms);
                           },
                       ),
                       const TextSpan(text: " and "),
@@ -84,8 +87,7 @@ class _TermsOfServiceWidgetState extends BaseState<TermsOfServiceWidget> {
                         ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
-                            // Handle privacy policy tap
-                            print("Privacy Policy clicked");
+                            openUrl(Constants.policy);
                           },
                       ),
                       const TextSpan(text: "."),
@@ -97,24 +99,55 @@ class _TermsOfServiceWidgetState extends BaseState<TermsOfServiceWidget> {
               ),
             ],
           ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Checkbox(
-                value: secondTerm,
-                onChanged: (value) {
-                  setState(() => secondTerm = value ?? secondTerm);
-                },
-              ),
-              Expanded(
-                child: Text(
-                  "I acknowledge that I am going to receive a 1099 form if I make \$600 or more during the entire year.\n  •  please read about tax faqs.",
-                  maxLines: 10,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(),
+          Visibility(
+            visible: !widget.showLeasingPolicy,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Checkbox(
+                  value: secondTerm,
+                  onChanged: (value) {
+                    setState(() => secondTerm = value ?? secondTerm);
+                  },
                 ),
-              ),
-            ],
+                Expanded(
+                  child: Text(
+                    "I acknowledge that I am going to receive a 1099 form if I make \$600 or more during the entire year.\n  •  please read about tax faqs.",
+                    maxLines: 10,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Visibility(
+            visible: widget.showLeasingPolicy,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Checkbox(
+                  value: secondTerm,
+                  onChanged: (value) {
+                    setState(() => secondTerm = value ?? secondTerm);
+                  },
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      openUrl(Constants.leasing);
+                    },
+                    child: Text("leasing agreement & policy",
+                        maxLines: 10,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(decoration: TextDecoration.underline)),
+                  ),
+                ),
+              ],
+            ),
           ),
           16.h.verticalSpace,
         ],
@@ -135,5 +168,12 @@ class _TermsOfServiceWidgetState extends BaseState<TermsOfServiceWidget> {
   @override
   bool validate() {
     return firstTerm && secondTerm;
+  }
+}
+
+Future<void> openUrl(String url) async {
+  final Uri uri = Uri.parse(url);
+  if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+    throw 'Could not launch $url';
   }
 }

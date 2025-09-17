@@ -9,6 +9,8 @@ abstract class TenantRepository {
   Future<ApiResponse<CommonData>> approveTenant(String id,Map<String, dynamic> request);
   Future<ApiResponse<CommonData>> rejectTenant(String id);
   Future<ApiResponse<CommonData>> getTenantsByHostId(String hostId, {List<String> status});
+  Future<ApiResponse<CommonData>> getTenantVerificationToken(String type, String tenantId);
+  Future<ApiResponse<CommonData>> updateTenantVerification(String type, String tenantId, String token);
 }
 
 final tenantRepository = locator<TenantRepository>();
