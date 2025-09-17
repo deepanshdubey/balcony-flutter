@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:homework/data/constants.dart';
 import 'package:homework/data/model/response/common_data.dart';
-import 'package:homework/data/model/response/coversation_response.dart';
 import 'package:homework/data/model/response/create_msg_response.dart';
 import 'package:homework/data/model/response/pagination_data.dart';
 import 'package:homework/data/model/response/promo_list_model.dart';
@@ -350,12 +349,11 @@ abstract class ApiClient {
   Future<CommonData> getTenant(@Query("status") String status);
 
   /// chat
-  @GET("/conversation/all")
-  Future<CommonData> getAllConversations();
+  @GET("/conversation/{type}/all")
+  Future<CommonData> getAllConversations(@Path("type") String type);
 
   @POST("/conversation/start")
-  Future<CoversationResponse> startConversation(
-      @Body() Map<String, dynamic> request);
+  Future<CommonData> startConversation(@Body() Map<String, dynamic> request);
 
   @POST("/message/create")
   @MultiPart()
@@ -483,6 +481,10 @@ abstract class ApiClient {
   @POST("/property/bulk-email")
   Future<CommonData> propertyBulkEmail(@Body() Map<String, dynamic> request);
 
+  @POST("/upload")
+  @MultiPart()
+  Future<CommonData> uploadMedia(@Part() File file);
+  
   @MultiPart()
   @POST("/tenant/apply")
   Future<CommonData> applyForTenancy({

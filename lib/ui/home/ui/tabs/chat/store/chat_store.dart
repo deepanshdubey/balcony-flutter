@@ -1,13 +1,11 @@
 import 'dart:io';
 import 'package:homework/core/locator/locator.dart';
 import 'package:homework/data/model/response/common_data.dart';
-import 'package:homework/data/model/response/coversation_response.dart';
 import 'package:homework/data/model/response/create_msg_response.dart';
 import 'package:homework/data/repository/chat_repository.dart';
 import 'package:homework/data/repository/user_repository.dart';
 import 'package:mobx/mobx.dart';
 import 'package:http/http.dart' as http;
-
 
 part 'chat_store.g.dart';
 
@@ -17,16 +15,11 @@ abstract class _ChatStoreBase with Store {
   @observable
   CommonData? allConversationResponse;
 
-
   @observable
-  CoversationResponse? startConversationResponse;
+  CommonData? startConversationResponse;
 
   @observable
   CommonData? allMsgResponse;
-
-
-  @observable
-  CreateMsgResponse? createMsgResponse;
 
   @observable
   bool isLoading = false;
@@ -35,11 +28,11 @@ abstract class _ChatStoreBase with Store {
   String? errorMessage;
 
   @action
-  Future getAllConversations() async {
+  Future getAllConversations(String type) async {
     try {
       errorMessage = null;
       isLoading = true;
-      final response = await chatRepository.getAllConversations();
+      final response = await chatRepository.getAllConversations(type);
       if (response.isSuccess) {
         allConversationResponse = response.data;
       } else {
@@ -55,7 +48,7 @@ abstract class _ChatStoreBase with Store {
   }
 
   @action
-  Future startConversations(Map<String , dynamic> request) async {
+  Future startConversations(Map<String, dynamic> request) async {
     try {
       errorMessage = null;
       isLoading = true;
@@ -93,28 +86,7 @@ abstract class _ChatStoreBase with Store {
       isLoading = false;
     }
   }
-
-
-  @action
-  Future createMsg({File? media, required String conversationId, String? msg}) async {
-    try {
-      errorMessage = null;
-      isLoading = true;
-      final response = await chatRepository.createMessage( conversationId,  msg, media);
-      if (response.isSuccess) {
-        createMsgResponse = response.data;
-      } else {
-        errorMessage = response.error!.message;
-      }
-    } catch (e, st) {
-      logger.e(e);
-      logger.e(st);
-      errorMessage = e.toString();
-    } finally {
-      isLoading = false;
-    }
-  }
-
+/*
   @action
   Future createMsgMedia({File? media, required String conversationId, String? type}) async {
     try {
@@ -144,10 +116,7 @@ abstract class _ChatStoreBase with Store {
     } finally {
       isLoading = false;
     }
-  }
-
-
-
+  }*/
 
   Future<String> _processSingleFilePath(String filePathOrUrl) async {
     if (filePathOrUrl.startsWith('http')) {
@@ -157,7 +126,7 @@ abstract class _ChatStoreBase with Store {
     // Call generateS3url API
     var fileExtension = filePathOrUrl.split('.').last;
     var generateS3urlResponse =
-    await userRepository.generateS3Url(fileExtension, "chat");
+        await userRepository.generateS3Url(fileExtension, "chat");
 
     if (generateS3urlResponse.isSuccess) {
       var signedUrl = generateS3urlResponse.data!.signedUrl!;

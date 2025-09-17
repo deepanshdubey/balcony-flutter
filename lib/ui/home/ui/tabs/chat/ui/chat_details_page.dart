@@ -1,21 +1,18 @@
 import 'dart:io';
 
 import 'package:audio_waveforms/audio_waveforms.dart';
-import 'package:homework/core/session/app_session.dart';
-import 'package:homework/core/socket/socket_manager.dart';
-import 'package:homework/data/model/response/conversation_data.dart';
-
-import 'package:dio/dio.dart';
-import 'package:homework/ui/home/ui/tabs/chat/ui/audio_player.dart';
-import 'package:http_parser/http_parser.dart';
-import 'package:homework/ui/home/ui/tabs/chat/store/chat_store.dart';
-import 'package:homework/widget/app_back_button.dart';
-import 'package:homework/widget/app_image.dart';
-import 'package:homework/widget/app_text_field.dart';
-import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:homework/core/locator/locator.dart';
+import 'package:homework/core/session/app_session.dart';
+import 'package:homework/data/model/response/message_data.dart';
+import 'package:homework/data/repository_impl/socket_chat_manager.dart';
+import 'package:homework/ui/home/ui/tabs/chat/store/chat_store.dart';
+import 'package:homework/ui/home/ui/tabs/chat/ui/audio_player.dart';
+import 'package:homework/widget/app_back_button.dart';
+import 'package:homework/widget/app_image.dart';
+import 'package:homework/widget/app_text_field.dart';
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 
@@ -24,9 +21,16 @@ class ChatDetailsPage extends StatefulWidget {
   final String? conversationId;
   final String? image;
   final String? name;
+  final bool fetchChatHistory;
 
-  ChatDetailsPage(
-      {super.key, this.receiverId, this.conversationId, this.image, this.name});
+  const ChatDetailsPage({
+    super.key,
+    this.receiverId,
+    this.conversationId,
+    this.image,
+    this.name,
+    this.fetchChatHistory = false,
+  });
 
   @override
   State<ChatDetailsPage> createState() => _ChatDetailsPageState();
@@ -36,8 +40,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   final ValueNotifier<bool> _isRecording = ValueNotifier<bool>(false);
   late RecorderController _recorderController;
   final messageController = TextEditingController();
-  final SocketManager socketManager = SocketManager();
-  final ValueNotifier<List<LastMessage>> messages = ValueNotifier([]);
+  final ValueNotifier<List<MessageData>> messages = ValueNotifier([]);
   ValueNotifier<bool> isReceiverOnline = ValueNotifier(false);
   final chatStore = ChatStore();
   List<ReactionDisposer>? disposers;
@@ -48,7 +51,8 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     super.initState();
     _initializeChat();
     initialiseControllers();
-    chatStore.getAllMsg(widget.conversationId ?? " ");
+    if (widget.fetchChatHistory)
+      chatStore.getAllMsg(widget.conversationId ?? " ");
     addDisposer();
   }
 
@@ -93,18 +97,18 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     final file = File(filePath);
 
     if (file.existsSync()) {
-      await chatStore.createMsgMedia(
+      /*await chatStore.createMsgMedia(
         conversationId: widget.conversationId ?? "",
         media: file,
         type: 'audio', // Specify the media type as audio
       );
-      _scrollToBottom();
+      _scrollToBottom();*/
     }
   }
 
   @override
   void dispose() {
-    socketManager.disConnect();
+    socketManager.disconnect();
     messageController.dispose();
     _isRecording.dispose();
     removeDisposer();
@@ -117,7 +121,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
         messages.value = chatStore.allMsgResponse?.messages ?? [];
         _scrollToBottom();
       }),
-      reaction((_) => chatStore.createMsgResponse, (response) {
+      /* reaction((_) => chatStore.createMsgResponse, (response) {
         final socketMessage = {
           "senderId": session.user.id ?? "",
           "receiverId": widget.receiverId ?? "",
@@ -136,16 +140,17 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
         socketManager.sendMessage(socketMessage);
         print("send chat--> $socketMessage");
 
-        final newMessage = LastMessage(
+        final newMessage = MessageData(
           senderId: session.user.id ?? "",
           text: messageController.text.trim(),
-          media: Media(url: response?.media?.url, type: response?.media?.url),
+          media:
+              MediaData(url: response?.media?.url, type: response?.media?.url),
           // Use the file URL or upload it if needed
           createdAt: DateTime.now().toIso8601String(),
         );
         messageController.clear();
         messages.value = [...messages.value, newMessage];
-      }),
+      }),*/
     ];
   }
 
@@ -169,27 +174,31 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   }
 
   Future<void> _initializeChat() async {
-    socketManager.initializeSocket(
-        "https://api.homework.ws/"); // Replace with socket URL
-   // socketManager.addUser(session.user.id ?? "");
+    socketManager.connect(token: session.token, isAnonymous: session.isLogin);
 
-    socketManager.onGetMessage((data) {
+    socketManager.registerChatHandler(
+      (message) {
+        logger.e(message.toJson());
+      },
+    );
+
+    /* socketManager.registerChatHandler((data) {
       print(data);
 
-      Media? media;
+      MediaData? media;
       if (data['media'] != null &&
           data['media'] is List &&
           data['media'].isNotEmpty) {
         final mediaData =
             data['media'][0]; // Access the first media object in the list
-        media = Media.fromJson({
+        media = MediaData.fromJson({
           'fieldname': 'media',
           'url': mediaData['url'],
           'type': mediaData['type'],
         });
       }
 
-      final messageWithTime = LastMessage(
+      final messageWithTime = MessageData(
         senderId: data['senderId'],
         text: data['text'] ?? '',
         media: media,
@@ -209,22 +218,19 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
       isReceiverOnline.value =
           users.any((user) => user['userId'] == session.user.id);
 
+      print(session.user.id);
 
-      print( session.user.id);
+      print(widget.receiverId);
 
-      print( widget.receiverId);
-
-
-      print( isReceiverOnline.value);
-
-    });
+      print(isReceiverOnline.value);
+    });*/
   }
 
   void _sendMessage() {
     if (messageController.text.trim().isEmpty) return;
-    chatStore.createMsg(
+    /*chatStore.createMsg(
         conversationId: widget.conversationId ?? "",
-        msg: messageController.text.trim());
+        msg: messageController.text.trim());*/
 
     _scrollToBottom();
   }
@@ -237,12 +243,12 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
 
     if (result != null && result.files.isNotEmpty) {
       final file = File(result.files.single.path ?? '');
-      await chatStore.createMsgMedia(
+      /*await chatStore.createMsgMedia(
           conversationId: widget.conversationId ?? "",
           media: file,
           type: "image" // Send the file as media
           );
-
+*/
       _scrollToBottom();
     }
   }
@@ -255,7 +261,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   //
   //   if (result != null && result.files.isNotEmpty) {
   //     final file = File(result.files.single.path ?? '');
-  //     await chatStore.createMsgMedia(
+  //     await chatStore.createMsgMediaData(
   //       conversationId: widget.conversationId ?? "",
   //       media: file, // Send the file as media
   //     );
@@ -273,7 +279,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
 
     if (result != null && result.files.isNotEmpty) {
       final file = File(result.files.single.path ?? '');
-      await chatStore.createMsgMedia(
+      await chatStore.createMsgMediaData(
         conversationId: widget.conversationId ?? "",
         media: file,
         type: "document"// Send the file as media
@@ -385,7 +391,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   }
 
   Widget _buildChatList(BuildContext context) {
-    return ValueListenableBuilder<List<LastMessage>>(
+    return ValueListenableBuilder<List<MessageData>>(
       valueListenable: messages,
       builder: (context, messageList, _) {
         if (messageList.isEmpty) {

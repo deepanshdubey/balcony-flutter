@@ -5,7 +5,9 @@ import 'workspace_data.dart'; // Import the WorkspaceData model.
 
 part 'pagination_data.g.dart';
 
-@JsonSerializable(genericArgumentFactories: true,)
+@JsonSerializable(
+  genericArgumentFactories: true,
+)
 class PaginationData<T> {
   @JsonKey(name: 'success')
   final bool? success;
@@ -71,6 +73,6 @@ class PaginationItem<T> {
   ) =>
       _$PaginationItemFromJson(json, fromJsonT);
 
-  Map<String, dynamic> toJson(Object Function(T value) toJsonT) =>
+  Map<String, dynamic> toJson(Object? Function(T value) toJsonT) =>
       _$PaginationItemToJson(this, toJsonT);
 }

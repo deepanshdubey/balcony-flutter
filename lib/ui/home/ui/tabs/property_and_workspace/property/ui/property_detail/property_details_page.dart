@@ -13,8 +13,10 @@ import 'package:homework/ui/home/ui/tabs/chat/store/chat_store.dart';
 import 'package:homework/ui/home/ui/tabs/chat/ui/chat_details_page.dart';
 import 'package:homework/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/widget/schedule_widget.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/tenant_application_page.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/workspace_details/custom_dropdown.dart';
+import 'package:homework/ui/home/widget/floating_expandable_action.dart';
 import 'package:homework/values/colors.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
 import 'package:homework/widget/app_back_button.dart';
@@ -23,6 +25,7 @@ import 'package:homework/widget/app_text_field.dart';
 import 'package:homework/widget/primary_button.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
 import 'package:mobx/mobx.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 @RoutePage()
@@ -71,7 +74,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                 ChatDetailsPage(
                   image: host.image,
                   name: host.firstName,
-                  conversationId: response?.conversation?.Id ?? "",
+                  /*conversationId: response?.data.conversation?.Id ?? "",*/
                   receiverId: session.user.id,
                 ));
       }),
@@ -102,6 +105,95 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+  void sendEmail() async {
+    final String subject = Uri.encodeComponent("Help & Support Inquiry");
+    final Uri emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: 'test.host@hw.co',
+      query: 'subject=$subject',
+    );
+
+    if (await canLaunchUrl(emailLaunchUri)) {
+      await launchUrl(emailLaunchUri);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Could not launch email")),
+      );
+    }
+  }
+
+  //! Handle phone call with permission check
+  Future<void> _handlePhoneCall(BuildContext context, String url) async {
+    try {
+      //! For Android and iOS, check phone permissions
+      if (Theme.of(context).platform == TargetPlatform.android ||
+          Theme.of(context).platform == TargetPlatform.iOS) {
+        var callStatus = await Permission.phone.status;
+        if (callStatus.isDenied) {
+          callStatus = await Permission.phone.request();
+        }
+
+        if (callStatus.isGranted) {
+          final Uri callUri = Uri.parse(url);
+          if (await canLaunchUrl(callUri)) {
+            await launchUrl(callUri, mode: LaunchMode.externalApplication);
+          } else {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Could not launch $url")),
+              );
+            }
+          }
+        } else {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Enable call access in settings to continue."),
+              ),
+            );
+
+            //! Adding delay before opening settings
+            Future.delayed(const Duration(seconds: 1), () {
+              openAppSettings();
+            });
+          }
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Error making call: ${e.toString()}"),
+          ),
+        );
+      }
+    }
+  }
+
+  void showScheduleBottomSheet(BuildContext context) {
+    showAppBottomSheet(context, const ScheduleWidget());
+  }
+
+  void showAppBottomSheet(BuildContext context, Widget any,
+      {VoidCallback? onClose}) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.8,
+        padding: const EdgeInsets.only(top: 30),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(20)),
+        ),
+        child: any,
+      ),
+    ).then((_) {
+      onClose!();
+    });
   }
 
   @override
@@ -245,7 +337,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                                     fontWeight: FontWeight.w600,
                                   )),
                               12.verticalSpace,
-                              Container(
+                              SizedBox(
                                 width: 50.w,
                                 child: AppTextField(
                                   readOnly: true,
@@ -412,7 +504,7 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                                   children: [
                                     // Other widgets...
 
-                                    Container(
+                                    SizedBox(
                                       height: 200.h,
                                       child: ClipRRect(
                                         borderRadius:
@@ -460,6 +552,20 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                   ),
                 ),
               ),
+              floatingActionButton: FloatingExpandableActions(
+                onChat: () {
+                  showChatBottomSheet(context);
+                },
+                onEmail: () {
+                  sendEmail();
+                },
+                onSchedule: () {
+                  showScheduleBottomSheet(context);
+                },
+                onCall: () {
+                  _handlePhoneCall(context, "tel://2312231323");
+                },
+              ),
             );
     });
   }
@@ -505,8 +611,8 @@ class UnitTable extends StatefulWidget {
 
   const UnitTable({
     required this.units,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<UnitTable> createState() => _UnitTableState();

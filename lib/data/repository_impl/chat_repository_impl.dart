@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:homework/core/api/api_response/api_response.dart';
 import 'package:homework/data/model/response/common_data.dart';
-import 'package:homework/data/model/response/coversation_response.dart';
 import 'package:homework/data/model/response/create_msg_response.dart';
 import 'package:homework/data/remote/api_client.dart';
 import 'package:homework/data/repository/chat_repository.dart';
@@ -14,12 +13,12 @@ class ChatRepositoryImpl extends BaseRepositoryImpl implements ChatRepository {
   ChatRepositoryImpl(this.apiClient);
 
   @override
-  Future<ApiResponse<CommonData>> getAllConversations() {
-    return execute(apiClient.getAllConversations());
+  Future<ApiResponse<CommonData>> getAllConversations(String type) {
+    return execute(apiClient.getAllConversations(type));
   }
 
   @override
-  Future<ApiResponse<CoversationResponse>> startConversation(
+  Future<ApiResponse<CommonData>> startConversation(
       Map<String, dynamic> request) {
     return execute(apiClient.startConversation(request));
   }
@@ -41,8 +40,8 @@ class ChatRepositoryImpl extends BaseRepositoryImpl implements ChatRepository {
   }
 
   @override
-  Future<ApiResponse<CreateMsgResponse>> createMessageV2(Map<String, dynamic> request) {
+  Future<ApiResponse<CreateMsgResponse>> createMessageV2(
+      Map<String, dynamic> request) {
     return execute(apiClient.createMessageV2(request));
-
   }
 }
