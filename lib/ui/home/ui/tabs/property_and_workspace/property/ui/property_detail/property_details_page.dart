@@ -8,11 +8,13 @@ import 'package:homework/core/alert/alert_manager.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/data/model/response/workspace_data.dart';
 import 'package:homework/generated/assets.dart';
+import 'package:homework/ui/auth/ui/bottomsheet/onboarding_bottomsheet.dart';
 import 'package:homework/ui/home/ui/tabs/chat/store/chat_store.dart';
 import 'package:homework/ui/home/ui/tabs/chat/ui/chat_details_page.dart';
 import 'package:homework/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/store/property_store.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/widget/schedule_widget.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/tenant_application_page.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/workspace_details/custom_dropdown.dart';
 import 'package:homework/ui/home/widget/floating_expandable_action.dart';
 import 'package:homework/values/colors.dart';
@@ -288,15 +290,28 @@ class _PropertyDetailPageState extends State<PropertyDetailPage> {
                       PrimaryButton(
                         text: "apply for tenancy",
                         onPressed: () {
-                          launchUrl(
+                          /*launchUrl(
                               Uri.parse(
                                   "https://hw.co/property/${widget.propertyId}"),
-                              mode: LaunchMode.externalApplication);
-                          /*showAppBottomSheet(
-                          context,
-                          TenantApplicationPage(
-                            propertyData: propertyStore.propertyDetailsResponse,
-                          ));*/
+                              mode: LaunchMode.externalApplication);*/
+                          if (session.isLogin) {
+                            showAppBottomSheet(
+                                context,
+                                TenantApplicationPage(
+                                  propertyData:
+                                      propertyStore.propertyDetailsResponse,
+                                ));
+                          } else {
+                            showOnboardingBottomSheet(
+                              context,
+                              onSuccess: () => showAppBottomSheet(
+                                  context,
+                                  TenantApplicationPage(
+                                    propertyData:
+                                        propertyStore.propertyDetailsResponse,
+                                  )),
+                            );
+                          }
                         },
                       ),
                       32.verticalSpace,

@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/core/alert/alert_manager.dart';
 import 'package:homework/data/model/response/card_data.dart';
 import 'package:homework/ui/home/ui/tabs/more/ui/wallet/store/wallet_store.dart';
@@ -5,13 +8,12 @@ import 'package:homework/ui/home/ui/tabs/more/ui/wallet/widget/add_card_widget.d
 import 'package:homework/ui/home/ui/tabs/more/ui/wallet/widget/card_listing_widget.dart';
 import 'package:homework/ui/home/ui/tabs/more/ui/wallet/widget/edit_card_widget.dart';
 import 'package:homework/widget/app_back_button.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobx/mobx.dart';
 
 class WalletPage extends StatefulWidget {
-  const WalletPage({super.key});
+  final VoidCallback? onDefaultCardUpdated;
+
+  const WalletPage({super.key, this.onDefaultCardUpdated});
 
   @override
   State<WalletPage> createState() => _WalletPageState();
@@ -41,6 +43,11 @@ class _WalletPageState extends State<WalletPage> {
       }),
       reaction((_) => walletStore.deleteCardResponse, (response) {
         selectedOption.value = "Card";
+      }),
+      reaction((_) => walletStore.setDefaultCardResponse, (response) {
+        if (widget.onDefaultCardUpdated != null) {
+          widget.onDefaultCardUpdated!();
+        }
       }),
       reaction((_) => walletStore.errorMessage, (String? errorMessage) {
         if (errorMessage != null) {
@@ -134,7 +141,7 @@ class _WalletPageState extends State<WalletPage> {
             children: [
               _buildPaymentOption("Card", Icons.credit_card),
               const SizedBox(width: 16),
-             // _buildPaymentOption("PayPal", Icons.paypal),
+              // _buildPaymentOption("PayPal", Icons.paypal),
               const SizedBox(width: 16),
               _buildPaymentOption("Add Card", Icons.add),
             ],
