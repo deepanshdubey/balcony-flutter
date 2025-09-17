@@ -1,17 +1,15 @@
 name: homework
 description: "workspaces,a change in scenery,property rentals"
-.publish_to: 'none'
+.publish_to: "none"
 
 version: 1.0.7+8
 
 environment:
   sdk: ^3.5.2
 
-
 dependencies:
   flutter:
     sdk: flutter
-
 
   cupertino_icons: ^1.0.8
   flutter_screenutil: ^5.9.3
@@ -57,9 +55,9 @@ dependencies:
   webview_flutter: ^4.10.0
   google_mlkit_text_recognition: ^0.14.0
   wechat_assets_picker: ^9.5.0
+  flutter_gen: ^5.4.0
+  flutter_launcher_icons: ^0.14.4
   plaid_flutter: ^4.2.0
-
-
 
 dev_dependencies:
   build_runner: ^2.4.13
@@ -72,14 +70,13 @@ dev_dependencies:
   # json parsing
   json_serializable: ^6.7.1
 
+  # Asset generator
+  flutter_gen_runner: ^5.4.0
+
   flutter_test:
     sdk: flutter
 
-
   flutter_lints: ^4.0.0
-
-
-
 
 flutter:
   generate: true
@@ -113,16 +110,16 @@ flutter:
     - assets/dummy/
     - assets/fonts/
 
-
-
 #flutter_intl: true
 
+flutter_gen:
+  output: lib/generated/
+  assets:
+    enabled: true
 
-flutter_assets_generator:
-  output_dir: generated
-  auto_detection: true  # this should be a boolean
-  named_with_parent: true  # this should also be a boolean
-  output_filename: assets
-  class_name: Assets
-  filename_split_pattern: "[-_]"
-  path_ignore: []
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_logo.png"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/images/app_logo.png"

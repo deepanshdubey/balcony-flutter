@@ -12,7 +12,7 @@ import 'package:homework/core/session/session.dart';
 import 'package:homework/core/socket/socket_provider.dart';
 import 'package:homework/cubit/internet_cubit.dart';
 import 'package:homework/data/repository_impl/socket_chat_manager.dart';
-import 'package:homework/generated/l10n.dart';
+import 'package:homework/l10n/l10n.dart';
 import 'package:homework/router/app_router.dart';
 import 'package:homework/values/theme.dart';
 import 'package:provider/provider.dart';
@@ -76,9 +76,9 @@ class MyApp extends StatelessWidget {
               if (state == InternetState.lost) {
                 debugPrint("Internet Lost");
                 ScaffoldMessenger.of(context).showMaterialBanner(
-                  MaterialBanner(
+                  const MaterialBanner(
                     backgroundColor: Colors.red,
-                    content: const Text(
+                    content: Text(
                       "No Internet Connection",
                       style: TextStyle(color: Colors.white),
                     ),
@@ -94,14 +94,15 @@ class MyApp extends StatelessWidget {
         },
         routerDelegate: appRouter.delegate(),
         routeInformationParser: appRouter.defaultRouteParser(),
-        onGenerateTitle: (context) => S.of(context).applicationTitle,
+        onGenerateTitle: (context) =>
+            S.of(context)?.applicationTitle ?? 'homework',
         localizationsDelegates: const [
           S.delegate,
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        supportedLocales: S.delegate.supportedLocales,
+        supportedLocales: S.supportedLocales,
       ),
     );
   }
