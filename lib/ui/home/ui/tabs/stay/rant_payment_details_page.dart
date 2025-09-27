@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:homework/data/model/response/tenant_details.dart';
 import 'package:homework/ui/home/ui/tabs/more/ui/wallet/ui/wallet_page.dart';
 import 'package:homework/values/colors.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
@@ -10,7 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class RentPaymentDetailsPage extends StatefulWidget {
-  const RentPaymentDetailsPage({super.key});
+  final Tenants? tenants;
+  const RentPaymentDetailsPage({super.key, this.tenants});
 
   @override
   State<RentPaymentDetailsPage> createState() => _RentPaymentDetailsPageState();
@@ -161,7 +163,7 @@ class _RentPaymentDetailsPageState extends State<RentPaymentDetailsPage> {
                 ),
               ),
               builder: (BuildContext context) {
-                return FractionallySizedBox(
+                return const FractionallySizedBox(
                   heightFactor: 0.8,
                   child: WalletPage(),
                 );
@@ -170,8 +172,8 @@ class _RentPaymentDetailsPageState extends State<RentPaymentDetailsPage> {
           },
           child: Row(
             children: [
-              Text("No card yet!"),
-              Spacer(),
+              const Text("No card yet!"),
+              const Spacer(),
               Text('add',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontSize: 14.spMin,
@@ -192,7 +194,7 @@ class _RentPaymentDetailsPageState extends State<RentPaymentDetailsPage> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12).r,
       decoration: BoxDecoration(
         color: const Color(0xFFCCDDDC),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(8).r),
+        borderRadius: BorderRadius.vertical(top: const Radius.circular(8).r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -453,15 +455,12 @@ class AgreementCheckboxes extends StatefulWidget {
 }
 
 class _AgreementCheckboxesState extends State<AgreementCheckboxes> {
-  // ValueNotifiers to track checkbox states
   final ValueNotifier<bool> _termsAccepted = ValueNotifier<bool>(false);
   final ValueNotifier<bool> _serviceFeeAccepted = ValueNotifier<bool>(false);
 
   @override
   void initState() {
     super.initState();
-
-    // Listen to both checkboxes and call the onAllChecked when both are true
     _termsAccepted.addListener(_checkAllAccepted);
     _serviceFeeAccepted.addListener(_checkAllAccepted);
   }

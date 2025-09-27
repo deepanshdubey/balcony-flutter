@@ -1,7 +1,7 @@
+import 'package:hive/hive.dart';
 import 'package:homework/core/locator/locator.dart';
 import 'package:homework/core/session/session.dart';
 import 'package:homework/data/model/response/user_data.dart';
-import 'package:hive/hive.dart';
 
 class AppSession implements Session {
   static const _appDbBox = '_appDbBox';
@@ -28,6 +28,12 @@ class AppSession implements Session {
   set isLogin(bool update) => setValue("isLogin", update);
 
   @override
+  bool get prop => getValue("prop", defaultValue: true);
+
+  @override
+  set prop(bool update) => setValue("prop", update);
+
+  @override
   String get token => getValue("token", defaultValue: "");
 
   @override
@@ -52,6 +58,7 @@ class AppSession implements Session {
     isLoginSkipped = false;
     isWalkthroughSeen = false;
     sessionCookie = null;
+    isConcierge = false;
   }
 
   @override
@@ -72,6 +79,12 @@ class AppSession implements Session {
 
   @override
   set user(UserData user) => setValue("user", user);
+
+  @override
+  bool get isConcierge => getValue("isConcierge", defaultValue: false);
+
+  @override
+  set isConcierge(bool update) => setValue("isConcierge", update);
 }
 
 final session = locator<Session>();

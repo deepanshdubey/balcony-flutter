@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
+import 'package:homework/data/constants.dart';
 import 'package:homework/data/model/response/common_data.dart';
-import 'package:homework/data/model/response/coversation_response.dart';
 import 'package:homework/data/model/response/create_msg_response.dart';
 import 'package:homework/data/model/response/pagination_data.dart';
 import 'package:homework/data/model/response/promo_list_model.dart';
@@ -10,7 +11,12 @@ import 'package:homework/data/model/response/promo_model.dart';
 import 'package:homework/data/model/response/property_data.dart';
 import 'package:homework/data/model/response/subscription_list_model.dart';
 import 'package:homework/data/model/response/user_data.dart';
-import 'package:dio/dio.dart';
+import 'package:homework/ui/concierge/model/add_tenant_model.dart';
+import 'package:homework/ui/concierge/model/concierge_property_response.dart';
+import 'package:homework/ui/concierge/model/concierge_tanant_response.dart';
+import 'package:homework/ui/concierge/model/maintenace_request_response.dart';
+import 'package:homework/ui/concierge/model/ongoing_response.dart';
+import 'package:homework/ui/concierge/model/parcel_response.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -18,12 +24,15 @@ import '../model/response/workspace_data.dart';
 
 part 'api_client.g.dart';
 
-@RestApi(baseUrl: "https://api.homework.ws/api/v2/")
+@RestApi(baseUrl: Constants.baseUrl)
 abstract class ApiClient {
   factory ApiClient(Dio dio, {String baseUrl}) = _ApiClient;
 
   @POST("auth/register")
   Future<CommonData> register(@Body() Map<String, dynamic> request);
+
+  @POST("auth/social-auth")
+  Future<CommonData> socialAuth(@Body() Map<String, dynamic> request);
 
   @GET("auth/resend-otp")
   Future<CommonData> resentOtp(@Query("reset") bool isReset);
@@ -38,6 +47,9 @@ abstract class ApiClient {
   @POST("auth/login")
   Future<CommonData> login(@Body() Map<String, dynamic> request);
 
+  @POST("user/delete-account")
+  Future<CommonData> deleteAccount(@Body() Map<String, dynamic> request);
+
   @POST("auth/send-reset-otp")
   Future<CommonData> sendResetOtp(@Body() Map<String, dynamic> request);
 
@@ -49,6 +61,9 @@ abstract class ApiClient {
 
   @GET("auth/logout")
   Future<void> logout();
+
+  @GET("/auth/reauthenticate")
+  Future<CommonData> reAuthenticate();
 
   @GET("profile")
   Future<UserData> getProfile();
@@ -68,11 +83,10 @@ abstract class ApiClient {
 
   @GET("workspace/all")
   Future<PaginationData<WorkspaceData>> getWorkSpaces(
-    @Query("status") String? status,
-    @Query("sort") String? sort,
-    @Query("select") String? select,
+    @Query("query") String query,
     @Query("page") int? page,
     @Query("limit") int? limit,
+    @Query("sort") String? sort,
     @Query("includeHost") bool? includeHost,
   );
 
@@ -81,13 +95,33 @@ abstract class ApiClient {
     @Path("id") String id,
   );
 
+  @GET("property/all/host/{id}")
+  Future<CommonData> getHostProperties(
+    @Path("id") String id,
+  );
+
+  /*https://api.hw.co/api/v2/property/application-fee/{propertyID}*/
+  @GET("property/application-fee/{propertyID}")
+  Future<CommonData> getPropertyApplicationFee(@Path("propertyID") String id);
+
   @DELETE("/workspace/delete/{id}")
   Future<CommonData> deleteWorkspace(
     @Path("id") String id,
   );
 
+  @DELETE("/property/delete/{id}")
+  Future<CommonData> deleteProperty(
+    @Path("id") String id,
+  );
+
   @PUT("/workspace/update-status/{id}")
   Future<CommonData> updateWorkspaceStatus(
+    @Path("id") String id,
+    @Field("status") String status,
+  );
+
+  @PUT("property/update-status/{id}")
+  Future<CommonData> updatePropertyStatus(
     @Path("id") String id,
     @Field("status") String status,
   );
@@ -143,11 +177,10 @@ abstract class ApiClient {
     List<MultipartFile>? floorPlanImages,
     @Part(name: "info") Info info,
     @Part(name: "currency") String currency,
-    @Part(name: "unitList") List<Map<String, dynamic>> unitList,
+    @Part(name: "unitList") String unitList,
     @Part(name: "other") Map<String, dynamic> other,
     @Part(name: "amenities") String amenities,
-    @Part(name: "leasingPolicyDoc")
-    File image,
+    @Part(name: "leasingPolicyDoc") File image,
   );
 
   @GET("/workspace/search")
@@ -182,6 +215,34 @@ abstract class ApiClient {
 
   @POST("/tenant/apply")
   Future<CommonData> applyTenant(@Body() Map<String, dynamic> request);
+
+  @PUT("/tenant/update/{id}")
+  Future<CommonData> updateTenant(
+      @Path("id") String id, @Body() Map<String, dynamic> request);
+
+  @PUT("/tenant/approve/{id}")
+  Future<CommonData> approveTenant(
+      @Path("id") String id, @Body() Map<String, dynamic> request);
+
+  @GET("/tenant/reject/{id}")
+  Future<CommonData> rejectTenant(@Path("id") String id);
+
+  @GET("/tenant/all/host/{id}")
+  Future<CommonData> getTenantsByHostId(
+    @Path("id") String hostId,
+    @Query("status") String? status, // Optional query parameter
+  );
+
+  @POST("/tenant/payment")
+  Future<CommonData> tenantPayment(@Body() Map<String, dynamic> request);
+
+  ///https://api.hw.co/api/v2/tenant/verification/get-token/identity-verification/{tenantID}
+
+  @GET("/tenant/verify/{type}/{id}/{token}")
+  Future<CommonData> updateTenantVerification(@Path("type") String type, @Path("id") String tenantId, @Path("token") String token );
+
+  @GET("/tenant/verification/get-token/{type}/{id}")
+  Future<CommonData> getTenantVerificationToken(@Path("type") String type, @Path("id") String tenantId);
 
   /// -- promo --
 
@@ -230,7 +291,7 @@ abstract class ApiClient {
     @Body() Map<String, dynamic> request,
   );
 
-  @PUT("card/set-default")
+  @PUT("card/default-card")
   Future<CommonData> setDefaultCard(@Field("cardId") String id);
 
   @DELETE("card/delete/{id}")
@@ -240,6 +301,9 @@ abstract class ApiClient {
   @GET("/subscription/all")
   Future<SubscriptionListModel> getSubscription(
       @Query("currency") String? currency);
+
+  @POST("/subscription/purchase")
+  Future<CommonData> subscriptionPurchase(@Body() Map<String, dynamic> request);
 
   /// == Booking
   @POST("booking/create")
@@ -281,13 +345,15 @@ abstract class ApiClient {
   @POST("booking/rate")
   Future<CommonData> rateBooking(@Body() Map<String, dynamic> request);
 
+  @GET("/tenant/me")
+  Future<CommonData> getTenant(@Query("status") String status);
+
   /// chat
-  @GET("/conversation/all")
-  Future<CommonData> getAllConversations();
+  @GET("/conversation/{type}/all")
+  Future<CommonData> getAllConversations(@Path("type") String type);
 
   @POST("/conversation/start")
-  Future<CoversationResponse> startConversation(
-      @Body() Map<String, dynamic> request);
+  Future<CommonData> startConversation(@Body() Map<String, dynamic> request);
 
   @POST("/message/create")
   @MultiPart()
@@ -307,8 +373,11 @@ abstract class ApiClient {
   Future<CommonData> getAllMessage(@Path("id") String conversationId);
 
   ///auto
-  @GET("auto/status")
-  Future<CommonData> getAutoStatus();
+  @GET("auto/status/{type}/{}")
+  Future<CommonData> getAutoStatus(
+    @Path("type") String type,
+    @Path("tenantId") String? tenantId,
+  );
 
   @GET("auto/accept-booking")
   Future<CommonData> toggleAcceptBooking();
@@ -317,8 +386,11 @@ abstract class ApiClient {
   Future<CommonData> toggleRentPayment();
 
   ///update payout info
-  @GET("user/onboarding-account/{type}")
-  Future<CommonData> updatePayoutInfo(@Path("type") String type);
+  @GET("user/onboarding-account/{workspace}")
+  Future<CommonData> updatePayoutInfo(
+    @Path("workspace") String workspace,
+    @Query("country") String country,
+  );
 
   @GET("user/balance/{hostId}")
   Future<CommonData> getEarnings(
@@ -326,5 +398,112 @@ abstract class ApiClient {
 
   @POST("upload/")
   @MultiPart()
-  Future<CommonData> uploadImages(@Part(name: "files") List<MultipartFile> images,);
+  Future<CommonData> uploadImages(
+    @Part(name: "files") List<MultipartFile> images,
+  );
+
+  @POST("/upload/generate-signed-url")
+  Future<CommonData> generateSignedUrl(
+      @Field("purpose") String purpose, @Field("extension") String extension);
+
+  @POST("property/create_v2")
+  Future<CommonData> createPropertyV2(@Body() Map<String, dynamic> request);
+
+  @POST("message/create_v2")
+  Future<CreateMsgResponse> createMessageV2(
+      @Body() Map<String, dynamic> request);
+
+  //concierge
+
+  @POST("concierge/login")
+  Future<CommonData> conciergeLogin(@Body() Map<String, dynamic> request);
+
+  @POST("/concierge/property/add")
+  Future<ConciergePropertyResponse> conciergePropertyAdd(
+      @Body() Map<String, dynamic> request);
+
+  @GET("concierge/property/all")
+  Future<ConciergePropertyResponse> conciergePropertyAll();
+
+  @GET("concierge/parcel/me")
+  Future<ParcelResponse> conciergeParcelMe();
+
+  @GET("/concierge/parcel/add/{type}/{tenantId}")
+  Future<ParcelResponse> parcelAdd(
+    @Path("type") String type,
+    @Path("tenantId") String tenantId,
+  );
+
+  @GET("/concierge/parcel/delete/{type}/{tenantId}")
+  Future<ParcelResponse> parcelDelete(
+    @Path("type") String type,
+    @Path("tenantId") String tenantId,
+  );
+
+  @DELETE("concierge/tenant/delete/{id}")
+  Future<ParcelResponse> tenantDelete(
+    @Path("id") String tenantId,
+  );
+
+  @GET("/concierge/parcel/remind")
+  Future<CommonData> parcelRemind();
+
+  @GET("concierge/tenant/all")
+  Future<ConciergeTanantResponse> conciergeTenantAll();
+
+  @POST("concierge/tenant/add")
+  Future<AddTenantModel> conciergeTenantAdd(
+      @Body() Map<String, dynamic> request);
+
+  @GET("concierge/outgoing-parcel/all")
+  Future<OngoingResponse> ongoingAll();
+
+  @POST("/concierge/outgoing-parcel/add")
+  Future<CommonData> ongoingAdd(@Body() Map<String, dynamic> request);
+
+  @GET("concierge/outgoing-parcel/toggle-status/{id}")
+  Future<CommonData> ongoingToggleStatus(
+    @Path("id") String tenantId,
+  );
+
+  @GET("concierge/maintenance-request/all")
+  Future<MaintenaceRequestResponse> maintenanceRequestAll();
+
+  @POST("concierge/maintenance-request/add")
+  Future<CommonData> maintenanceRequestsAdd(
+      @Body() Map<String, dynamic> request);
+
+  @GET("/concierge/maintenance-request/toggle-status/{id}")
+  Future<CommonData> maintenanceRequestToggle(
+    @Path("id") String tenantId,
+  );
+
+  @POST("/property/bulk-email")
+  Future<CommonData> propertyBulkEmail(@Body() Map<String, dynamic> request);
+
+  @POST("/upload")
+  @MultiPart()
+  Future<CommonData> uploadMedia(@Part() File file);
+  
+  @MultiPart()
+  @POST("/tenant/apply")
+  Future<CommonData> applyForTenancy({
+    @Part(name: "firstName") required String firstName,
+    @Part(name: "lastName") required String lastName,
+    @Part(name: "email") required String email,
+    @Part(name: "socialSecurityNo") required String socialSecurityNo,
+    @Part(name: "phone") required String phone,
+    @Part(name: "address") required String address,
+    @Part(name: "city") required String city,
+    @Part(name: "state") required String state,
+    @Part(name: "zipCode") required String zipCode,
+    @Part(name: "country") required String country,
+    @Part(name: "currency") required String currency,
+    @Part(name: "moveInRequest") required String moveInRequest,
+    @Part(name: "selectedUnitId") required String selectedUnitId,
+    @Part(name: "note") required String note,
+    @Part(name: "docs") required String docs,
+    // If docs should be a file, use:
+    // @Part(name: "docs") required MultipartFile docsFile,
+  });
 }

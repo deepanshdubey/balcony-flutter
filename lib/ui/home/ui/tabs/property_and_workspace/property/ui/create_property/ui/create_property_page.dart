@@ -1,6 +1,7 @@
-import 'dart:io';
-
 import 'package:auto_route/annotations.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/core/alert/alert_manager.dart';
 import 'package:homework/data/model/response/property_data.dart';
 import 'package:homework/data/model/response/workspace_data.dart';
@@ -17,18 +18,17 @@ import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/crea
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/widget/processing_fee_widget.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/widget/unit_list_widget.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/model/amenities_item.dart';
+import 'package:homework/values/extensions/context_ext.dart';
 import 'package:homework/widget/app_back_button.dart';
 import 'package:homework/widget/primary_button.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobx/mobx.dart';
 
 @RoutePage()
 class CreatePropertyPage extends StatefulWidget {
   final PropertyData? existingProperty;
+  final VoidCallback? onEdited;
 
-  const CreatePropertyPage({super.key, this.existingProperty});
+  const CreatePropertyPage({super.key, this.existingProperty, this.onEdited});
 
   @override
   State<CreatePropertyPage> createState() => _CreatePropertyPageState();
@@ -37,6 +37,7 @@ class CreatePropertyPage extends StatefulWidget {
 class _CreatePropertyPageState extends State<CreatePropertyPage> {
   ThemeData get theme => Theme.of(context);
   late bool isEdit;
+  late PropertyData propertyData;
   late GlobalKey<BaseState> propertyAddressKey;
   late GlobalKey<BaseState> processingFeeKey;
   late GlobalKey<BaseState> photosKey;
@@ -52,6 +53,10 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
   @override
   void initState() {
     isEdit = widget.existingProperty != null;
+    if (isEdit) {
+      propertyData = widget.existingProperty!;
+      store.getPropertyDetails(id: propertyData.id.toString());
+    }
     propertyAddressKey = GlobalKey<BaseState>();
     processingFeeKey = GlobalKey<BaseState>();
     photosKey = GlobalKey<BaseState>();
@@ -59,7 +64,8 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
     leasingTermsKey = GlobalKey<BaseState>();
     amenitiesKey = GlobalKey<BaseState>();
     termsOfServiceKey = GlobalKey<BaseState>();
-    summaryController = TextEditingController();
+    summaryController =
+        TextEditingController(text: isEdit ? propertyData.info?.summary : null);
     addDisposer();
     super.initState();
   }
@@ -85,12 +91,22 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
           alertManager.showError(context, errorMessage);
         }
       }),
+      reaction((_) => store.propertyDetailsResponse, (data) {
+        if (data != null) {
+          setState(() {
+            propertyData = data;
+          });
+        }
+      }),
       reaction((_) => store.createPropertyResponse, (res) {
         if (res != null) {
           alertManager.showSuccess(
             context,
-            'property added successfully',
+            'property ${isEdit ? "updated" : "added"} successfully',
             afterAlert: () {
+              if (widget.onEdited != null) {
+                widget.onEdited!();
+              }
               appRouter.back();
             },
           );
@@ -129,20 +145,26 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
                       divider(),
                       PhotosWidget(
                         key: photosKey,
+                        existingImages: isEdit ? propertyData.images : null,
                         isWorkspace: false,
                       ),
                       30.h.verticalSpace,
                       AddressWidget(
                         key: propertyAddressKey,
                         isWorkSpace: false,
+                        existingAddress: isEdit ? propertyData.info : null,
                       ),
                       30.h.verticalSpace,
                       ProcessingFeeWidget(
                         key: processingFeeKey,
+                        feeType: isEdit
+                            ? propertyData.other?.chargeFeeFromRent
+                            : null,
                       ),
                       30.h.verticalSpace,
                       UnitListWidget(
                         key: unitListKey,
+                        existingUnits: isEdit ? propertyData.unitList : null,
                       ),
                       30.h.verticalSpace,
                       ShortSummaryWidget(
@@ -160,11 +182,19 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
                       AmenitiesWidget(
                         key: amenitiesKey,
                         isWorkspace: false,
-                        amenities: AmenitiesItem.preset(),
+                        amenities: AmenitiesItem.preset().map((amenity) {
+                          final isChecked = isEdit &&
+                              propertyData.amenities?.contains(amenity.name) ==
+                                  true;
+                          amenity.isChecked = isChecked;
+                          return amenity;
+                        }).toList(),
                       ),
                       30.h.verticalSpace,
                       LeaseTermsAndPolicyWidget(
                         key: leasingTermsKey,
+                        isEdit: isEdit,
+                        existingFilePath: isEdit ? null : null,
                       ),
                       divider(),
                       TermsOfServiceWidget(
@@ -174,10 +204,14 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
                       30.h.verticalSpace,
                       Observer(builder: (context) {
                         var isLoading = store.isLoading;
-                        return PrimaryButton(
-                          text: "add new property",
-                          onPressed: submit,
-                          isLoading: isLoading,
+                        return SizedBox(
+                          width: context.width,
+                          child: PrimaryButton(
+                            text:
+                                isEdit ? "update property" : "add new property",
+                            onPressed: submit,
+                            isLoading: isLoading,
+                          ),
                         );
                       }),
                     ],
@@ -218,16 +252,17 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
   void submit() {
     if (validate()) {
       Map<String, dynamic> unitData = unitListKey.currentState!.getApiData();
-      List<File> floorPlanImages = unitData['floor_plan_images'];
       String currency = unitData['currency'];
-      List<Map<String, dynamic>> units = unitData['units'];
+      var units = unitData['units'];
       Info info = propertyAddressKey.currentState!.getApiData();
       info.summary = summaryController.text.trim();
       bool other = processingFeeKey.currentState!.getApiData();
 
-      store.createProperty(
+      store.createPropertyV2(
+        id: isEdit ? propertyData.id : null,
         photosKey.currentState!.getApiData(),
-        floorPlanImages,
+        units,
+        leasingTermsKey.currentState?.getApiData(),
         info,
         currency,
         {
@@ -236,8 +271,6 @@ class _CreatePropertyPageState extends State<CreatePropertyPage> {
           "leaseDuration": leaseDuration?.toInt()
         },
         amenitiesKey.currentState!.getApiData(),
-        leasingTermsKey.currentState!.getApiData(),
-        units,
       );
     }
   }

@@ -75,15 +75,13 @@ class MapWorkspaceWidget<T> extends StatelessWidget {
                                 )),
                           ),
                           chip(
-                            Expanded(
-                              child: Text(
-                                  workspaceData.pricing?.formattedTotalPerDay ??
-                                      "0",
-                                  style: theme.textTheme.titleLarge?.copyWith(
-                                    fontSize: 12.spMin,
-                                    fontWeight: FontWeight.w500,
-                                  )),
-                            ),
+                            Text(
+                                workspaceData.pricing?.formattedTotalPerDay ??
+                                    "0",
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  fontSize: 12.spMin,
+                                  fontWeight: FontWeight.w500,
+                                )),
                           ),
                           6.w.horizontalSpace,
                         ],

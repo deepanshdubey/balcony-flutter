@@ -75,6 +75,30 @@ class AlertManagerImpl implements AlertManager {
     );
   }
 
+
+  @override
+  Future<void> comingSoonDialog(
+      {required BuildContext context,
+      bool isCancelable = true}) {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: isCancelable,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text("Coming Soon..."),
+          actions: [
+            PrimaryButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              text: "Ok",
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void showAlert(BuildContext context, Widget alert) {
     showDialog(

@@ -1,3 +1,4 @@
+import 'package:homework/core/session/app_session.dart';
 import 'package:homework/ui/home/ui/tabs/user_home/widget/search_properties_widget.dart';
 import 'package:homework/ui/home/ui/tabs/user_home/widget/search_workspaces_widget.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
@@ -28,7 +29,7 @@ class _SearchPageState extends State<SearchPage> {
       child: ListView(
         children: [
           12.h.verticalSpace,
-          tabBar(theme),
+            tabBar(theme),
           10.h.verticalSpace,
           _currentIndex == 0
               ? const SearchWorkspacesWidget()
@@ -58,7 +59,7 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ),
         10.w.horizontalSpace,
-        Container(
+        if(session.prop)   Container(
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(12.r)),
@@ -67,8 +68,8 @@ class _SearchPageState extends State<SearchPage> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildTab(theme, "workspace", 0),
-              _buildTab(theme, "properties", 1),
+              _buildTab(theme, "commercial", 0),
+              _buildTab(theme, "residential", 1),
             ],
           ),
         ),

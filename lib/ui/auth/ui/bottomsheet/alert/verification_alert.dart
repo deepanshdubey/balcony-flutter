@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:homework/core/alert/alert_manager.dart';
+import 'package:homework/core/session/app_session.dart';
 import 'package:homework/ui/auth/store/auth_store.dart';
 import 'package:homework/widget/app_outlined_button.dart';
 import 'package:homework/widget/app_text_field.dart';
@@ -75,6 +76,9 @@ class _VerificationAlertState extends State<VerificationAlert> {
     disposers ??= [
       reaction((_) => authStore.verificationResponse, (response) {
         if (response != null) {
+          session.user = response.user!;
+          session.isLogin = true;
+          session.token = response.token! ;
           Navigator.of(context).pop();
           widget.onSuccess();
         }

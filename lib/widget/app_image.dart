@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
-
+import 'package:homework/generated/assets.dart';
 import 'package:homework/values/extensions/int_ext.dart';
 import 'package:homework/widget/app_loader.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -154,7 +154,13 @@ class _AppImageState extends State<AppImage> {
           color: widget.borderColor,
         ),
       ),
-      child: const Center(child: AppLoader()),
+      child: Image.asset(
+      Assets.imagesHostYourPropertyOrWorkspace,
+        fit: widget.boxFit ?? BoxFit.cover,
+        height: widget.height,
+        width: widget.width,
+        alignment: widget.alignment,
+      ),
     );
   }
 

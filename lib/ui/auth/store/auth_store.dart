@@ -4,6 +4,7 @@ import 'package:homework/core/locator/locator.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/data/model/response/common_data.dart';
 import 'package:homework/data/model/response/subscription_list_model.dart';
+import 'package:homework/data/repository/social_manager.dart';
 import 'package:homework/data/repository/user_repository.dart';
 import 'package:homework/ui/auth/ui/bottomsheet/alert/verification_alert.dart';
 import 'package:mobx/mobx.dart';
@@ -13,8 +14,14 @@ part 'auth_store.g.dart';
 class AuthStore = _AuthStoreBase with _$AuthStore;
 
 abstract class _AuthStoreBase with Store {
+  final socialManager = locator<SocialManager>();
+
   @observable
   CommonData? loginResponse;
+
+
+  @observable
+  CommonData? deleteAccountResponse;
 
   @observable
   CommonData? registerResponse;
@@ -47,6 +54,9 @@ abstract class _AuthStoreBase with Store {
   CommonData? updateProfileResponse;
 
   @observable
+  CommonData? subscriptionPurchaseResponse;
+
+  @observable
   List<Plan>? subscriptionListResponse;
 
   @action
@@ -72,13 +82,33 @@ abstract class _AuthStoreBase with Store {
   }
 
   @action
-  Future register(Map<String, dynamic> request) async {
+  Future deleteAccount(Map<String, dynamic> request) async {
     try {
       errorMessage = null;
       isLoading = true;
-      final response = await userRepository.register(request);
+      final response = await userRepository.deleteAccount(request);
       if (response.isSuccess) {
-        registerResponse = response.data!;
+        deleteAccountResponse = response.data!;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future socialAuth({SocialPlatform type = SocialPlatform.google}) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      var response = await socialManager.loginWithSocial(type);
+      if (response.isSuccess) {
+        loginResponse = response.data!;
         session.user = response.data!.user!;
         session.token = response.data!.token!;
       } else {
@@ -87,6 +117,24 @@ abstract class _AuthStoreBase with Store {
     } catch (e, st) {
       logger.e(e);
       logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future register(Map<String, dynamic> request) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await userRepository.register(request);
+      if (response.isSuccess) {
+        registerResponse = response.data!;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
       errorMessage = e.toString();
     } finally {
       isLoading = false;
@@ -193,8 +241,6 @@ abstract class _AuthStoreBase with Store {
     }
   }
 
-
-
   @action
   Future updateProfile(Map<String, dynamic> request) async {
     try {
@@ -244,8 +290,6 @@ abstract class _AuthStoreBase with Store {
     }
   }
 
-
-
   @action
   Future getSubscriptionList(String currency) async {
     try {
@@ -254,6 +298,26 @@ abstract class _AuthStoreBase with Store {
       final response = await userRepository.subscriptionList(currency);
       if (response.isSuccess) {
         subscriptionListResponse = response.data?.plans;
+      } else {
+        errorMessage = response.error!.message;
+      }
+    } catch (e, st) {
+      logger.e(e);
+      logger.e(st);
+      errorMessage = e.toString();
+    } finally {
+      isLoading = false;
+    }
+  }
+
+  @action
+  Future subscriptionPurchase(Map<String, dynamic> request) async {
+    try {
+      errorMessage = null;
+      isLoading = true;
+      final response = await userRepository.subscriptionPurchase(request);
+      if (response.isSuccess) {
+        subscriptionPurchaseResponse = response.data;
       } else {
         errorMessage = response.error!.message;
       }

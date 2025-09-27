@@ -1,19 +1,18 @@
 import 'dart:io';
 
-import 'package:homework/core/session/app_session.dart';
-import 'package:homework/core/socket/socket_manager.dart';
-import 'package:homework/data/model/response/conversation_data.dart';
-
-import 'package:dio/dio.dart';
-import 'package:http_parser/http_parser.dart';
-import 'package:homework/ui/home/ui/tabs/chat/store/chat_store.dart';
-import 'package:homework/widget/app_back_button.dart';
-import 'package:homework/widget/app_image.dart';
-import 'package:homework/widget/app_text_field.dart';
-import 'package:dio/dio.dart';
+import 'package:audio_waveforms/audio_waveforms.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:homework/core/locator/locator.dart';
+import 'package:homework/core/session/app_session.dart';
+import 'package:homework/data/model/response/message_data.dart';
+import 'package:homework/data/repository_impl/socket_chat_manager.dart';
+import 'package:homework/ui/home/ui/tabs/chat/store/chat_store.dart';
+import 'package:homework/ui/home/ui/tabs/chat/ui/audio_player.dart';
+import 'package:homework/widget/app_back_button.dart';
+import 'package:homework/widget/app_image.dart';
+import 'package:homework/widget/app_text_field.dart';
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 
@@ -22,18 +21,26 @@ class ChatDetailsPage extends StatefulWidget {
   final String? conversationId;
   final String? image;
   final String? name;
+  final bool fetchChatHistory;
 
-  ChatDetailsPage(
-      {super.key, this.receiverId, this.conversationId, this.image, this.name});
+  const ChatDetailsPage({
+    super.key,
+    this.receiverId,
+    this.conversationId,
+    this.image,
+    this.name,
+    this.fetchChatHistory = false,
+  });
 
   @override
   State<ChatDetailsPage> createState() => _ChatDetailsPageState();
 }
 
 class _ChatDetailsPageState extends State<ChatDetailsPage> {
+  final ValueNotifier<bool> _isRecording = ValueNotifier<bool>(false);
+  late RecorderController _recorderController;
   final messageController = TextEditingController();
-  final SocketManager socketManager = SocketManager();
-  final ValueNotifier<List<LastMessage>> messages = ValueNotifier([]);
+  final ValueNotifier<List<MessageData>> messages = ValueNotifier([]);
   ValueNotifier<bool> isReceiverOnline = ValueNotifier(false);
   final chatStore = ChatStore();
   List<ReactionDisposer>? disposers;
@@ -43,14 +50,67 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   void initState() {
     super.initState();
     _initializeChat();
-    chatStore.getAllMsg(widget.conversationId ?? " ");
+    initialiseControllers();
+    if (widget.fetchChatHistory)
+      chatStore.getAllMsg(widget.conversationId ?? " ");
     addDisposer();
+  }
+
+  Future<void> initialiseControllers() async {
+    _recorderController = RecorderController()
+      ..androidEncoder = AndroidEncoder.aac
+      ..androidOutputFormat = AndroidOutputFormat.amr_nb
+      ..iosEncoder = IosEncoder.kAudioFormatMPEG4AAC
+      ..bitRate = 256000 // Increase bitrate to improve quality
+      ..sampleRate = 44100;
+  }
+
+  Future<void> startRecording() async {
+    try {
+      if (await _recorderController.checkPermission()) {
+        await _recorderController.record(); // Start recording
+      }
+    } catch (e) {
+      print('Error recording: $e');
+    }
+  }
+
+  Future<void> stopRecording() async {
+    var path = await _recorderController.stop() ??
+        ''; // Get the file path after stopping the recording
+    if (path.isNotEmpty) {
+      print('Recording saved at: $path');
+      await uploadAudio(path); // Upload the audio file
+    }
+  }
+
+  void _toggleRecording() {
+    _isRecording.value = !_isRecording.value;
+    if (_isRecording.value) {
+      startRecording();
+    } else {
+      stopRecording();
+    }
+  }
+
+  Future<void> uploadAudio(String filePath) async {
+    final file = File(filePath);
+
+    if (file.existsSync()) {
+      /*await chatStore.createMsgMedia(
+        conversationId: widget.conversationId ?? "",
+        media: file,
+        type: 'audio', // Specify the media type as audio
+      );
+      _scrollToBottom();*/
+    }
   }
 
   @override
   void dispose() {
-    socketManager.disConnect();
+    socketManager.disconnect();
     messageController.dispose();
+    _isRecording.dispose();
     removeDisposer();
     super.dispose();
   }
@@ -60,39 +120,37 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
       reaction((_) => chatStore.allMsgResponse, (response) {
         messages.value = chatStore.allMsgResponse?.messages ?? [];
         _scrollToBottom();
-
       }),
-      reaction((_) => chatStore.createMsgResponse, (response) {
-
-
-
+      /* reaction((_) => chatStore.createMsgResponse, (response) {
         final socketMessage = {
           "senderId": session.user.id ?? "",
           "receiverId": widget.receiverId ?? "",
           "text": messageController.text.trim().isNotEmpty
               ? messageController.text.trim()
-              : null, // Only include text if it's not empty
-          "media": response?.media?.isNotEmpty == true
-              ? {
-            "url": response?.media?[0].url,
-            "type": response?.media?[0].type,
-          }
-              : null,  // If no media, set it to null
+              : null, // Only include text if it's not
+          // empty
+          if (response?.media?.url != null)
+            "media": {
+              "url": response?.media?.url,
+              "type": response?.media?.type,
+            }, // If no media, set it to null
           "seen": false,
         };
 
-
         socketManager.sendMessage(socketMessage);
+        print("send chat--> $socketMessage");
 
-        final newMessage = LastMessage(
+        final newMessage = MessageData(
           senderId: session.user.id ?? "",
           text: messageController.text.trim(),
-          media: Media(url:response?.media?[0].url, type: response?.media?[0].url), // Use the file URL or upload it if needed
+          media:
+              MediaData(url: response?.media?.url, type: response?.media?.url),
+          // Use the file URL or upload it if needed
           createdAt: DateTime.now().toIso8601String(),
         );
         messageController.clear();
         messages.value = [...messages.value, newMessage];
-      }),
+      }),*/
     ];
   }
 
@@ -116,21 +174,31 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   }
 
   Future<void> _initializeChat() async {
-    socketManager.initializeSocket(
-        "https://api.homework.ws/"); // Replace with socket URL
-    socketManager.addUser(session.user.id ?? "");
+    socketManager.connect(token: session.token, isAnonymous: session.isLogin);
 
-    socketManager.onGetMessage((data) {
-      Media? media; // Initialize as null (optional)
-      if (data['media'] != null && data['media'].isNotEmpty) {
-        final mediaData = data['media'][0];
-        media = Media.fromJson({
-          'fieldname': 'media', // Static value
+    socketManager.registerChatHandler(
+      (message) {
+        logger.e(message.toJson());
+      },
+    );
+
+    /* socketManager.registerChatHandler((data) {
+      print(data);
+
+      MediaData? media;
+      if (data['media'] != null &&
+          data['media'] is List &&
+          data['media'].isNotEmpty) {
+        final mediaData =
+            data['media'][0]; // Access the first media object in the list
+        media = MediaData.fromJson({
+          'fieldname': 'media',
           'url': mediaData['url'],
           'type': mediaData['type'],
         });
       }
-      final messageWithTime = LastMessage(
+
+      final messageWithTime = MessageData(
         senderId: data['senderId'],
         text: data['text'] ?? '',
         media: media,
@@ -140,29 +208,34 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
       if (data['senderId'] != session.user.id) {
         messages.value = [...messages.value, messageWithTime];
       }
+
       _scrollToBottom();
     });
 
-
-
     socketManager.onGetUsers((users) {
+      print(users);
+
       isReceiverOnline.value =
-          users.any((user) => user['userId'] == widget.receiverId);
-    });
+          users.any((user) => user['userId'] == session.user.id);
+
+      print(session.user.id);
+
+      print(widget.receiverId);
+
+      print(isReceiverOnline.value);
+    });*/
   }
 
   void _sendMessage() {
     if (messageController.text.trim().isEmpty) return;
-    chatStore.createMsg(
+    /*chatStore.createMsg(
         conversationId: widget.conversationId ?? "",
-        msg: messageController.text.trim());
-
+        msg: messageController.text.trim());*/
 
     _scrollToBottom();
   }
 
   Future<void> _pickAndSendImage() async {
-    // Pick an image file
     final result = await FilePicker.platform.pickFiles(
       type: FileType.image, // Restrict to images
       allowMultiple: false,
@@ -170,17 +243,92 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
 
     if (result != null && result.files.isNotEmpty) {
       final file = File(result.files.single.path ?? '');
-
-      // Upload media or send the image message (depending on your app's requirements)
-      await chatStore.createMsg(
-        conversationId: widget.conversationId ?? "",
-        media: file, // Send the file as media
-      );
-
+      /*await chatStore.createMsgMedia(
+          conversationId: widget.conversationId ?? "",
+          media: file,
+          type: "image" // Send the file as media
+          );
+*/
       _scrollToBottom();
     }
   }
 
+  // Future<void> _pickAndSendVideo() async {
+  //   final result = await FilePicker.platform.pickFiles(
+  //     type: FileType.video, // Restrict to video files
+  //     allowMultiple: false,
+  //   );
+  //
+  //   if (result != null && result.files.isNotEmpty) {
+  //     final file = File(result.files.single.path ?? '');
+  //     await chatStore.createMsgMediaData(
+  //       conversationId: widget.conversationId ?? "",
+  //       media: file, // Send the file as media
+  //     );
+  //
+  //     _scrollToBottom();
+  //   }
+  // }
+
+  /*Future<void> _pickAndSendDocument() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom, // Restrict to custom types (documents)
+      allowedExtensions: ['pdf', 'doc', 'docx', 'txt'], // Allowed extensions (optional)
+      allowMultiple: false,
+    );
+
+    if (result != null && result.files.isNotEmpty) {
+      final file = File(result.files.single.path ?? '');
+      await chatStore.createMsgMediaData(
+        conversationId: widget.conversationId ?? "",
+        media: file,
+        type: "document"// Send the file as media
+      );
+
+      _scrollToBottom();
+    }
+  }*/
+
+  // void _showPickOptions() {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return Padding(
+  //         padding: const EdgeInsets.all(16.0),
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             ListTile(
+  //               leading: Icon(Icons.image, color: Theme.of(context).primaryColor),
+  //               title: Text('Pick an Image'),
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //                 _pickAndSendImage();
+  //               },
+  //             ),
+  //             ListTile(
+  //               leading: Icon(Icons.video_collection, color: Theme.of(context).primaryColor),
+  //               title: Text('Pick a Video'),
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //                 _pickAndSendVideo();
+  //               },
+  //             ),
+  //             ListTile(
+  //               leading: Icon(Icons.description, color: Theme.of(context).primaryColor),
+  //               title: Text('Pick a Document'),
+  //               onTap: () {
+  //                 Navigator.pop(context);
+  //                 _pickAndSendDocument();
+  //               },
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -199,17 +347,6 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     final theme = Theme.of(context);
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 5,
-            spreadRadius: 1,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
       child: Row(
         children: [
           AppBackButton(
@@ -254,33 +391,40 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
   }
 
   Widget _buildChatList(BuildContext context) {
-    return ValueListenableBuilder<List<LastMessage>>(
+    return ValueListenableBuilder<List<MessageData>>(
       valueListenable: messages,
       builder: (context, messageList, _) {
-        return ListView.builder(
-          controller: scrollController,
-          padding: const EdgeInsets.all(16),
-          itemCount: messageList.length,
-          itemBuilder: (context, index) {
-            final message = messageList[index];
-            if (message.senderId == session.user.id) {
-              return _buildSentMessage(
+        if (messageList.isEmpty) {
+          return chatStore.isLoading
+              ? Center(child: CircularProgressIndicator())
+              : Center(child: Text("No messages yet. Start a conversation!"));
+        } else {
+          return ListView.builder(
+            controller: scrollController,
+            padding: const EdgeInsets.all(16),
+            itemCount: messageList.length,
+            itemBuilder: (context, index) {
+              final message = messageList[index];
+              if (message.senderId == session.user.id) {
+                return _buildSentMessage(
                   context: context,
                   time: _formatTime(message.createdAt),
                   text: message.text,
-                  mediaUrl: message.media?.url);
-            } else {
-              return _buildReceivedMessage(
+                  mediaUrl: message.media?.url,
+                );
+              } else {
+                return _buildReceivedMessage(
                   time: _formatTime(message.createdAt),
                   text: message.text,
-                  mediaUrl: message.media?.url);
-            }
-          },
-        );
+                  mediaUrl: message.media?.url,
+                );
+              }
+            },
+          );
+        }
       },
     );
   }
-
 
 // Widget to build sent message
   Widget _buildSentMessage({
@@ -311,19 +455,23 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
             )
           // Display image if mediaUrl is available
           else if (mediaUrl != null && mediaUrl.isNotEmpty)
-            AppImage(
-              url: mediaUrl.startsWith('file://')
-                  ? null
-                  : mediaUrl,  // If it's a local file, pass null for URL
-              file: mediaUrl.startsWith('file://')
-                  ? mediaUrl.replaceFirst('file://', '')
-                  : null,  // Extract the local file path
-              height: 200.r,
-              width: 200.r,
-              radius: 10.r,
-            )
+            mediaUrl.endsWith(".mp3") ||
+                    mediaUrl.endsWith(".wav") ||
+                    mediaUrl.endsWith(".m4a")
+                ? AudioPlayerWidget(audioUrl: mediaUrl) // Display audio player
+                : AppImage(
+                    url: mediaUrl.startsWith('file://') ? null : mediaUrl,
+                    // If it's a local file, pass null for URL
+                    file: mediaUrl.startsWith('file://')
+                        ? mediaUrl.replaceFirst('file://', '')
+                        : null,
+                    // Extract the local file path
+                    height: 200.r,
+                    width: 200.r,
+                    radius: 10.r,
+                  )
           else
-            const SizedBox.shrink(),  // Empty space if no media or text
+            const SizedBox.shrink(), // Empty space if no media or text
           const SizedBox(height: 5),
           Text(
             time,
@@ -334,10 +482,11 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
     );
   }
 
-
-
-  Widget _buildReceivedMessage(
-      {String? text, required String time, String? mediaUrl}) {
+  Widget _buildReceivedMessage({
+    String? text,
+    required String time,
+    String? mediaUrl,
+  }) {
     return Align(
       alignment: Alignment.centerLeft,
       child: Column(
@@ -358,12 +507,18 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
                   ),
                 )
               : mediaUrl != null && mediaUrl.isNotEmpty
-                  ? AppImage(
-                      url: mediaUrl,
-                      height: 200.r,
-                      width: 200.r,
-                      radius: 10.r,
-                    )
+                  ? mediaUrl.endsWith(".mp3") ||
+                          mediaUrl.endsWith(".wav") ||
+                          mediaUrl.endsWith(".m4a") ||
+                          mediaUrl.endsWith(".webm")
+                      ? AudioPlayerWidget(
+                          audioUrl: mediaUrl) // Display audio player
+                      : AppImage(
+                          url: mediaUrl,
+                          height: 200.r,
+                          width: 200.r,
+                          radius: 10.r,
+                        )
                   : const SizedBox.shrink(),
           const SizedBox(height: 5),
           Text(
@@ -445,7 +600,7 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
             // Background color of the text field
             contentPadding:
                 EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
-            suffixIcon: IconButton(
+            /*suffixIcon: IconButton(
               onPressed: _pickAndSendImage,
               icon: Container(
                 padding: const EdgeInsets.all(5),
@@ -455,18 +610,28 @@ class _ChatDetailsPageState extends State<ChatDetailsPage> {
                 ),
                 child: const Icon(Icons.add, color: Colors.white),
               ),
-            ),
-            prefixIcon: IconButton(
-              onPressed: () {},
-              icon: Container(
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  color: theme.primaryColor,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.mic, color: Colors.white),
-              ),
-            ),
+            ),*/
+            // prefixIcon: IconButton(
+            //   onPressed: () {
+            //
+            //
+            //
+            //   },
+            //
+            //
+            //   icon: ValueListenableBuilder<bool>(
+            //     valueListenable: _isRecording,
+            //     builder: (context, isRecording, child) {
+            //       return IconButton(
+            //         icon: Icon (
+            //           isRecording ? Icons.stop : Icons.mic,
+            //           color: theme.primaryColor,
+            //         ),
+            //         onPressed: _toggleRecording,
+            //       );
+            //     },
+            //   ),
+            // ),
           ),
           label: '',
           showLabelAboveField: false,

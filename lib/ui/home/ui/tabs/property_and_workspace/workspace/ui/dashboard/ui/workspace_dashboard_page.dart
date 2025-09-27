@@ -1,4 +1,7 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:homework/core/alert/alert_manager.dart';
 import 'package:homework/core/session/app_session.dart';
+import 'package:homework/router/app_router.dart';
 import 'package:homework/ui/home/ui/tabs/more/ui/support_tickets/store/support_ticket_store.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/widget/earning_widget.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/widget/open_support_request_widget.dart';
@@ -14,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:mobx/mobx.dart';
 
 class WorkspaceDashboardPage extends StatefulWidget {
   const WorkspaceDashboardPage({super.key});
@@ -24,6 +28,7 @@ class WorkspaceDashboardPage extends StatefulWidget {
 
 class _WorkspaceDashboardPageState extends State<WorkspaceDashboardPage> {
   final dashboardStore = DashboardStore();
+  List<ReactionDisposer>? disposers;
 
   @override
   void initState() {

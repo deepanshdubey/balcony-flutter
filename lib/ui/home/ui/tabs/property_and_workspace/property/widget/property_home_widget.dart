@@ -55,7 +55,7 @@ class _PropertyHomeWidgetState extends State<PropertyHomeWidget> {
         builder: (context) =>
             store.propertyResponse?.isNotEmpty == true || store.isLoading
                 ? HomeListingWidget(
-                    title: "properties",
+                    title: "residential",
                     onMoreClick: () {
                       appRouter.push(PropertyRoute());
                     },

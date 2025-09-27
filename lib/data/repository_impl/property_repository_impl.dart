@@ -85,10 +85,42 @@ class PropertyRepositoryImpl extends BaseRepositoryImpl
       list2,
       info,
       currency,
-      unitList,
+      jsonEncode(unitList),
       other,
       amenities.join(','),
       leasingPolicyDoc,
     ));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> deleteProperty(String id) {
+    return execute(apiClient.deleteProperty(id));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> getHostProperties(String id) {
+    return execute(apiClient.getHostProperties(id));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> updatePropertyStatus(String id, bool status) {
+    return execute(
+        apiClient.updatePropertyStatus(id, status ? 'active' : 'inactive'));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> createPropertyV2(
+      Map<String, dynamic> request) {
+    return execute(apiClient.createPropertyV2(request));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> sendBulkEmails(Map<String, dynamic> request) {
+    return execute(apiClient.propertyBulkEmail(request));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> getPropertyApplicationFee(String id) {
+    return execute(apiClient.getPropertyApplicationFee(id));
   }
 }

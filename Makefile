@@ -4,7 +4,7 @@ all: clean get build_runner intl run
 # Get all dependencies
 get:
 	@echo "Fetching dependencies..."
-	dart pub get
+	flutter pub get
 
 # Clean the build
 clean:
@@ -37,9 +37,9 @@ build_runner :
 
 watch :
 	@echo "Generating intermediates"
-	dart run build_runner watch --delete-conflicting-outputs
+	flutter run build_runner watch --delete-conflicting-outputs
 
 intl :
 	@echo "Generating Language files"
-	 dart pub global run intl_utils:generate
+	 flutter pub global run intl_utils:generate
 

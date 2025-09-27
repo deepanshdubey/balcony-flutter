@@ -7,6 +7,7 @@ import 'package:homework/widget/app_image.dart';
 import 'package:homework/widget/app_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:homework/widget/primary_button.dart';
 
 class AmenitiesWidget extends StatefulWidget {
   final bool isWorkspace;
@@ -25,13 +26,11 @@ class AmenitiesWidget extends StatefulWidget {
 }
 
 class _AmenitiesWidgetState extends BaseState<AmenitiesWidget> {
-  late String? otherAmenities;
   late TextEditingController otherAmenitiesController;
 
   @override
   void initState() {
-    otherAmenities = widget.otherAmenities;
-    otherAmenitiesController = TextEditingController(text: otherAmenities);
+    otherAmenitiesController = TextEditingController();
     super.initState();
   }
 
@@ -52,27 +51,20 @@ class _AmenitiesWidgetState extends BaseState<AmenitiesWidget> {
           Text(
             widget.isWorkspace ? "workspace amenities" : "property amenities",
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 24.spMin,
-                ),
+              fontWeight: FontWeight.w500,
+              fontSize: 24.spMin,
+            ),
           ),
           16.h.verticalSpace,
           Column(
             children: widget.amenities
                 .map(
                   (amenity) => amenityItem(amenity),
-                )
+            )
                 .toList(),
           ),
           16.h.verticalSpace,
-          otherAmenitiesWidget(),
-          8.h.verticalSpace,
-          if (otherAmenities != null)
-            AppTextField(
-              controller: otherAmenitiesController,
-              label: "enter amenity",
-              hintText: 'type the amenity name',
-            ),
+          addAmenityField(),
           16.h.verticalSpace,
         ],
       ),
@@ -112,38 +104,30 @@ class _AmenitiesWidgetState extends BaseState<AmenitiesWidget> {
     );
   }
 
-  Widget otherAmenitiesWidget() {
-    return GestureDetector(
-        onTap: () {
-          setState(() {
-            if (otherAmenities == null) {
-              otherAmenities = "";
-            } else {
-              otherAmenitiesController.text = "";
-              otherAmenities = null;
+  Widget addAmenityField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppTextField(
+          controller: otherAmenitiesController,
+          label: "Enter amenity",
+          hintText: 'Type the amenity name',
+        ),
+        8.h.verticalSpace,
+        PrimaryButton(
+          text: "Add Amenity",
+          onPressed: () {
+            final newAmenity = otherAmenitiesController.text.trim();
+            if (newAmenity.isNotEmpty) {
+              setState(() {
+                widget.amenities.add(AmenitiesItem(name: newAmenity, image: Assets.imagesLargePlus, ));
+                otherAmenitiesController.clear();
+              });
             }
-          });
-        },
-        child: Row(
-          children: [
-            AppImage(
-              height: 30.r,
-              width: 30.r,
-              assetPath: otherAmenities == null
-                  ? Assets.imagesLargePlus
-                  : Assets.imagesLargeMinus,
-            ),
-            16.w.horizontalSpace,
-            Expanded(
-              child: Text(
-                otherAmenities == null
-                    ? "not listed? manually add an amenity."
-                    : "remove",
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            )
-          ],
-        ));
+          },
+        ),
+      ],
+    );
   }
 
   @override
@@ -151,14 +135,11 @@ class _AmenitiesWidgetState extends BaseState<AmenitiesWidget> {
     List<String> checked = widget.amenities
         .where(
           (element) => element.isChecked,
-        )
+    )
         .map(
           (e) => e.name,
-        )
+    )
         .toList();
-    if (otherAmenities != null) {
-      checked.add(otherAmenitiesController.text.trim());
-    }
     return checked;
   }
 

@@ -1,5 +1,4 @@
 import 'package:homework/data/model/response/workspace_data.dart';
-import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'property_data.g.dart';
@@ -38,26 +37,25 @@ class PropertyData {
 
   @UnitListConverter()
   @JsonKey(name: 'unitList')
-  final  List<UnitList>? unitList;
+  final List<UnitList>? unitList;
 
   @JsonKey(name: 'host')
   @HostConverter()
   final dynamic? host;
 
-  PropertyData({
-    this.id,
-    this.status,
-    this.ratings,
-    this.info,
-    this.images,
-    this.geocode,
-    this.pricing,
-    this.times,
-    this.other,
-    this.amenities,
-    this.unitList,
-    this.host
-  });
+  PropertyData(
+      {this.id,
+      this.status,
+      this.ratings,
+      this.info,
+      this.images,
+      this.geocode,
+      this.pricing,
+      this.times,
+      this.other,
+      this.amenities,
+      this.unitList,
+      this.host});
 
   factory PropertyData.fromJson(Map<String, dynamic> json) =>
       _$PropertyDataFromJson(json);
@@ -65,33 +63,40 @@ class PropertyData {
   Map<String, dynamic> toJson() => _$PropertyDataToJson(this);
 }
 
-
 @JsonSerializable(ignoreUnannotated: true)
 class UnitList {
   @JsonKey(name: '_id')
-  final  String? Id;
+  final String? Id;
   @JsonKey(name: 'unit')
-  final  int? unit;
+  final int? unit;
   @JsonKey(name: 'price')
-  final  int? price;
+  final num? price;
   @JsonKey(name: 'beds')
-  final  int? beds;
+  final int? beds;
   @JsonKey(name: 'baths')
-  final  int? baths;
+  final int? baths;
   @JsonKey(name: 'floorPlanImg')
-  final  String? floorPlanImg;
+  String? floorPlanImg;
   @JsonKey(name: 'isAvailable')
-  final  bool? isAvailable;
+  final bool? isAvailable;
   @JsonKey(name: 'status')
-  final  String? status;
+  final String? status;
 
-  UnitList({this.Id, this.unit, this.price, this.beds, this.baths, this.floorPlanImg, this.isAvailable, this.status});
+  UnitList({
+    this.Id,
+    this.unit,
+    this.price,
+    this.beds,
+    this.baths,
+    this.floorPlanImg,
+    this.isAvailable,
+    this.status,
+  });
 
-  factory UnitList.fromJson(Map<String, dynamic> json) => _$UnitListFromJson(json);
+  factory UnitList.fromJson(Map<String, dynamic> json) =>
+      _$UnitListFromJson(json);
 
   Map<String, dynamic> toJson() => _$UnitListToJson(this);
-
-
 }
 
 class UnitListConverter implements JsonConverter<List<UnitList>, dynamic> {
@@ -101,7 +106,9 @@ class UnitListConverter implements JsonConverter<List<UnitList>, dynamic> {
   List<UnitList> fromJson(dynamic json) {
     if (json is List) {
       return json
-          .whereType<Map<String, dynamic>>() // Ensure that each item is a Map<String, dynamic>
+          .whereType<
+              Map<String,
+                  dynamic>>() // Ensure that each item is a Map<String, dynamic>
           .map((e) => UnitList.fromJson(e)) // Convert the map to UnitList
           .toList();
     }
@@ -110,9 +117,8 @@ class UnitListConverter implements JsonConverter<List<UnitList>, dynamic> {
 
   @override
   dynamic toJson(List<UnitList> object) {
-    return object.map((e) => e.toJson()).toList(); // Convert the list of UnitList to JSON
+    return object
+        .map((e) => e.toJson())
+        .toList(); // Convert the list of UnitList to JSON
   }
 }
-
-
-

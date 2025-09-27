@@ -90,6 +90,7 @@ class _AddCardWidgetState extends State<AddCardWidget> {
           AppTextField(
             controller: cardNumberController,
             label: 'card number',
+            keyboardType: TextInputType.number,
             hintText: '1234 1234 1234 1234',
             inputFormatters: [
               FilteringTextInputFormatter.digitsOnly,

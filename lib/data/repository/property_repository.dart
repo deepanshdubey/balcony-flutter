@@ -44,6 +44,19 @@ abstract class PropertyRepository {
     File leasingPolicyDoc,
     List<Map<String, dynamic>> unitList,
   );
+
+  Future<ApiResponse<CommonData>> getHostProperties(String id);
+
+  Future<ApiResponse<CommonData>> deleteProperty(String id);
+
+  Future<ApiResponse<CommonData>> updatePropertyStatus(String id, bool status);
+
+  Future<ApiResponse<CommonData>> createPropertyV2(
+      Map<String, dynamic> request);
+
+  Future<ApiResponse<CommonData>> sendBulkEmails(Map<String, dynamic> request);
+
+  Future<ApiResponse<CommonData>> getPropertyApplicationFee(String id);
 }
 
 final propertyRepository = locator<PropertyRepository>();

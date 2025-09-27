@@ -52,44 +52,47 @@ class _PastBookingsRowWidgetState extends State<PastBookingsRowWidget> {
               bookingsData: widget.booking,
             ));
       },
-      child: Row(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Checkbox(
-              value: isSelected,
-              onChanged: (value) {
-                setState(() {
-                  isSelected = value ?? false;
-                });
-              },
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Text(
-              widget.booking.workspace?.info?.name ?? "no name",
-              style: theme.textTheme.bodyLarge,
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text(
-              bookingStatus,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontSize: 12.spMin),
-            ),
-          ),
-          Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10 , horizontal: 15).r,
+        child: Row(
+          children: [
+          /*  Expanded(
+              flex: 1,
+              child: Checkbox(
+                value: isSelected,
+                onChanged: (value) {
+                  setState(() {
+                    isSelected = value ?? false;
+                  });
+                },
+              ),
+            ),*/
+            Expanded(
               flex: 3,
               child: Text(
-                widget.booking.id.toString(),
-                style: theme.textTheme.titleMedium,
-                maxLines: 1,
-              )),
-        ],
+                widget.booking.workspace?.info?.name ?? "no name",
+                style: theme.textTheme.bodyLarge,
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Text(
+                bookingStatus,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium
+                    ?.copyWith(fontSize: 12.spMin),
+              ),
+            ),
+            Expanded(
+                flex: 3,
+                child: Text(
+                  widget.booking.id.toString(),
+                  style: theme.textTheme.titleMedium,
+                  maxLines: 1,
+                )),
+          ],
+        ),
       ),
     );
   }

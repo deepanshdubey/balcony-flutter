@@ -89,8 +89,8 @@ class _MorePageState extends State<MorePage> {
         status: isLoading,
         child: ListView(
           children: [
-            12.h.verticalSpace,
-            tabBar(theme),
+         //   12.h.verticalSpace,
+         //   tabBar(theme),
             20.h.verticalSpace,
             Container(
               width: context.width,

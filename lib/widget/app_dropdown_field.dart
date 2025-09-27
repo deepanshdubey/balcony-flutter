@@ -59,14 +59,16 @@ class AppDropdownField<T> extends StatelessWidget {
       readOnly: readOnly,
       onTap: () => _showBottomSheet(context),
       validator: validator,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: inputDecoration ??
           InputDecoration(
             contentPadding: EdgeInsets.symmetric(
               vertical: 5.h,
-              horizontal: 16.w,
+              horizontal: 10.w,
             ),
             labelText: hintText,
             hintText: hintText,
+            suffixIconConstraints: BoxConstraints(minHeight: 30,minWidth: 30),
             suffixIcon: suffixIcon ?? const Icon(Icons.arrow_drop_down),
             prefixIcon: prefixIcon,
             floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -75,22 +77,29 @@ class AppDropdownField<T> extends StatelessWidget {
   }
 
   void _showBottomSheet(BuildContext context) {
-    showModalBottomSheet(
+    showBottomSheet(
       context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
+      showDragHandle: true,
+      enableDrag: true,
+      elevation: 10,
+      backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+
       ),
       builder: (context) {
-        return _BottomSheetContent<T>(
-          items: items,
-          itemLabel: itemLabel,
-          onItemSelected: (item) {
-            controller.text = itemLabel(item);
-            onItemSelected(item);
-            Navigator.of(context).pop();
-          },
+        return SizedBox(
+          height: .85.sh,
+          child: _BottomSheetContent<T>(
+            items: items,
+            itemLabel: itemLabel,
+            onItemSelected: (item) {
+
+              controller.text = itemLabel(item);
+              onItemSelected(item);
+              Navigator.of(context).pop();
+            },
+          ),
         );
       },
     );

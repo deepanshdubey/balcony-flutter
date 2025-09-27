@@ -1,4 +1,5 @@
 import 'package:auto_route/annotations.dart';
+import 'package:homework/core/session/app_session.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/dashboard/ui/property_dashboard_page.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/dashboard/ui/workspace_dashboard_page.dart';
 import 'package:homework/values/extensions/theme_ext.dart';
@@ -24,8 +25,8 @@ class _HostHomePageState extends State<HostHomePage> {
         padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 0.h),
         children: [
           12.h.verticalSpace,
-          tabBar(theme),
-          Container(
+          if(session.prop)  tabBar(theme),
+          if(session.prop)    Container(
             height: 1.h,
             color: theme.primaryColor,
             margin: EdgeInsets.symmetric(vertical: 20.h),
@@ -51,8 +52,8 @@ class _HostHomePageState extends State<HostHomePage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildTab(theme, "workspace", 0),
-            _buildTab(theme, "properties", 1),
+            _buildTab(theme, "commercial", 0),
+            _buildTab(theme, "residential", 1),
           ],
         ),
       ),

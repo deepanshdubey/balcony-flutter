@@ -1,4 +1,5 @@
 import 'package:auto_route/annotations.dart';
+import 'package:homework/core/session/app_session.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/widget/map_workspace_widget.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/widget/workspace_widget.dart';
@@ -46,14 +47,7 @@ class WorkspacePageState extends State<WorkspacePage> {
     await workspaceStore.getWorkspace(page: currentPage, limit: 10);
   }
 
-  Future<void> _fetchWorkspacesSearch() async {
-    await workspaceStore.searchWorkspace(
-        page: currentPage,
-        people: widget.people ?? 0,
-        checkin: widget.checkIn,
-        checkout: widget.checkOut,
-        place: widget.place);
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +111,7 @@ class WorkspacePageState extends State<WorkspacePage> {
                   ),
                 ),
                 16.w.horizontalSpace,
-                GestureDetector(
+             if(session.prop)   GestureDetector(
                   onTap: () {
                     // Filter action
                   },
@@ -243,8 +237,8 @@ class WorkspacePageState extends State<WorkspacePage> {
                             ],
                           ),
                         ),
-                        16.w.horizontalSpace,
-                        GestureDetector(
+                       // 16.w.horizontalSpace,
+         /*               GestureDetector(
                           onTap: () {
                             // Map filter action
                           },
@@ -267,7 +261,7 @@ class WorkspacePageState extends State<WorkspacePage> {
                               ),
                             ],
                           ),
-                        ),
+                        ),*/
                       ],
                     ),
                   ),
@@ -284,7 +278,6 @@ class WorkspacePageState extends State<WorkspacePage> {
                     physics: BouncingScrollPhysics(),
                     scrollDirection: Axis.horizontal,
                     itemCount: workspaceStore.workspaceResponse?.length ?? 0,
-                    shrinkWrap: true,
                     itemBuilder: (context, index) {
                       final workspace = workspaceStore.workspaceResponse![index];
                       return MapWorkspaceWidget(

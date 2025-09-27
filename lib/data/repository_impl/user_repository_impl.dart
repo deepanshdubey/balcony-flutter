@@ -19,6 +19,11 @@ class UserRepositoryImpl extends BaseRepositoryImpl implements UserRepository {
   }
 
   @override
+  Future<ApiResponse<CommonData>> deleteAccount(Map<String, dynamic> request) {
+    return execute(apiClient.deleteAccount(request));
+  }
+
+  @override
   Future<ApiResponse<CommonData>> register(Map<String, dynamic> request) {
     return execute(apiClient.register(request));
   }
@@ -101,8 +106,14 @@ class UserRepositoryImpl extends BaseRepositoryImpl implements UserRepository {
   }
 
   @override
+  Future<ApiResponse<CommonData>> subscriptionPurchase(
+      Map<String, dynamic> request) {
+    return execute(apiClient.subscriptionPurchase(request));
+  }
+
+  @override
   Future<ApiResponse<CommonData>> updatePayoutInfo(String type) {
-    return execute(apiClient.updatePayoutInfo(type));
+    return execute(apiClient.updatePayoutInfo(type , "US"));
   }
 
   @override
@@ -111,8 +122,24 @@ class UserRepositoryImpl extends BaseRepositoryImpl implements UserRepository {
   }
 
   @override
+  Future<ApiResponse<CommonData>> getReAuthenticate() {
+    return execute(apiClient.reAuthenticate());
+  }
+
+  @override
   Future<ApiResponse<CommonData>> uploadFiles(List<File> files) async {
     var list = await prepareImageFiles(files);
     return execute(apiClient.uploadImages(list));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> socialAuth(Map<String, dynamic> request) {
+    return execute(apiClient.socialAuth(request));
+  }
+
+  @override
+  Future<ApiResponse<CommonData>> generateS3Url(
+      String extension, String purpose) {
+    return execute(apiClient.generateSignedUrl(purpose, extension));
   }
 }

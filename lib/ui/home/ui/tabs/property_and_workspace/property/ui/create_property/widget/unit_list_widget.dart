@@ -1,5 +1,10 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:homework/core/locator/locator.dart';
+import 'package:homework/data/model/response/property_data.dart';
 import 'package:homework/generated/assets.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/create_property/model/unit_item.dart';
@@ -10,13 +15,13 @@ import 'package:homework/widget/app_image.dart';
 import 'package:homework/widget/app_outlined_button.dart';
 import 'package:homework/widget/app_text_field.dart';
 import 'package:homework/widget/image_picker_widget.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class UnitListWidget extends StatefulWidget {
+  final List<UnitList>? existingUnits;
+
   const UnitListWidget({
     super.key,
+    this.existingUnits,
   });
 
   @override
@@ -36,6 +41,18 @@ class _UnitListWidgetState extends BaseState<UnitListWidget> {
     formKey = GlobalKey<FormState>();
     currencyController = TextEditingController(text: "USD");
     searchController = TextEditingController();
+    if (widget.existingUnits != null) {
+      unitList = widget.existingUnits!.map((e) {
+        return UnitItem(
+          id: e.Id,
+          unit: e.unit,
+          price: e.price?.toDouble(),
+          bed: e.beds,
+          bath: e.baths,
+          floorImage: e.floorPlanImg,
+        );
+      }).toList();
+    }
     super.initState();
   }
 
@@ -153,7 +170,9 @@ class _UnitListWidgetState extends BaseState<UnitListWidget> {
             width: context.width * .4,
             child: AppOutlinedButton(
               text: 'update plan',
-              onPressed: () {},
+              onPressed: () {
+                logger.i(getApiData()["units"]);
+              },
             ),
           ),
           16.h.verticalSpace,
@@ -164,27 +183,48 @@ class _UnitListWidgetState extends BaseState<UnitListWidget> {
 
   @override
   Map<String, dynamic> getApiData() {
-    return  {
-      'floor_plan_images' : unitList.where((element) => element.floorImage != null,).map((e) => File(e.floorImage!),).toList(),
-      'currency' : currencyController.text.trim(),
-      'units' : unitList.map((e) =>  {
-        "unit": e.unitController.text.trim(),
-        "price": e.priceController.text.trim(),
-        "beds": e.bedController.text.trim(),
-        "baths": e.bathController.text.trim(),
-        "isAvailable": true
-      },).toList()
+    return {
+      'floor_plan_images': unitList
+          .where(
+            (element) => element.floorImage != null,
+          )
+          .map(
+            (e) => File(e.floorImage!),
+          )
+          .toList(),
+      'currency': currencyController.text.trim(),
+      'units': unitList
+          .map((e) => UnitList(
+              Id: e.id,
+              unit: int.tryParse(e.unitController.text.trim()),
+              price: double.tryParse(e.priceController.text.trim()),
+              beds: int.tryParse(e.bedController.text.trim()),
+              baths: int.tryParse(e.bathController.text.trim()),
+              floorPlanImg: e.floorImage,
+              isAvailable: true))
+          .toList()
     };
   }
 
   @override
   String? getError() {
-    return null;
+    return unitList.any(
+      (element) => element.floorImage == null,
+    )
+        ? "please select floor plan image for ${unitList.where(
+              (element) => element.floorImage == null,
+            ).map(
+              (e) => e.unit,
+            ).join(", ")}"
+        : null;
   }
 
   @override
   bool validate() {
-    return formKey.currentState?.validate() == true;
+    return formKey.currentState?.validate() == true &&
+        unitList.every(
+          (element) => element.floorImage != null,
+        );
   }
 
   Widget unitItem(UnitItem e) {

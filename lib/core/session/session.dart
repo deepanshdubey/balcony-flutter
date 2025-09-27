@@ -13,6 +13,11 @@ abstract class Session {
 
   set isLogin(bool update);
 
+
+  bool get prop;
+
+  set prop(bool update);
+
   bool get isLoginSkipped;
 
   set isLoginSkipped(bool update);
@@ -32,6 +37,11 @@ abstract class Session {
   String? get sessionCookie;
 
   set sessionCookie(String? update);
+
+  bool get isConcierge;
+
+  set isConcierge(bool update);
+
 
   void logout();
 }

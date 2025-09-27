@@ -1,15 +1,17 @@
-import 'dart:io';
-
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:homework/values/extensions/context_ext.dart';
 import 'package:homework/widget/file_picker_widget.dart';
-import 'package:homework/widget/image_picker_widget.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LeaseTermsAndPolicyWidget extends StatefulWidget {
+  final bool isEdit;
+  final String? existingFilePath;
+
   const LeaseTermsAndPolicyWidget({
     super.key,
+    this.existingFilePath,
+    this.isEdit = false,
   });
 
   @override
@@ -20,6 +22,12 @@ class LeaseTermsAndPolicyWidget extends StatefulWidget {
 class _LeaseTermsAndPolicyWidgetState
     extends BaseState<LeaseTermsAndPolicyWidget> {
   String? selectedFilePath;
+
+  @override
+  void initState() {
+    selectedFilePath = widget.existingFilePath;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,17 +105,17 @@ class _LeaseTermsAndPolicyWidgetState
   }
 
   @override
-  File getApiData() {
-    return File(selectedFilePath!);
+  getApiData() {
+    return selectedFilePath;
   }
 
   @override
   String? getError() {
-    return validate() ? null : 'please agree to terms of service';
+    return validate() ? null : 'please upload lease terms and privacy policy';
   }
 
   @override
   bool validate() {
-    return true;
+    return widget.isEdit ? true : selectedFilePath != null;
   }
 }

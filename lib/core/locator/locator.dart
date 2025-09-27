@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:get_it/get_it.dart';
+import 'package:hive/hive.dart';
 import 'package:homework/core/alert/alert_manager.dart';
 import 'package:homework/core/alert/alert_manager_impl.dart';
 import 'package:homework/core/api/api_module.dart';
@@ -8,17 +10,25 @@ import 'package:homework/core/session/app_session.dart';
 import 'package:homework/core/session/session.dart';
 import 'package:homework/data/model/response/user_data.dart';
 import 'package:homework/data/repository/booking_repository.dart';
+import 'package:homework/data/repository/chat_manager.dart';
 import 'package:homework/data/repository/chat_repository.dart';
+import 'package:homework/data/repository/chat_repository_v2.dart';
+import 'package:homework/data/repository/concierge_repo.dart';
 import 'package:homework/data/repository/promo_repository.dart';
 import 'package:homework/data/repository/property_repository.dart';
+import 'package:homework/data/repository/social_manager.dart';
 import 'package:homework/data/repository/tenant_repository.dart';
 import 'package:homework/data/repository/user_repository.dart';
 import 'package:homework/data/repository/wallet_repository.dart';
 import 'package:homework/data/repository/workspace_repository.dart';
 import 'package:homework/data/repository_impl/booking_repository_impl.dart';
 import 'package:homework/data/repository_impl/chat_repository_impl.dart';
+import 'package:homework/data/repository_impl/chat_repository_v2_impl.dart';
+import 'package:homework/data/repository_impl/concierge_repository_impl.dart';
 import 'package:homework/data/repository_impl/promo_repository_impl.dart';
 import 'package:homework/data/repository_impl/property_repository_impl.dart';
+import 'package:homework/data/repository_impl/social_manager_impl.dart';
+import 'package:homework/data/repository_impl/socket_chat_manager.dart';
 import 'package:homework/data/repository_impl/tenant_repository_impl.dart';
 import 'package:homework/data/repository_impl/user_repository_impl.dart';
 import 'package:homework/data/repository_impl/wallet_repository_impl.dart';
@@ -28,8 +38,6 @@ import 'package:homework/ui/home/ui/tabs/more/ui/support_tickets/store/support_t
 import 'package:homework/ui/home/ui/tabs/more/ui/wallet/store/wallet_store.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/store/address_store.dart';
 import 'package:homework/values/colors.dart';
-import 'package:get_it/get_it.dart';
-import 'package:hive/hive.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -69,10 +77,17 @@ Future<void> setupLocator() async {
       () => TenantRepositoryImpl(locator()));
   locator.registerLazySingleton<ChatRepository>(
       () => ChatRepositoryImpl(locator()));
+  locator.registerLazySingleton<ConciergeRepository>(
+      () => ConciergeRepositoryImpl(locator()));
+  locator.registerLazySingleton<ChatRepositoryV2>(
+          () => ChatRepositoryV2Impl(locator()));
+  locator.registerLazySingleton<ChatManager>(
+          () => SocketChatManager());
   locator.registerLazySingleton<Logger>(() => Logger(level: Level.all));
   locator.registerLazySingleton<AddressStore>(() => AddressStore());
   locator.registerLazySingleton<SupportTicketStore>(() => SupportTicketStore());
   locator.registerLazySingleton<WalletStore>(() => WalletStore());
+  locator.registerLazySingleton<SocialManager>(() => SocialManagerImplementation());
 
   /// setup API modules with repos which requires [Dio] instance
 }

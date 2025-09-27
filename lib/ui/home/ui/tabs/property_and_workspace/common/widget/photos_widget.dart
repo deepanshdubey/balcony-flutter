@@ -135,7 +135,7 @@ class PhotosWidgetState extends BaseState<PhotosWidget> {
 
   @override
   List<dynamic> getApiData() {
-    return widget.existingImages != null
+    return widget.existingImages != null || !widget.isWorkspace
         ? userSelectedImages.asMap().entries.map((entry) {
             final index = entry.key;
             final selectedImage = entry.value;

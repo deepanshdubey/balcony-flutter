@@ -58,7 +58,7 @@ class OnboardingBottomSheetState extends State<OnboardingBottomSheet> {
                   children: [
                     _buildTab(theme, "sign in", 0),
                     _buildTab(theme, "sign up", 1),
-                    _buildTab(theme, "password reset", 2),
+                 //   _buildTab(theme, "password reset", 2),
                   ],
                 ),
               ),
@@ -79,7 +79,7 @@ class OnboardingBottomSheetState extends State<OnboardingBottomSheet> {
                     SignUpPage(
                       onSuccess: widget.onSuccess,
                     ),
-                    const ResetPasswordPage(),
+                //    const ResetPasswordPage(),
                   ],
                 ),
               ),

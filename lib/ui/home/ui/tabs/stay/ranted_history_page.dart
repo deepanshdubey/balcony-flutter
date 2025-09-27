@@ -1,10 +1,18 @@
+import 'dart:ui';
+
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:homework/data/model/response/tenant_details.dart';
 import 'package:homework/generated/assets.dart';
+import 'package:homework/ui/home/ui/tabs/property_and_workspace/property/ui/tenant_application/tenant_application_page.dart';
+import 'package:homework/ui/home/ui/tabs/stay/finish_application.dart';
 import 'package:homework/ui/home/ui/tabs/stay/rant_payment_details_page.dart';
-import 'package:homework/ui/home/ui/tabs/works/booking_details_page.dart';
+import 'package:homework/ui/home/ui/tabs/stay/tenant_details_page.dart';
+import 'package:homework/ui/home/ui/tabs/works/store/booking_listing_store.dart';
 import 'package:homework/values/colors.dart';
 import 'package:homework/values/extensions/context_ext.dart';
-import 'package:homework/widget/app_text_field.dart';
+import 'package:homework/widget/app_outlined_button.dart';
 import 'package:homework/widget/button_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,6 +27,15 @@ class _RantedHistoryPageState extends State<RantedHistoryPage> {
   final List<int> rowOptions = [3, 5, 10];
   int currentPage = 1;
   final TextEditingController _filterController = TextEditingController();
+  var store = BookingListingStore();
+
+  @override
+  void initState() {
+    store.getAwaitingTenant();
+    store.getHistoryTenant();
+    store.getRantingTenant();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,37 +46,88 @@ class _RantedHistoryPageState extends State<RantedHistoryPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(flex:5 , child: AppTextField(controller:_filterController , hintText: "Filter search...")),
-                  20.horizontalSpace,
-                  Expanded(flex:2 ,child: BorderButton(label: 'filter',onTap: (){},))
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   crossAxisAlignment: CrossAxisAlignment.center,
+              //   children: [
+              //     Expanded(
+              //         flex: 5,
+              //         child: AppTextField(
+              //             controller: _filterController,
+              //             hintText: "Filter search...")),
+              //     20.horizontalSpace,
+              //     Expanded(
+              //         flex: 2,
+              //         child: BorderButton(
+              //           label: 'filter',
+              //           onTap: () {},
+              //         ))
+              //   ],
+              // ),
+              // 20.verticalSpace,
+              const SectionTitle(
+                  title: "awaiting review ", subtitle: "(active)"),
               20.verticalSpace,
-              const SectionTitle(title: "awaiting review ", subtitle: "(active)"),
-              20.verticalSpace,
-              BookingTable(
-                isActive: true,
-                bookings: _getBookings(isActive: true),
-              ),
+              Observer(builder: (context) {
+                var tenants = store.awaitingTenant;
+                var isLoading = store.isLoading;
+                return isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : tenants?.isNotEmpty == true
+                        ? BookingTable(
+                            isActive: true,
+                            tenants: tenants ?? [],
+                          )
+                        : Center(
+                            child: Text(
+                              "no bookings available",
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          );
+              }),
               40.verticalSpace,
               const SectionTitle(title: "renting", subtitle: "(inactive)"),
               20.verticalSpace,
-              RantedTable(
-                isActive: false,
-                bookings: _getBookings(isActive: false),
-              ),
-              40.verticalSpace,const SectionTitle(title: "rented history", subtitle: "(inactive)"),
+              Observer(builder: (context) {
+                var tenants = store.rantingTenant;
+                var isLoading = store.isLoading;
+                return isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : tenants?.isNotEmpty == true
+                        ? RantedTable(
+                            isActive: true,
+                            tenants: tenants ?? [],
+                          )
+                        : Center(
+                            child: Text(
+                              "no renting available",
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          );
+              }),
+              40.verticalSpace,
+              const SectionTitle(
+                  title: "rented history", subtitle: "(inactive)"),
               20.verticalSpace,
-              BookingTable(
-                isActive: false,
-                bookings: _getBookings(isActive: false),
-              ),
+              Observer(builder: (context) {
+                var tenants = store.historyTenant;
+                var isLoading = store.isLoading;
+                return isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : tenants?.isNotEmpty == true
+                        ? BookingTable(
+                            isActive: true,
+                            tenants: tenants ?? [],
+                          )
+                        : Center(
+                            child: Text(
+                              "no history available",
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          );
+              }),
               20.verticalSpace,
-              const Text("0 of 100 row(s) selected."),
+              /*  const Text("0 of 100 row(s) selected."),
               20.verticalSpace,
               PaginationControls(
                 rowsPerPageNotifier: rowsPerPageNotifier,
@@ -67,32 +135,12 @@ class _RantedHistoryPageState extends State<RantedHistoryPage> {
                 currentPage: currentPage,
               ),
               20.verticalSpace,
-              NavigationControls(),
+              NavigationControls(),*/
             ],
           ),
         ),
       ),
     );
-  }
-
-  List<Map<String, dynamic>> _getBookings({required bool isActive}) {
-    return [
-      {
-        "workspace": "9 Homestead",
-        "status": isActive ? "awaiting host to respond" : null,
-        "date": isActive ? null : "01/24/2024",
-      },
-      {
-        "workspace": "15 Garland",
-        "status": isActive ? "accepted - 01/24/2024" : null,
-        "date": isActive ? null : "01/20/2024",
-      },
-      {
-        "workspace": "3432 Beachside",
-        "status": isActive ? "accepted - 01/02/2024" : null,
-        "date": isActive ? null : "01/18/2024",
-      },
-    ];
   }
 }
 
@@ -110,18 +158,18 @@ class SectionTitle extends StatelessWidget {
         Text(
           title,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontSize: 28.spMin,
-            fontWeight: FontWeight.w800,
-            color: appColor.primaryColor,
-          ),
+                fontSize: 28.spMin,
+                fontWeight: FontWeight.w800,
+                color: appColor.primaryColor,
+              ),
         ),
         Text(
           subtitle,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontSize: 12.spMin,
-            fontWeight: FontWeight.w400,
-            color: appColor.primaryColor,
-          ),
+                fontSize: 12.spMin,
+                fontWeight: FontWeight.w400,
+                color: appColor.primaryColor,
+              ),
         ),
       ],
     );
@@ -130,13 +178,26 @@ class SectionTitle extends StatelessWidget {
 
 class BookingTable extends StatelessWidget {
   final bool isActive;
-  final List<Map<String, dynamic>> bookings;
+  final List<Tenants> tenants;
 
-
-  const BookingTable({required this.isActive, required this.bookings});
+  const BookingTable({required this.isActive, required this.tenants});
 
   @override
   Widget build(BuildContext context) {
+
+    final filteredTenants = tenants
+        ?.where((tenant) => tenant.acceptance?.toLowerCase() != 'rejected')
+        .toList();
+
+    if (filteredTenants == null || filteredTenants.isEmpty) {
+      return Center(
+        child: Text(
+          "no rented history",
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+      );
+    }
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8).r,
@@ -144,9 +205,13 @@ class BookingTable extends StatelessWidget {
       ),
       child: Column(
         children: [
-          TableHeader(isActive: isActive),
           const Divider(height: 1, color: Colors.grey),
-          ...bookings.map((booking) => TableRowWidget(booking: booking, isActive: isActive)),
+          ...tenants
+              .where((tenant) => tenant.acceptance?.toLowerCase() != 'rejected')
+              .map((tenant) => TableRowWidget(
+            isActive: isActive,
+            tenant: tenant,
+          )),
         ],
       ),
     );
@@ -155,10 +220,9 @@ class BookingTable extends StatelessWidget {
 
 class RantedTable extends StatelessWidget {
   final bool isActive;
-  final List<Map<String, dynamic>> bookings;
+  final List<Tenants> tenants;
 
-
-  const RantedTable({required this.isActive, required this.bookings});
+  const RantedTable({required this.isActive, required this.tenants});
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +235,8 @@ class RantedTable extends StatelessWidget {
         children: [
           TableHeader(isActive: isActive),
           const Divider(height: 1, color: Colors.grey),
-          ...bookings.map((booking) => TableRantingRow(booking: booking, isActive: isActive)),
+          ...tenants.map(
+              (tenant) => TableRantingRow(tenant: tenant, isActive: isActive)),
         ],
       ),
     );
@@ -194,19 +259,19 @@ class TableHeader extends StatelessWidget {
             child: Text(
               "building",
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontSize: 13.spMin,
-                color: appColor.primaryColor,
-              ),
+                    fontSize: 13.spMin,
+                    color: appColor.primaryColor,
+                  ),
             ),
           ),
           Expanded(
             child: Center(
               child: Text(
-               "more info",
+                "more info",
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontSize: 13.spMin,
-                  color: appColor.primaryColor,
-                ),
+                      fontSize: 13.spMin,
+                      color: appColor.primaryColor,
+                    ),
               ),
             ),
           ),
@@ -217,10 +282,10 @@ class TableHeader extends StatelessWidget {
 }
 
 class TableRowWidget extends StatelessWidget {
-  final Map<String, dynamic> booking;
+  final Tenants tenant;
   final bool isActive;
 
-  const TableRowWidget({required this.booking, required this.isActive});
+  const TableRowWidget({required this.tenant, required this.isActive});
 
   @override
   Widget build(BuildContext context) {
@@ -237,24 +302,81 @@ class TableRowWidget extends StatelessWidget {
               Expanded(
                 flex: 3,
                 child: Text(
-                  booking["workspace"],
+                  tenant.selectedUnit?.property?.info?.name ?? "",
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontSize: 13.spMin,
-                    color: appColor.primaryColor,
-                  ),
+                        fontSize: 13.spMin,
+                        color: appColor.primaryColor,
+                      ),
                 ),
               ),
               Expanded(
-                flex: 3,
-                child: isActive
-                    ? Text(
-                  booking["status"] ?? "",
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontSize: 13.spMin,
-                    color: appColor.primaryColor,
-                  ),
-                )
-                    : const Icon(Icons.more_horiz, color: Colors.grey),
+                flex: 4,
+                child: tenant.acceptance?.toLowerCase() == 'pending'
+                    ? RichText(
+                        text: TextSpan(
+                          text: 'Pending Approval: ',
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontSize: 13.spMin,
+                                    color: Colors.grey, // Base text color
+                                  ),
+                          children: [
+                            TextSpan(
+                              text: 'Review App',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontSize: 13.spMin,
+                                    color: appColor.primaryColor,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  showAppBottomSheet(
+                                    context,
+                                    TenantApplicationPage(
+                                      tenant: tenant,
+                                      isUpdate: true,
+                                    ),
+                                  );
+                                },
+                            ),
+                          ],
+                        ),
+                      )
+                    : tenant.acceptance?.toLowerCase() == 'approved'
+                        ? AppOutlinedButton(
+                            padding: EdgeInsets.symmetric(horizontal: 10).r,
+                            style: TextStyle(fontSize: 10.spMin),
+                            text: "approved finish application",
+                            onPressed: () {
+                              showAppBottomSheet(
+                                  context,
+                                  FinishApplicationPage(
+                                    tenants: tenant,
+                                  ));
+                            })
+                        : GestureDetector(
+                            onTap: () {
+                              showAppBottomSheet(
+                                context,
+                                TenantDetailsPage(
+                                  tenants: tenant,
+                                ),
+                              );
+                            },
+                            child: Text(
+                              tenant.acceptance ?? "",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    fontSize: 13.spMin,
+                                    color: appColor.primaryColor,
+                                  ),
+                            ),
+                          ),
               ),
             ],
           ),
@@ -266,10 +388,10 @@ class TableRowWidget extends StatelessWidget {
 }
 
 class TableRantingRow extends StatelessWidget {
-  final Map<String, dynamic> booking;
+  final Tenants tenant;
   final bool isActive;
 
-  const TableRantingRow({required this.booking, required this.isActive});
+  const TableRantingRow({required this.tenant, required this.isActive});
 
   @override
   Widget build(BuildContext context) {
@@ -286,20 +408,24 @@ class TableRantingRow extends StatelessWidget {
               Expanded(
                 flex: 4,
                 child: Text(
-                  booking["workspace"],
+                  tenant.selectedUnit?.property?.info?.name ?? "",
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontSize: 13.spMin,
-                    color: appColor.primaryColor,
-                  ),
+                        fontSize: 13.spMin,
+                        color: appColor.primaryColor,
+                      ),
                 ),
               ),
               Expanded(
-                flex: 2,
-                child: BorderButton(label: "Pay rent", onTap: (){
-                  context.router.maybePop();
-                  showAppBottomSheet(context,  RentPaymentDetailsPage());
-                } , height: 20.h,padding: EdgeInsets.zero,)
-              ),
+                  flex: 2,
+                  child: BorderButton(
+                    label: "Pay rent",
+                    onTap: () {
+                      context.router.maybePop();
+                      showAppBottomSheet(context, RentPaymentDetailsPage());
+                    },
+                    height: 20.h,
+                    padding: EdgeInsets.zero,
+                  )),
             ],
           ),
         ),
@@ -327,10 +453,10 @@ class PaginationControls extends StatelessWidget {
         Text(
           "Rows per page",
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontSize: 12.spMin,
-            fontWeight: FontWeight.w500,
-            color: appColor.primaryColor,
-          ),
+                fontSize: 12.spMin,
+                fontWeight: FontWeight.w500,
+                color: appColor.primaryColor,
+              ),
         ),
         36.horizontalSpace,
         Container(
@@ -367,10 +493,10 @@ class PaginationControls extends StatelessWidget {
         Text(
           "Page $currentPage of 10",
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontSize: 12.spMin,
-            fontWeight: FontWeight.w500,
-            color: appColor.primaryColor,
-          ),
+                fontSize: 12.spMin,
+                fontWeight: FontWeight.w500,
+                color: appColor.primaryColor,
+              ),
         ),
       ],
     );

@@ -1,10 +1,15 @@
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/core/alert/alert_manager.dart';
 import 'package:homework/core/session/app_session.dart';
 import 'package:homework/data/model/response/workspace_data.dart';
 import 'package:homework/generated/assets.dart';
-import 'package:homework/ui/home/ui/tabs/chat/store/chat_store.dart';
+import 'package:homework/ui/auth/ui/bottomsheet/onboarding_bottomsheet.dart';
 import 'package:homework/ui/home/ui/tabs/chat/ui/chat_details_page.dart';
 import 'package:homework/ui/home/ui/tabs/chat/ui/chat_page.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/store/workspace_store.dart';
@@ -17,14 +22,9 @@ import 'package:homework/values/extensions/theme_ext.dart';
 import 'package:homework/widget/app_back_button.dart';
 import 'package:homework/widget/app_image.dart';
 import 'package:homework/widget/primary_button.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maplibre_gl/maplibre_gl.dart';
-import 'package:maptiler_flutter/maptiler_flutter.dart';
 import 'package:mobx/mobx.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 @RoutePage()
 class WorkspaceDetailPage extends StatefulWidget {
@@ -44,15 +44,12 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
   int? selectedDays;
   String? startDateIso;
   String? endDateIso;
-
   final workspaceStore = WorkspaceStore();
-  final chatStore = ChatStore();
 
   @override
   void initState() {
     addDisposer();
     workspaceStore.getWorkspaceDetail(id: widget.workspaceId);
-
     super.initState();
   }
 
@@ -69,15 +66,16 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
           alertManager.showError(context, errorMessage);
         }
       }),
-      reaction((_) => chatStore.startConversationResponse, (response) {
+      reaction((_) => workspaceStore.startConversationResponse, (conversation) {
         var host = workspaceStore.workspaceDetailsResponse?.host as Host;
         showAppBottomSheet(
             context,
             ChatDetailsPage(
               image: host.image,
               name: host.firstName,
-              conversationId: response?.conversation?.Id??"",
-              receiverId: session.user.id,
+              conversationId: conversation?.Id ?? "",
+              receiverId: conversation?.user?.id ?? "",
+              fetchChatHistory: conversation?.lastMessage != null,
             ));
       }),
     ];
@@ -100,21 +98,30 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
     await _mapController.addImage('custom-marker', imageData);
   }
 
+  void _makingPhoneCall(String number) async {
+    final Uri url = Uri.parse("tel://$number");
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Observer(
-          builder: (context) {
-            var data = workspaceStore.workspaceDetailsResponse;
-            return workspaceStore.workspaceResponse?.isNotEmpty == true ||
-                    workspaceStore.isLoading
-                ? Center(
-                    child:
-                        CircularProgressIndicator(color: appColor.primaryColor),
-                  )
-                : Padding(
+      body: Observer(
+        builder: (context) {
+          var data = workspaceStore.workspaceDetailsResponse;
+          return workspaceStore.workspaceResponse?.isNotEmpty == true ||
+                  workspaceStore.isLoading
+              ? Center(
+                  child:
+                      CircularProgressIndicator(color: appColor.primaryColor),
+                )
+              : SingleChildScrollView(
+                  child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24).r,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,7 +172,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                             fontSize: 28.spMin,
                           ),
                         ),
-                        20.verticalSpace,
+                        /*   20.verticalSpace,
                         Row(
                           children: [
                             buildRatingStars(
@@ -186,7 +193,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                               fit: BoxFit.cover,
                             )
                           ],
-                        ),
+                        ),*/
                         29.verticalSpace,
                         BookingCalendar(
                           onDateSelected: (String onDateSelected, int days,
@@ -207,13 +214,26 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                                     "Please select a date",
                                     style: TextStyle(color: Colors.red),
                                   )
-                                : SizedBox.shrink();
+                                : const SizedBox.shrink();
                           },
                         ),
                         PrimaryButton(
                           text: "Book Workspace",
                           onPressed: () {
-                            openBottomSheet(context, data);
+                            if (session.isLogin) {
+                              if (dateSelected.value) {
+                                openBottomSheet(context, data);
+                              }
+                            } else {
+                              showOnboardingBottomSheet(
+                                context,
+                                onSuccess: () {
+                                  if (dateSelected.value) {
+                                    openBottomSheet(context, data);
+                                  }
+                                },
+                              );
+                            }
                           },
                         ),
                         30.verticalSpace,
@@ -231,10 +251,10 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                           ),
                         ),
                         4.verticalSpace,
-                        Container(
+                        SizedBox(
                           width: 200.w,
                           child: Text(
-                            "Chat &/or call with the workspace host before booking",
+                            "call with the workspace host before booking",
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: theme.textTheme.titleMedium?.copyWith(
@@ -244,7 +264,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                           ),
                         ),
                         16.verticalSpace,
-                        Container(
+                        SizedBox(
                           width: 200.w,
                           child: const Divider(
                             color: Color(0xff005451),
@@ -254,23 +274,33 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                         16.verticalSpace,
                         Row(
                           children: [
-                            GestureDetector(
-                              onTap: () {
-                                var host = data?.host as Host;
-
-                                var request = {
-                                  "userId": host.Id
-                                };
-                                chatStore.startConversations(request);
-                              },
-                              child: Text(
-                                "chat",
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                    fontSize: 14.spMin,
-                                    color: appColor.primaryColor,
-                                    decoration: TextDecoration.underline),
-                              ),
-                            ),
+                            Observer(builder: (context) {
+                              var isStartingConversation =
+                                  workspaceStore.isStartingConversation;
+                              return isStartingConversation
+                                  ? SizedBox(
+                                      height: 20.r,
+                                      width: 20.r,
+                                      child: const CircularProgressIndicator(),
+                                    )
+                                  : GestureDetector(
+                                      onTap: () {
+                                        workspaceStore.startConversation(
+                                            isLogin: session.isLogin,
+                                            hostId: data?.host?.Id ??
+                                                "67accf469d7fbe4e42233dee");
+                                      },
+                                      child: Text(
+                                        "chat",
+                                        style: theme.textTheme.titleMedium
+                                            ?.copyWith(
+                                                fontSize: 14.spMin,
+                                                color: appColor.primaryColor,
+                                                decoration:
+                                                    TextDecoration.underline),
+                                      ),
+                                    );
+                            }),
                             16.horizontalSpace,
                             Container(
                               color: const Color(0xff005451),
@@ -278,12 +308,28 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                               width: 1.w,
                             ),
                             16.horizontalSpace,
-                            Text(
-                              "call",
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontSize: 14.spMin,
-                                decoration: TextDecoration.underline,
-                                color: appColor.primaryColor,
+                            GestureDetector(
+                              onTap: () {
+                                if (session.isLogin) {
+                                  var host = data?.host as Host;
+                                  _makingPhoneCall(host.phone.toString());
+                                } else {
+                                  showOnboardingBottomSheet(
+                                    context,
+                                    onSuccess: () {
+                                      var host = data?.host as Host;
+                                      _makingPhoneCall(host.phone.toString());
+                                    },
+                                  );
+                                }
+                              },
+                              child: Text(
+                                "call",
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  fontSize: 14.spMin,
+                                  decoration: TextDecoration.underline,
+                                  color: appColor.primaryColor,
+                                ),
                               ),
                             ),
                           ],
@@ -312,7 +358,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                                       })
                                   .toList() ??
                               [],
-                          visibleItem: 9,
+                          visibleItem: data?.amenities?.length ?? 0,
                         ),
                         18.verticalSpace,
                         CustomDropdown(
@@ -394,8 +440,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                           ),
                         ),
                         23.verticalSpace,
-
-                        Observer(
+                        /*  Observer(
                           builder: (context) {
                             var data = workspaceStore.workspaceDetailsResponse;
                             return workspaceStore
@@ -410,12 +455,15 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                                     children: [
                                       // Other widgets...
 
-                                      Container(
+                                      SizedBox(
                                         height: 200.h,
                                         child: ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(20).r,
                                           child: MapLibreMap(
+                                            trackCameraPosition: true,
+                                            zoomGesturesEnabled: true,
+                                            dragEnabled: true,
                                             styleString:
                                                 'https://api.maptiler.com/maps/streets-v2/style.json?key=HRmXb4He6yvLBd6RRIcJ',
                                             myLocationEnabled: true,
@@ -426,7 +474,6 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                                                   data?.geocode?.lon ?? 0),
                                               zoom: 13,
                                             ),
-                                            trackCameraPosition: true,
                                             onMapCreated: onMapCreated,
                                             onStyleLoadedCallback: () async {
                                               await Future.delayed(const Duration(
@@ -457,8 +504,7 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                                     ],
                                   );
                           },
-                        ),
-
+                        ),*/
                         20.verticalSpace
                         // Map Image Placeholder
                         // MapTiler.geocodingAPI.searchByCoordinates(8.55, 47.36667).then((result) {
@@ -472,9 +518,9 @@ class _WorkspaceDetailPageState extends State<WorkspaceDetailPage> {
                         //   ),
                       ],
                     ),
-                  );
-          },
-        ),
+                  ),
+                );
+        },
       ),
     );
   }

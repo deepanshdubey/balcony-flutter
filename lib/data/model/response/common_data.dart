@@ -1,11 +1,16 @@
 import 'package:homework/data/model/response/card_data.dart';
 import 'package:homework/data/model/response/conversation_data.dart';
-import 'package:homework/data/model/response/support_ticket_data.dart';
+import 'package:homework/data/model/response/media_data.dart';
+import 'package:homework/data/model/response/message_data.dart';
+import 'package:homework/data/model/response/property_data.dart';
+import 'package:homework/data/model/response/support_ticket_data.dart' show SupportTicketData;
+import 'package:homework/data/model/response/tenant_details.dart';
 import 'package:homework/data/model/response/user_data.dart';
+import 'package:homework/data/model/response/verification_data.dart';
 import 'package:homework/data/model/response/workspace_data.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import 'bookings_data.dart';
+import 'package:homework/data/model/response/bookings_data.dart';
 
 part 'common_data.g.dart';
 
@@ -19,6 +24,12 @@ class CommonData {
 
   @JsonKey(name: 'url')
   String? url;
+
+  @JsonKey(name: 'signedUrl')
+  String? signedUrl;
+
+  @JsonKey(name: 'publicUrl')
+  String? publicUrl;
 
   @JsonKey(name: 'token')
   String? token;
@@ -46,6 +57,9 @@ class CommonData {
   @JsonKey(name: 'workspaces')
   List<WorkspaceData>? workspaces;
 
+  @JsonKey(name: 'properties')
+  List<PropertyData>? properties;
+
   @JsonKey(name: 'dates')
   List<String>? bookingsDates;
 
@@ -59,15 +73,30 @@ class CommonData {
   num? deposits;
 
   @JsonKey(name: 'messages')
-  List<LastMessage>? messages;
+  List<MessageData>? messages;
 
   @JsonKey(name: 'messageId')
   final String? messageId;
 
   @JsonKey(name: 'media')
-  final Media? media;
+  final MediaData? media;
 
-  CommonData({
+  @JsonKey(name: 'tenants')
+  final List<Tenants>? tenants;
+  @JsonKey(name: 'tenant')
+  final Tenants? tenant;
+
+  @JsonKey(name: 'applicationFee')
+  num? applicationFee;
+
+  @JsonKey(name: 'verification')
+  Verification? verification;
+
+  @JsonKey(name: 'conversation')
+  final ConversationData? conversation;
+
+  CommonData(
+    this.tenants, {
     this.messageId,
     this.media,
     this.success,
@@ -86,6 +115,13 @@ class CommonData {
     this.bookingsDates,
     this.booking,
     this.urls,
+    this.properties,
+    this.signedUrl,
+    this.publicUrl,
+    this.conversation,
+    this.applicationFee,
+    this.tenant,
+    this.verification,
   });
 
   factory CommonData.fromJson(Map<String, dynamic> json) =>

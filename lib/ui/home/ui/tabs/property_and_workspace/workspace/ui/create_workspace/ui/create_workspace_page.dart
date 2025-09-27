@@ -1,5 +1,9 @@
 import 'package:auto_route/annotations.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/core/alert/alert_manager.dart';
+import 'package:homework/core/session/app_session.dart';
 import 'package:homework/data/model/response/workspace_data.dart';
 import 'package:homework/router/app_router.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
@@ -15,9 +19,6 @@ import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/cre
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/workspace/ui/create_workspace/widget/pricing_widget.dart';
 import 'package:homework/widget/app_back_button.dart';
 import 'package:homework/widget/primary_button.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mobx/mobx.dart';
 
 @RoutePage()
@@ -52,6 +53,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
     isEdit = widget.editWorkspaceItem != null;
     if (isEdit) {
       workspaceData = widget.editWorkspaceItem!;
+      store.getWorkspaceDetail(id: workspaceData.id.toString());
     }
     workspaceInfoKey = GlobalKey<BaseState>();
     pricingKey = GlobalKey<BaseState>();
@@ -71,6 +73,13 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
       reaction((_) => store.errorMessage, (String? errorMessage) {
         if (errorMessage != null) {
           alertManager.showError(context, errorMessage);
+        }
+      }),
+      reaction((_) => store.workspaceDetailsResponse, (data) {
+        if (data != null) {
+          setState(() {
+            workspaceData = data;
+          });
         }
       }),
       reaction((_) => store.createWorkSpaceDetailsResponse, (res) {
@@ -124,8 +133,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
             Expanded(
               child: SingleChildScrollView(
                 child: Padding(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
+                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
                   child: Column(
                     children: [
                       title(),
@@ -137,6 +145,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
                       30.h.verticalSpace,
                       AddressWidget(
                         key: workspaceInfoKey,
+                        isWorkSpace: true,
                         existingAddress: isEdit ? workspaceData.info : null,
                       ),
                       30.h.verticalSpace,
@@ -192,12 +201,15 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
                         return SizedBox(
                           width: double.infinity,
                           child: PrimaryButton(
-                            text: isEdit ? "update workspace" : "add new workspace",
+                            text: isEdit
+                                ? "update workspace"
+                                : "add new workspace",
                             onPressed: submit,
                             isLoading: isLoading,
                           ),
                         );
                       }),
+                      55.verticalSpace
                     ],
                   ),
                 ),
@@ -211,7 +223,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
 
   Widget title() {
     return Text(
-      "we need a few information about your property.",
+      "we need a few information about your workspace.",
       style: theme.textTheme.titleLarge?.copyWith(
         fontWeight: FontWeight.w600,
         fontSize: 28.spMin,
@@ -237,6 +249,7 @@ class _CreateWorkspacePageState extends State<CreateWorkspacePage> {
     if (validate()) {
       Info info = workspaceInfoKey.currentState!.getApiData();
       info.summary = summaryController.text.trim();
+      info.floor = "5th floor";
       if (isEdit) {
         store.updateWorkspace(
           workspaceData.id.toString(),

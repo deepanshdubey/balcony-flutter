@@ -27,7 +27,7 @@ class PrimaryButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.r),
         ),
-        backgroundColor: backgroundColor ?? Theme.of(context).primaryColor,
+        backgroundColor: (backgroundColor ?? Theme.of(context).primaryColor).withAlpha(enabled ? 255 : 100),
       ),
       child: isLoading
           ? SizedBox(
@@ -35,8 +35,7 @@ class PrimaryButton extends StatelessWidget {
               height: 24,
               child: CircularProgressIndicator(
                 color: Theme.of(context)
-                    .primaryColor
-                    .withOpacity(enabled ? 1 : 0.5),
+                    .primaryColor,
                 strokeWidth: 2.r,
               ),
             )

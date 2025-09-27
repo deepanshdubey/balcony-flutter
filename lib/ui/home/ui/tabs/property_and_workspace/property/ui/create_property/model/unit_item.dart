@@ -1,6 +1,7 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class UnitItem {
+  String? id;
   int? unit;
   double? price;
   int? bed;
@@ -12,10 +13,17 @@ class UnitItem {
   late TextEditingController bedController;
   late TextEditingController bathController;
 
-  UnitItem() {
-    unitController = TextEditingController();
-    priceController = TextEditingController();
-    bedController = TextEditingController();
-    bathController = TextEditingController();
+  UnitItem({
+    this.id,
+    this.unit,
+    this.price,
+    this.bed,
+    this.bath,
+    this.floorImage,
+  }) {
+    unitController = TextEditingController(text: unit?.toString());
+    priceController = TextEditingController(text: price?.toString());
+    bedController = TextEditingController(text: bed?.toString());
+    bathController = TextEditingController(text: bath?.toString());
   }
 }

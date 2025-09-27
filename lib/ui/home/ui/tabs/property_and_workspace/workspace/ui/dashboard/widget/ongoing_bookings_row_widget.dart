@@ -58,83 +58,86 @@ class _OnGoingBookingsRowWidgetState extends State<OnGoingBookingsRowWidget> {
               bookingsData: widget.booking,
             ));
       },
-      child: Row(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Checkbox(
-              value: isSelected,
-              onChanged: (value) {
-                setState(() {
-                  isSelected = value ?? false;
-                });
-              },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10 , horizontal: 15).r,
+        child: Row(
+          children: [
+           /* Expanded(
+              flex: 1,
+              child: Checkbox(
+                value: isSelected,
+                onChanged: (value) {
+                  setState(() {
+                    isSelected = value ?? false;
+                  });
+                },
+              ),
+            ),*/
+            Expanded(
+              flex: 3,
+              child: Text(
+                widget.booking.workspace?.info?.name ?? "no name",
+                style: theme.textTheme.bodyLarge,
+              ),
             ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Text(
-              widget.booking.workspace?.info?.name ?? "no name",
-              style: theme.textTheme.bodyLarge,
+            Expanded(
+              flex: 2,
+              child: Text(
+                bookingStatus,
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium
+                    ?.copyWith(fontSize: 12.spMin),
+              ),
             ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text(
-              bookingStatus,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontSize: 12.spMin),
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Observer(builder: (context) {
-              var isLoading = workspaceStore.isLoading;
-              return Center(
-                child: isLoading
-                    ? SizedBox(
-                        width: 24.r,
-                        height: 24.r,
-                        child: const CircularProgressIndicator())
-                    : bookingStatus.toLowerCase() == "pending"
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              GestureDetector(
-                                  onTap: () {
-                                    workspaceStore.handleBooking(
-                                        widget.booking.id.toString(), true);
-                                  },
-                                  child: Icon(
-                                    Icons.check_circle_rounded,
-                                    color: appColor.primaryColor,
-                                  )),
-                              10.w.horizontalSpace,
-                              GestureDetector(
-                                  onTap: () {
-                                    workspaceStore.handleBooking(
-                                        widget.booking.id.toString(), false);
-                                  },
-                                  child: Transform.rotate(
-                                      angle: 45 * 3.141592653589793 / 180,
-                                      child: const Icon(
-                                        Icons.add_circle,
-                                        color: Colors.red,
-                                      ))),
-                            ],
-                          )
-                        : Text(
-                            widget.booking.acceptance.toString(),
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontSize: 12.spMin,
+            Expanded(
+              flex: 3,
+              child: Observer(builder: (context) {
+                var isLoading = workspaceStore.isLoading;
+                return Center(
+                  child: isLoading
+                      ? SizedBox(
+                          width: 24.r,
+                          height: 24.r,
+                          child: const CircularProgressIndicator())
+                      : bookingStatus.toLowerCase() == "pending"
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                GestureDetector(
+                                    onTap: () {
+                                      workspaceStore.handleBooking(
+                                          widget.booking.id.toString(), true);
+                                    },
+                                    child: Icon(
+                                      Icons.check_circle_rounded,
+                                      color: appColor.primaryColor,
+                                    )),
+                                10.w.horizontalSpace,
+                                GestureDetector(
+                                    onTap: () {
+                                      workspaceStore.handleBooking(
+                                          widget.booking.id.toString(), false);
+                                    },
+                                    child: Transform.rotate(
+                                        angle: 45 * 3.141592653589793 / 180,
+                                        child: const Icon(
+                                          Icons.add_circle,
+                                          color: Colors.red,
+                                        ))),
+                              ],
+                            )
+                          : Text(
+                              widget.booking.acceptance.toString(),
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontSize: 12.spMin,
+                              ),
                             ),
-                          ),
-              );
-            }),
-          ),
-        ],
+                );
+              }),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "254534505135",
+    "project_id": "balconyws",
+    "storage_bucket": "balconyws.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:254534505135:android:d99b572bff85c57b503a5a",
+        "android_client_info": {
+          "package_name": "com.homeworkbooking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "254534505135-uqeutoji0nd05hg440r6b1dvonlb8de3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.homeworkbooking",
+            "certificate_hash": "46993d22356b7cfeb2444964efd037ba0986250a"
+          }
+        },
+        {
+          "client_id": "254534505135-qm51p5pg2rqbq0t0mtvv6kuk8ah2jjff.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9VnSZqFVgxvSnDBNmFkU88CLNuWorGSk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "254534505135-qm51p5pg2rqbq0t0mtvv6kuk8ah2jjff.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "254534505135-rjvomjhhtr8tg8ct2tpj5pdqutlp7jnb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.homeworkbooking"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:254534505135:android:469ce0750fa19cc5503a5a",
+        "android_client_info": {
+          "package_name": "com.homeworkspaces.ws"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "254534505135-qm51p5pg2rqbq0t0mtvv6kuk8ah2jjff.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9VnSZqFVgxvSnDBNmFkU88CLNuWorGSk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "254534505135-qm51p5pg2rqbq0t0mtvv6kuk8ah2jjff.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "254534505135-rjvomjhhtr8tg8ct2tpj5pdqutlp7jnb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.homeworkbooking"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

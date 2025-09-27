@@ -158,7 +158,6 @@ class _AddressWidgetState extends BaseState<AddressWidget> {
     return Info(
         name: nameController.text.trim(),
         address: addressController.text.trim(),
-        floor: floorController.text.trim(),
         city: cityController.text.trim(),
         state: stateController.text.trim(),
         country: countryController.text.trim(),

@@ -118,7 +118,7 @@ class _AvailableWorkspaceHoursWidgetState
           ),
         ),
         Expanded(
-          flex: 4,
+          flex: 3,
           child: Padding(
             padding: EdgeInsets.only(top: 12.h),
             child: Text(
@@ -129,13 +129,13 @@ class _AvailableWorkspaceHoursWidgetState
             ),
           ),
         ),
-        8.w.horizontalSpace,
+        4.w.horizontalSpace,
         Expanded(
             flex: 5,
             child: AppDropdownField(
               controller: item.startTimeController,
               label: "am / pm",
-              hintText: "1..",
+              hintText: "0 AM",
               items: allSlots,
               itemLabel: (p0) => p0,
               onItemSelected: (p0) {
@@ -145,7 +145,7 @@ class _AvailableWorkspaceHoursWidgetState
         Container(
           height: 1,
           color: appColor.primaryColor,
-          width: 12.w,
+          width: 5.w,
           margin: EdgeInsets.only(left: 6.w, right: 6.w, top: 10.h),
         ),
         Expanded(
@@ -153,7 +153,7 @@ class _AvailableWorkspaceHoursWidgetState
             child: AppDropdownField(
               controller: item.endTimeController,
               label: "am / pm",
-              hintText: "1..",
+              hintText: "0 AM",
               items: allSlots,
               itemLabel: (p0) => p0,
               onItemSelected: (p0) {

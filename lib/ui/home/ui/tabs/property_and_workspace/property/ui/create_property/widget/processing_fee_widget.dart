@@ -1,11 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:homework/ui/home/ui/tabs/property_and_workspace/common/base_state.dart';
 import 'package:homework/values/colors.dart';
 import 'package:homework/values/extensions/context_ext.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProcessingFeeWidget extends StatefulWidget {
-  const ProcessingFeeWidget({super.key});
+  final bool? feeType;
+
+  const ProcessingFeeWidget({super.key, this.feeType});
 
   @override
   ProcessingFeeWidgetState createState() => ProcessingFeeWidgetState();
@@ -13,6 +15,12 @@ class ProcessingFeeWidget extends StatefulWidget {
 
 class ProcessingFeeWidgetState extends BaseState<ProcessingFeeWidget> {
   bool? feeType;
+
+  @override
+  void initState() {
+    feeType = widget.feeType;
+    super.initState();
+  }
 
   @override
   bool validate() {
