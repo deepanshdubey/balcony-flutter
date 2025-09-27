@@ -40,7 +40,7 @@ dependencies:
   maplibre_gl: ^0.21.0
   credit_card_form: ^0.0.7
   maptiler_flutter: ^0.1.0
-  flutter_stripe: ^11.3.0
+  flutter_stripe: ^11.5.0
   socket_io_client: ^2.0.0
   provider: ^6.1.2
   url_launcher: ^6.3.1
@@ -70,8 +70,7 @@ dev_dependencies:
   # json parsing
   json_serializable: ^6.7.1
 
-  # Asset generator
-  flutter_gen_runner: ^5.4.0
+
 
   flutter_test:
     sdk: flutter
@@ -112,8 +111,9 @@ flutter:
 
 #flutter_intl: true
 
+
 flutter_gen:
-  output: lib/generated/
+  output: lib/i10n/
   assets:
     enabled: true
 

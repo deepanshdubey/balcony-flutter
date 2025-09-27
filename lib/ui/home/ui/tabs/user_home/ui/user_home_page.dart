@@ -22,7 +22,7 @@ class UserHomePage extends StatefulWidget {
 }
 
 class _UserHomePageState extends State<UserHomePage> {
-  int _currentIndex = 0;
+  int _currentIndex = 1;
   var store = DashboardStore();
   List<ReactionDisposer>? disposers;
 
