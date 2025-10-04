@@ -1,7 +1,4 @@
 # Miscellaneous
-lib/generated
-*.gr.dart
-*.g.dart
 *.class
 *.log
 *.pyc
